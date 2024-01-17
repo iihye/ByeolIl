@@ -1,37 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import {atom, useRecoilValue, useSetRecoilState} from "recoil";
-import {listState} from "./List";
+import { atom, useRecoilValue, useSetRecoilState } from 'recoil';
+import { listState } from './List';
 
-export const filterState=atom({
-    key: "filterState",
+export const filterState = atom({
+    key: 'filterState',
     default: [],
-})
+});
 
-const useDebounce=((value, delay)=>{
-    const [debounceValue, setDebounceValue]=useState(value);
+const useDebounce = (value, delay) => {
+    const [debounceValue, setDebounceValue] = useState(value);
 
-    useEffect(()=>{
-        const timer=setTimeout(()=>{
+    useEffect(() => {
+        const timer = setTimeout(() => {
             setDebounceValue(value);
         }, delay);
 
-        return()=>{
+        return () => {
             clearTimeout(timer);
-        }
-    }, [value]);
+        };
+    }, [value, delay]);
 
     return debounceValue;
-})
+};
 
 function SearchBar() {
-    const [searchValue, setSearchValue] = useState("");
+    const [searchValue, setSearchValue] = useState('');
     const setFilterData = useSetRecoilState(filterState);
-    const listItems=useRecoilValue(listState);
+    const listItems = useRecoilValue(listState);
 
-    const debouncedSearchValue=useDebounce(searchValue, 0);
+    const debouncedSearchValue = useDebounce(searchValue, 150);
 
     const handleSearchValue = (e) => {
-        setSearchValue(e.target.value); 
+        setSearchValue(e.target.value);
     };
 
     // 검색 결과와 일치하는 결과만 가져옴
@@ -40,12 +40,12 @@ function SearchBar() {
             it.boardContent
                 .toLocaleLowerCase()
                 .replace(/\s/g, '')
-                .includes(searchValue.toLocaleLowerCase().replace(/\s/g, ''))
+                .includes(debouncedSearchValue.toLocaleLowerCase().replace(/\s/g, ''))
         );
 
         // 필터링이 완료된 후에 상태를 업데이트
         setFilterData(filterContents);
-    }, [searchValue, listItems]);
+    }, [debouncedSearchValue, listItems]);
 
     return (
         <div className="searchBar">
