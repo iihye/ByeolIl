@@ -1,9 +1,9 @@
-import SearchBar from './components/reusable/SearchBar';
+import List from "./components/reusable/List";
 
 function App() {
     return (
         <div className="App">
-            <SearchBar />
+            <List/>
         </div>
     );
 }
