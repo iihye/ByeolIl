@@ -25,6 +25,7 @@ function App() {
       <RadioModal />
       <br />
       <StarDetail starIndex={1} />
+      <button onClick={loginHandler}>소셜 로그인 테스트 버튼</button>
     </div>
   );
 }
