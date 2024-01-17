@@ -28,11 +28,11 @@ function List(){
     },[])
 
     return(
-        <div className="reusableList">
+        <div className="reusableList" style={{border: '1px solid blue'}}>
             <SearchBar />
             <div className="searchList">
                 {filterData.map((it) => (
-                    <li key={it.boardIndex}>
+                    <li key={it.boardIndex} style={{border: '1px solid'}}>
                         {it.boardRegTime}&nbsp;{it.boardInputTime}&nbsp;{it.boardContent}
                     </li>
                 ))}

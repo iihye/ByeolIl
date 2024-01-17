@@ -7,11 +7,28 @@ export const filterState=atom({
     default: [],
 })
 
+const useDebounce=((value, delay)=>{
+    const [debounceValue, setDebounceValue]=useState(value);
+
+    useEffect(()=>{
+        const timer=setTimeout(()=>{
+            setDebounceValue(value);
+        }, delay);
+
+        return()=>{
+            clearTimeout(timer);
+        }
+    }, [value]);
+
+    return debounceValue;
+})
 
 function SearchBar() {
     const [searchValue, setSearchValue] = useState("");
     const setFilterData = useSetRecoilState(filterState);
     const listItems=useRecoilValue(listState);
+
+    const debouncedSearchValue=useDebounce(searchValue, 0);
 
     const handleSearchValue = (e) => {
         setSearchValue(e.target.value); 
