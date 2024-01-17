@@ -24,8 +24,6 @@ function SearchBar() {
 
     },[])
 
-    // console.log(dummyItems[0])
-
     useEffect(() => {
         const filterContents = dummyItems.filter((it) =>
             it.boardContent
