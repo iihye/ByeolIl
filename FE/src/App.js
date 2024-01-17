@@ -13,13 +13,8 @@ import PWCheck from "./components/user/PWCheckAlert";
 function App() {
   return (
     <div className="App">
-      <StarDeleteAlert />
-      <br />
-      <BlockAlert />
-      <br />
-      <StarReportAlert />
-      <br />
-      <PWCheck />
+      <FindID />
+      <FindPW />
     </div>
   );
 }
