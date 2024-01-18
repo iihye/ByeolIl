@@ -8,44 +8,36 @@ const menuArr = [
 ];
 
 function FollowList() {
-    const [currentTab, setCurrentTab] = useState(0);
-    const [followData, setFollowData] = useState([]);
-    const [followerData, setFollowerData] = useState([]);
+    const [currentTab, setCurrentTab] = useState(1);
 
     useEffect(() => {
         const fetchData = async () => {
-            await axios
-                .all([
+            try {
+                const [followResponse, followerResponse] = await axios.all([
                     axios.get(
                         'https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/follow/following/1'
                     ),
                     axios.get(
                         'https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/follow/follower/2'
                     ),
-                ])
+                ]);
 
-                .then(
-                    axios.spread((res1, res2) => {
-                        setFollowData(res1.data);
-                        setFollowerData(res2.data);
-                    })
-                )
-                .catch((e) => {
-                    console.log(e);
-                });
+                // 데이터를 받은 후에 content를 설정
+                menuArr[0].content = followResponse.data.map(
+                    (it) => it.userName
+                );
+                menuArr[1].content = followerResponse.data.map(
+                    (it) => it.userName
+                );
+
+                setCurrentTab(0);
+            } catch (error) {
+                console.error(error);
+            }
         };
 
         fetchData();
     }, []);
-
-    useEffect(() => {
-        menuArr[0].content = [
-            followData && followData.map((it) => it.userName),
-        ];
-        menuArr[1].content = [
-            followerData && followerData.map((it) => it.userName),
-        ];
-    }, [followData, followerData]);
 
     return (
         <div className="FollowList">
@@ -66,7 +58,13 @@ function FollowList() {
                     </div>
                 );
             })}
-            <p>{menuArr[currentTab].content}</p>
+            <ul>
+                {menuArr[currentTab].content.map((userName, index) => (
+                    <li key={index}>
+                        {userName} <button>팔로우하기</button>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
