@@ -1,14 +1,21 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 
-const menuArr = [
-    { name: '팔로우', content: [] },
-    { name: '팔로워', content: [] },
-];
-
 function FollowList() {
-    const [currentTab, setCurrentTab] = useState(1);
+    const [currentTab, setCurrentTab] = useState(0);
+    const [followData, setFollowData] = useState([]);
+    const [followerData, setFollowerData] = useState([]);
+
+    const menuArr = useMemo(() => {
+        // 데이터를 받은 후에 content를 설정
+        const followContent = followData.map((it) => it.userName);
+        const followerContent = followerData.map((it) => it.userName);
+
+        return [
+            { name: '팔로우', content: followContent },
+            { name: '팔로워', content: followerContent },
+        ];
+    }, [followData, followerData]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,15 +29,8 @@ function FollowList() {
                     ),
                 ]);
 
-                // 데이터를 받은 후에 content를 설정
-                menuArr[0].content = followResponse.data.map(
-                    (it) => it.userName
-                );
-                menuArr[1].content = followerResponse.data.map(
-                    (it) => it.userName
-                );
-
-                setCurrentTab(0);
+                setFollowData(followResponse.data);
+                setFollowerData(followerResponse.data);
             } catch (error) {
                 console.error(error);
             }
@@ -41,27 +41,23 @@ function FollowList() {
 
     return (
         <div className="FollowList">
-            {menuArr.map((data, index) => {
-                return (
-                    <div>
-                        <button
-                            key={index}
-                            onClick={() => setCurrentTab(index)}
-                            className={
-                                currentTab === index
-                                    ? 'currentFocused'
-                                    : 'Focused'
-                            }
-                        >
-                            {data.name}
-                        </button>
-                    </div>
-                );
-            })}
+            {menuArr.map((data, index) => (
+                <div key={index}>
+                    <button
+                        onClick={() => setCurrentTab(index)}
+                        className={
+                            currentTab === index ? 'currentFocusedTab' : 'Tab'
+                        }
+                    >
+                        {data.name}
+                    </button>
+                </div>
+            ))}
             <ul>
                 {menuArr[currentTab].content.map((userName, index) => (
                     <li key={index}>
-                        {userName} <button>팔로우하기</button>
+                        <p>{userName}</p>
+                        <button>언팔로우</button>
                     </li>
                 ))}
             </ul>
