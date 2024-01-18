@@ -1,9 +1,12 @@
-import SearchBar from './components/reusable/SearchBar';
+import FollowList from './components/user/FollowList';
+import { RecoilRoot } from 'recoil';
 
 function App() {
     return (
         <div className="App">
-            <SearchBar />
+            <RecoilRoot>
+                <FollowList />
+            </RecoilRoot>
         </div>
     );
 }
