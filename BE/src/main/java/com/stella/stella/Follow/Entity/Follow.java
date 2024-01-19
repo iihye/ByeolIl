@@ -1,0 +1,26 @@
+package com.stella.stella.Follow.Entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity(name = "follow")
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Follow {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Member followIndex;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_member_index")
+    private Member toMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_member_index")
+    private Member fromMember;
+}
