@@ -1,11 +1,7 @@
-import List from "./components/reusable/List";
+import List from './components/reusable/List';
 
 function App() {
-    return (
-        <div className="App">
-            <List/>
-        </div>
-    );
+    return <div className="App"></div>;
 }
 
 export default App;
