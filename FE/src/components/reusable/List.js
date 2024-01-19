@@ -3,6 +3,7 @@ import SearchBar, { filterState } from './SearchBar';
 import { atom, useSetRecoilState, useRecoilValue } from 'recoil';
 import axios from 'axios';
 
+// API로 받아온 전체 데이터를 관리하는 atom
 export const listState = atom({
     key: 'listState',
     default: [],
@@ -28,6 +29,7 @@ function List() {
         fetchData();
     }, []);
 
+    // 검색 결과와 일치하는 값을 렌더링
     return (
         <div className="reusableList" style={{ border: '1px solid blue' }}>
             <SearchBar filterKey="boardContent" />

@@ -7,6 +7,7 @@ export const filterState = atom({
     default: [],
 });
 
+// useDebounce를 이용하여 상태가 변경될 때마다 화면이 깜빡이는 이슈 해결
 const useDebounce = (value, delay) => {
     const [debounceValue, setDebounceValue] = useState(value);
 
@@ -24,9 +25,9 @@ const useDebounce = (value, delay) => {
 };
 
 function SearchBar({ filterKey }) {
-    const [searchValue, setSearchValue] = useState('');
-    const setFilterData = useSetRecoilState(filterState);
-    const listItems = useRecoilValue(listState);
+    const [searchValue, setSearchValue] = useState(''); // 검색창에 입력되는 값
+    const setFilterData = useSetRecoilState(filterState); // 필터링된 값
+    const listItems = useRecoilValue(listState); // API로 받아온 값
 
     const debouncedSearchValue = useDebounce(searchValue, 150);
 
@@ -34,7 +35,7 @@ function SearchBar({ filterKey }) {
         setSearchValue(e.target.value);
     };
 
-    // 검색 결과와 일치하는 결과만 가져옴
+    // 검색 결과 필터링. filterKey에 따라 대상 데이터가 변경됨
     useEffect(() => {
         const filterContents = listItems.filter((it) =>
             it[filterKey]
