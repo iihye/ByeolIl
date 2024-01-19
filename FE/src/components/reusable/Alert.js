@@ -3,27 +3,29 @@ import axios from "axios";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert({ type, boardIndex }) {
-  return (
-    <div className="alert">
-      {type === "block" ? <Block /> : null}
-      {type === "delete" ? <Delete boardIndex={boardIndex} /> : null}
-      {type === "PWCheck" || type === "report" ? <InputAlert type={type} /> : null}
-    </div>
-  );
+  const alertTypes = {
+    block: <Block />,
+    delete: <Delete boardIndex={boardIndex} />,
+    PWCheck: <InputAlert type={type} />,
+    report: <InputAlert type={type} />,
+  };
+
+  return <div className="alert">{alertTypes[type]}</div>;
 }
 
 function InputAlert({ type }) {
   const input = useRef(null);
 
-  const toEnter = type === "PWCheck" ? "비밀번호를" : "신고 내용을";
-  const buttonValue = type === "PWCheck" ? "입력" : "신고";
-  const URL = ""; // axios 요청 URL
-
-  // 빈 내용 체크
-  const emptyCheck = (input) => {
-    return input.trim();
+  const toEnter = {
+    PWCheck: "비밀번호를",
+    report: "신고 내용을",
+  };
+  const buttonValue = {
+    PWCheck: "입력",
+    report: "신고",
   };
 
+  const URL = ""; // axios 요청 URL
   const reqReport = (inputData) => {
     const data = {
       boardIndex: "", // 게시글 번호
@@ -38,21 +40,25 @@ function InputAlert({ type }) {
         /* 2. 신고 완료 모달 닫기 */
         /* 3. 신고 내용 입력 모달 닫기 */
       })
-      .catch((e) => console.log(e));
+      .catch((err) => console.log(err));
   };
 
+  // 빈 내용 체크
+  const emptyCheck = (input) => {
+    return input.trim();
+  };
   // 비밀번호 입력 / 신고 요청
   const handleSubmit = () => {
     const inputData = input.current.value;
 
     if (!emptyCheck(inputData)) {
-      alert(`${toEnter} 입력해주세요!`);
+      alert(`${toEnter[type]} 입력해주세요!`);
       return;
     }
 
-    if (buttonValue === "신고") {
+    if (buttonValue[type] === "신고") {
       reqReport(inputData);
-    } else if (buttonValue === "입력") {
+    } else if (buttonValue[type] === "입력") {
       /* 1. 비밀번호 일치하는지 체크 */
       /* 2. - 일치할 경우) 해당 모달 내리고 개인정보 수정 모달 띄우기 */
       /* 3. - 일치하지 않을 경우) '비밀번호가 일치하지 않습니다.' 띄우기 */
@@ -69,18 +75,18 @@ function InputAlert({ type }) {
     input.current.addEventListener("keydown", handleEnter);
 
     return () => {
-      clearTimeout(handleEnter);
+      input.current.removeEventListener("keydown", handleEnter);
     };
   }, []);
 
   return (
     <>
-      <div>{toEnter} 입력해주세요.</div>
+      <div>{toEnter[type]} 입력해주세요.</div>
       <div>
         <input ref={input} />
       </div>
       <div>
-        <button onClick={handleSubmit}>{buttonValue}</button>
+        <button onClick={handleSubmit}>{buttonValue[type]}</button>
         <button
           onClick={() => {
             /* 모달 닫기 */
