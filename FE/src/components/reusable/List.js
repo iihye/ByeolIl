@@ -30,7 +30,7 @@ function List() {
 
     return (
         <div className="reusableList" style={{ border: '1px solid blue' }}>
-            <SearchBar />
+            <SearchBar filterKey="boardContent" />
             <div className="searchList">
                 {filterData.map((it) => (
                     <li key={it.boardIndex} style={{ border: '1px solid' }}>

@@ -23,7 +23,7 @@ const useDebounce = (value, delay) => {
     return debounceValue;
 };
 
-function SearchBar() {
+function SearchBar({ filterKey }) {
     const [searchValue, setSearchValue] = useState('');
     const setFilterData = useSetRecoilState(filterState);
     const listItems = useRecoilValue(listState);
@@ -37,10 +37,12 @@ function SearchBar() {
     // 검색 결과와 일치하는 결과만 가져옴
     useEffect(() => {
         const filterContents = listItems.filter((it) =>
-            it.boardContent
-                .toLocaleLowerCase()
+            it[filterKey]
+                ?.toLocaleLowerCase()
                 .replace(/\s/g, '')
-                .includes(debouncedSearchValue.toLocaleLowerCase().replace(/\s/g, ''))
+                .includes(
+                    debouncedSearchValue.toLocaleLowerCase().replace(/\s/g, '')
+                )
         );
 
         // 필터링이 완료된 후에 상태를 업데이트
