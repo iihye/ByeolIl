@@ -81,7 +81,13 @@ function InputAlert({ type }) {
       </div>
       <div>
         <button onClick={handleSubmit}>{buttonValue}</button>
-        <button>취소</button>
+        <button
+          onClick={() => {
+            /* 모달 닫기 */
+          }}
+        >
+          취소
+        </button>
       </div>
     </>
   );
@@ -109,8 +115,20 @@ function Delete({ boardIndex }) {
         정말로.. 삭제할까요?
       </div>
       <div>
-        <button onClick={() => {}}>삭제</button>
-        <button>취소</button>
+        <button
+          onClick={() => {
+            /* 삭제 요청 */
+          }}
+        >
+          삭제
+        </button>
+        <button
+          onClick={() => {
+            /* 모달 닫기 */
+          }}
+        >
+          취소
+        </button>
       </div>
     </>
   );
@@ -122,7 +140,13 @@ function Block() {
   return (
     <>
       <div>
-        <button>CLOSE</button>
+        <button
+          onClick={() => {
+            /* 모달 닫기 */
+          }}
+        >
+          CLOSE
+        </button>
       </div>
       <div>
         차단된 사용자입니다.
