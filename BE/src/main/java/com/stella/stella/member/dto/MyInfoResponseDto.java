@@ -1,0 +1,31 @@
+package com.stella.stella.member.dto;
+
+import com.stella.stella.member.entity.Member;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.sql.Date;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MyInfoResponseDto {
+	private String memberId, memberPlatform, memberName, memberNickname, memberEmail, memberAlarmStatus,
+			memberRadioStatus;
+	private Date memberBirth, memberBanDate;
+	
+	public MyInfoResponseDto(Member member) {
+		memberId = member.getMemberId();
+		memberPlatform = member.getMemberPlatform();
+		memberName = member.getMemberName();
+		memberNickname = member.getMemberEmail();
+		memberEmail = member.getMemberEmail();
+		memberAlarmStatus = member.getMemberAlarmStatus().toString();
+		memberRadioStatus = member.getMemberRadioStatus().toString();
+		memberBanDate = member.getMemberBanDate();
+		memberBirth = member.getMemberBirth();
+	}
+}
