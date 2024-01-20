@@ -1,8 +1,8 @@
 package com.stella.stella.board.entity;
 
-import com.stella.stella.Report.Entity.Report;
 import com.stella.stella.comment.entity.Comment;
 import com.stella.stella.member.entity.Member;
+import com.stella.stella.report.entity.Report;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
