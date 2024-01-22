@@ -38,8 +38,8 @@ public class Alarm {
     private AlarmType alarmType;
 
     @OneToMany(mappedBy = "alarm")
-    private List<Alarm> alarmList;
+    private List<Alarmcheck> alarmList;
 
-    @OneToMany(mappedBy = "alarmboard")
+    @OneToMany(mappedBy = "alarm")
     private List<Alarmboard> alarmboardList;
 }

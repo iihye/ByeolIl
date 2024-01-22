@@ -5,6 +5,8 @@ import com.stella.stella.member.entity.Member;
 import com.stella.stella.report.entity.Report;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -44,7 +46,9 @@ public class Board {
     private Long boardLocation;         //하늘에서 별 위치
 
     @Column(name = "board_access", nullable = false, length = 10)
-    private String boardAccess;         //게시글 접근 범위
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'OPEN'")
+    private BoardAccessStatus boardAccess;         //게시글 접근 범위
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_index", referencedColumnName = "member_index")
@@ -68,10 +72,6 @@ public class Board {
 
     public void setBoardLocation(Long boardLocation) {
         this.boardLocation = boardLocation;
-    }
-
-    public void setBoardAccess(String boardAccess) {
-        this.boardAccess = boardAccess;
     }
 
     public void setReports(List<Report> reports) {
