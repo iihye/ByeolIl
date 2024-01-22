@@ -14,16 +14,16 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Like {
+public class Heart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="like_index" ,updatable = false)
-    private Long likeIndex;             //테이블 고유 번호
+    @Column(name ="heart_index" ,updatable = false)
+    private Long heartIndex;             //테이블 고유 번호
 
     @CreatedDate
-    @Column(name="like_regdate")
-    private LocalDate likeRegdate;      //좋아요 작성 날
+    @Column(name="heart_regdate")
+    private LocalDate heartRegdate;      //좋아요 작성 날
 
     @ManyToOne
     @JoinColumn(name = "board_index", referencedColumnName = "board_index")

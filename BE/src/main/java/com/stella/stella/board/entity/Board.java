@@ -54,13 +54,13 @@ public class Board {
     private List<Report> reports = new ArrayList<>();;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private  List<Like> likes = new ArrayList<>();;
+    private  List<Heart> hearts = new ArrayList<>();;
 
 
-    @OneToMany(mappedBy="board",cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(mappedBy="board",cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
     private Set<Hash> hashes = new HashSet<>();
 
-    @OneToMany(mappedBy="board",cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(mappedBy="board",cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();;
 
     public void setBoardContent(String boardContent) {
@@ -79,8 +79,8 @@ public class Board {
         this.reports = reports;
     }
 
-    public void setLikes(List<Like> likes) {
-        this.likes = likes;
+    public void setLikes(List<Heart> likes) {
+        this.hearts = hearts;
     }
 
     public void setHashes(Set<Hash> hashes) {
