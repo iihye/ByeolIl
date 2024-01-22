@@ -89,6 +89,9 @@ public class Member implements UserDetails {
 	@ColumnDefault("'N'")
 	private MemberDeleteYN memberDeleteYN;
 
+	@Column(name = "member_delete_date")
+	private Date memberDeleteDate;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
