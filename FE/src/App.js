@@ -1,5 +1,11 @@
+import UserSpace from "./components/user/UserSpace";
+
 function App() {
-    return <div className="App"></div>;
+  return (
+    <div className="app">
+      <UserSpace />
+    </div>
+  );
 }
 
 export default App;
