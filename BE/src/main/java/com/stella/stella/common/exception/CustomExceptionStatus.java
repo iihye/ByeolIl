@@ -7,13 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CustomExceptionStatus {
     // member 관련
-    WRONG_ID(1000, "잘못된 아이디입니다"),
-    WRONG_PW(1001, "잘못된 비밀번호입니다"),
-    MEMER_RESTRICT(1002, "제한된 사용자입니다"),
-    ACCESS_TOKEN_INVALID(1003, "유효하지 않은 액세스 토큰입니다"),
-    REFRESH_TOKEN_INVALID(1004, "유효하지 않은 리프레시 토큰입니다"),
-    FIND_ID_INVALID(1005, "유효하지 않은 정보입니다"),
-    FIND_PW_INVALID(1006, "유효하지 않은 정보입니다"),
+    WRONG_ID(1001, "잘못된 아이디입니다"),
+    WRONG_PW(1002, "잘못된 비밀번호입니다"),
+    MEMER_RESTRICT(1003, "제한된 사용자입니다"),
+    ACCESS_TOKEN_INVALID(1004, "유효하지 않은 액세스 토큰입니다"),
+    REFRESH_TOKEN_INVALID(1005, "유효하지 않은 리프레시 토큰입니다"),
+    FIND_ID_INVALID(1006, "유효하지 않은 정보입니다"),
+    FIND_PW_INVALID(1007, "유효하지 않은 정보입니다"),
     MEMBER_INVALID(1008, "존재하지 않는 사용자입니다"),
 
     // board 관련

@@ -1,10 +1,16 @@
 package com.stella.stella.follow.controller;
 
+import com.stella.stella.common.dto.BasicResponseDto;
+import com.stella.stella.common.dto.StatusResponseDto;
+import com.stella.stella.common.exception.CustomExceptionStatus;
 import com.stella.stella.follow.dto.FollowListResponseDto;
 import com.stella.stella.follow.dto.FollowRequestDto;
 import com.stella.stella.follow.service.FollowService;
+import jakarta.persistence.Basic;
+import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,20 +25,25 @@ public class FollowController {
 
     // 팔로우 등록
     @PostMapping("/following")
-    public ResponseEntity<Object> followingAdd(@RequestBody FollowRequestDto followRequestDto){
+    public ResponseEntity<?> followingAdd(@RequestBody FollowRequestDto followRequestDto) {
         followService.addFollow(followRequestDto);
 
-        return ResponseEntity.ok().build();
+        BasicResponseDto basicResponse = BasicResponseDto.builder()
+                .message("success")
+                .count(0)
+                .build();
+
+        return ResponseEntity.ok(basicResponse);
     }
 
     // 팔로우 삭제
-    @DeleteMapping("/following")
-    public ResponseEntity<Object> followingRemove(@RequestBody FollowRequestDto followRequestDto){
-        followService.removeFollow(followRequestDto);
-
-        return ResponseEntity.ok().build();
-
-    }
+//    @DeleteMapping("/following")
+//    public ResponseEntity<Object> followingRemove(@RequestBody FollowRequestDto followRequestDto){
+//        followService.removeFollow(followRequestDto);
+//
+//        return ResponseEntity.ok().build();
+//
+//    }
 
     // 팔로잉 목록 조회
 //    @GetMapping("/following/{memberIndex}")

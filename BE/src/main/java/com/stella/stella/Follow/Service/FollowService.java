@@ -28,8 +28,11 @@ public class FollowService {
     public void addFollow(FollowRequestDto followRequestDto) {
         Member toMember = memberRepository.findByMemberIndex(followRequestDto.getToMemberIndex())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
+
         Member fromMember = memberRepository.findByMemberIndex(followRequestDto.getFromMemberIndex())
-                .orElseThrow(() -> new CustomException((CustomExceptionStatus.MEMBER_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
+
+        // follow가 중복으로 들어갈 때 처리하기
 
         Follow follow = Follow.builder()
                         .toMember(toMember)
