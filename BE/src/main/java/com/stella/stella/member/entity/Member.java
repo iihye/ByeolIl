@@ -1,5 +1,6 @@
 package com.stella.stella.member.entity;
 
+import com.stella.stella.follow.entity.Follow;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 @Builder

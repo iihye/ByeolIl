@@ -20,29 +20,28 @@ import java.util.List;
 @Builder
 public class Comment {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_index", updatable = false)
     private Long commentIndex;                  //댓글 고유 번호
 
     @CreatedDate
-    @Column(name="comment_regdate")
+    @Column(name = "comment_regdate")
     private LocalDate commentRegdate;           //댓글 등록 날짜
 
-    @ManyToOne
-    @JoinColumn(name="board_index", referencedColumnName = "board_index")
-    private Board board;
-
-    @Column(name="comment_content" ,length = 200)
+    @Column(name = "comment_content", length = 200)
     private String commentContent;              //댓글 내용
 
     @ManyToOne
-    @JoinColumn(name="member_index", referencedColumnName = "member_index")
+    @JoinColumn(name = "member_index", referencedColumnName = "member_index")
     private Member member;
 
-    @OneToMany(mappedBy="comment", cascade = CascadeType.ALL)
-    private List<MultiComment> multiComments = new ArrayList<>();;
+    @ManyToOne
+    @JoinColumn(name = "board_index", referencedColumnName = "board_index")
+    private Board board;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+    private List<MultiComment> multiComments = new ArrayList<>();
 
     public void setCommentContent(String commentContent) {
         this.commentContent = commentContent;

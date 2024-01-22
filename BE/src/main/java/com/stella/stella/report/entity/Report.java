@@ -23,18 +23,18 @@ public class Report {
     private Long reportIndex;
 
     @CreatedDate
-    @Column(name="report_regdate")
+    @Column(name = "report_regdate")
     private LocalDate reportRegdate;
 
-    @ManyToOne
-    @JoinColumn(name="board_index", referencedColumnName = "board_index")
-    private Board board;
-
-    @Column(name="report_content" ,length = 100)
+    @Column(name = "report_content", length = 100)
     private String reportContent;
 
     @ManyToOne
-    @JoinColumn(name="member_index", referencedColumnName = "member_index")
+    @JoinColumn(name = "board_index", referencedColumnName = "board_index")
+    private Board board;
+
+    @ManyToOne
+    @JoinColumn(name = "member_index", referencedColumnName = "member_index")
     private Member member;
 
 }

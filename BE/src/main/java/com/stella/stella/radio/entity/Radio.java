@@ -16,7 +16,7 @@ public class Radio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="radio_index" ,updatable = false)
+    @Column(name = "radio_index", updatable = false)
     private Long radioIndex;
 
     //엔티티 완성하기
@@ -28,7 +28,6 @@ public class Radio {
     @ManyToOne
     @JoinColumn(name = "member_index", referencedColumnName = "member_index")
     private Member member;
-
 
 
 }

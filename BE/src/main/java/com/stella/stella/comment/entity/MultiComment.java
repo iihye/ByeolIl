@@ -23,18 +23,18 @@ public class MultiComment {
     private Long multiCommentIndex;                 //대댓글 고유 번호
 
     @CreatedDate
-    @Column(name="multicomment_regdate")
+    @Column(name = "multicomment_regdate")
     private LocalDate multiCommentRegdate;          //대댓글 등록 시점
 
-    @ManyToOne
-    @JoinColumn(name="comment_index", referencedColumnName = "comment_index")
-    private Comment comment;                        //댓글 고유 번호
-
-    @Column(name="multicomment_content" ,length = 200)
+    @Column(name = "multicomment_content", length = 200)
     private String multiCommentContent;
 
     @ManyToOne
-    @JoinColumn(name="member_index", referencedColumnName = "member_index")
+    @JoinColumn(name = "comment_index", referencedColumnName = "comment_index")
+    private Comment comment;                        //댓글 고유 번호
+
+    @ManyToOne
+    @JoinColumn(name = "member_index", referencedColumnName = "member_index")
     private Member member;
 
     public void setMultiCommentContent(String multiCommentContent) {
