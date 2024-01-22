@@ -2,6 +2,7 @@ package com.stella.stella.member.controller;
 
 import com.stella.stella.member.dto.MemberJoinRequestDto;
 import com.stella.stella.member.dto.MemberLoginRequestDto;
+import com.stella.stella.member.dto.MemberUpdateRequestDto;
 import com.stella.stella.member.dto.MyInfoResponseDto;
 import com.stella.stella.member.entity.Member;
 import com.stella.stella.member.repository.MemberRepository;
@@ -28,7 +29,7 @@ public class MemberController {
 	MemberRepository memberRepository;
 
 	private final MemberService memberService;
-
+	//홈페이지 로그인
 	@PostMapping("/login/origin")
 	public ResponseEntity<Map<String, Object>> originLogin(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -43,7 +44,7 @@ public class MemberController {
 		}
 		return ResponseEntity.status(status).header("accessToken",accessToken).body(resultMap);
 	}
-
+	//카카오로그인
 	@GetMapping("/login/kakao")
 	public ResponseEntity<Map<String, Object>> kakaoLogin(@RequestParam("code") String code) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -60,7 +61,7 @@ public class MemberController {
 		}
 		return ResponseEntity.status(status).header("accessToken",accessToken).body(resultMap);
 	}
-
+	//회원가입
 	@PostMapping("/join")
 	public ResponseEntity<Map<String, Object>> originJoin(@RequestBody MemberJoinRequestDto memberJoinDto) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -90,12 +91,13 @@ public class MemberController {
 		return ResponseEntity.status(status).body(resultMap);
 	}
 
-	// 본인 정보
+	//토큰에 저장된 인덱스로 본인 정보
 	@GetMapping("/info/mine")
 	public ResponseEntity<MyInfoResponseDto> myInfo(HttpServletRequest request) {
 		Member result = null;
 		HttpStatus status = HttpStatus.OK;
 		try {
+			//토큰으로 유저 정보 받아옴
 			Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
 			log.info("accessMemberIndex={}", accessMemberIndex);
 			result = memberService.info(accessMemberIndex);
@@ -175,6 +177,18 @@ public class MemberController {
 		} catch (Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.BAD_REQUEST;
+		}
+		return ResponseEntity.status(status).body(resultMap);
+	}
+	//통합 정보 수정
+	@PutMapping
+	public ResponseEntity<Map<String,Object>> updateMember(MemberUpdateRequestDto memberUpdateRequestDto){
+		HttpStatus status = HttpStatus.OK;
+		Map<String, Object> resultMap = new HashMap<>();
+		try{
+			resultMap.put("message", "success");
+		}catch(Exception e){
+			resultMap.put("message",e.getMessage());
 		}
 		return ResponseEntity.status(status).body(resultMap);
 	}
