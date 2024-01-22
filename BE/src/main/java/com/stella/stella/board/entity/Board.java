@@ -26,24 +26,24 @@ import java.util.Set;
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="board_index" ,updatable = false)
+    @Column(name = "board_index", updatable = false)
     private Long boardIndex;            //게시글 고유 번호
 
     @CreatedDate
-    @Column(name="board_regtime")
+    @Column(name = "board_regtime")
     private LocalDateTime boardRegtime; //처음 등록 시점
 
     @LastModifiedDate
     @Column(name = "board_input_date")
     private LocalDate boardInputdate;   //사용자 입력 날짜(최근 수정 날짜)
 
-    @Column(name="board_content", nullable = false ,length = 500)
+    @Column(name = "board_content", nullable = false, length = 500)
     private String boardContent;        //게시글 내용
 
     @Column(name = "board_location")
     private Long boardLocation;         //하늘에서 별 위치
 
-    @Column(name="board_access" , nullable = false ,length = 10)
+    @Column(name = "board_access", nullable = false, length = 10)
     private String boardAccess;         //게시글 접근 범위
 
     @ManyToOne(optional = false)
@@ -51,17 +51,16 @@ public class Board {
     private Member member;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Report> reports = new ArrayList<>();;
+    private List<Report> reports = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private  List<Heart> hearts = new ArrayList<>();;
+    private List<Heart> hearts = new ArrayList<>();
 
-
-    @OneToMany(mappedBy="board",cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Hash> hashes = new HashSet<>();
 
-    @OneToMany(mappedBy="board",cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<Comment> comments = new ArrayList<>();;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     public void setBoardContent(String boardContent) {
         this.boardContent = boardContent;
@@ -90,7 +89,6 @@ public class Board {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
-
 
 
 }

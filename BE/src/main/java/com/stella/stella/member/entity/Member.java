@@ -19,104 +19,90 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "member", 
-uniqueConstraints = @UniqueConstraint(name = "UniqueIdandPlatform", columnNames = { "member_id",
-		"member_platform" }))
+@Table(name = "member",
+        uniqueConstraints = @UniqueConstraint(name = "UniqueIdandPlatform", columnNames = {"member_id", "member_platform"}))
 
 public class Member implements UserDetails {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name ="member_index" ,updatable = false)
-	private long memberIndex;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_index", updatable = false)
+    private long memberIndex;
 
-	@Column(name = "member_id", nullable = false)
-	private String memberId;
+    @Column(name = "member_id", nullable = false)
+    private String memberId;
 
-	@Column(name = "member_pass")
-	private String memberPass;
+    @Column(name = "member_pass")
+    private String memberPass;
 
-	@Column(name = "member_platform", nullable = false)
-	private String memberPlatform;
+    @Column(name = "member_platform", nullable = false)
+    private String memberPlatform;
 
-	@Column(name = "member_role", nullable = false)
-	@ColumnDefault("'USER'")
-	@Enumerated(EnumType.STRING)
-	private MemberRole memberRole;
+    @Column(name = "member_role", nullable = false)
+    @ColumnDefault("'USER'")
+    @Enumerated(EnumType.STRING)
+    private MemberRole memberRole;
 
-	@Column(name = "member_name")
-	private String memberName;
+    @Column(name = "member_name")
+    private String memberName;
 
-	@Column(name = "member_birth")
-	private Date memberBirth;
+    @Column(name = "member_birth")
+    private Date memberBirth;
 
-	@Column(name = "member_nickname", unique = true)
-	private String memberNickname;
+    @Column(name = "member_nickname", unique = true)
+    private String memberNickname;
 
-	@Column(name = "member_email", unique = true)
-	private String memberEmail;
+    @Column(name = "member_email", unique = true)
+    private String memberEmail;
 
-	@Column(name = "member_alarm_status")
-	@Enumerated(EnumType.STRING)
-	@ColumnDefault("'ACCEPT'")
-	private MemberAlarmStatus memberAlarmStatus;
+    @Column(name = "member_alarm_status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'ACCEPT'")
+    private MemberAlarmStatus memberAlarmStatus;
 
-	@Column(name = "member_radio_status")
-	@Enumerated(EnumType.STRING)
-	@ColumnDefault("'OLDEST'")
-	private MemberRadioStatus memberRadioStatus;
+    @Column(name = "member_radio_status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'OLDEST'")
+    private MemberRadioStatus memberRadioStatus;
 
-	@Column(name = "member_ban_date")
-	private Date memberBanDate;
+    @Column(name = "member_ban_date")
+    private Date memberBanDate;
 
-	@Column(name = "member_refresh_token")
-	private String memberRefreshToken;
+    @Column(name = "member_refresh_token")
+    private String memberRefreshToken;
 
-	@OneToMany(mappedBy = "toMember", cascade = CascadeType.ALL)
-	private List<Follow> toFollows;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
 
-	@OneToMany(mappedBy = "fromMember", cascade = CascadeType.ALL)
-	private List<Follow> fromFollows;
+    @Override
+    public String getPassword() {
+        return memberPass;
+    }
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getUsername() {
+        return memberId;
+    }
 
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return memberPass;
-	}
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return memberId;
-	}
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

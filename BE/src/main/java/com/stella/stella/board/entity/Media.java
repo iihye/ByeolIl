@@ -18,11 +18,11 @@ public class Media {
     @Column(name = "media_index", updatable = false)
     private Long mediaIndex;
 
-    @Column(name="media_location", nullable = false, length = 100)
+    @Column(name = "media_location", nullable = false, length = 100)
     private String mediaLocation;
 
     @ManyToOne()
-    @JoinColumn(name="board_index", referencedColumnName = "board_index")
+    @JoinColumn(name = "board_index", referencedColumnName = "board_index")
     private Board board;
 
 }

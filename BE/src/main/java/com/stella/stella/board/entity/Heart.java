@@ -18,11 +18,11 @@ public class Heart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="heart_index" ,updatable = false)
+    @Column(name = "heart_index", updatable = false)
     private Long heartIndex;             //테이블 고유 번호
 
     @CreatedDate
-    @Column(name="heart_regdate")
+    @Column(name = "heart_regdate")
     private LocalDate heartRegdate;      //좋아요 작성 날
 
     @ManyToOne
@@ -32,7 +32,6 @@ public class Heart {
     @ManyToOne
     @JoinColumn(name = "member_index", referencedColumnName = "member_index")
     private Member member;
-
 
 
 }
