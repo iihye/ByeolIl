@@ -18,10 +18,10 @@ public class Follow {
     private Long followIndex;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_member_index", referencedColumnName = "member_index")
+    @JoinColumn(name = "to_member_index")
     private Member toMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_member_index", referencedColumnName = "member_index")
+    @JoinColumn(name = "from_member_index")
     private Member fromMember;
 }
