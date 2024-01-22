@@ -183,20 +183,31 @@ function StarTagSearch() {
             return;
         }
         e.preventDefault();
-        activeButton(e);
+        activeButton();
     };
 
     const activeButton = () => {
         const tag = tagRef.current?.value;
-        setReplaceTag(tag.replace(/\s/g, ''));
+        if (tag === '') return;
 
-        tagRef.current.value = '';
+        const regExp = /^[a-z|A-Z|가-힣|ㄱ-ㅎ|ㅏ-ㅣ|0-9| \t|]+$/g;
+        const specialRegExp = /[\{\}\[\]\/?.;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
+
+        if (regExp.test(tag)) {
+            const testedTag = specialRegExp.test(tag)
+                ? tag.replace(specialRegExp, '')
+                : tag;
+
+            console.log(testedTag);
+            setReplaceTag(testedTag.replace(/\s/g, ''));
+        }
 
         // fetchData(replaceTag);
         const reverseData = [...dummyData].reverse();
         setTagSearchData(reverseData);
 
         // 해시태그 모양 만들어주기
+        tagRef.current.value = '';
     };
 
     return (
@@ -207,15 +218,17 @@ function StarTagSearch() {
                     ref={tagRef}
                     onKeyDown={(e) => activeSearch(e)}
                 />
-                <span
-                    style={{
-                        margin: '4px',
-                        padding: '4px',
-                        border: '1px solid #ccc',
-                    }}
-                >
-                    #{replaceTag}
-                </span>
+                {replaceTag && (
+                    <span
+                        style={{
+                            margin: '4px',
+                            padding: '4px',
+                            border: '1px solid #ccc',
+                        }}
+                    >
+                        #{replaceTag}
+                    </span>
+                )}
                 <button name="searchButton" onClick={(e) => activeButton()}>
                     찾기
                 </button>
