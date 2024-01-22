@@ -10,6 +10,7 @@ import { constSelector } from "recoil";
 function Cube({ position, size, color }) {
   console.log("CUBE MOUNTED");
   const mesh = useRef(null);
+
   return (
     <mesh position={position} ref={mesh}>
       <boxGeometry args={size} />
@@ -19,7 +20,22 @@ function Cube({ position, size, color }) {
 }
 
 function Line(props) {
-  return <lineGeometry></lineGeometry>;
+  const points = [
+    [1, 10, -30],
+    [2, 7, -30],
+    [3, 13, -30],
+    [4, 5, -30],
+    [13, 5, -30],
+    [14, 8, -30],
+  ];
+
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const material = new THREE.LineBasicMaterial({ color: "black" });
+  return (
+    <mesh geometry={geometry}>
+      <lineBasicMaterial />
+    </mesh>
+  );
 }
 
 function Sphere(props) {
