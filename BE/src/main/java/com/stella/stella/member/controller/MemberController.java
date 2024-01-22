@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -48,9 +49,10 @@ public class MemberController {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.OK;
 		try {
-			String kakaoAcessToken = memberService.getKakaoAccessToken(code);
-			Map<String, String> kakaoMemberInfo = memberService.getKakaoMemberInfo(kakaoAcessToken);
-			String accessToken = memberService.login(kakaoMemberInfo.get("id"), "", "kakao");
+			String kakaoAcessToken = memberService.getKakaoAccessToken(code, "member/login/kakao");
+			Map<String, Object> kakaoMemberInfo = memberService.getKakaoMemberInfo(kakaoAcessToken);
+			log.info(kakaoMemberInfo.toString());
+			String accessToken = memberService.login(kakaoMemberInfo.get("id").toString(), "", "kakao");
 			resultMap.put("accessToken", accessToken);
 		} catch (Exception e) {
 			resultMap.put("message", e.getMessage());
@@ -73,28 +75,40 @@ public class MemberController {
 		return ResponseEntity.status(status).body(resultMap);
 	}
 
+	// 카카오 로그인 코드로 카카오 회원가입 시 정보 받아오기
 	@GetMapping("/join/kakao")
-	public HttpStatus kakaoJoin() {
-		return HttpStatus.OK;
+	public ResponseEntity<Map<String, Object>> kakaoJoin(@RequestParam("code") String code) {
+		HttpStatus status = HttpStatus.OK;
+		Map<String, Object> resultMap = new HashMap<>();
+		try {
+			String kakaoAcessToken = memberService.getKakaoAccessToken(code, "member/join/kakao");
+			resultMap = memberService.getKakaoMemberInfo(kakaoAcessToken);
+		} catch (Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.BAD_REQUEST;
+		}
+		return ResponseEntity.status(status).body(resultMap);
 	}
-	//본인 정보
+
+	// 본인 정보
 	@GetMapping("/info/mine")
 	public ResponseEntity<MyInfoResponseDto> myInfo(HttpServletRequest request) {
 		Member result = null;
 		HttpStatus status = HttpStatus.OK;
 		try {
-			Long accessMemberIndex = (Long)request.getAttribute("accessMemberIndex");
-			log.info("accessMemberIndex={}",accessMemberIndex);
+			Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
+			log.info("accessMemberIndex={}", accessMemberIndex);
 			result = memberService.info(accessMemberIndex);
-			log.info("result={}",result);
-		} catch(NullPointerException e) {
+			log.info("result={}", result);
+		} catch (NullPointerException e) {
 			status = HttpStatus.NOT_FOUND;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			status = HttpStatus.BAD_REQUEST;
 		}
 		return ResponseEntity.status(status).body(new MyInfoResponseDto(result));
 	}
-	
+
+	// 남의 정보 가져올 예정
 //	@GetMapping("/info")
 //	public ResponseEntity<MemberInfoResponseDto> memberInfo(@RequestParam("index") long memberIndex,HttpServletRequest request) {
 //		Member result = null;
@@ -109,6 +123,61 @@ public class MemberController {
 //		}
 //		return ResponseEntity.status(status).body(new MemberInfoResponseDto(result));
 //	}
+	// 아이디 중복 체크: 홈페이지 로그인만 체크 요청이 들어온다고 가정
+	@GetMapping("/dup-check/id")
+	public ResponseEntity<Map<String, Object>> dupCheckId(@RequestParam("id") String id) {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.OK;
+		try {
+			log.info("id={}", id);
+			log.info("result={}", memberRepository.findByMemberIdAndMemberPlatform(id, "origin"));
+			memberRepository.findByMemberIdAndMemberPlatform(id, "origin")
+					.orElseThrow(() -> new UsernameNotFoundException("사용 가능한 아이디입니다."));
+			resultMap.put("message", "이미 존재하는 아이디입니다.");
+		} catch (UsernameNotFoundException e) {
+			resultMap.put("message", e.getMessage());
+		} catch (Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.BAD_REQUEST;
+		}
+		return ResponseEntity.status(status).body(resultMap);
+	}
+	//이메일 중복 체크
+	@GetMapping("/dup-check/email")
+	public ResponseEntity<Map<String, Object>> dupCheckEmail(@RequestParam("email") String email) {
+		Map<String, Object> resultMap = new HashMap<>();
+		log.info("호출됨");
+		HttpStatus status = HttpStatus.OK;
+		try {
+			memberRepository.findByMemberEmail(email)
+					.orElseThrow(() -> new UsernameNotFoundException("사용 가능한 이메일입니다."));
+			resultMap.put("message", "이미 존재하는 이메일입니다.");
+		} catch (UsernameNotFoundException e) {
+			resultMap.put("message", e.getMessage());
+		} catch (Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.BAD_REQUEST;
+		}
+		return ResponseEntity.status(status).body(resultMap);
+	}
+	//닉네임 중복 체크
+	@GetMapping("/dup-check/nickname")
+	public ResponseEntity<Map<String, Object>> dupCheckNickname(@RequestParam("nickname") String nickname) {
+		Map<String, Object> resultMap = new HashMap<>();
+		log.info("호출됨");
+		HttpStatus status = HttpStatus.OK;
+		try {
+			memberRepository.findByMemberNickname(nickname)
+					.orElseThrow(() -> new UsernameNotFoundException("사용 가능한 닉네임입니다."));
+			resultMap.put("message", "이미 존재하는 닉네임입니다.");
+		} catch (UsernameNotFoundException e) {
+			resultMap.put("message", e.getMessage());
+		} catch (Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.BAD_REQUEST;
+		}
+		return ResponseEntity.status(status).body(resultMap);
+	}
 
 	@PostMapping("/test")
 	public ResponseEntity<Map<String, Object>> getTestPage(HttpServletRequest request) {

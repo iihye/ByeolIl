@@ -64,7 +64,7 @@ public class MemberService {
 		return tokenInfo.getAccessToken();
 	}
 
-	public String getKakaoAccessToken(String code) {
+	public String getKakaoAccessToken(String code, String url) {
 		String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -77,7 +77,7 @@ public class MemberService {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
 		params.add("client_id", kakaoRestAPIKey);
-		params.add("redirect_uri", "http://localhost:8080/member/login/kakao");
+		params.add("redirect_uri", "http://localhost:8080/"+url);
 		params.add("code", code);
 		// Set http entity
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
@@ -89,7 +89,7 @@ public class MemberService {
 		return jsonObject.getString("access_token");
 	}
 
-	public HashMap<String, String> getKakaoMemberInfo(String kakaoAcessToken) {
+	public HashMap<String, Object> getKakaoMemberInfo(String kakaoAcessToken) {
 		String postURL = "https://kapi.kakao.com/v2/user/me";
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -107,7 +107,7 @@ public class MemberService {
 
 		JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
 
-		HashMap<String, String> memberInfo = new HashMap<>();
+		HashMap<String, Object> memberInfo = new HashMap<>();
 		memberInfo.put("id", jsonObject.get("id").toString());
 		memberInfo.put("nickname", ((JSONObject) jsonObject.get("properties")).getString("nickname"));
 

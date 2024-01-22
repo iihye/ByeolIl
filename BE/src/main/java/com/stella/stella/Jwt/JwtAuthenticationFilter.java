@@ -64,13 +64,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					//curMember 객체에서 가져온 정보로 멤버서비스의 Login 기능 실행
 					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 							accessMember.getMemberIndex(), accessMember.getMemberPass());
-					
+
 					Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-					
+
 					TokenInfo newTokenInfo = jwtTokenProvider.generateToken(authentication);
 					//accesstoken을 재발행된 토큰으로 설정
 					token = newTokenInfo.getAccessToken();
-					
+
 					accessMember.setMemberRefreshToken(newTokenInfo.getRefreshToken());
 				}
 			}
