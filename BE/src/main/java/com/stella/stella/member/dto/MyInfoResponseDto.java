@@ -14,8 +14,8 @@ import java.sql.Date;
 @AllArgsConstructor
 public class MyInfoResponseDto {
 	private String memberId, memberPlatform, memberName, memberNickname, memberEmail, memberAlarmStatus,
-			memberRadioStatus;
-	private Date memberBirth, memberBanDate;
+			memberRadioStatus,memberDeletedYN;
+	private Date memberBirth, memberBanDate,memberRegDate;
 	
 	public MyInfoResponseDto(Member member) {
 		memberId = member.getMemberId();
@@ -27,5 +27,7 @@ public class MyInfoResponseDto {
 		memberRadioStatus = member.getMemberRadioStatus().toString();
 		memberBanDate = member.getMemberBanDate();
 		memberBirth = member.getMemberBirth();
+		memberRegDate=Date.valueOf(member.getMemberRegDate());
+		memberDeletedYN=member.getMemberDeleteYN().toString();
 	}
 }

@@ -33,32 +33,32 @@ public class MemberController {
 	public ResponseEntity<Map<String, Object>> originLogin(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.OK;
+		String accessToken = "";
 		try {
-			String accessToken = memberService.login(memberLoginRequestDto.getMemberId(),
+			accessToken = memberService.login(memberLoginRequestDto.getMemberId(),
 					memberLoginRequestDto.getMemberPass(), memberLoginRequestDto.getMemberPlatform());
-			resultMap.put("accessToken", accessToken);
 		} catch (Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.BAD_REQUEST;
 		}
-		return ResponseEntity.status(status).body(resultMap);
+		return ResponseEntity.status(status).header("accessToken",accessToken).body(resultMap);
 	}
 
 	@GetMapping("/login/kakao")
 	public ResponseEntity<Map<String, Object>> kakaoLogin(@RequestParam("code") String code) {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.OK;
+		String accessToken="";
 		try {
 			String kakaoAcessToken = memberService.getKakaoAccessToken(code, "member/login/kakao");
 			Map<String, Object> kakaoMemberInfo = memberService.getKakaoMemberInfo(kakaoAcessToken);
 			log.info(kakaoMemberInfo.toString());
-			String accessToken = memberService.login(kakaoMemberInfo.get("id").toString(), "", "kakao");
-			resultMap.put("accessToken", accessToken);
+			accessToken = memberService.login(kakaoMemberInfo.get("id").toString(), "", "kakao");
 		} catch (Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.BAD_REQUEST;
 		}
-		return ResponseEntity.status(status).body(resultMap);
+		return ResponseEntity.status(status).header("accessToken",accessToken).body(resultMap);
 	}
 
 	@PostMapping("/join")

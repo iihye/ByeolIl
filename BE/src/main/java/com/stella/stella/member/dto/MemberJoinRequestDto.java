@@ -24,13 +24,10 @@ public class MemberJoinRequestDto {
 				.memberId(memberId)
 				.memberPass(memberPass)
 				.memberPlatform(memberPlatform)
-				.memberRole(MemberRole.USER)
 				.memberName(memberName)
 				.memberBirth(memberBirth)
 				.memberNickname(memberNickname)
 				.memberEmail(memberEmail)
-				.memberAlarmStatus(MemberAlarmStatus.ACCEPT)
-				.memberRadioStatus(MemberRadioStatus.OLDEST)
 				.build();
 	}
 }

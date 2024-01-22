@@ -6,10 +6,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
@@ -20,7 +27,8 @@ import java.util.Collection;
 @Table(name = "member", 
 uniqueConstraints = @UniqueConstraint(name = "UniqueIdandPlatform", columnNames = { "member_id",
 		"member_platform" }))
-
+@DynamicInsert
+@DynamicUpdate
 public class Member implements UserDetails {
 
 	@Id
@@ -37,7 +45,7 @@ public class Member implements UserDetails {
 	@Column(name = "member_platform", nullable = false)
 	private String memberPlatform;
 
-	@Column(name = "member_role", nullable = false)
+	@Column(name = "member_role")
 	@ColumnDefault("'USER'")
 	@Enumerated(EnumType.STRING)
 	private MemberRole memberRole;
@@ -69,6 +77,15 @@ public class Member implements UserDetails {
 
 	@Column(name = "member_refresh_token")
 	private String memberRefreshToken;
+
+	@CreationTimestamp
+	@Column(name="member_reg_date")
+	private LocalDate memberRegDate; //처음 등록 시점
+
+	@Column(name = "member_deleteYN")
+	@Enumerated(EnumType.STRING)
+	@ColumnDefault("'N'")
+	private MemberDeleteYN memberDeleteYN;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

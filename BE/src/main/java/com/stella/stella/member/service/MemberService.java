@@ -126,8 +126,8 @@ public class MemberService {
 		return memberInfo;
 	}
 
-	public void join(MemberJoinRequestDto memberJoinDto) {
-		Member newMember = memberJoinDto.toEntity();
+	public void join(MemberJoinRequestDto memberJoinRequestDto) {
+		Member newMember = memberJoinRequestDto.toEntity();
 		memberRepository.save(newMember);
 	}
 	//Member 엔티티를 전부 보내는 메소드: 컨트롤러에서 Dto로 변환 필요
