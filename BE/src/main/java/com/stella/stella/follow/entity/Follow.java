@@ -13,15 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Follow {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long followIndex;
-
     @Id
-    @Column(name = "to_member_index")
-    private Long toMemberIndex;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long followIndex;
 
-    @Id
-    @Column(name = "from_member_index")
-    private Long fromMemberIndex;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_member_index")
+    private Member toMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_member_index")
+    private Member fromMember;
 }
