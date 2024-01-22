@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
 @Entity(name = "alarm_check")
 @Builder
 @Getter

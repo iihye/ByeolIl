@@ -27,7 +27,7 @@ public class Alarm {
     private Member toMember;
 
     @JoinColumn(name = "from_member_index")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member fromMember;
 
     @CreatedDate
