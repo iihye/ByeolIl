@@ -19,15 +19,15 @@ import java.util.List;
 public class Alarm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "alarm_index")
+    @Column(name = "alarm_index", updatable = false)
     private Long alarmIndex;
 
     @JoinColumn(name = "to_member_index")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     private Member toMember;
 
     @JoinColumn(name = "from_member_index")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     private Member fromMember;
 
     @CreatedDate
@@ -37,9 +37,9 @@ public class Alarm {
     @Column(name = "alarm_type")
     private AlarmType alarmType;
 
-    @OneToMany(mappedBy = "alarm")
+    @OneToMany(mappedBy = "alarm",cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Alarmcheck> alarmList;
 
-    @OneToMany(mappedBy = "alarm")
+    @OneToMany(mappedBy = "alarm",cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Alarmboard> alarmboardList;
 }

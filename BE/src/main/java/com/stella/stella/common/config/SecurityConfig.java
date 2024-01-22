@@ -33,6 +33,7 @@ public class SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
 				.requestMatchers("/member/login/**").permitAll()
 				.requestMatchers("/member/join/**").permitAll()
+				.requestMatchers("/**").permitAll()
 				.requestMatchers("/member/test").hasRole("USER")
 //                .requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 				.anyRequest().authenticated().and().addFilterBefore(
