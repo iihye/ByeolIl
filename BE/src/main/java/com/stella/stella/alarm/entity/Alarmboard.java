@@ -17,9 +17,10 @@ public class Alarmboard {
     @Column(name = "alarm_board_index")
     private Long alarmBoardIndex;
 
-    @ManyToOne
-    private Alarm alarm;
-
     @Column(name = "board_index")
     private Long boardIndex;
+
+    @ManyToOne
+    @JoinColumn(name = "alarm_index", referencedColumnName = "alarm_index")
+    private Alarm alarm;
 }
