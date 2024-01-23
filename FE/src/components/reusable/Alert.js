@@ -6,7 +6,6 @@ import axios from "axios";
 2. 신고 내용, 비밀번호 입력 내용 공백 검사
 */
 
-// type: 'report', 'PWCheck', 'delete', 'block'
 function Alert({ type, boardIndex }) {
   const alertTypes = {
     block: <Block />,
