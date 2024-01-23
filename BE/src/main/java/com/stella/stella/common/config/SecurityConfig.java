@@ -33,6 +33,7 @@ public class SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
 				.requestMatchers("/member/login/**").permitAll()
 				.requestMatchers("/member/join/**").permitAll()
+				.requestMatchers("/follow/**").permitAll()
 				.requestMatchers("/member/dup-check/**").permitAll()
 				.requestMatchers("/member/test").hasRole("USER")
 //                .requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
