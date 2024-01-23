@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs "Node20"
+    }
+
+    stages {
+        stage('React build'){
+            steps{
+                dir('FE'){
+                    echo 'React build...'
+                    sh 'npm install'
+                    sh 'CI=false npm run build'
+                }
+            }
+        }
+
+        stage('Dockerimage build'){
+            steps{
+                dir('FE'){
+                    sh '''
+                    echo 'Dockerimage build...'
+                    docker build -t docker-react:0.0.1 .
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy'){
+            steps{
+                dir('BE'){
+                    sh '''
+                    echo 'Deploy FE...'
+                    docker stop react
+                    docker rm react
+                    docker run -d -p 3000:3000 --name springboot docker-react:0.0.1
+                    '''
+                }
+            }
+        }
+    }
+}
