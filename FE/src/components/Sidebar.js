@@ -1,4 +1,12 @@
 import React,{useState} from "react";
+import ChangeInfo from './user/ChangeInfo'
+import StarList from './star/StarList'
+import StarFavoList from './star/StarFavorList'
+import FollowList from './user/FollowList'
+import FindUser from './user/FindUser'
+import StarTagSearch from './star/StarTagSearch'
+// 환경설정..?
+import Alarm from './user/Alarm'
 
 function SidebarList (props) {
     return (
