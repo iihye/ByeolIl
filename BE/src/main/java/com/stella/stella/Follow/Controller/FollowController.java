@@ -55,10 +55,6 @@ public class FollowController {
     public ResponseEntity<Object> followingList(@PathVariable Long memberIndex){
         List<FollowListResponseDto> followListResponseDtos = followService.findFollowing(memberIndex);
 
-        for (FollowListResponseDto f : followListResponseDtos){
-            System.out.println(f.getMemberName());
-        }
-
         BasicResponseDto basicResponse = BasicResponseDto.builder()
                 .message("success")
                 .count(followListResponseDtos.size())
