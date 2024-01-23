@@ -11,9 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.stella.stella.Jwt.JwtAuthenticationFilter;
-import com.stella.stella.Jwt.JwtTokenProvider;
-import com.stella.stella.member.controller.MemberController;
+import com.stella.stella.common.Jwt.JwtAuthenticationFilter;
+import com.stella.stella.common.Jwt.JwtTokenProvider;
 import com.stella.stella.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +34,7 @@ public class SecurityConfig {
 				.requestMatchers("/member/join/**").permitAll()
 				.requestMatchers("/member/dup-check/**").permitAll()
 				.requestMatchers("/member/test").hasRole("USER")
+				.requestMatchers("/member/send/email").permitAll()
 //                .requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 				.anyRequest().authenticated().and().addFilterBefore(
 						new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, authenticationManagerBuilder),

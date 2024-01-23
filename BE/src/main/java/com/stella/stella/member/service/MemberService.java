@@ -1,7 +1,7 @@
 package com.stella.stella.member.service;
 
-import com.stella.stella.Jwt.JwtTokenProvider;
-import com.stella.stella.Jwt.TokenInfo;
+import com.stella.stella.common.Jwt.JwtTokenProvider;
+import com.stella.stella.common.Jwt.TokenInfo;
 import com.stella.stella.member.dto.MemberJoinRequestDto;
 import com.stella.stella.member.dto.MemberUpdateRequestDto;
 import com.stella.stella.member.entity.Member;
@@ -25,8 +25,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -143,24 +143,13 @@ public class MemberService {
     public void updateMember(MemberUpdateRequestDto memberUpdateRequestDto) {
         Member member = memberRepository.findByMemberIndex(memberUpdateRequestDto.getMemberIndex())
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
-        if (memberUpdateRequestDto.getMemberNickname() != null) {
-
-        }
-        if (memberUpdateRequestDto.getMemberEmail() != null) {
-
-        }
-        if(memberUpdateRequestDto.getMemberAlarmStatus()!=null){
-
-        }
-        if(memberUpdateRequestDto.getMemberDeleteYN()!=null){
-
-        }
-        if(memberUpdateRequestDto.getMemberNickname()!=null){
-
-        }
-        if(memberUpdateRequestDto.getMemberNickname()!=null){
-
-        }
-
+        Optional.ofNullable(memberUpdateRequestDto.getMemberNickname()).ifPresent(member::setMemberNickname);
+        Optional.ofNullable(memberUpdateRequestDto.getMemberNickname()).ifPresent(member::setMemberNickname);
+        Optional.ofNullable(memberUpdateRequestDto.getMemberEmail()).ifPresent(member::setMemberEmail);
+        Optional.ofNullable(memberUpdateRequestDto.getMemberAlarmStatus()).ifPresent(member::setMemberAlarmStatus);
+        Optional.ofNullable(memberUpdateRequestDto.getMemberRadioStatus()).ifPresent(member::setMemberRadioStatus);
+        Optional.ofNullable(memberUpdateRequestDto.getMemberDeleteYN()).ifPresent(member::setMemberDeleteYN);
+        Optional.ofNullable(memberUpdateRequestDto.getMemberBirth()).ifPresent(member::setMemberBirth);
+        Optional.ofNullable(memberUpdateRequestDto.getMemberDeleteDate()).ifPresent(member::setMemberDeleteDate);
     }
 }

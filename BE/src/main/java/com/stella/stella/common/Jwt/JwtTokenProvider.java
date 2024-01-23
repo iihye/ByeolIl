@@ -1,4 +1,4 @@
-package com.stella.stella.Jwt;
+package com.stella.stella.common.Jwt;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -14,8 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import com.stella.stella.member.entity.Member;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

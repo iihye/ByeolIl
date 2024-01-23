@@ -1,5 +1,6 @@
 package com.stella.stella.member.controller;
 
+import com.stella.stella.common.email.EmailSender;
 import com.stella.stella.member.dto.MemberJoinRequestDto;
 import com.stella.stella.member.dto.MemberLoginRequestDto;
 import com.stella.stella.member.dto.MemberUpdateRequestDto;
@@ -26,9 +27,9 @@ import java.util.Map;
 public class MemberController {
 
     @Autowired
-    MemberRepository memberRepository;
-
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final EmailSender emailSender;
 
     //홈페이지 로그인
     @PostMapping("/login/origin")
@@ -155,7 +156,6 @@ public class MemberController {
     @GetMapping("/dup-check/email")
     public ResponseEntity<Map<String, Object>> dupCheckEmail(@RequestParam("email") String email) {
         Map<String, Object> resultMap = new HashMap<>();
-        log.info("호출됨");
         HttpStatus status = HttpStatus.OK;
         try {
             memberRepository.findByMemberEmail(email)
@@ -174,7 +174,6 @@ public class MemberController {
     @GetMapping("/dup-check/nickname")
     public ResponseEntity<Map<String, Object>> dupCheckNickname(@RequestParam("nickname") String nickname) {
         Map<String, Object> resultMap = new HashMap<>();
-        log.info("호출됨");
         HttpStatus status = HttpStatus.OK;
         try {
             memberRepository.findByMemberNickname(nickname)
@@ -204,6 +203,24 @@ public class MemberController {
             }
             memberService.updateMember(memberUpdateRequestDto);
             resultMap.put("message", "success");
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
+    @GetMapping("/send/email")
+    public ResponseEntity<Map<String, Object>> sendEmail(@RequestParam("email") String email) {
+        Map<String, Object> resultMap = new HashMap<>();
+        log.info("이메일 센더 호출됨");
+        HttpStatus status = HttpStatus.OK;
+        try {
+            String input="stella에서 보낸 메일입니다 아래는 인증번호 어쩌구..."
+            String code = "ajf2e";
+            resultMap.put("code", code);
+            emailSender.sendMail(email, input+code);
+            resultMap.put("message", "이메일 전송 완료");
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
