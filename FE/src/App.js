@@ -1,8 +1,11 @@
-import SideBar from "./components/Sidebar"
+import MainPage from "./pages/MainPage";
+import { RecoilRoot } from "recoil";
 
 function App() {
   return <div className="App">
-    <SideBar/>
+    <RecoilRoot>
+      <MainPage/>
+    </RecoilRoot>
   </div>;
 }
 

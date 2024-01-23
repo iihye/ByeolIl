@@ -1,26 +1,39 @@
 import React,{useState} from "react";
-import ChangeInfo from './user/ChangeInfo'
-import StarList from './star/StarList'
-import StarFavoList from './star/StarFavorList'
-import FollowList from './user/FollowList'
-import FindUser from './user/FindUser'
-import StarTagSearch from './star/StarTagSearch'
-// 환경설정..?
-import Alarm from './user/Alarm'
+// import StarFavoList from './star/StarFavorList'
+// import FollowList from './user/FollowList'
+// import FindUser from './user/FindUser'
+// import StarTagSearch from './star/StarTagSearch'
+// 환경설정 컴포넌트..?
+// import Alarm from './user/Alarm'
+import {Link} from "react-router-dom"
+const items = [
+    { name: "회원정보수정", path:"/ChangeInfo"},
+    { name: "별리스트", path:"/StarList"},
+    { name: "좋아하는별리스트", path:"/StarFavoList"},
+];
+
+function SideBarItem({item}) {
+    return (
+        <div className="sidebar-item">
+          <p>{item.name}</p>
+        </div>
+      );
+}
 
 function SidebarList (props) {
     return (
         <div className="SidebarList">
             <ul>
                 <h2>{props.name}님의 우주</h2>
-                <li>회원정보수정</li>
-                <li>나의 별 목록</li>
-                <li>좋아하는 별 목록</li>
-                <li>나의 친구</li>
-                <li>다른 우주 찾기</li>
-                <li>태그로 별 찾기</li>
-                <li>환경설정</li>
-                <li>알림창</li>
+                {items.map((item, index) => {
+                    return (
+                        <Link to={item.path} key={index}>
+                            <SideBarItem
+                                item={item}
+                            />
+                        </Link>
+                    );
+                })}
                 <button>로그아웃</button>
             </ul>
         </div>
