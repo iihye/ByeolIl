@@ -10,7 +10,11 @@ function Alert({ type, boardIndex }) {
     report: <InputAlert type={type} />,
   };
 
-  return <div className="alert">{alertTypes[type]}</div>;
+  return (
+    <div className="alert" style={{ border: "1px solid black" }}>
+      {alertTypes[type]}
+    </div>
+  );
 }
 
 function InputAlert({ type }) {
