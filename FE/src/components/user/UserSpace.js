@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { DirectionalLightHelper } from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { CameraControls, OrbitControls, PerspectiveCamera, Wireframe } from "@react-three/drei";
+import { CameraControls, OrbitControls, PerspectiveCamera, Wireframe, useHelper } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import * as THREE from "three";
@@ -11,30 +11,28 @@ function Cube({ position, size, color }) {
   console.log("CUBE MOUNTED");
   const mesh = useRef(null);
 
+  useEffect(() => {
+    // mesh.current.rotation.z = 90;
+  }, []);
+
   return (
     <mesh position={position} ref={mesh}>
-      <boxGeometry args={size} />
-      <meshStandardMaterial color={color} />
+      <circleGeometry args={[6, 64]} />
+      <meshStandardMaterial color={color} side={THREE.DoubleSide} />
     </mesh>
   );
 }
 
 function Line(props) {
-  const points = [
-    [1, 10, -30],
-    [2, 7, -30],
-    [3, 13, -30],
-    [4, 5, -30],
-    [13, 5, -30],
-    [14, 8, -30],
-  ];
-
-  const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  const material = new THREE.LineBasicMaterial({ color: "black" });
+  // props : points
+  const ref = useRef(null);
+  const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
   return (
-    <mesh geometry={geometry}>
-      <lineBasicMaterial />
-    </mesh>
+    <>
+      <line ref={ref} geometry={lineGeometry}>
+        <lineBasicMaterial attach="material" color={"white"} linewidth={10} />
+      </line>
+    </>
   );
 }
 
@@ -62,19 +60,10 @@ function Star(props) {
 
   const mesh = useRef(null);
   const [curStarState, setCurStarState] = useState(props.isPossesed.get(props.location));
-  const [starState, setStarState] = useState("unwritten");
   const colors = {
-    unwritten: "grey",
     OPEN: "yellow",
     CLOSE: "red",
   };
-
-  useEffect(() => {
-    // 초기 색 칠하기
-    if (curStarState) {
-      setStarState(curStarState.boardAccess);
-    }
-  }, []);
 
   const updateStarState = () => {
     // 요 페이지에서는 사실 눌렀을 때 색 변화를 일으키는 게 아니라, 상세보기 / 글쓰기 등 모달창만 띄워주면 됨
@@ -83,24 +72,27 @@ function Star(props) {
     // 등록된 별이 아닐 때
     if (!curStarState) {
       if (window.confirm("별을 등록할까요?")) {
-        setStarState("OPEN");
         // axios : 별 등록 요청
         // {현재 별 페이지 번호} * {한 페이지당 별 개수} + {현재 별의 위치 번호} -> 별의 location 값
+        // 별 등록이 성공적으로 이루어졌다면 별 상태를 바꾼다 -> 요건 추후에 API에 맞춰서 수정
+        setCurStarState({ boardAccess: "OPEN" });
+        props.isPossesed.set(props.location, curStarState);
       }
 
       // 등록된 별일 때
     } else {
       if (curStarState.boardAccess === "OPEN") {
         if (window.confirm("별 상세 내용 \n 별을 비공개 처리할까요?")) {
-          curStarState.boardAccess = "CLOSE";
-          setStarState("CLOSE");
           // axios : 별 정보 수정 요청 (공개범위수정)
+          // 수정이 정상적으로 이루어졌다면
+          let tmp = props.isPossesed.get(props.location);
+          tmp.boardAccess = "CLOSE";
+          setCurStarState(tmp);
         }
-      }
-      if (curStarState.boardAccess === "CLOSE") {
+      } else if (curStarState.boardAccess === "CLOSE") {
         if (window.confirm("비공개 별입니다 \n 별을 삭제할까요?")) {
-          setStarState("unwritten");
           // axios : 별 정보 수정 요청 (별 삭제 처리)
+          setCurStarState(null);
         }
       }
     }
@@ -115,32 +107,30 @@ function Star(props) {
       }}
     >
       <sphereGeometry args={props.size} />
-      <meshStandardMaterial color={colors[starState]} />
+      <meshStandardMaterial color={curStarState ? colors[curStarState.boardAccess] : "grey"} />
     </mesh>
   );
 }
 
-function Scene() {
+function SceneStars() {
   console.log("SCENE MOUNTED");
   const [lineState, setLineState] = useState([]);
 
   useEffect(() => {
+    let cur = 0;
+    let tmp = [];
     starTail.forEach((val, index) => {
       if (constellationCheck(val)) {
-        // 별자리 잇는 코드 작성해야함
-        let tmp = [...lineState];
-        for (let i = 0; i < val; i++) {
-          tmp.push([position[i], position[i + 1]]);
+        let points = [];
+        for (let i = cur; i <= val; i++) {
+          points.push(new THREE.Vector3(...position[i]));
         }
-        setLineState(tmp);
+
+        cur = val + 1;
+        tmp.push(points);
       }
     });
-
-    console.log(lineState);
-
-    return () => {
-      setLineState([]);
-    };
+    setLineState(tmp);
   }, []);
 
   const stars = [
@@ -189,14 +179,25 @@ function Scene() {
       boardLike: 3,
       tagContent: [],
     },
+    {
+      boardIndex: 3,
+      userIndex: 1,
+      boardRegTime: "2099-99-99",
+      boardInputDate: "2099-99-99",
+      boardContent: "더미 컨텐츠",
+      boardLocation: 4,
+      boardAccess: "OPEN",
+      boardLike: 3,
+      tagContent: [],
+    },
   ];
 
   // position : 변화할 일 없는 값
   const position = [
     [1, 10, -30],
     [2, 7, -30],
-    [3, 13, -30],
     [4, 5, -30],
+    [3, 13, -30],
     [13, 5, -30],
     [14, 8, -30],
   ];
@@ -209,7 +210,7 @@ function Scene() {
   const starTail = [3, 5];
 
   // 별자리 이어짐 체크
-  const constellationCheck = (starNum) => {
+  function constellationCheck(starNum) {
     // starNum이 한 페이지 내 별 개수보다 커질 경우도 생각해서 수정해야함
 
     let curStarNum = starNum % position.length;
@@ -232,32 +233,40 @@ function Scene() {
     }
 
     return res;
-  };
+  }
 
-  const testLineFunc = () => {
-    const tmp = [...lineState];
-    tmp.push("123");
-    setLineState(tmp);
-  };
+  return (
+    <>
+      {/* 별 */}
+      {/* index : 별 location 값이랑 동일 */}
+      {position.map((i, index) => {
+        return <Star size={[0.2, 32, 32]} position={i} location={index} key={index} constellationCheck={constellationCheck} isPossesed={isPossesed} setLineState={setLineState} />;
+      })}
 
+      {/* 별자리 선 */}
+      {lineState.map((_, index) => {
+        return <Line points={lineState[index]} key={index} />;
+      })}
+    </>
+  );
+}
+
+function SceneLights() {
   return (
     <>
       {/* 광원 */}
       <directionalLight position={[0, 0, 2]} intensity={3} />
       <ambientLight intensity={1} />
 
-      {/* 별 */}
-      {/* index : 별 location 값이랑 */}
-      {position.map((i, index) => {
-        return <Star size={[0.2, 32, 32]} position={i} location={index} key={index} constellationCheck={constellationCheck} isPossesed={isPossesed} func={testLineFunc} />;
-      })}
+      {/* 중심점 - 추후 삭제 */}
+      <Sphere size={[0.01, 16, 16]} position={[0.5, -7.8, -1]} color={"red"} />
+    </>
+  );
+}
 
-      {/* 테스트 오브젝트 */}
-      {/* <primitive object={gltf.scene} position={[0, -10, 0]} /> */}
-
-      {/* 중심점 */}
-      <Sphere size={[0.01, 16, 16]} position={[0.5, -7.8, -1]} color={"red"} type={"wireframe"} />
-
+function SceneEnvironment() {
+  return (
+    <>
       {/* 우주 배경 */}
       <Sphere size={[40, 48, 48]} position={[0, -4, 0]} color={"black"} type={"back"} />
 
@@ -266,13 +275,15 @@ function Scene() {
     </>
   );
 }
-
 function UserSpace() {
   return (
     <>
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
         <Canvas>
-          <Scene type={3} />
+          <SceneStars />
+          <SceneLights />
+          <SceneEnvironment />
+          {/* <OrbitControls dampingFactor={0.12} target={[0.5, -7.8, -1]} rotateSpeed={-0.15} enableZoom={true} /> */}
           <OrbitControls dampingFactor={0.12} minPolarAngle={(Math.PI * 2.7) / 5} maxPolarAngle={Math.PI} target={[0.5, -7.8, -1]} rotateSpeed={-0.15} enableZoom={false} />
           <PerspectiveCamera makeDefault position={[0, -8, 0]} fov={110} zoom={3} aspect={window.innerWidth / window.innerHeight} />
         </Canvas>
