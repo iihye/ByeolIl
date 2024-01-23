@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { DirectionalLightHelper } from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { CameraControls, OrbitControls, PerspectiveCamera, Wireframe, useHelper } from "@react-three/drei";
+import { ArcballControls, CameraControls, FirstPersonControls, FlyControls, MapControls, OrbitControls, PerspectiveCamera, PointerLockControls, Wireframe, useHelper } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import * as THREE from "three";
@@ -12,12 +12,12 @@ function Cube({ position, size, color }) {
   const mesh = useRef(null);
 
   useEffect(() => {
-    // mesh.current.rotation.z = 90;
+    mesh.current.rotation.x = Math.PI / 2;
   }, []);
 
   return (
     <mesh position={position} ref={mesh}>
-      <circleGeometry args={[6, 64]} />
+      <circleGeometry args={size} />
       <meshStandardMaterial color={color} side={THREE.DoubleSide} />
     </mesh>
   );
@@ -271,7 +271,8 @@ function SceneEnvironment() {
       <Sphere size={[40, 48, 48]} position={[0, -4, 0]} color={"black"} type={"back"} />
 
       {/* 바닥면 */}
-      <Cube size={[100, 0.1, 100]} position={[0, -13, 0]} color={"orange"} />
+      {/* <Cube size={[8, 48]} position={[0, -9.5, 0]} color={"orange"} /> */}
+      <Sphere size={[2, 48, 48]} position={[0, -2.2, 0]} color={"orange"} />
     </>
   );
 }
@@ -283,9 +284,8 @@ function UserSpace() {
           <SceneStars />
           <SceneLights />
           <SceneEnvironment />
-          {/* <OrbitControls dampingFactor={0.12} target={[0.5, -7.8, -1]} rotateSpeed={-0.15} enableZoom={true} /> */}
-          <OrbitControls dampingFactor={0.12} minPolarAngle={(Math.PI * 2.7) / 5} maxPolarAngle={Math.PI} target={[0.5, -7.8, -1]} rotateSpeed={-0.15} enableZoom={false} />
-          <PerspectiveCamera makeDefault position={[0, -8, 0]} fov={110} zoom={3} aspect={window.innerWidth / window.innerHeight} />
+          <OrbitControls dampingFactor={0.12} target={[0, 0, 0]} rotateSpeed={-0.15} />
+          <PerspectiveCamera makeDefault position={[0, 0, 0.1]} fov={60} zoom={1} aspect={window.innerWidth / window.innerHeight} />
         </Canvas>
       </div>
     </>
