@@ -37,7 +37,7 @@ public class Board {
 
     @LastModifiedDate
     @Column(name = "board_input_date")
-    private LocalDate boardInputdate;   //사용자 입력 날짜(최근 수정 날짜)
+    private LocalDateTime boardInputdate;   //사용자 입력 날짜(최근 수정 날짜)
 
     @Column(name = "board_content", nullable = false, length = 500)
     private String boardContent;        //게시글 내용
@@ -50,21 +50,29 @@ public class Board {
     @ColumnDefault("'OPEN'")
     private BoardAccessStatus boardAccess;         //게시글 접근 범위
 
+    @Column(name = "delete_yn", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'Y'")
+    private BoardDeleteYN boardDeleteYN;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_index", referencedColumnName = "member_index")
     private Member member;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Report> reports = new ArrayList<>();
+    private List<Report> reports ;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Heart> hearts = new ArrayList<>();
+    private List<Heart> hearts ;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Hash> hashes = new HashSet<>();
+    private Set<Hash> hashes ;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments ;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Media> medias;
 
     public void setBoardContent(String boardContent) {
         this.boardContent = boardContent;
@@ -78,7 +86,7 @@ public class Board {
         this.reports = reports;
     }
 
-    public void setLikes(List<Heart> likes) {
+    public void setHearts(List<Heart> hearts) {
         this.hearts = hearts;
     }
 
@@ -90,5 +98,11 @@ public class Board {
         this.comments = comments;
     }
 
+    public void setBoardAccess(BoardAccessStatus boardAccess) {
+        this.boardAccess = boardAccess;
+    }
 
+    public void setBoardDeleteYN(BoardDeleteYN boardDeleteYN) {
+        this.boardDeleteYN = boardDeleteYN;
+    }
 }

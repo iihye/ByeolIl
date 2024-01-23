@@ -1,25 +1,22 @@
 package com.stella.stella.board.dto;
 
-import lombok.Getter;
+import com.stella.stella.board.entity.BoardAccessStatus;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class BoardUpdateRequestDto {
 
     private Long boardIndex;
     private Long userIndex;
-    private LocalDate boardInputDate;
     private String boardContent;
-    private String boardPicture;
-    private String boardAccess;
+    private List<String> boardMedia;
+    private BoardAccessStatus boardAccess;
 
-    public BoardUpdateRequestDto(Long boardIndex, Long userIndex, LocalDate boardInputDate, String boardContent, String boardPicture, String boardAccess) {
-        this.boardIndex = boardIndex;
-        this.userIndex = userIndex;
-        this.boardInputDate = boardInputDate;
-        this.boardPicture = boardPicture;
-        this.boardContent = boardContent;
-        this.boardAccess = boardAccess;
-    }
+
 }

@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HashRepository extends JpaRepository<Hash, Long> {
-Optional<List<Hash>> findByBoardBoardIndex(Long BoardId);
+Optional<List<Hash>> findByBoardBoardIndex(Long BoardIndex);
 }
