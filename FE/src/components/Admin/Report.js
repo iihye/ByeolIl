@@ -3,7 +3,6 @@ import axios from 'axios';
 
 function Report() {
     const [reportData, setReportData] = useState([]);
-    const [boardData, setBoardData] = useState([]); // 게시글 전체 항목
     const [boardContent, setBoardContent] = useState([]); // 게시글에서 boardContent만 뽑아옴
 
     useEffect(() => {
@@ -23,47 +22,26 @@ function Report() {
     useEffect(() => {
         const fetchBoardData = async () => {
             try {
-                await Promise.all(
-                    reportData &&
-                        reportData.map(async (it) => {
-                            const response = await axios.get(
-                                `https://d9434a94-4844-4787-a437-ceb2559ee35c.mock.pstmn.io/board/${it.boardIndex}`
-                            );
-                            setBoardData((prevBoardData) => [
-                                ...prevBoardData,
-                                response.data,
-                            ]);
-                        })
+                const responses = await Promise.all(
+                    reportData.map(async (it) => {
+                        const response = await axios.get(
+                            `https://d9434a94-4844-4787-a437-ceb2559ee35c.mock.pstmn.io/board/${it.boardIndex}`
+                        );
+
+                        return response.data.boardContent;
+                    })
                 );
+                console.log(responses);
+                setBoardContent(responses);
             } catch (error) {
                 console.error(error);
             }
-
-            console.log(boardData);
         };
 
         fetchBoardData();
     }, [reportData]);
 
-    useEffect(() => {
-        const fetchContentData = async () => {
-            // 예외처리
-            if (boardData.length === 0) {
-                console.log('Board data is not loaded yet.');
-                return;
-            }
-            const contentResponse = await Promise.all(
-                boardData &&
-                    boardData.map(async (res, index) => {
-                        return res.boardContent;
-                    })
-            );
-            setBoardContent(contentResponse);
-        };
-        fetchContentData();
-    }, [boardData]);
-
-    // console.log(boardContent);
+    console.log(boardContent);
 
     return (
         <div className="Report">
