@@ -48,36 +48,42 @@ public class FollowService {
         followRepository.deleteByFollowIndex(follow.getFollowIndex());
     }
 
-//    // 팔로잉 목록 조회
-//    public List<FollowListResponseDto> findFollowing(Long memberIndex){
-//        List<Follow> follows = followRepository.findAllByFromMemberIndex(memberIndex);
-//        List<FollowListResponseDto> followListResponseDtos = new ArrayList<>();
-//
-//        for(Follow follow : follows){
-//            FollowListResponseDto f = FollowListResponseDto.builder()
-//                    .memberId(follow.getFromMember().getMemberId())
-//                    .memberName(follow.getFromMember().getMemberName())
-//                    .build();
-//            followListResponseDtos.add(f);
-//        }
-//
-//        return followListResponseDtos;
-//    }
-//
-//    // 팔로워 목록 조회
-//    public List<FollowListResponseDto> findFollower(Long memberIndex){
-//        List<Follow> follows = followRepository.findAllByToMemberIndex(memberIndex);
-//        List<FollowListResponseDto> followListResponseDtos = new ArrayList<>();
-//
-//        for(Follow follow : follows){
-//            FollowListResponseDto f = FollowListResponseDto.builder()
-//                    .memberId(follow.getFromMember().getMemberId())
-//                    .memberName(follow.getFromMember().getMemberName())
-//                    .build();
-//            followListResponseDtos.add(f);
-//        }
-//
-//        return followListResponseDtos;
-//    }
+    // 팔로잉 목록 조회
+    public List<FollowListResponseDto> findFollowing(Long memberIndex){
+        Member member = memberRepository.findByMemberIndex(memberIndex)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
+
+        List<Follow> follows = followRepository.findAllByFromMemberIndex(memberIndex);
+        List<FollowListResponseDto> followListResponseDtos = new ArrayList<>();
+
+        for(Follow follow : follows){
+            FollowListResponseDto f = FollowListResponseDto.builder()
+                    .memberId(follow.getToMember().getMemberId())
+                    .memberName(follow.getToMember().getMemberName())
+                    .build();
+            followListResponseDtos.add(f);
+        }
+
+        return followListResponseDtos;
+    }
+
+    // 팔로워 목록 조회
+    public List<FollowListResponseDto> findFollower(Long memberIndex){
+        Member member = memberRepository.findByMemberIndex(memberIndex)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
+
+        List<Follow> follows = followRepository.findAllByToMemberIndex(memberIndex);
+        List<FollowListResponseDto> followListResponseDtos = new ArrayList<>();
+
+        for(Follow follow : follows){
+            FollowListResponseDto f = FollowListResponseDto.builder()
+                    .memberId(follow.getFromMember().getMemberId())
+                    .memberName(follow.getFromMember().getMemberName())
+                    .build();
+            followListResponseDtos.add(f);
+        }
+
+        return followListResponseDtos;
+    }
 
 }
