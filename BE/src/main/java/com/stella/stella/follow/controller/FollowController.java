@@ -50,31 +50,31 @@ public class FollowController {
 
     }
 
-//    // 팔로잉 목록 조회
-//    @GetMapping("/following/{memberIndex}")
-//    public ResponseEntity<Object> followingList(@PathVariable Long memberIndex){
-//        List<FollowListResponseDto> followListResponseDtos = followService.findFollowing(memberIndex);
-//
-//        BasicResponseDto basicResponse = BasicResponseDto.builder()
-//                .message("success")
-//                .count(followListResponseDtos.size())
-//                .result(followListResponseDtos)
-//                .build();
-//
-//        return ResponseEntity.ok(basicResponse);
-//    }
-//
-//    // 팔로워 목록 조회
-//    @GetMapping("/follower/{memberIndex}")
-//    public ResponseEntity<Object> followerList(@PathVariable Long memberIndex){
-//        List<FollowListResponseDto> followListResponseDtos = followService.findFollower(memberIndex);
-//
-//        BasicResponseDto basicResponse = BasicResponseDto.builder()
-//                .message("success")
-//                .count(followListResponseDtos.size())
-//                .result(followListResponseDtos)
-//                .build();
-//
-//        return ResponseEntity.ok(basicResponse);
-//    }
+    // 팔로잉 목록 조회
+    @GetMapping("/following/{memberIndex}")
+    public ResponseEntity<Object> followingList(@PathVariable Long memberIndex){
+        List<FollowListResponseDto> followListResponseDtos = followService.findFollowing(memberIndex);
+
+        BasicResponseDto basicResponse = BasicResponseDto.builder()
+                .message("success")
+                .count(followListResponseDtos.size())
+                .result(followListResponseDtos)
+                .build();
+
+        return ResponseEntity.ok(basicResponse);
+    }
+
+    // 팔로워 목록 조회
+    @GetMapping("/follower/{memberIndex}")
+    public ResponseEntity<Object> followerList(@PathVariable Long memberIndex){
+        List<FollowListResponseDto> followListResponseDtos = followService.findFollower(memberIndex);
+
+        BasicResponseDto basicResponse = BasicResponseDto.builder()
+                .message("success")
+                .count(followListResponseDtos.size())
+                .result(followListResponseDtos)
+                .build();
+
+        return ResponseEntity.ok(basicResponse);
+    }
 }

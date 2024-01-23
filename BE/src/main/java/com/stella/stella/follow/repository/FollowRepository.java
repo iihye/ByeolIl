@@ -12,6 +12,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("select f from follow f where f.toMember.memberIndex =:toMemberIndex and f.fromMember.memberIndex =:fromMemberIndex")
     Optional<Follow> findByMemberIndexs(Long toMemberIndex, Long fromMemberIndex);
     void deleteByFollowIndex(Long followIndex);
-//    List<Follow> findAllByFromMemberIndex(Long fromMemberIndex);
-//    List<Follow> findAllByToMemberIndex(Long toMemberIndex);
+    @Query("select f from follow f where f.fromMember.memberIndex =:fromMemberIndex")
+    List<Follow> findAllByFromMemberIndex(Long fromMemberIndex);
+    @Query("select f from follow f where f.toMember.memberIndex =:toMemberIndex")
+    List<Follow> findAllByToMemberIndex(Long toMemberIndex);
 }
