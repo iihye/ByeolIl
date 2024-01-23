@@ -199,6 +199,5 @@ function Block() {
     </>
   );
 }
-// type: 'report', 'PWCheck', 'delete', 'block'
 
 export default Alert;
