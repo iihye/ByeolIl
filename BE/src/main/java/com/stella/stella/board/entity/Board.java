@@ -42,7 +42,7 @@ public class Board {
     @Column(name = "board_content", nullable = false, length = 500)
     private String boardContent;        //게시글 내용
 
-    @Column(name = "board_location")
+    @Column(name = "board_location", unique = true)
     private Long boardLocation;         //하늘에서 별 위치
 
     @Column(name = "board_access", nullable = false, length = 10)
