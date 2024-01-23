@@ -50,7 +50,7 @@ const onChangeId = () => {
 
  const onChangePassword = () => {
    const passwordRegExp =
-     /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+     /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*+=-])(?=.*[0-9]).{8,25}$/;
    if (!passwordRegExp.test(password.current.value)) {
      setPasswordMessage(
        "숫자+영문자+특수문자 조합으로 8자리 이상 25자 이하로 입력해주세요!"
@@ -82,13 +82,35 @@ const onChangeId = () => {
      setIsEmail(true);
    }
  };
+  const onChangeBirth = () => {
+  const dateRegex = /^\d{4}\d{2}\d{2}$/; //? YYYYMMDD 형식의 정규식
+  const dateRegex2 = /^\d{4}-\d{2}-\d{2}$/; //? YYYY-MM-DD 형식의 정규식
+  const dateRegex3 = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/; //? 230613 kty YYYYMMDD 각 자리에 유효한 생년월일인지 확인
+  const dateRegex4 = /^(19|20)\d{2}-(0[1-9]|1[0-2])-([0-2][1-9]|3[01])$/; //? 230613 kty YYYY-MM-DD 각 자리에 유효한 생년월일인지 확인
+  
+  if (dateRegex.test(birth.current.value) || dateRegex2.test(birth.current.value)) {
+    if (dateRegex3.test(birth.current.value) || dateRegex4.test(birth.current.value)) {
+      setBirthMessage("유효한 생년월일입니다.")
+      setIsBirth(true);
+    } else {
+      setBirthMessage("유효하지 않은 생년월일입니다.")
+      setIsBirth(false);
+    }
+  } else {
+    {
+      setBirthMessage("유효하지 않은 생년월일입니다.")
+      setIsBirth(false);
+    }
+  }
+};
 
- const onChangeBirth = () => {
-   
- };
- 
+//아이디 중복체크
+//닉네임 중복체크
+//이메일 중복체크 및 이메일 인증 
+// 중복체크 및 인증 완료시 회원가입 완료
+
+
 console.log("redering!"); // 렌더링 빈도 테스트
-
  return (
    <>
      <h3>회원가입</h3>
@@ -136,6 +158,7 @@ console.log("redering!"); // 렌더링 빈도 테스트
        <div className="form-el">
          <label htmlFor="birth">*생년월일</label> <br />
          <input
+          placeholder="YYYYMMDD"
            id="birth"
            name="birth"
            ref={birth}
@@ -144,8 +167,7 @@ console.log("redering!"); // 렌더링 빈도 테스트
          <p className="message">{birthMessage}</p>
        </div> 
        <br />
-       <br />
-       <button type="submit">가입하기</button>
+       <button type="submit" disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth)}>가입하기</button>
      </div>
    </>
  );
