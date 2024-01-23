@@ -1,5 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+
+/*
+1. 모달 컴포넌트 html 작성
+2. 신고 내용, 비밀번호 입력 내용 공백 검사
+*/
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert({ type, boardIndex }) {
@@ -10,7 +15,11 @@ function Alert({ type, boardIndex }) {
     report: <InputAlert type={type} />,
   };
 
-  return <div className="alert">{alertTypes[type]}</div>;
+  return (
+    <div className="alert" style={{ border: "1px solid black" }}>
+      {alertTypes[type]}
+    </div>
+  );
 }
 
 function InputAlert({ type }) {
@@ -47,6 +56,7 @@ function InputAlert({ type }) {
   const emptyCheck = (input) => {
     return input.trim();
   };
+
   // 비밀번호 입력 / 신고 요청
   const handleSubmit = () => {
     const inputData = input.current.value;
@@ -143,6 +153,33 @@ function Delete({ boardIndex }) {
 function Block() {
   /* 1. axios로 해당 사용자 차단 해제일 받아오기 */
   /* 2. 받아온 해제일 아래 alert에 채우기*/
+
+  // 테스트 데이터
+  const [userData, setUserData] = useState({
+    memberRole: "Ban",
+    memberBanDate: "2024-01-26",
+  });
+  const [dueDate, setDueDate] = useState("");
+
+  // userData -> 로그인 직후에 유저 정보 받아오기
+  // memberRole -> Ban일 경우 차단된 사용자
+  // memberBanDate -> 차단 일자
+
+  useEffect(() => {
+    const date = new Date(userData.memberBanDate);
+    setDueDate(new Date(date.setDate(date.getDate() + 7)));
+    // api 개발 후 주석 해제할 예정
+    // const fetchData = async () => {
+    //   await axios
+    //     .get(URL) // URL : API 요청 주소
+    //     .then((response) => {
+    //       setUserData(response.data);
+    //     })
+    //     .catch((e) => console.log(e));
+    // };
+    //   fetchData();
+  }, []);
+
   return (
     <>
       <div>
@@ -157,7 +194,7 @@ function Block() {
       <div>
         차단된 사용자입니다.
         <br />
-        차단 해제일 : n년 n월 n일
+        차단 해제일 : {`${dueDate && dueDate.getFullYear()}년 ${dueDate && dueDate.getMonth() + 1}월 ${dueDate && dueDate.getDate()}일`}
       </div>
     </>
   );
