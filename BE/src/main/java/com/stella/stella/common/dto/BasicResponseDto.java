@@ -11,5 +11,5 @@ import java.util.List;
 public class BasicResponseDto {
     private String message;
     private Integer count;
-    private List<Object> result;
+    private List<?> result;
 }

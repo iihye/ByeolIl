@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
-//    List<Follow> findAllByFromMemberIndex(Long fromMemberIndex);
-//    List<Follow> findAllByToMemberIndex(Long toMemberIndex);
-
     @Query("select f from follow f where f.toMember.memberIndex =:toMemberIndex and f.fromMember.memberIndex =:fromMemberIndex")
     Optional<Follow> findByMemberIndexs(Long toMemberIndex, Long fromMemberIndex);
     void deleteByFollowIndex(Long followIndex);
+//    List<Follow> findAllByFromMemberIndex(Long fromMemberIndex);
+//    List<Follow> findAllByToMemberIndex(Long toMemberIndex);
 }

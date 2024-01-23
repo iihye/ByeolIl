@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"to_member_index", "from_member_index"}))
 public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

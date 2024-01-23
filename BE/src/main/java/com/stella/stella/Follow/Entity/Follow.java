@@ -1,5 +1,6 @@
-package com.stella.stella.Follow.Entity;
+package com.stella.stella.follow.entity;
 
+import com.stella.stella.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +12,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"to_member_index", "from_member_index"}))
 public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Member followIndex;
+    private Long followIndex;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_member_index")
