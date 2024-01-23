@@ -26,7 +26,7 @@ export default function Sidebar (props) {
         if(viewSideBar === false) setViewSideBar(true); 
         else setViewSideBar(false);
     }
-    
+
     return (
         <div className="Sidebar">
             <button onClick={toggleSidebar}>=</button>
