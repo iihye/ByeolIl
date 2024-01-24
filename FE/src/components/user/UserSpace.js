@@ -82,22 +82,6 @@ const stars = [
 const isAddedStar = new Map();
 stars.forEach((val) => isAddedStar.set(val.boardLocation, val));
 
-function Cube({ position, size, color }) {
-  console.log("CUBE MOUNTED");
-  const mesh = useRef(null);
-
-  useEffect(() => {
-    mesh.current.rotation.x = Math.PI / 2;
-  }, []);
-
-  return (
-    <mesh position={position} ref={mesh}>
-      <circleGeometry args={size} />
-      <meshStandardMaterial color={color} side={THREE.DoubleSide} />
-    </mesh>
-  );
-}
-
 function Line(props) {
   // props : points
   const ref = useRef(null);
@@ -128,7 +112,7 @@ function Sphere(props) {
 }
 
 function Star(props) {
-  console.log(`STAR${props.location} MOUNTED`);
+  // console.log(`STAR${props.location} MOUNTED`);
   /**
    * props : size / position / location / constellationCheck / isAddedStar /
    */
@@ -170,16 +154,18 @@ function Star(props) {
           for (let i = 0; i < starTail.length; i++) {
             if (props.location <= starTail[i]) {
               let tmp = [...props.lineState];
-              console.log(tmp);
+
               let points = [];
-              let cur = starTail[i - 1] + 1 ?? 0;
+              let cur = starTail[i - 1] === undefined ? 0 : starTail[i - 1] + 1;
 
               for (let j = cur; j <= starTail[i]; j++) {
                 points.push(new THREE.Vector3(...position[j]));
               }
 
               tmp.push(points);
+              console.log(tmp);
               props.setLineState(tmp);
+              break;
             }
           }
         }
@@ -191,9 +177,9 @@ function Star(props) {
         if (window.confirm("별 상세 내용 \n 별을 비공개 처리할까요?")) {
           // axios : 별 정보 수정 요청 (공개범위수정)
           // 수정이 정상적으로 이루어졌다면
-          let tmp = props.isAddedStar.get(props.location);
+          // tmp 값이 원래의 메모리 주소를 그대로 참조함
+          let tmp = Object.assign(props.isAddedStar.get(props.location));
           tmp.boardAccess = "CLOSE";
-
           setCurStarState(tmp);
         }
       } else if (curStarState.boardAccess === "CLOSE") {
@@ -203,9 +189,12 @@ function Star(props) {
             if (props.location <= starTail[i]) {
               const tmp = [...props.lineState];
               tmp.splice(i, 1);
+              console.log(tmp);
               props.setLineState(tmp);
+              break;
             }
           }
+          isAddedStar.delete(props.location);
           setCurStarState(null);
         }
       }
@@ -267,7 +256,7 @@ function SceneStars() {
         }
       }
     }
-
+    console.log(isAddedStar);
     return res;
   }
 
