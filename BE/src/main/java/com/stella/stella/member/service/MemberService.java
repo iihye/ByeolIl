@@ -2,9 +2,13 @@ package com.stella.stella.member.service;
 
 import com.stella.stella.common.Jwt.JwtTokenProvider;
 import com.stella.stella.common.Jwt.TokenInfo;
+import com.stella.stella.common.email.EmailSender;
+import com.stella.stella.member.dto.MemberFindPassDto;
 import com.stella.stella.member.dto.MemberJoinRequestDto;
 import com.stella.stella.member.dto.MemberUpdateRequestDto;
 import com.stella.stella.member.entity.Member;
+import com.stella.stella.member.entity.MemberDeleteYN;
+import com.stella.stella.member.entity.MemberRole;
 import com.stella.stella.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +29,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -37,18 +42,26 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EmailSender emailSender;
 
     @Value("${kakao.key}")
     private String kakaoRestAPIKey;
 
     @Transactional
-    public String login(String memberId, String memberPassword, String memberPlatform) {
+    public String login(String memberId, String memberPassword, String memberPlatform) throws Exception{
 
         // 0. memberId와 memeberPlatform으로 memberIndex(PK) 검색
         Member accessMember = memberRepository.findByMemberIdAndMemberPlatform(memberId, memberPlatform)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
 
-        log.info(accessMember.toString());
+        if(accessMember.getMemberDeleteYN()== MemberDeleteYN.Y){
+           throw new IllegalAccessException("탈퇴 처리된 계정입니다. 탈퇴일: "+accessMember.getMemberDeleteDate());
+        }
+
+        if(accessMember.getMemberRole().equals(MemberRole.BAN)){
+           throw new IllegalAccessException("차단된 사용자입니다. 차단일: "+accessMember.getMemberBanDate());
+        }
+
         // 1. Login Index/PW 를 기반으로 Authentication 객체 생성
         // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -151,5 +164,42 @@ public class MemberService {
         Optional.ofNullable(memberUpdateRequestDto.getMemberDeleteYN()).ifPresent(member::setMemberDeleteYN);
         Optional.ofNullable(memberUpdateRequestDto.getMemberBirth()).ifPresent(member::setMemberBirth);
         Optional.ofNullable(memberUpdateRequestDto.getMemberDeleteDate()).ifPresent(member::setMemberDeleteDate);
+    }
+
+    public String sendEmail(String email, String order) {
+        String result = "";
+        String title = "";
+        String content = "";
+        switch (order) {
+            case "check_email":
+                title = "Stella 이메일 인증 코드입니다.";
+                content = "Stella에서 보낸 이메일 인증용 코드입니다.<br>아래의 인증번호를 입력해 주세요.<br><br>코드: ";
+                result = emailSender.generateCode();
+                emailSender.sendMail(email, title, content + result);
+                break;
+            case "find_pass":
+                title = "Stella에서 생성한 임시 비밀번호입니다.";
+                content = "Stella에서 생성한 임시 비밀번호입니다.<br>아래의 비밀번호를 사용해 로그인해 주세요.<br><br>임시 비밀번호: ";
+                result = emailSender.generateCode();
+                emailSender.sendMail(email, title, content + result);
+                break;
+        }
+        return result;
+    }
+
+    public void findPass(MemberFindPassDto memberFindPassDto) {
+        Member accessMember = memberRepository.findByMemberIdAndMemberNameAndMemberEmailAndMemberPlatform
+                        (memberFindPassDto.getMemberId(), memberFindPassDto.getMemberName()
+                                , memberFindPassDto.getMemberEmail(), "origin")
+                .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다."));
+        String tmpPass = sendEmail(accessMember.getMemberEmail(), "find_pass");
+        accessMember.setMemberPass(tmpPass);
+    }
+
+    public void banMember(long memberIndex) {
+        Member targetMember = memberRepository.findByMemberIndex(memberIndex)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다."));
+        targetMember.setMemberRole(MemberRole.BAN);
+        targetMember.setMemberBanDate(LocalDate.now());
     }
 }

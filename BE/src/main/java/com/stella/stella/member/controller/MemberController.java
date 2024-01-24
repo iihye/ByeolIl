@@ -1,10 +1,7 @@
 package com.stella.stella.member.controller;
 
 import com.stella.stella.common.email.EmailSender;
-import com.stella.stella.member.dto.MemberJoinRequestDto;
-import com.stella.stella.member.dto.MemberLoginRequestDto;
-import com.stella.stella.member.dto.MemberUpdateRequestDto;
-import com.stella.stella.member.dto.MyInfoResponseDto;
+import com.stella.stella.member.dto.*;
 import com.stella.stella.member.entity.Member;
 import com.stella.stella.member.repository.MemberRepository;
 import com.stella.stella.member.service.MemberService;
@@ -29,7 +26,6 @@ public class MemberController {
     @Autowired
     private final MemberRepository memberRepository;
     private final MemberService memberService;
-    private final EmailSender emailSender;
 
     //홈페이지 로그인
     @PostMapping("/login/origin")
@@ -210,18 +206,58 @@ public class MemberController {
         return ResponseEntity.status(status).body(resultMap);
     }
 
-    @GetMapping("/send/email")
+    @GetMapping("/check/email")
     public ResponseEntity<Map<String, Object>> sendEmail(@RequestParam("email") String email) {
         Map<String, Object> resultMap = new HashMap<>();
-        log.info("이메일 센더 호출됨");
         HttpStatus status = HttpStatus.OK;
         try {
-            String input="stella에서 보낸 메일입니다 아래는 인증번호 어쩌구..."
-            String code = "ajf2e";
+            String code = memberService.sendEmail(email,"check_email");
             resultMap.put("code", code);
-            emailSender.sendMail(email, input+code);
-            resultMap.put("message", "이메일 전송 완료");
         } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
+    @GetMapping("/find/id")
+    public ResponseEntity<Map<String, Object>> findId(@RequestParam("name") String name, @RequestParam("email") String email) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        try {
+            Member accessMember = memberRepository.findByMemberNameAndMemberEmailAndMemberPlatform(name, email, "origin")
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다."));
+            resultMap.put("id",accessMember.getMemberId());
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
+    @PostMapping("/find/pass")
+    public ResponseEntity<Map<String, Object>> findPass(@RequestBody MemberFindPassDto memberFindPassDto) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        try {
+            memberService.findPass(memberFindPassDto);
+            resultMap.put("message","입력하신 이메일로 임시 비밀번호가 발송되었습니다.");
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
+    @GetMapping("/ban")
+    public ResponseEntity<Map<String,Object>> banMember(@RequestParam("index") long memberIndex){
+        //filter로 관리자만
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        try{
+            memberService.banMember(memberIndex);
+            resultMap.put("message", "ban success");
+        }catch (Exception e){
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
         }

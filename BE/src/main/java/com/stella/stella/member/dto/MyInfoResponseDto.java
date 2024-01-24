@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -15,7 +16,7 @@ import java.sql.Date;
 public class MyInfoResponseDto {
 	private String memberId, memberPlatform, memberName, memberNickname, memberEmail, memberAlarmStatus,
 			memberRadioStatus,memberDeletedYN;
-	private Date memberBirth, memberBanDate,memberRegDate;
+	private LocalDate memberBirth, memberBanDate,memberRegDate;
 	
 	public MyInfoResponseDto(Member member) {
 		memberId = member.getMemberId();
@@ -27,7 +28,7 @@ public class MyInfoResponseDto {
 		memberRadioStatus = member.getMemberRadioStatus().toString();
 		memberBanDate = member.getMemberBanDate();
 		memberBirth = member.getMemberBirth();
-		memberRegDate=Date.valueOf(member.getMemberRegDate());
+		memberRegDate=member.getMemberRegDate();
 		memberDeletedYN=member.getMemberDeleteYN().toString();
 	}
 }

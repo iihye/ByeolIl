@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -20,5 +21,5 @@ public class MemberUpdateRequestDto {
     private MemberAlarmStatus memberAlarmStatus;
     private MemberRadioStatus memberRadioStatus;
     private MemberDeleteYN memberDeleteYN;
-    private Date memberBirth, memberDeleteDate;
+    private LocalDate memberBirth, memberDeleteDate;
 }

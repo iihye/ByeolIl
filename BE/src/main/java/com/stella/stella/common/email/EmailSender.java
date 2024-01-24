@@ -12,11 +12,6 @@ import java.util.Properties;
 
 @Component
 public class EmailSender {
-//    public static void main(String[] args) {
-//        EmailSender emailSender=new EmailSender();
-//        System.out.println(emailSender.emailAddress+" "+emailSender.password);
-//        emailSender.sendMail("orange11th@naver.com","test");
-//    }
     private String type = "text/html; charset=utf-8";
 
     @Value("${email.address}")
@@ -25,13 +20,12 @@ public class EmailSender {
     @Value("${email.password}")
     private String password;
 
-    public void sendMail(String email,String content) {
-        System.out.println(emailAddress+" "+password);
+    public void sendMail(String email, String title, String content) {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", 587);
         properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable","true");
+        properties.put("mail.smtp.starttls.enable", "true");
         properties.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
         Authenticator auth = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -41,14 +35,21 @@ public class EmailSender {
         Session session = Session.getInstance(properties, auth);
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(emailAddress,"Stella"));
+            message.setFrom(new InternetAddress(emailAddress, "Stella"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
-            message.setSubject("Stella 이메일 인증 번호입니다.");
-            message.setContent( "Stella 이메일<br>내용입니다<br>"+content, type);
+            message.setSubject(title);
+            message.setContent(content, type);
             Transport.send(message);
-            System.out.println("이메일 발송");
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String generateCode() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            sb.append((char) ((int) (Math.random() * 57) + 65));
+        }
+        return sb.toString();
     }
 }

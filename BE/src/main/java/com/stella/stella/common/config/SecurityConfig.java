@@ -34,7 +34,9 @@ public class SecurityConfig {
 				.requestMatchers("/member/join/**").permitAll()
 				.requestMatchers("/member/dup-check/**").permitAll()
 				.requestMatchers("/member/test").hasRole("USER")
-				.requestMatchers("/member/send/email").permitAll()
+				.requestMatchers("/member/check/email").permitAll()
+				.requestMatchers("/member/find/**").permitAll()
+				.requestMatchers("/member/ban").hasRole("ADMIN")
 //                .requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 				.anyRequest().authenticated().and().addFilterBefore(
 						new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, authenticationManagerBuilder),
