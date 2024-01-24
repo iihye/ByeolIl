@@ -10,13 +10,19 @@ const starTail = [3, 5];
 
 // position : 변화할 일 없는 값
 const position = [
-  [1, 10, -30],
-  [2, 7, -30],
-  [4, 5, -30],
-  [3, 13, -30],
-  [13, 5, -30],
-  [14, 8, -30],
+  [
+    [0, 1, 10, -30],
+    [1, 2, 7, -30],
+    [2, 4, 5, -30],
+    [3, 3, 13, -30],
+  ],
+  [
+    [4, 13, 5, -30],
+    [5, 14, 8, -30],
+  ],
 ];
+
+const totalStarCount = 6;
 
 const stars = [
   // fetchData
@@ -81,10 +87,34 @@ const stars = [
 const isAddedStar = new Map();
 stars.forEach((val) => isAddedStar.set(val.boardLocation, val));
 
+// 별자리 이어짐 체크
+const constellationCheck = (starNum) => {
+  // starNum이 한 페이지 내 별 개수보다 커질 경우도 생각
+  let curStarNum = starNum % totalStarCount;
+  let res = true;
+
+  if (curStarNum < 4) {
+    for (let i = 0; i < 4; i++) {
+      if (!isAddedStar.has(i)) {
+        res = false;
+        break;
+      }
+    }
+  } else if (curStarNum < 6) {
+    for (let i = 4; i < 6; i++) {
+      if (!isAddedStar.has(i)) {
+        res = false;
+        break;
+      }
+    }
+  }
+  return res;
+};
+
 function Line(props) {
-  // props : points
   const ref = useRef(null);
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
+
   return (
     <>
       <line ref={ref} geometry={lineGeometry}>
@@ -108,13 +138,8 @@ function Sphere(props) {
 }
 
 function Star(props) {
-  // console.log(`STAR${props.location} MOUNTED`);
-  /**
-   * props : size / position / location / constellationCheck / isAddedStar /
-   */
-
   const mesh = useRef(null);
-  const [curStarState, setCurStarState] = useState(props.isAddedStar.get(props.location));
+  const [curStarState, setCurStarState] = useState(isAddedStar.get(props.location));
   const colors = {
     OPEN: "yellow",
     CLOSE: "red",
@@ -144,24 +169,19 @@ function Star(props) {
           tagContent: [],
         };
 
-        props.isAddedStar.set(props.location, starData);
+        isAddedStar.set(props.location, starData);
 
         // 별 등록 후, 별자리 이어짐 체크 및 별자리 그리기
-        if (props.constellationCheck(props.location)) {
+        if (constellationCheck(props.location)) {
           for (let i = 0; i < starTail.length; i++) {
             if (props.location <= starTail[i]) {
-              let tmp = [...props.lineState];
-
               let points = [];
-              let cur = starTail[i - 1] === undefined ? 0 : starTail[i - 1] + 1;
 
-              for (let j = cur; j <= starTail[i]; j++) {
-                points.push(new THREE.Vector3(...position[j]));
-              }
+              props.positions.forEach((element, index) => {
+                points.push(new THREE.Vector3(...element.slice(1, 4)));
+              });
 
-              tmp.push(points);
-              console.log(tmp);
-              props.setLineState(tmp);
+              props.setLineState(points);
               break;
             }
           }
@@ -173,7 +193,7 @@ function Star(props) {
       if (curStarState.boardAccess === "OPEN") {
         if (window.confirm("별 상세 내용 \n 별을 비공개 처리할까요?")) {
           // axios : 별 정보 수정 요청 (공개범위수정)
-          let tmp = { ...props.isAddedStar.get(props.location) };
+          let tmp = { ...isAddedStar.get(props.location) };
           tmp.boardAccess = "CLOSE";
           setCurStarState(tmp);
         }
@@ -182,10 +202,7 @@ function Star(props) {
           // axios : 별 정보 수정 요청 (별 삭제 처리)
           for (let i = 0; i < starTail.length; i++) {
             if (props.location <= starTail[i]) {
-              const tmp = [...props.lineState];
-              tmp.splice(i, 1);
-              console.log(tmp);
-              props.setLineState(tmp);
+              props.setLineState([]);
               break;
             }
           }
@@ -210,56 +227,55 @@ function Star(props) {
   );
 }
 
-function SceneStars() {
-  console.log("SCENE MOUNTED");
+function GroupStar(props) {
   const [lineState, setLineState] = useState([]);
+  const position = props.position;
 
   useEffect(() => {
-    let cur = 0;
-    let tmp = [];
-    starTail.forEach((val, index) => {
-      if (constellationCheck(val)) {
-        let points = [];
-        for (let i = cur; i <= val; i++) {
-          points.push(new THREE.Vector3(...position[i]));
-        }
-        cur = val + 1;
-        tmp.push(points);
-      }
-    });
-    setLineState(tmp);
-  }, []);
-
-  // 별자리 이어짐 체크
-  function constellationCheck(starNum) {
-    // starNum이 한 페이지 내 별 개수보다 커질 경우도 생각
-    let curStarNum = starNum % position.length;
-    let res = true;
-
-    if (curStarNum < 4) {
-      for (let i = 0; i < 4; i++) {
-        if (!isAddedStar.has(i)) {
-          res = false;
-          break;
-        }
-      }
-    } else if (curStarNum < 6) {
-      for (let i = 4; i < 6; i++) {
-        if (!isAddedStar.has(i)) {
-          res = false;
-          break;
-        }
-      }
+    const lastStarOfThisGroup = position[position.length - 1][0];
+    if (constellationCheck(lastStarOfThisGroup)) {
+      let points = [];
+      position.forEach((element, index) => {
+        points.push(new THREE.Vector3(...element.slice(1, 4)));
+      });
+      setLineState(points);
     }
-    console.log(isAddedStar);
-    return res;
-  }
+  }, []);
 
   return (
     <>
-      {/* 별 */}
+      {position.map((val, index) => (
+        <Star key={index} size={[0.2, 32, 32]} positions={position} position={val.slice(1, 4)} location={val[0]} lineState={lineState} setLineState={setLineState} />
+      ))}
+      <Line points={lineState} />
+    </>
+  );
+}
+
+function SceneStars() {
+  console.log("SCENE MOUNTED");
+
+  // useEffect(() => {
+  //   let cur = 0;
+  //   let tmp = [];
+  //   starTail.forEach((val, index) => {
+  //     if (constellationCheck(val)) {
+  //       let points = [];
+  //       for (let i = cur; i <= val; i++) {
+  //         points.push(new THREE.Vector3(...position[i]));
+  //       }
+  //       cur = val + 1;
+  //       tmp.push(points);
+  //     }
+  //   });
+  //   setLineState(tmp);
+  // }, []);
+
+  return (
+    <>
+      {/* 별
       {/* index : 별 location 값이랑 동일 */}
-      {position.map((i, index) => {
+      {/* {position.map((i, index) => {
         return (
           <Star
             size={[0.2, 32, 32]}
@@ -272,11 +288,14 @@ function SceneStars() {
             lineState={lineState}
           />
         );
-      })}
+      })} */}
 
       {/* 별자리 선 */}
-      {lineState.map((_, index) => {
+      {/* {lineState.map((_, index) => {
         return <Line points={lineState[index]} key={index} />;
+      })}  */}
+      {position.map((val, index) => {
+        return <GroupStar position={val} />;
       })}
     </>
   );
