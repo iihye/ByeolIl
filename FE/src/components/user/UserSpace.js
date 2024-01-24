@@ -4,7 +4,6 @@ import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { ArcballControls, CameraControls, FirstPersonControls, FlyControls, MapControls, OrbitControls, PerspectiveCamera, PointerLockControls, Wireframe, useHelper } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
-import { atom } from "recoil";
 
 // starTail : 각 별자리 마다 가장 큰 location 번호
 const starTail = [3, 5];
@@ -97,9 +96,6 @@ function Line(props) {
 
 function Sphere(props) {
   console.log("SPHERE MOUNTED");
-  /**
-   * type : "front", "back", "double", "star"
-   */
 
   const mesh = useRef(null);
 
@@ -150,6 +146,7 @@ function Star(props) {
 
         props.isAddedStar.set(props.location, starData);
 
+        // 별 등록 후, 별자리 이어짐 체크 및 별자리 그리기
         if (props.constellationCheck(props.location)) {
           for (let i = 0; i < starTail.length; i++) {
             if (props.location <= starTail[i]) {
@@ -176,9 +173,7 @@ function Star(props) {
       if (curStarState.boardAccess === "OPEN") {
         if (window.confirm("별 상세 내용 \n 별을 비공개 처리할까요?")) {
           // axios : 별 정보 수정 요청 (공개범위수정)
-          // 수정이 정상적으로 이루어졌다면
-          // tmp 값이 원래의 메모리 주소를 그대로 참조함
-          let tmp = Object.assign(props.isAddedStar.get(props.location));
+          let tmp = { ...props.isAddedStar.get(props.location) };
           tmp.boardAccess = "CLOSE";
           setCurStarState(tmp);
         }
@@ -266,7 +261,16 @@ function SceneStars() {
       {/* index : 별 location 값이랑 동일 */}
       {position.map((i, index) => {
         return (
-          <Star size={[0.2, 32, 32]} position={i} location={index} key={index} constellationCheck={constellationCheck} isAddedStar={isAddedStar} setLineState={setLineState} lineState={lineState} />
+          <Star
+            size={[0.2, 32, 32]}
+            position={i}
+            location={index % position.length}
+            key={index}
+            constellationCheck={constellationCheck}
+            isAddedStar={isAddedStar}
+            setLineState={setLineState}
+            lineState={lineState}
+          />
         );
       })}
 
