@@ -23,25 +23,27 @@ function Report() {
         const fetchBoardData = async () => {
             try {
                 const responses = await Promise.all(
-                    reportData.map(async (it) => {
-                        const response = await axios.get(
+                    reportData.map((it) =>
+                        axios.get(
                             `https://d9434a94-4844-4787-a437-ceb2559ee35c.mock.pstmn.io/board/${it.boardIndex}`
-                        );
-
-                        return response.data.boardContent;
-                    })
+                        )
+                    )
                 );
-                console.log(responses);
-                setBoardContent(responses);
+
+                const newBoardContent = responses.map(
+                    (res, index) => res.data[index].boardContent
+                );
+
+                setBoardContent(newBoardContent);
             } catch (error) {
                 console.error(error);
             }
         };
 
-        fetchBoardData();
+        if (reportData.length > 0) {
+            fetchBoardData();
+        }
     }, [reportData]);
-
-    console.log(boardContent);
 
     return (
         <div className="Report">
