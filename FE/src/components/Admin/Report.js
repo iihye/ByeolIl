@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReportDetail from './ReportDetail';
+import { atom, useRecoilState } from 'recoil';
+
+export const reportModalState = atom({
+    key: 'reportModalState',
+    default: false,
+});
 
 function Report() {
     const [reportData, setReportData] = useState([]);
     const [boardContent, setBoardContent] = useState([]); // 게시글에서 boardContent만 뽑아옴
     const [boardIndex, setBoardIndex] = useState([]); // 게시글에서 boardIndex만 뽑아옴
-    let [modal, setModal] = useState(false); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
+    const [reportModal, setReportModal] = useRecoilState(reportModalState); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,13 +62,16 @@ function Report() {
             {reportData.length > 0 && boardContent.length > 0 ? (
                 reportData.map((it, index) => (
                     <>
-                        {modal && (
+                        {reportModal && (
                             <ReportDetail
                                 boardIndex={boardIndex[index]}
                                 reportContent={it.reportContent}
                             />
                         )}
-                        <li key={it.reportIndex} onClick={() => setModal(true)}>
+                        <li
+                            key={it.reportIndex}
+                            onClick={() => setReportModal(true)}
+                        >
                             {boardContent[index]}
                             {it.reportInputDate}
                             {it.userNickname}
