@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import ReportDetail from './ReportDetail';
 
 function Report() {
     const [reportData, setReportData] = useState([]);
     const [boardContent, setBoardContent] = useState([]); // 게시글에서 boardContent만 뽑아옴
+    const [boardIndex, setBoardIndex] = useState([]);
+    let [modal, setModal] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,7 +37,12 @@ function Report() {
                     (res, index) => res.data[index].boardContent
                 );
 
+                const newBoardIndex = responses.map(
+                    (res, index) => res.data[index].boardIndex
+                );
+
                 setBoardContent(newBoardContent);
+                setBoardIndex(newBoardIndex);
             } catch (error) {
                 console.error(error);
             }
@@ -49,12 +57,17 @@ function Report() {
         <div className="Report">
             {reportData.length > 0 && boardContent.length > 0 ? (
                 reportData.map((it, index) => (
-                    <li key={it.reportIndex}>
-                        {boardContent[index]}
-                        {it.reportInputDate}
-                        {it.userNickname}
-                        {it.reportContent}
-                    </li>
+                    <>
+                        {modal && (
+                            <ReportDetail boardIndex={boardIndex[index]} />
+                        )}
+                        <li key={it.reportIndex} onClick={() => setModal(true)}>
+                            {boardContent[index]}
+                            {it.reportInputDate}
+                            {it.userNickname}
+                            {it.reportContent}
+                        </li>
+                    </>
                 ))
             ) : (
                 <div>Loading...</div>
