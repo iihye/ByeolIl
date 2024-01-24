@@ -5,8 +5,8 @@ import ReportDetail from './ReportDetail';
 function Report() {
     const [reportData, setReportData] = useState([]);
     const [boardContent, setBoardContent] = useState([]); // 게시글에서 boardContent만 뽑아옴
-    const [boardIndex, setBoardIndex] = useState([]);
-    let [modal, setModal] = useState(false);
+    const [boardIndex, setBoardIndex] = useState([]); // 게시글에서 boardIndex만 뽑아옴
+    let [modal, setModal] = useState(false); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,9 +37,7 @@ function Report() {
                     (res, index) => res.data[index].boardContent
                 );
 
-                const newBoardIndex = responses.map(
-                    (res, index) => res.data[index].boardIndex
-                );
+                const newBoardIndex = reportData.map((res) => res.boardIndex);
 
                 setBoardContent(newBoardContent);
                 setBoardIndex(newBoardIndex);
@@ -59,7 +57,10 @@ function Report() {
                 reportData.map((it, index) => (
                     <>
                         {modal && (
-                            <ReportDetail boardIndex={boardIndex[index]} />
+                            <ReportDetail
+                                boardIndex={boardIndex[index]}
+                                reportContent={it.reportContent}
+                            />
                         )}
                         <li key={it.reportIndex} onClick={() => setModal(true)}>
                             {boardContent[index]}
