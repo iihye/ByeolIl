@@ -14,8 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -211,7 +214,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            String code = memberService.sendEmail(email,"check_email");
+            String code = memberService.sendEmail(email, "check_email");
             resultMap.put("code", code);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
@@ -227,7 +230,7 @@ public class MemberController {
         try {
             Member accessMember = memberRepository.findByMemberNameAndMemberEmailAndMemberPlatform(name, email, "origin")
                     .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다."));
-            resultMap.put("id",accessMember.getMemberId());
+            resultMap.put("id", accessMember.getMemberId());
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
@@ -241,7 +244,7 @@ public class MemberController {
         HttpStatus status = HttpStatus.OK;
         try {
             memberService.findPass(memberFindPassDto);
-            resultMap.put("message","입력하신 이메일로 임시 비밀번호가 발송되었습니다.");
+            resultMap.put("message", "입력하신 이메일로 임시 비밀번호가 발송되었습니다.");
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
@@ -250,27 +253,32 @@ public class MemberController {
     }
 
     @GetMapping("/ban")
-    public ResponseEntity<Map<String,Object>> banMember(@RequestParam("index") long memberIndex){
+    public ResponseEntity<Map<String, Object>> banMember(@RequestParam("index") long memberIndex) {
         //filter로 관리자만
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-        try{
+        try {
             memberService.banMember(memberIndex);
             resultMap.put("message", "ban success");
-        }catch (Exception e){
+        } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
         }
         return ResponseEntity.status(status).body(resultMap);
     }
 
-    @PostMapping("/test")
-    public ResponseEntity<Map<String, Object>> getTestPage(HttpServletRequest request) {
-        log.info("권한 실험 입력");
-        log.info("request={}", request.getHeader("Authorization"));
-        log.info("body={}", request.getParameterMap().toString());
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("access-token", request.getHeader("Authorization"));
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.ACCEPTED);
+    @GetMapping("/search/list")
+    public ResponseEntity<List<MemberSearchResponseDto>> searchMemmberList(HttpServletRequest request) {
+        HttpStatus status = HttpStatus.OK;
+        List<MemberSearchResponseDto> responseDtoList=null;
+        try {
+            Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
+            List<Member> memberList = memberRepository.findAllExcept(accessMemberIndex);
+            responseDtoList = memberList.stream()
+                    .map(m->new MemberSearchResponseDto(m.getMemberIndex(),m.getMemberNickname())).collect(Collectors.toList());
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(responseDtoList);
     }
 }

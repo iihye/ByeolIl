@@ -37,6 +37,7 @@ public class SecurityConfig {
 				.requestMatchers("/member/check/email").permitAll()
 				.requestMatchers("/member/find/**").permitAll()
 				.requestMatchers("/member/ban").hasRole("ADMIN")
+				.requestMatchers("/member/search/list").permitAll()
 //                .requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 				.anyRequest().authenticated().and().addFilterBefore(
 						new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, authenticationManagerBuilder),
