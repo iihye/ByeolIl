@@ -13,7 +13,8 @@ import java.util.List;
 public class BoardUpdateRequestDto {
 
     private Long boardIndex;
-    private Long userIndex;
+    private Long memberIndex;
+    private LocalDate boardInputDate;
     private String boardContent;
     private List<String> boardMedia;
     private BoardAccessStatus boardAccess;

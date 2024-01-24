@@ -36,8 +36,11 @@ public class Board {
     private LocalDateTime boardRegtime; //처음 등록 시점
 
     @LastModifiedDate
+    @Column(name = "board_update_date")
+    private LocalDateTime boardUpdateDate; //(최근 수정 날짜)
+
     @Column(name = "board_input_date")
-    private LocalDateTime boardInputdate;   //사용자 입력 날짜(최근 수정 날짜)
+    private LocalDate boardInputDate;   //사용자 입력 날짜
 
     @Column(name = "board_content", nullable = false, length = 500)
     private String boardContent;        //게시글 내용
@@ -104,5 +107,9 @@ public class Board {
 
     public void setBoardDeleteYN(BoardDeleteYN boardDeleteYN) {
         this.boardDeleteYN = boardDeleteYN;
+    }
+
+    public void setBoardInputDate(LocalDate boardInputDate) {
+        this.boardInputDate = boardInputDate;
     }
 }

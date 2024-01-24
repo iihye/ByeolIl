@@ -13,7 +13,8 @@ import java.util.List;
 @Builder
 public class BoardStarResponseDto {
     private LocalDateTime boardRegtime;
-   private LocalDateTime boardInputDate;
+   private LocalDate boardInputDate;
+   private LocalDateTime boardUpdateDate;
    private String boardContent;
    private List<String> boardMedia;
    private BoardAccessStatus boardAccess;

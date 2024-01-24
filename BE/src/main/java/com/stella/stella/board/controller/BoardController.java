@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/board")
@@ -80,4 +83,34 @@ public class BoardController {
         }
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
+
+
+//    @GetMapping("/board/star/{userIndex}")
+//    public ResponseEntity<List<BoardListResponseDto>> findAllBoardtoStar(@PathVariable Long userIndex){
+//        HttpStatus status = HttpStatus.OK;
+//        List<BoardListResponseDto> list = new ArrayList<>();
+//        try {
+//            boardService.showAllBoardtoList
+//        } catch (NullPointerException e) {
+//            status = HttpStatus.NOT_FOUND;
+//        } catch (Exception e) {
+//            status = HttpStatus.BAD_REQUEST;
+//        }
+//        return ResponseEntity.status(status).body(list);
+//    }
+//    @GetMapping("/board/list/{userIndex}")
+//
+//    public ResponseEntity<List<BoardListResponseDto>> findAllBoardtoList(@PathVariable Long userIndex){
+//        HttpStatus status = HttpStatus.OK;
+//        List<BoardListResponseDto> list = new ArrayList<>();
+//
+//        return ResponseEntity.status(status).body(list);
+//    }
+//    @GetMapping("/board/like/{userIndex}")
+//    public ResponseEntity<List<BoardListResponseDto>> findHeartedBoard(@PathVariable Long userIndex){
+//        HttpStatus status = HttpStatus.OK;
+//        List<BoardListResponseDto> list = new ArrayList<>();
+//
+//        return ResponseEntity.status(status).body(list);
+//    }
 }

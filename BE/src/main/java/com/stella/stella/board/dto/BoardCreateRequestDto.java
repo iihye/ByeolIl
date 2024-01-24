@@ -4,6 +4,8 @@ import com.stella.stella.board.entity.BoardAccessStatus;
 import com.stella.stella.board.entity.BoardDeleteYN;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +15,9 @@ import java.util.List;
 @Builder
 public class BoardCreateRequestDto {
 
-    private Long userIndex;
+    private Long memberIndex;
     private String boardContent;
+    private LocalDate boardInputDate;
     private List<String> boardMedia;
     private Long boardLocation;
     private BoardAccessStatus boardAccess;

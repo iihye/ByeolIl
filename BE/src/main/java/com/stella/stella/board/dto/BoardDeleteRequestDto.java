@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BoardDeleteRequestDto {
     private Long boardIndex;
+    private Long memberIndex;
 }

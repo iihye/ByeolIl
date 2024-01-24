@@ -1,6 +1,5 @@
 package com.stella.stella.member.entity;
 
-import com.stella.stella.follow.entity.Follow;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
 import java.util.Collection;
-import java.util.List;
 
 @Data
 @Builder

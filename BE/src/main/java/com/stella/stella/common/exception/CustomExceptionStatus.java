@@ -17,7 +17,8 @@ public enum CustomExceptionStatus {
     MEMBER_INVALID(1008, "존재하지 않는 사용자입니다"),
 
     // board 관련
-
+    BOARDID_INVALID(1101, "유효하지 않은 게시글 정보입니다."),
+    MEMBERID_INVALID(1102, "본인의 작성글이 아닙니다."),
     // follow 관련
     FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다");
 
