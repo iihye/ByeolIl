@@ -1,4 +1,4 @@
-package com.stella.stella.Jwt;
+package com.stella.stella.common.Jwt;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

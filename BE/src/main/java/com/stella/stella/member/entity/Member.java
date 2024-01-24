@@ -56,7 +56,7 @@ public class Member implements UserDetails {
 	private String memberName;
 
 	@Column(name = "member_birth")
-	private Date memberBirth;
+	private LocalDate memberBirth;
 
 	@Column(name = "member_nickname", unique = true)
 	private String memberNickname;
@@ -75,7 +75,7 @@ public class Member implements UserDetails {
 	private MemberRadioStatus memberRadioStatus;
 
 	@Column(name = "member_ban_date")
-	private Date memberBanDate;
+	private LocalDate memberBanDate;
 
 	@Column(name = "member_refresh_token")
 	private String memberRefreshToken;
@@ -90,7 +90,7 @@ public class Member implements UserDetails {
 	private MemberDeleteYN memberDeleteYN;
 
 	@Column(name = "member_delete_date")
-	private Date memberDeleteDate;
+	private LocalDate memberDeleteDate;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

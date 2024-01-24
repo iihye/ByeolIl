@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +18,7 @@ import java.sql.Date;
 @Builder
 public class MemberJoinRequestDto {
 	private String memberId, memberPass, memberPlatform, memberName, memberNickname, memberEmail;
-	private Date memberBirth;
+	private LocalDate memberBirth;
 	
 	public Member toEntity(){
 		return Member.builder()
