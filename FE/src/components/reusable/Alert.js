@@ -4,6 +4,7 @@ import axios from "axios";
 /*
 1. 모달 컴포넌트 html 작성
 2. 신고 내용, 비밀번호 입력 내용 공백 검사
+
 */
 
 function Alert({ type, boardIndex }) {
