@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowRequestDto {
-    Long toMemberIndex;
-    Long fromMemberIndex;
+public class FollowListResponseDto {
+    String memberId;
+    String memberName;
 }
