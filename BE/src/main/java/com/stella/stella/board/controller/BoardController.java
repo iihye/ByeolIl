@@ -17,7 +17,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -93,22 +95,25 @@ public class BoardController {
 
 
     @GetMapping("/star/{memberIndex}")
-    public ResponseEntity<List<BoardListResponseDto>> findAllBoardToStar(@PathVariable Long memberIndex, Model model , @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<Map<String,Object>> findAllBoardToStar(@PathVariable Long memberIndex, @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.DESC) Pageable pageable){
+        Map<String,Object> map = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         List<BoardListResponseDto> list = new ArrayList<>();
         try {
             Page<Board> boards = boardService.showAllBoardToStar(memberIndex, pageable);
-            model.addAttribute("totalPage",boards.getTotalPages());
+            map.put("totalPage",boards.getTotalPages());
             //총 페이지 넘버
-            model.addAttribute("previousPageNumber",boards.previousOrFirstPageable().getPageNumber());
+            map.put("previousPageNumber",boards.previousOrFirstPageable().getPageNumber());
             //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
-            model.addAttribute("nextPageNumber",boards.nextOrLastPageable().getPageNumber());
+            map.put("nextPageNumber",boards.nextOrLastPageable().getPageNumber());
             //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
             list = boardService.wrapBoardToDto(memberIndex,boards.getContent());
+            map.put("BoardListResponseDtoList",list);
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
+            map.put("error", e.getMessage());
         }
-        return ResponseEntity.status(status).body(list);
+        return ResponseEntity.status(status).body(map);
     }
 //    @GetMapping("/board/list/{memberIndex}")
 //
