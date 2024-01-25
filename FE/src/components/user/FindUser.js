@@ -13,13 +13,11 @@ function FindUser() {
     useEffect(() => {
         const fetchData = async () => {
             await axios
-                .get(
-                    'https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/search?user=2'
-                )
+                .get(`${process.env.REACT_APP_API_URL}/member/search/list`)
                 .then((response) => {
                     setListData(response.data);
                 })
-                .catch((e) => console.log(e));
+                .catch((e) => console.log(e.response.status));
         };
 
         fetchData();
