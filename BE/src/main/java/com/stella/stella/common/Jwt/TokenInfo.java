@@ -1,4 +1,4 @@
-package com.stella.stella.Jwt;
+package com.stella.stella.common.Jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

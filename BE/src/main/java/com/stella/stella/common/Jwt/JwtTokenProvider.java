@@ -1,4 +1,4 @@
-package com.stella.stella.Jwt;
+package com.stella.stella.common.Jwt;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -14,8 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import com.stella.stella.member.entity.Member;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -47,8 +45,8 @@ public class JwtTokenProvider {
 
 		long now = (new Date()).getTime();
 		// Access Token 생성
-		Date accessTokenRefreshIn = new Date(now + 180000);
-		Date accessTokenExpiresIn = new Date(now + 300000);
+		Date accessTokenRefreshIn = new Date(now + 480000);
+		Date accessTokenExpiresIn = new Date(now + 600000);
 		String accessToken = Jwts.builder().setSubject(authentication.getName()).claim("auth", authorities)
 				.claim("refresh", accessTokenRefreshIn).setExpiration(accessTokenExpiresIn)
 				.signWith(key, SignatureAlgorithm.HS256).compact();
