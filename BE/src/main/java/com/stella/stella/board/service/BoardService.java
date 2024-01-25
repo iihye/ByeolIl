@@ -3,6 +3,7 @@ package com.stella.stella.board.service;
 import com.stella.stella.board.dto.*;
 import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.entity.Hash;
+import com.stella.stella.board.entity.Heart;
 import com.stella.stella.board.entity.Media;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.board.repository.HashRepository;
@@ -126,7 +127,7 @@ public class BoardService {
     public void deleteBoard(BoardDeleteRequestDto dto) {
         int boardCount = boardRepository.countByBoardIndex(dto.getBoardIndex());
         if (boardCount == 1) {
-            if(boardRepository.findByBoardIndex(dto.getBoardIndex()).getMember().getMemberIndex()==dto.getMemberIndex()){
+            if(boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow().getMember().getMemberIndex()==dto.getMemberIndex()){
                 boardRepository.deleteById(dto.getBoardIndex());
             }else{
                 throw new CustomException(CustomExceptionStatus.MEMBER_INVALID);
@@ -138,32 +139,29 @@ public class BoardService {
     }
 
     @Transactional
-    public Page<Board> showAllBoardToStar (Long memberIndex, Pageable pageable){
+    public Page<Board> showAllBoard (Long memberIndex, Pageable pageable){
 
        return boardRepository.findByMemberMemberIndex(memberIndex,pageable);
 
 
     }
+    public Page<Board> showMyHeartBoard (Long memberIndex, Pageable pageable){
 
-    @Transactional
-    public List<BoardListResponseDto> wrapBoardToDto (Long memberIndex, List<Board> list){
+       List<Heart> Hearts = heartRepository.findAllByMemberMemberIndex(memberIndex).orElse(Collections.emptyList());
 
-        List<BoardListResponseDto> dtoList = new ArrayList<>();
-        for(Board b : list){
-            dtoList.add(BoardListResponseDto.builder()
-                    .boardIndex(b.getBoardIndex())
-                    .memberIndex(memberIndex)
-                    .boardRegTime(b.getBoardRegtime())
-                    .boardUpdateDate(b.getBoardUpdateDate())
-                    .boardInputDate(b.getBoardInputDate())
-                    .boardContent(b.getBoardContent())
-                    .boardLocation(b.getBoardLocation())
-                    .boardAccess(b.getBoardAccess())
-                    .boardHeart(b.getHearts().size())
-                    .Hash(b.getHashes().stream().map(Hash::getHashContent).toList()).build());
-        }
-        return dtoList;
+       if(Hearts.isEmpty()) throw new CustomException(CustomExceptionStatus.NO_HEART_CONTENT);
+
+       List<Long> boardIndexList = new ArrayList<>();
+
+       for(Heart H : Hearts){
+           boardIndexList.add(H.getBoard().getBoardIndex());
+       }
+
+      return boardRepository.findByBoardIndex(boardIndexList,pageable);
+
     }
+
+
 
 //    @Transactional
 //    public List<BoardListResponseDto> showAllBoardToList (Long memberIndex){

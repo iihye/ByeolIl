@@ -77,8 +77,9 @@ public class BoardController {
         }
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
+
     @DeleteMapping("/")
-    public ResponseEntity<ResultResponseDto> deleteBoard(@RequestBody BoardDeleteRequestDto boardDeleteRequestDto){
+    public ResponseEntity<ResultResponseDto> deleteBoard(@RequestBody BoardDeleteRequestDto boardDeleteRequestDto) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
@@ -95,53 +96,71 @@ public class BoardController {
 
 
     @GetMapping("/star/{memberIndex}")
-    public ResponseEntity<Map<String,Object>> findAllBoardToStar(@PathVariable Long memberIndex, @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.DESC) Pageable pageable){
-        Map<String,Object> map = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> findAllBoardToStar(@PathVariable Long memberIndex, @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.ASC) Pageable pageable) {
+        Map<String, Object> responseBody = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         List<BoardListResponseDto> list = new ArrayList<>();
         try {
-            Page<Board> boards = boardService.showAllBoardToStar(memberIndex, pageable);
-            map.put("totalPage",boards.getTotalPages());
+            Page<Board> boards = boardService.showAllBoard(memberIndex, pageable);
+            responseBody.put("totalPage", boards.getTotalPages());
             //총 페이지 넘버
-            map.put("previousPageNumber",boards.previousOrFirstPageable().getPageNumber());
+            responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
             //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
-            map.put("nextPageNumber",boards.nextOrLastPageable().getPageNumber());
+            responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
             //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
-            list = boardService.wrapBoardToDto(memberIndex,boards.getContent());
-            map.put("BoardListResponseDtoList",list);
+            list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
+            responseBody.put("BoardListResponseDtoList", list);
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            map.put("error", e.getMessage());
+            responseBody.put("error", e.getMessage());
         }
-        return ResponseEntity.status(status).body(map);
+        return ResponseEntity.status(status).body(responseBody);
     }
-//    @GetMapping("/board/list/{memberIndex}")
-//
-//    public ResponseEntity<List<BoardListResponseDto>> findAllBoardtoList(@PathVariable Long memberIndex){
-//        HttpStatus status = HttpStatus.OK;
-//        List<BoardListResponseDto> list = new ArrayList<>();
-//        try {
-//            list = boardService.showAllBoardtoList(memberIndex);
-//        } catch (NullPointerException e) {
-//            status = HttpStatus.NOT_FOUND;
-//        } catch (Exception e) {
-//            status = HttpStatus.BAD_REQUEST;
-//        }
-//        return ResponseEntity.status(status).body(list);
-//    }
-//
-//    @GetMapping("/board/like/{memberIndex}")
-//    public ResponseEntity<List<BoardListResponseDto>> findHeartedBoard(@PathVariable Long memberIndex){
-//        HttpStatus status = HttpStatus.OK;
-//        List<BoardListResponseDto> list = new ArrayList<>();
-//        try {
-//            list = boardService.showHeartedBoard(memberIndex);
-//        } catch (NullPointerException e) {
-//            status = HttpStatus.NOT_FOUND;
-//        } catch (Exception e) {
-//            status = HttpStatus.BAD_REQUEST;
-//        }
-//        return ResponseEntity.status(status).body(list);
-//    }
+
+    @GetMapping("/list/{memberIndex}")
+
+    public ResponseEntity<Map<String, Object>> findAllBoardtoList(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable) {
+        Map<String, Object> responseBody = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        List<BoardListResponseDto> list = new ArrayList<>();
+        try {
+            Page<Board> boards = boardService.showAllBoard(memberIndex, pageable);
+            responseBody.put("totalPage", boards.getTotalPages());
+            //총 페이지 넘버
+            responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
+            //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
+            responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
+            //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
+            list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
+            responseBody.put("BoardListResponseDtoList", list);
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseBody.put("error", e.getMessage());
+        }
+        return ResponseEntity.status(status).body(responseBody);
+    }
+
+
+    @GetMapping("/like/{memberIndex}")
+    public ResponseEntity<Map<String, Object>> findMyHeartBoard(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable){
+        Map<String, Object> responseBody = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        List<BoardListResponseDto> list = new ArrayList<>();
+        try {
+            Page<Board> boards = boardService.showMyHeartBoard(memberIndex, pageable);
+            responseBody.put("totalPage", boards.getTotalPages());
+            //총 페이지 넘버
+            responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
+            //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
+            responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
+            //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
+            list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
+            responseBody.put("BoardListResponseDtoList", list);
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseBody.put("error", e.getMessage());
+        }
+        return ResponseEntity.status(status).body(responseBody);
+    }
 
 }
