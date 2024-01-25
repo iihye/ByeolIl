@@ -8,8 +8,8 @@ function FollowList() {
 
     const menuArr = useMemo(() => {
         // 데이터를 받은 후에 content를 설정
-        const followContent = followData.map((it) => it.userName);
-        const followerContent = followerData.map((it) => it.userName);
+        const followContent = followData.map((it) => it.memberName);
+        const followerContent = followerData.map((it) => it.memberName);
 
         return [
             { name: '팔로우', content: followContent },
@@ -22,17 +22,17 @@ function FollowList() {
             try {
                 const [followResponse, followerResponse] = await axios.all([
                     axios.get(
-                        'https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/follow/following/1'
+                        `${process.env.REACT_APP_API_URL}/follow/following/1`
                     ),
                     axios.get(
-                        'https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/follow/follower/2'
+                        `${process.env.REACT_APP_API_URL}/follow/follower/1`
                     ),
                 ]);
 
-                setFollowData(followResponse.data);
-                setFollowerData(followerResponse.data);
+                setFollowData(followResponse.data.result);
+                setFollowerData(followerResponse.data.result);
             } catch (error) {
-                console.error(error);
+                console.error(error.response.status);
             }
         };
 
@@ -57,7 +57,7 @@ function FollowList() {
                 {menuArr[currentTab].content.map((userName, index) => (
                     <li key={index}>
                         <p>{userName}</p>
-                        <button>언팔로우</button>
+                        {/* <button>언팔로우</button> */}
                     </li>
                 ))}
             </ul>
