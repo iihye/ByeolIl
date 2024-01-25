@@ -33,6 +33,7 @@ public class SecurityConfig {
 				.requestMatchers("/member/login/**").permitAll()
 				.requestMatchers("/member/join/**").permitAll()
 				.requestMatchers("/follow/**").permitAll()
+				.requestMatchers("/alarm/**").permitAll()
 				.requestMatchers("/member/dup-check/**").permitAll()
 				.requestMatchers("/member/test").hasRole("USER")
 				.requestMatchers("/member/check/email").permitAll()

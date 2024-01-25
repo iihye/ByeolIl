@@ -17,11 +17,13 @@ public enum CustomExceptionStatus {
     MEMBER_INVALID(1008, "존재하지 않는 사용자입니다"),
 
     // board 관련
+    BOARD_INVALID(1101, "존재하지 않는 게시글입니다"),
 
     // follow 관련
-    FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다");
+    FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다"),
 
     // alarm 관련
+    ALARM_INVALID(1301, "존재하지 않는 알림입니다");
 
     // radio 관련
 
