@@ -55,9 +55,9 @@ function SidebarList(props) {
 export default function Sidebar(props) {
     const [viewSideBar, setViewSideBar] = useState(false);
 
-    function toggleSidebar() {
+    const toggleSidebar = () => {
         setViewSideBar(!viewSideBar);
-    }
+    };
 
     return (
         <div className="Sidebar">
