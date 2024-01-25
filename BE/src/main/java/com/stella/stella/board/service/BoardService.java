@@ -160,19 +160,5 @@ public class BoardService {
       return boardRepository.findByBoardIndexIn(boardIndexList,pageable);
 
     }
-    @Transactional
-    public void addHeart(HeartRequestDto dto) {
-        Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow();
-        System.out.println(board.getBoardContent());
-        Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow();
-        System.out.println(member.getMemberBirth());
-        Heart heart = Heart.builder()
-                .board(board)
-                .member(member)
-                .build();
-
-        heartRepository.save(heart);
-    }
-
 
 }
