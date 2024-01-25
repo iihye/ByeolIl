@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
-@CrossOrigin("*")
 public class MemberController {
 
     @Autowired
