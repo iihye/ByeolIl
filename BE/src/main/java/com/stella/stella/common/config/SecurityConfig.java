@@ -42,7 +42,8 @@ public class SecurityConfig {
 //                .requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 				.anyRequest().authenticated().and().addFilterBefore(
 						new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, authenticationManagerBuilder),
-						UsernamePasswordAuthenticationFilter.class);
+						UsernamePasswordAuthenticationFilter.class)
+				.cors();
 		return http.build();
 	}
 

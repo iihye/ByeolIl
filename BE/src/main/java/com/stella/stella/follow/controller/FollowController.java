@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/follow")
+@CrossOrigin("*")
 public class FollowController {
     private final FollowService followService;
 
