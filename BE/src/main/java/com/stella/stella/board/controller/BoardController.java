@@ -1,12 +1,19 @@
 package com.stella.stella.board.controller;
 
 import com.stella.stella.board.dto.*;
+import com.stella.stella.board.entity.Board;
+import com.stella.stella.board.entity.Hash;
 import com.stella.stella.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -85,12 +92,31 @@ public class BoardController {
     }
 
 
-//    @GetMapping("/board/star/{userIndex}")
-//    public ResponseEntity<List<BoardListResponseDto>> findAllBoardtoStar(@PathVariable Long userIndex){
+    @GetMapping("/star/{memberIndex}")
+    public ResponseEntity<List<BoardListResponseDto>> findAllBoardToStar(@PathVariable Long memberIndex, Model model , @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.DESC) Pageable pageable){
+        HttpStatus status = HttpStatus.OK;
+        List<BoardListResponseDto> list = new ArrayList<>();
+        try {
+            Page<Board> boards = boardService.showAllBoardToStar(memberIndex, pageable);
+            model.addAttribute("totalPage",boards.getTotalPages());
+            //총 페이지 넘버
+            model.addAttribute("previousPageNumber",boards.previousOrFirstPageable().getPageNumber());
+            //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
+            model.addAttribute("nextPageNumber",boards.nextOrLastPageable().getPageNumber());
+            //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
+            list = boardService.wrapBoardToDto(memberIndex,boards.getContent());
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(list);
+    }
+//    @GetMapping("/board/list/{memberIndex}")
+//
+//    public ResponseEntity<List<BoardListResponseDto>> findAllBoardtoList(@PathVariable Long memberIndex){
 //        HttpStatus status = HttpStatus.OK;
 //        List<BoardListResponseDto> list = new ArrayList<>();
 //        try {
-//            boardService.showAllBoardtoList
+//            list = boardService.showAllBoardtoList(memberIndex);
 //        } catch (NullPointerException e) {
 //            status = HttpStatus.NOT_FOUND;
 //        } catch (Exception e) {
@@ -98,19 +124,19 @@ public class BoardController {
 //        }
 //        return ResponseEntity.status(status).body(list);
 //    }
-//    @GetMapping("/board/list/{userIndex}")
 //
-//    public ResponseEntity<List<BoardListResponseDto>> findAllBoardtoList(@PathVariable Long userIndex){
+//    @GetMapping("/board/like/{memberIndex}")
+//    public ResponseEntity<List<BoardListResponseDto>> findHeartedBoard(@PathVariable Long memberIndex){
 //        HttpStatus status = HttpStatus.OK;
 //        List<BoardListResponseDto> list = new ArrayList<>();
-//
+//        try {
+//            list = boardService.showHeartedBoard(memberIndex);
+//        } catch (NullPointerException e) {
+//            status = HttpStatus.NOT_FOUND;
+//        } catch (Exception e) {
+//            status = HttpStatus.BAD_REQUEST;
+//        }
 //        return ResponseEntity.status(status).body(list);
 //    }
-//    @GetMapping("/board/like/{userIndex}")
-//    public ResponseEntity<List<BoardListResponseDto>> findHeartedBoard(@PathVariable Long userIndex){
-//        HttpStatus status = HttpStatus.OK;
-//        List<BoardListResponseDto> list = new ArrayList<>();
-//
-//        return ResponseEntity.status(status).body(list);
-//    }
+
 }

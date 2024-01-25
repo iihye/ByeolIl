@@ -1,5 +1,6 @@
 package com.stella.stella.board.repository;
 
+import com.stella.stella.board.dto.BoardListResponseDto;
 import com.stella.stella.board.entity.Board;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +12,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     int countByBoardIndex(Long BoardIndex);
     Board findByBoardIndex(Long BoardIndex);
-//    Page<Board> findbyBoardLocation(Long BoardLocation, Pageable pageable);
-//    Page<Board> findbyBoard(Long BoardLocation, Pageable pageable);
-//    Page<Board> findbyBoardLocation(Long BoardLocation, Pageable pageable);
+
+    int countByBoardLocation(Long BoardLocation);
+    Page<Board> findByMemberMemberIndex(Long MemberIndex, Pageable pageable);
+
 
 }

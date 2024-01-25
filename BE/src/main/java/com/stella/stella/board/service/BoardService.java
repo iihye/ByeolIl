@@ -1,9 +1,6 @@
 package com.stella.stella.board.service;
 
-import com.stella.stella.board.dto.BoardCreateRequestDto;
-import com.stella.stella.board.dto.BoardDeleteRequestDto;
-import com.stella.stella.board.dto.BoardStarResponseDto;
-import com.stella.stella.board.dto.BoardUpdateRequestDto;
+import com.stella.stella.board.dto.*;
 import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.entity.Hash;
 import com.stella.stella.board.entity.Media;
@@ -17,9 +14,14 @@ import com.stella.stella.member.entity.Member;
 import com.stella.stella.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +41,9 @@ public class BoardService {
     @Transactional
     public void createBoard(BoardCreateRequestDto dto) {
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
-        System.out.println(dto.getBoardInputDate());
+        if(boardRepository.countByBoardLocation(dto.getBoardLocation())!=0) throw new CustomException(CustomExceptionStatus.ALREADY_LOCATED);
+        //location이 중복 안되게 유니크를 줘서 등록은 안되는데 entity가 만들어졌다가 등록이 안되는 거라
+        //index값은 증가해버려서 방지하기 위해 넣음
         Board board = Board.builder()
                 .boardInputDate(dto.getBoardInputDate())
                 .boardContent(dto.getBoardContent())
@@ -132,4 +136,42 @@ public class BoardService {
             throw new CustomException(CustomExceptionStatus.BOARDID_INVALID);
         }
     }
+
+    @Transactional
+    public Page<Board> showAllBoardToStar (Long memberIndex, Pageable pageable){
+
+       return boardRepository.findByMemberMemberIndex(memberIndex,pageable);
+
+
+    }
+
+    @Transactional
+    public List<BoardListResponseDto> wrapBoardToDto (Long memberIndex, List<Board> list){
+
+        List<BoardListResponseDto> dtoList = new ArrayList<>();
+        for(Board b : list){
+            dtoList.add(BoardListResponseDto.builder()
+                    .boardIndex(b.getBoardIndex())
+                    .memberIndex(memberIndex)
+                    .boardRegTime(b.getBoardRegtime())
+                    .boardUpdateDate(b.getBoardUpdateDate())
+                    .boardInputDate(b.getBoardInputDate())
+                    .boardContent(b.getBoardContent())
+                    .boardLocation(b.getBoardLocation())
+                    .boardAccess(b.getBoardAccess())
+                    .boardHeart(b.getHearts().size())
+                    .Hash(b.getHashes().stream().map(Hash::getHashContent).toList()).build());
+        }
+        return dtoList;
+    }
+
+//    @Transactional
+//    public List<BoardListResponseDto> showAllBoardToList (Long memberIndex){
+//
+//    }
+//
+//    @Transactional
+//    public List<BoardListResponseDto> showHeartedBoard (Long memberIndex){
+//
+//    }
 }

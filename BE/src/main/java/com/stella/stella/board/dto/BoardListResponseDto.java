@@ -1,7 +1,9 @@
 package com.stella.stella.board.dto;
 
+import com.stella.stella.board.entity.BoardAccessStatus;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,13 +14,14 @@ import java.util.List;
 public class BoardListResponseDto {
 
 
-    private int boardIndex;
-    private int userIndex;
+    private Long boardIndex;
+    private Long memberIndex;
     private LocalDateTime boardRegTime;
-    private LocalDateTime boardInputDate;
+    private LocalDateTime boardUpdateDate;
+    private LocalDate boardInputDate;
     private  String boardContent;
-    private  int boardLocation;
-    private  String boardAccess;
-    private  int boardLike;
-    private List<String> tagContent;
+    private  Long boardLocation;
+    private BoardAccessStatus boardAccess;
+    private  int boardHeart;
+    private List<String> Hash;
 }
