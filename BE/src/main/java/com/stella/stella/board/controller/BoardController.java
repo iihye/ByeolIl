@@ -4,6 +4,7 @@ import com.stella.stella.board.dto.*;
 import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.entity.Hash;
 import com.stella.stella.board.service.BoardService;
+import com.stella.stella.board.service.HeartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BoardController {
 
-    @Autowired
     private final BoardService boardService;
+    private final HeartService heartService;
 
     @PostMapping("/")
     public ResponseEntity<ResultResponseDto> saveBoard(@RequestBody BoardCreateRequestDto boardCreateRequestDto) {
@@ -126,11 +127,8 @@ public class BoardController {
         try {
             Page<Board> boards = boardService.showAllBoard(memberIndex, pageable);
             responseBody.put("totalPage", boards.getTotalPages());
-            //총 페이지 넘버
             responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
-            //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
             responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
-            //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
             list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
             responseBody.put("BoardListResponseDtoList", list);
         } catch (Exception e) {
@@ -149,11 +147,8 @@ public class BoardController {
         try {
             Page<Board> boards = boardService.showMyHeartBoard(memberIndex, pageable);
             responseBody.put("totalPage", boards.getTotalPages());
-            //총 페이지 넘버
             responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
-            //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
             responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
-            //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
             list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
             responseBody.put("BoardListResponseDtoList", list);
         } catch (Exception e) {
@@ -161,6 +156,41 @@ public class BoardController {
             responseBody.put("error", e.getMessage());
         }
         return ResponseEntity.status(status).body(responseBody);
+    }
+
+    @PostMapping("/like")
+    public ResponseEntity<ResultResponseDto> saveHeart(@RequestBody HeartRequestDto heartRequestDto){
+        HttpStatus status = HttpStatus.OK;
+        String message = "success";
+
+        try{
+            heartService.addHeart(heartRequestDto);
+        }catch (NullPointerException e) {
+            status = HttpStatus.NOT_FOUND;
+            message = "fail";
+        } catch (Exception e) {
+        status = HttpStatus.BAD_REQUEST;
+        message = "fail";
+    }
+
+        return ResponseEntity.status(status).body(new ResultResponseDto(message));
+    }
+    @DeleteMapping("/like")
+    public ResponseEntity<ResultResponseDto> deleteHeart(@RequestBody HeartRequestDto heartRequestDto){
+        HttpStatus status = HttpStatus.OK;
+        String message = "success";
+
+        try{
+            heartService.removeHeart(heartRequestDto);
+        }catch (NullPointerException e) {
+            status = HttpStatus.NOT_FOUND;
+            message = "fail";
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            message = "fail";
+        }
+
+        return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
 
 }
