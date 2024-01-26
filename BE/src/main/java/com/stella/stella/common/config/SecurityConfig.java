@@ -29,6 +29,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
+				.csrf().disable()
 				.authorizeRequests(authorizeRequests ->
 						authorizeRequests
 								.requestMatchers("/member/login/**").permitAll()
@@ -47,7 +48,7 @@ public class SecurityConfig {
 				.addFilterBefore(
 						new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, authenticationManagerBuilder),
 						UsernamePasswordAuthenticationFilter.class)
-				.csrf().disable()
+
 				.headers().frameOptions().disable()
 				.and()
 				.cors(); // CORS 활성화
