@@ -24,7 +24,7 @@ public enum CustomExceptionStatus {
     HEART_INVALID(1105,"유효한 좋아요 정보가 아닙니다."),
     ALREADY_HEARTED(1106,"이미 좋아요한 게시글입니다."),
     // follow 관련
-    FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다");
+    FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다"),
 
     // alarm 관련
     ALARM_INVALID(1301, "존재하지 않는 알림입니다");
