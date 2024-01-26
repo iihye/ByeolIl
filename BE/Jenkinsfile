@@ -32,7 +32,7 @@ pipeline {
                     echo 'Deploy BE...'
                     docker stop springboot
                     docker rm springboot
-                    docker run -d -p 8080:8080 --name springboot docker-springboot:0.0.1
+                    docker run -d -p 8081:8080 --name springboot docker-springboot:0.0.1
                     '''
                 }
             }
