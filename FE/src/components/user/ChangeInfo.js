@@ -3,9 +3,6 @@ import React, { useRef, useState } from "react";
 // 사이드바에-> 소셜로그인회원은 안되고 일반로그인회원은 비밀번호 수정 버튼 있다. -> 
 // PWCheck를 먼저 가고 -> PWCheck에서 비밀번호 검사-> 검사 통과시에 ChangeInfo에 연결.
 // 비밀번호만 수정할 수 있다.
-// - 사용자는 회원정보 수정 페이지로 이동할 때 비밀번호를 다시 확인하는 절차를 거친다.
-//  ⇒ 소셜 로그인 유저의 경우에는? 비밀번호 수정 불가...
-
 
 export default function ChangeInfo() {
  const password = useRef("");
