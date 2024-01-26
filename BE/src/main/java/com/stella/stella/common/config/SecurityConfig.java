@@ -29,23 +29,19 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-
 				.authorizeRequests(authorizeRequests ->
 						authorizeRequests
-								.requestMatchers("/**").permitAll()
-//								.requestMatchers("/error").permitAll()
-								.anyRequest().authenticated()
-//								.requestMatchers("/member/login/**").permitAll()
-//								.requestMatchers("/member/join/**").permitAll()
-//								.requestMatchers("/follow/**").permitAll()
-//								.requestMatchers("/member/dup-check/**").permitAll()
-//								.requestMatchers("/member/test").hasRole("USER")
-//								.requestMatchers("/member/check/email").permitAll()
-//								.requestMatchers("/member/find/**").permi	tAll()
-//								.requestMatchers("/member/ban").hasRole("ADMIN")
-//								.requestMatchers("/member/search/list").permitAll()
+								.requestMatchers("/api/member/login/**").permitAll()
+								.requestMatchers("/api/member/join/**").permitAll()
+								.requestMatchers("/api/follow/**").permitAll()
+								.requestMatchers("/api/member/dup-check/**").permitAll()
+								.requestMatchers("/api/member/test").hasRole("USER")
+								.requestMatchers("/api/member/check/email").permitAll()
+								.requestMatchers("/api/member/find/**").permitAll()
+								.requestMatchers("/api/member/ban").hasRole("ADMIN")
+								.requestMatchers("/api/member/search/list").permitAll()
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
-//								.anyRequest().authenticated()
+								.anyRequest().authenticated()
 
 				)
 				.addFilterBefore(
@@ -53,7 +49,7 @@ public class SecurityConfig {
 						UsernamePasswordAuthenticationFilter.class)
 				.csrf().disable()
 				.headers().frameOptions().disable()
-				.and()///
+				.and()
 				.cors(); // CORS 활성화
 
 //		http.httpBasic().disable().csrf().disable().sessionManagement()
