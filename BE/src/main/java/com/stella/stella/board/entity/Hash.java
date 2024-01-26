@@ -23,7 +23,7 @@ public class Hash {
     private Board board;
 
     @Column(name = "hash_content", nullable = false, length = 20)
-    private String hash_content;
+    private String hashContent;
     //같은 해시태그 입력 못하게 막아야함
 
     @ManyToOne

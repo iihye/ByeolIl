@@ -1,7 +1,6 @@
 package com.stella.stella.board.dto;
 
 import com.stella.stella.board.entity.BoardAccessStatus;
-import com.stella.stella.board.entity.BoardDeleteYN;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,14 +10,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoardCreateRequestDto {
+public class BoardUpdateRequestDto {
 
+    private Long boardIndex;
     private Long memberIndex;
-    private String boardContent;
     private LocalDate boardInputDate;
+    private String boardContent;
     private List<String> boardMedia;
-    private Long boardLocation;
     private BoardAccessStatus boardAccess;
-    private BoardDeleteYN boardDeleteYN;
-    private List<String> hashContent;
+
+
 }
