@@ -31,15 +31,15 @@ public class SecurityConfig {
 		http
 				.authorizeRequests(authorizeRequests ->
 						authorizeRequests
-								.requestMatchers("/member/login/**").permitAll()
-								.requestMatchers("/member/join/**").permitAll()
-								.requestMatchers("/follow/**").permitAll()
-								.requestMatchers("/member/dup-check/**").permitAll()
-								.requestMatchers("/member/test").hasRole("USER")
-								.requestMatchers("/member/check/email").permitAll()
-								.requestMatchers("/member/find/**").permitAll()
-								.requestMatchers("/member/ban").hasRole("ADMIN")
-								.requestMatchers("/member/search/list").permitAll()
+								.requestMatchers("/api/member/login/**").permitAll()
+								.requestMatchers("/api/member/join/**").permitAll()
+								.requestMatchers("/api/follow/**").permitAll()
+								.requestMatchers("/api/member/dup-check/**").permitAll()
+								.requestMatchers("/api/member/test").hasRole("USER")
+								.requestMatchers("/api/member/check/email").permitAll()
+								.requestMatchers("/api/member/find/**").permitAll()
+								.requestMatchers("/api/member/ban").hasRole("ADMIN")
+								.requestMatchers("/api/member/search/list").permitAll()
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 								.anyRequest().authenticated()
 
