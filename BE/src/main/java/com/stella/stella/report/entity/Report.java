@@ -15,6 +15,9 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Table(name = "report",
+        uniqueConstraints = @UniqueConstraint(name = "UniqueReportSet", columnNames = {"board_index", "member_index"}))
+
 public class Report {
 
     @Id

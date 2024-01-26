@@ -5,6 +5,7 @@ import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.entity.Hash;
 import com.stella.stella.board.service.BoardService;
 import com.stella.stella.board.service.HeartService;
+import com.stella.stella.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final HeartService heartService;
+    private final ReportService reportService;
 
     @PostMapping("/")
     public ResponseEntity<ResultResponseDto> saveBoard(@RequestBody BoardCreateRequestDto boardCreateRequestDto) {
@@ -192,5 +194,21 @@ public class BoardController {
 
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
+    @PostMapping("/report")
+    public ResponseEntity<ResultResponseDto> saveReport(@RequestBody BoardReportRequestDto boardReportRequestDto){
+        HttpStatus status = HttpStatus.OK;
+        String message = "success";
 
+        try{
+            reportService.addReport(boardReportRequestDto);
+        }catch (NullPointerException e) {
+            status = HttpStatus.NOT_FOUND;
+            message = "fail";
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            message = "fail";
+        }
+
+        return ResponseEntity.status(status).body(new ResultResponseDto(message));
+    }
 }

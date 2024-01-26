@@ -13,13 +13,13 @@ import java.util.List;
 @Builder
 public class BoardStarResponseDto {
     private LocalDateTime boardRegtime;
-   private LocalDate boardInputDate;
-   private LocalDateTime boardUpdateDate;
-   private String boardContent;
-   private List<String> boardMedia;
-   private BoardAccessStatus boardAccess;
-   private int boardLike;
-  private List<String> hashContent;
+    private LocalDate boardInputDate;
+    private LocalDateTime boardUpdateDate;
+    private String boardContent;
+    private List<String> boardMedia;
+    private BoardAccessStatus boardAccess;
+    private int boardLike;
+    private List<String> hashContent;
 
 
 }
