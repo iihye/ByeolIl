@@ -54,6 +54,7 @@ function Login() {
                     `${process.env.REACT_APP_API_URL}/member/login/origin`,
                     loginInfo
                 );
+
                 const token = `Bearer ${response.data.token}`;
                 localStorage.setItem('token', token);
                 axios.defaults.headers.common[
