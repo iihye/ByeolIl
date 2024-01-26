@@ -32,27 +32,28 @@ public class SecurityConfig {
 
 				.authorizeRequests(authorizeRequests ->
 						authorizeRequests
-								.requestMatchers("/**")
-								.permitAll()
+								.requestMatchers("/**").permitAll()
+//								.requestMatchers("/error").permitAll()
+								.anyRequest().authenticated()
 //								.requestMatchers("/member/login/**").permitAll()
 //								.requestMatchers("/member/join/**").permitAll()
 //								.requestMatchers("/follow/**").permitAll()
 //								.requestMatchers("/member/dup-check/**").permitAll()
 //								.requestMatchers("/member/test").hasRole("USER")
 //								.requestMatchers("/member/check/email").permitAll()
-//								.requestMatchers("/member/find/**").permitAll()
+//								.requestMatchers("/member/find/**").permi	tAll()
 //								.requestMatchers("/member/ban").hasRole("ADMIN")
 //								.requestMatchers("/member/search/list").permitAll()
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 //								.anyRequest().authenticated()
 
 				)
-//				.addFilterBefore(
-//						new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, authenticationManagerBuilder),
-//						UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(
+						new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, authenticationManagerBuilder),
+						UsernamePasswordAuthenticationFilter.class)
 				.csrf().disable()
 				.headers().frameOptions().disable()
-				.and()
+				.and()///
 				.cors(); // CORS 활성화
 
 //		http.httpBasic().disable().csrf().disable().sessionManagement()
