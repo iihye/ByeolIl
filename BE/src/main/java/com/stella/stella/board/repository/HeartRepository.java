@@ -1,6 +1,5 @@
 package com.stella.stella.board.repository;
 
-import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.entity.Heart;
 import org.springframework.data.jpa.repository.JpaRepository;
 
