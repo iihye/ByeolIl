@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 @Data
@@ -25,10 +24,13 @@ public class MemberJoinRequestDto {
 				.memberId(memberId)
 				.memberPass(memberPass)
 				.memberPlatform(memberPlatform)
+				.memberRole(MemberRole.USER)
 				.memberName(memberName)
 				.memberBirth(memberBirth)
 				.memberNickname(memberNickname)
 				.memberEmail(memberEmail)
+				.memberAlarmStatus(MemberAlarmStatus.ACCEPT)
+				.memberRadioStatus(MemberRadioStatus.OLDEST)
 				.build();
 	}
 }

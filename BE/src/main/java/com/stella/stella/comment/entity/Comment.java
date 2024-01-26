@@ -41,7 +41,7 @@ public class Comment {
     private Board board;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<MultiComment> multiComments = new ArrayList<>();
+    private List<MultiComment> multiComments ;
 
     public void setCommentContent(String commentContent) {
         this.commentContent = commentContent;

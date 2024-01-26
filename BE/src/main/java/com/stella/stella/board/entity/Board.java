@@ -5,14 +5,13 @@ import com.stella.stella.member.entity.Member;
 import com.stella.stella.report.entity.Report;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,33 +33,46 @@ public class Board {
     private LocalDateTime boardRegtime; //처음 등록 시점
 
     @LastModifiedDate
+    @Column(name = "board_update_date")
+    private LocalDateTime boardUpdateDate; //(최근 수정 날짜)
+
     @Column(name = "board_input_date")
-    private LocalDate boardInputdate;   //사용자 입력 날짜(최근 수정 날짜)
+    private LocalDate boardInputDate;   //사용자 입력 날짜
 
     @Column(name = "board_content", nullable = false, length = 500)
     private String boardContent;        //게시글 내용
 
-    @Column(name = "board_location")
+    @Column(name = "board_location", unique = true)
     private Long boardLocation;         //하늘에서 별 위치
 
     @Column(name = "board_access", nullable = false, length = 10)
-    private String boardAccess;         //게시글 접근 범위
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'OPEN'")
+    private BoardAccessStatus boardAccess;         //게시글 접근 범위
+
+    @Column(name = "delete_yn", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'Y'")
+    private BoardDeleteYN boardDeleteYN;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_index", referencedColumnName = "member_index")
     private Member member;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Report> reports = new ArrayList<>();
+    private List<Report> reports ;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Heart> hearts = new ArrayList<>();
+    private List<Heart> hearts ;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Hash> hashes = new HashSet<>();
+    private Set<Hash> hashes ;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments ;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Media> medias;
 
     public void setBoardContent(String boardContent) {
         this.boardContent = boardContent;
@@ -70,15 +82,11 @@ public class Board {
         this.boardLocation = boardLocation;
     }
 
-    public void setBoardAccess(String boardAccess) {
-        this.boardAccess = boardAccess;
-    }
-
     public void setReports(List<Report> reports) {
         this.reports = reports;
     }
 
-    public void setLikes(List<Heart> likes) {
+    public void setHearts(List<Heart> hearts) {
         this.hearts = hearts;
     }
 
@@ -90,5 +98,15 @@ public class Board {
         this.comments = comments;
     }
 
+    public void setBoardAccess(BoardAccessStatus boardAccess) {
+        this.boardAccess = boardAccess;
+    }
 
+    public void setBoardDeleteYN(BoardDeleteYN boardDeleteYN) {
+        this.boardDeleteYN = boardDeleteYN;
+    }
+
+    public void setBoardInputDate(LocalDate boardInputDate) {
+        this.boardInputDate = boardInputDate;
+    }
 }

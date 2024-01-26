@@ -14,6 +14,9 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Table(name = "heart",
+        uniqueConstraints = @UniqueConstraint(name = "UniqueHeartSet", columnNames = {"board_index", "member_index"}))
+
 public class Heart {
 
     @Id
