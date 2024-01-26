@@ -45,7 +45,7 @@ public class AlarmService {
 
         if(alarmRequestDto.getBoardIndex() != null) {
             Board board = boardRepository.findByBoardIndex(alarmRequestDto.getBoardIndex())
-                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARD_INVALID));
+                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
 
             alarm = Alarm.builder()
                     .toMember(toMember)
