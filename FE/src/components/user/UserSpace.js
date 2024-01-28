@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { DirectionalLightHelper } from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { ArcballControls, CameraControls, FirstPersonControls, FlyControls, MapControls, OrbitControls, PerspectiveCamera, PointerLockControls, Wireframe, useHelper } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
+import axios from "axios";
+import { atom, useRecoilState } from "recoil";
 
-// starTail : 각 별자리 마다 가장 큰 location 번호
-const starTail = [3, 5];
+// // starTail : 각 별자리 마다 가장 큰 location 번호
+// const starTail = [3, 5];
 
 // position : 변화할 일 없는 값
 const position = [
@@ -15,16 +16,27 @@ const position = [
     [1, 2, 7, -30],
     [2, 4, 5, -30],
     [3, 3, 13, -30],
+    [4, 0, 5, -30],
   ],
   [
-    [4, 13, 5, -30],
-    [5, 14, 8, -30],
+    [5, 13, 5, -30],
+    [6, 14, 8, -30],
   ],
 ];
 
-const totalStarCount = 6;
+const totalStarCount = 7;
 
-const stars = [
+const starsState = atom({
+  key: "stars",
+  default: [],
+});
+
+const curPageState = atom({
+  key: "curPage",
+  default: 0,
+});
+
+const tmpStars = [
   // fetchData
   {
     boardIndex: 1,
@@ -85,22 +97,22 @@ const stars = [
 
 // isAddedStar : 등록된 별 체크를 위한 Map
 const isAddedStar = new Map();
-stars.forEach((val) => isAddedStar.set(val.boardLocation, val));
+// stars.forEach((val) => isAddedStar.set(val.boardLocation, val));
 
 // 별자리 이어짐 체크
 const constellationCheck = (starNum) => {
   const curStarNum = starNum % totalStarCount;
   let res = true;
 
-  if (curStarNum < 4) {
-    for (let i = 0; i < 4; i++) {
+  if (curStarNum < 5) {
+    for (let i = 0; i < 5; i++) {
       if (!isAddedStar.has(i)) {
         res = false;
         break;
       }
     }
-  } else if (curStarNum < 6) {
-    for (let i = 4; i < 6; i++) {
+  } else if (curStarNum < 7) {
+    for (let i = 5; i < 7; i++) {
       if (!isAddedStar.has(i)) {
         res = false;
         break;
@@ -119,7 +131,6 @@ function Line(props) {
   return (
     <>
       <line ref={ref} geometry={lineGeometry}>
-        {/* <lineBasicMaterial attach="material" color={0x93492f} transparent={true} opacity={0.2} /> */}
         <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={0} />{" "}
       </line>
     </>
@@ -143,7 +154,13 @@ function Star(props) {
   console.log(`STAR ${props.location} MOUNTED`);
 
   const mesh = useRef(null);
-  const [curStarState, setCurStarState] = useState(isAddedStar.get(props.location));
+  const [stars, setStars] = useRecoilState(starsState);
+  const [curStarState, setCurStarState] = useState(null);
+
+  useEffect(() => {
+    setCurStarState(isAddedStar.get(props.location));
+  }, [stars]);
+
   const colors = {
     OPEN: "yellow",
     CLOSE: "red",
@@ -216,6 +233,7 @@ function Star(props) {
 function GroupStar(props) {
   console.log(`GROUP-STAR ${props.groupNum} MOUNTED`);
 
+  const [stars, setStars] = useRecoilState(starsState);
   const [lineState, setLineState] = useState([]);
   const [lineColor, setLineColor] = useState(true);
 
@@ -228,7 +246,7 @@ function GroupStar(props) {
     if (constellationCheck(lastStarOfThisGroup)) {
       setLineColor(false);
     }
-  }, []);
+  }, [stars]);
 
   useFrame((state, delta) => {
     group.current.rotation.y += delta / 300;
@@ -243,16 +261,7 @@ function GroupStar(props) {
         }}
       >
         {props.position.map((val, index) => (
-          <Star
-            key={index}
-            size={[0.2, 32, 32]}
-            positions={position}
-            position={val.slice(1, 4)}
-            location={val[0 /* + (curPage * 최대 별 개수)*/]}
-            lineState={lineState}
-            setLineState={setLineState}
-            setLineColor={setLineColor}
-          />
+          <Star key={index} size={[0.2, 32, 32]} positions={position} position={val.slice(1, 4)} location={val[0]} lineState={lineState} setLineState={setLineState} setLineColor={setLineColor} />
         ))}
         <Line points={lineState} lineColor={lineColor} />
       </group>
@@ -262,6 +271,32 @@ function GroupStar(props) {
 
 function SceneStars() {
   console.log("SCENE-STARS MOUNTED");
+
+  const [stars, setStars] = useRecoilState(starsState);
+  const [curPage, setCurPage] = useRecoilState(curPageState);
+  const REST_API_URI = ""; // env 설정
+  const member_index = ""; // 페이지 url에서 파싱
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await axios
+        .get(`${REST_API_URI}/board/start/${member_index}/?page=${curPage}`) // member_index : router url의 유저 id
+        .then((response) => {
+          isAddedStar.clear();
+          response.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+          setStars(response.data);
+        })
+        .catch((e) => {
+          // 임시 데이터
+          console.log(e);
+          isAddedStar.clear();
+          tmpStars.forEach((star) => isAddedStar.set(star.boardLocation, star));
+          console.log(isAddedStar);
+          setStars(tmpStars);
+        });
+    };
+    fetchData();
+  }, [curPage]);
 
   return (
     <>
