@@ -93,7 +93,7 @@ public class AlarmService {
 
             AlarmListResponseDto a = AlarmListResponseDto.builder()
                     .alarmIndex(alarm.getAlarmIndex())
-                    .toMemberNickName(alarm.getToMember().getMemberNickname())
+                    .fromMemberNickName(alarm.getFromMember().getMemberNickname())
                     .alarmType(alarm.getAlarmType().toString())
                     .boardIndex(boardIndex.orElse(null))
                     .build();
