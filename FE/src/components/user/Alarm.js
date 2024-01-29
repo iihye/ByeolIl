@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { userIndexState } from 'components/atom';
+import { useRecoilState } from 'recoil';
 
 // 추후 에러핸들링 필요
 // onClose, get에서 유저 인덱스로 변경
 
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
+    const userIndex = useRecoilState(userIndexState);
 
     const navigate = useNavigate();
     const moveBoardDetail = (boardIndex) => {
@@ -22,7 +25,7 @@ function Alarm() {
     const onClose = (index) => {
         const alarmInfo = {
             alarmIndex: index,
-            memberIndex: 1,
+            memberIndex: userIndex,
         };
 
         axios
@@ -36,7 +39,7 @@ function Alarm() {
     useEffect(() => {
         const fetchData = async () => {
             await axios
-                .get(`${process.env.REACT_APP_API_URL}/alarm/list/1`)
+                .get(`${process.env.REACT_APP_API_URL}/alarm/list/${userIndex}`)
                 .then((response) => {
                     console.log(response.data.result);
                     setAlarmData(response.data.result);
