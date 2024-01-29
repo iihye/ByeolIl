@@ -1,16 +1,25 @@
 import Alarm from './components/user/Alarm';
+import MainPage from './pages/MainPage';
+import LandingPage from './pages/LandingPage';
+import Login from './components/login/Login';
+import Header from './components/Header';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import KakaoLogin from './components/login/KakaoLogin';
+
+localStorage.setItem('isLogin', true); // 테스트용
 
 function App() {
+    const isLogin = localStorage.getItem('isLogin');
+
     return (
         <div className="App">
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/space/alarm" element={<Alarm />} />
-                </Routes>
-            </BrowserRouter>
+            <Header />
+            <Routes>
+                <Route path="/" element={<KakaoLogin />}></Route>
+                <Route path="/landing/login" element={<Login />}></Route>
+                <Route path="/space/alarm" element={<Alarm />} />
+            </Routes>
         </div>
     );
 }
-
 export default App;
