@@ -54,6 +54,8 @@ function Login() {
                     `${process.env.REACT_APP_API_URL}/member/login/origin`,
                     loginInfo
                 );
+                console.log('성공');
+                console.log(response.headers);
 
                 const token = `Bearer ${response.data.token}`;
                 localStorage.setItem('token', token);
