@@ -101,15 +101,8 @@ public class BoardController {
         HttpStatus status = HttpStatus.OK;
         List<BoardListResponseDto> list = new ArrayList<>();
         try {
-            Page<Board> boards = boardService.showAllBoard(memberIndex, pageable);
-            responseBody.put("totalPage", boards.getTotalPages());
-            //총 페이지 넘버
-            responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
-            //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
-            responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
-            //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
-            list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
-            responseBody.put("BoardListResponseDtoList", list);
+            responseBody = boardService.showAllBoard(memberIndex, pageable);
+
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
             responseBody.put("error", e.getMessage());
@@ -124,12 +117,8 @@ public class BoardController {
         HttpStatus status = HttpStatus.OK;
         List<BoardListResponseDto> list = new ArrayList<>();
         try {
-            Page<Board> boards = boardService.showAllBoard(memberIndex, pageable);
-            responseBody.put("totalPage", boards.getTotalPages());
-            responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
-            responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
-            list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
-            responseBody.put("BoardListResponseDtoList", list);
+            responseBody = boardService.showAllBoard(memberIndex, pageable);
+
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
             responseBody.put("error", e.getMessage());
@@ -144,12 +133,8 @@ public class BoardController {
         HttpStatus status = HttpStatus.OK;
         List<BoardListResponseDto> list = new ArrayList<>();
         try {
-            Page<Board> boards = boardService.showMyHeartBoard(memberIndex, pageable);
-            responseBody.put("totalPage", boards.getTotalPages());
-            responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
-            responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
-            list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
-            responseBody.put("BoardListResponseDtoList", list);
+            responseBody = boardService.showMyHeartBoard(memberIndex, pageable);
+            
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
             responseBody.put("error", e.getMessage());

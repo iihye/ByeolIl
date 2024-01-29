@@ -16,7 +16,7 @@ public class BoardCreateRequestDto {
     private Long memberIndex;
     private String boardContent;
     private LocalDate boardInputDate;
-    private List<String> boardMedia;
+    private List<String> mediaContent;
     private Long boardLocation;
     private BoardAccessStatus boardAccess;
     private BoardDeleteYN boardDeleteYN;

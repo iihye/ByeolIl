@@ -12,9 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class BoardStarResponseDto {
-    private LocalDateTime boardRegtime;
-    private LocalDate boardInputDate;
-    private LocalDateTime boardUpdateDate;
+    private String boardRegtime;
+    private String boardInputDate;
+    private String boardUpdateDate;
     private String boardContent;
     private List<String> boardMedia;
     private BoardAccessStatus boardAccess;

@@ -22,9 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -56,9 +55,20 @@ public class BoardService {
         //dto에서 받은 memberid로 member를 찾아서 board를 만듦
 
         boardRepository.save(board);
-        List<String> medias = dto.getBoardMedia();
+        List<String> hashes = dto.getHashContent();
+        if(hashes != null && hashes.isEmpty()){
+            for(String s: hashes){
+                Hash hash = Hash.builder()
+                        .hashContent(s)
+                        .board(board)
+                        .member(member).build();
+            }
+        }
+
+
+        List<String> medias = dto.getMediaContent();
         //dto에서 받은 media 경로 정보를 확인하고 media 테이블에 저장
-        if (medias != null) {
+        if (medias!=null && medias.isEmpty()) {
             for (String s : medias) {
                 Media media = Media.builder()
                         .mediaLocation(s)
@@ -75,24 +85,24 @@ public class BoardService {
     public BoardStarResponseDto showBoardDetail(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
         List<Media> medias = mediaRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
-        List<String> mediasLocation = medias.stream()
+        List<String> mediaLocations = medias.stream()
                 .map(Media::getMediaLocation)
                 .toList();
 
         List<Hash> hashes = hashRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
-        List<String> Hashecontent = hashes.stream()
+        List<String> hashContent = hashes.stream()
                 .map(Hash::getHashContent)
                 .toList();
 
         BoardStarResponseDto dto = BoardStarResponseDto.builder()
-                .boardRegtime(board.getBoardRegtime())
-                .boardUpdateDate(board.getBoardUpdateDate())
-                .boardInputDate(board.getBoardInputDate())
+                .boardRegtime(board.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
+                .boardUpdateDate(board.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
+                .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
                 .boardContent(board.getBoardContent())
-                .boardMedia(mediasLocation)
+                .boardMedia(mediaLocations)
                 .boardAccess(board.getBoardAccess())
                 .boardLike(heartRepository.countByBoardBoardIndex(boardId))
-                .hashContent(Hashecontent).build();
+                .hashContent(hashContent).build();
 
         return dto;
     }
@@ -105,6 +115,7 @@ public class BoardService {
             board.setBoardContent(dto.getBoardContent());
             board.setBoardAccess(dto.getBoardAccess());
             board.setBoardInputDate(dto.getBoardInputDate());
+            //DateTimeFormatter 이용해서 String에서 LocalDateTime으로 형변환 시켜줘야할지도
 
             mediaRepository.deleteAllById(dto.getBoardIndex());
 
@@ -139,14 +150,27 @@ public class BoardService {
     }
 
     @Transactional
-    public Page<Board> showAllBoard (Long memberIndex, Pageable pageable){
+    public Map<String, Object> showAllBoard (Long memberIndex, Pageable pageable){
+        Map<String, Object> responseBody = new HashMap<>();
+        List<BoardListResponseDto> list = new ArrayList<>();
+        Page<Board> boards = boardRepository.findByMemberMemberIndex(memberIndex,pageable);
 
-       return boardRepository.findByMemberMemberIndex(memberIndex,pageable);
+        responseBody.put("totalPage", boards.getTotalPages());
+        //총 페이지 넘버
+        responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
+        //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
+        responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
+        //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
+        list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
+        responseBody.put("BoardListResponseDtoList", list);
+       return responseBody;
 
 
     }
-    public Page<Board> showMyHeartBoard (Long memberIndex, Pageable pageable){
 
+    public Map<String, Object> showMyHeartBoard (Long memberIndex, Pageable pageable){
+        Map<String, Object> responseBody = new HashMap<>();
+        List<BoardListResponseDto> list = new ArrayList<>();
        List<Heart> Hearts = heartRepository.findAllByMemberMemberIndex(memberIndex).orElse(Collections.emptyList());
 
        if(Hearts.isEmpty()) throw new CustomException(CustomExceptionStatus.NO_HEART_CONTENT);
@@ -156,8 +180,14 @@ public class BoardService {
        for(Heart H : Hearts){
            boardIndexList.add(H.getBoard().getBoardIndex());
        }
+        Page<Board> boards = boardRepository.findByBoardIndexIn(boardIndexList,pageable);
+        responseBody.put("totalPage", boards.getTotalPages());
+        responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
+        responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
+        list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
+        responseBody.put("BoardListResponseDtoList", list);
 
-      return boardRepository.findByBoardIndexIn(boardIndexList,pageable);
+      return responseBody;
 
     }
 
