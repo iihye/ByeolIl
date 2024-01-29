@@ -19,7 +19,7 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Dockerimage build...'
-                    docker build -t docker-springboot:0.0.1 .
+                    sudo docker build -t docker-springboot:0.0.1 .
                     '''
                 }
             }
@@ -30,9 +30,9 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Deploy BE...'
-                    docker stop springboot
-                    docker rm springboot
-                    docker run -d -p 8081:8080 --name springboot docker-springboot:0.0.1
+                    sudo docker stop springboot
+                    sudo docker rm springboot
+                    sudo docker run -d -p 8081:8080 --name springboot docker-springboot:0.0.1
                     '''
                 }
             }
