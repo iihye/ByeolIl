@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class AlarmListResponseDto {
     Long alarmIndex;
-    String toMemberNickName;
+    String fromMemberNickName;
     String alarmType;
     Long boardIndex;
 }

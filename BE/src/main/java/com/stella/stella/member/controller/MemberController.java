@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("/api/member")
 public class MemberController {
 
     @Autowired
@@ -55,7 +55,7 @@ public class MemberController {
         HttpStatus status = HttpStatus.OK;
         String accessToken = "";
         try {
-            String kakaoAcessToken = memberService.getKakaoAccessToken(code, "member/login/kakao");
+            String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/login/kakao");
             Map<String, Object> kakaoMemberInfo = memberService.getKakaoMemberInfo(kakaoAcessToken);
             log.info(kakaoMemberInfo.toString());
             accessToken = memberService.login(kakaoMemberInfo.get("id").toString(), "", "kakao");
@@ -88,7 +88,7 @@ public class MemberController {
         HttpStatus status = HttpStatus.OK;
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            String kakaoAcessToken = memberService.getKakaoAccessToken(code, "member/join/kakao");
+            String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/join/kakao");
             resultMap = memberService.getKakaoMemberInfo(kakaoAcessToken);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
@@ -280,5 +280,24 @@ public class MemberController {
             status = HttpStatus.BAD_REQUEST;
         }
         return ResponseEntity.status(status).body(responseDtoList);
+    }
+
+    @PostMapping("/check/pass")
+    public ResponseEntity<Map<String,Object>> searchMemmberList(@RequestBody MemberCheckPassDto memberCheckPassDto, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.OK;
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
+
+        } catch (Exception e) {
+
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
+    @GetMapping("/test")
+    public String teste(){
+        return "success";
     }
 }

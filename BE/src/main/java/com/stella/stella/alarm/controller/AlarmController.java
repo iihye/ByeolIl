@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/alarm")
+@RequestMapping("/api/alarm")
 public class AlarmController {
     private final AlarmService alarmService;
 

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/multicomment")
+@RequestMapping("/api/multicomment")
 @Slf4j
 public class MulticommentController {
 
