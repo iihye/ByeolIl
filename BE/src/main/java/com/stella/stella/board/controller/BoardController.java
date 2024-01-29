@@ -4,6 +4,7 @@ import com.stella.stella.board.dto.*;
 import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.service.BoardService;
 import com.stella.stella.board.service.HeartService;
+import com.stella.stella.comment.dto.ReportResponseDto;
 import com.stella.stella.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class BoardController {
     private final BoardService boardService;
     private final HeartService heartService;
     private final ReportService reportService;
+
 
     @PostMapping("/")
     public ResponseEntity<ResultResponseDto> boardAdd(@RequestBody BoardCreateRequestDto boardCreateRequestDto) {
@@ -189,5 +191,23 @@ public class BoardController {
         }
 
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
+    }
+
+    @GetMapping("/adminlist")
+    public ResponseEntity<List<ReportResponseDto>> reportList(){
+        HttpStatus status = HttpStatus.OK;
+        String message = "success";
+        List<ReportResponseDto> list = new ArrayList<>();
+        try{
+            list = reportService.findReportList();
+        }catch (NullPointerException e) {
+            status = HttpStatus.NOT_FOUND;
+            message = "fail";
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            message = "fail";
+        }
+
+        return ResponseEntity.status(status).body(list);
     }
 }

@@ -3,6 +3,7 @@ package com.stella.stella.report.service;
 import com.stella.stella.board.dto.BoardReportRequestDto;
 import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.repository.BoardRepository;
+import com.stella.stella.comment.dto.ReportResponseDto;
 import com.stella.stella.common.exception.CustomException;
 import com.stella.stella.common.exception.CustomExceptionStatus;
 import com.stella.stella.member.entity.Member;
@@ -11,6 +12,10 @@ import com.stella.stella.report.entity.Report;
 import com.stella.stella.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,4 +38,19 @@ public class ReportService {
 
        reportRepository.save(report);
     }
+
+    public List<ReportResponseDto> findReportList(){
+        List<ReportResponseDto> list = new ArrayList<>();
+        for(Report r : reportRepository.findAll()){
+            list.add(ReportResponseDto.builder()
+                    .reportRegdate(r.getReportRegdate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                    .reportIndex(r.getReportIndex())
+                    .reportContent(r.getReportContent())
+                    .boardIndex(r.getBoard().getBoardIndex())
+                    .memberNickname(r.getMember().getMemberNickname())
+                    .build());
+        }
+        return list;
+    }
+
 }
