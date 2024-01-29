@@ -281,4 +281,23 @@ public class MemberController {
         }
         return ResponseEntity.status(status).body(responseDtoList);
     }
+
+    @PostMapping("/check/pass")
+    public ResponseEntity<Map<String,Object>> searchMemmberList(@RequestBody MemberCheckPassDto memberCheckPassDto, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.OK;
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
+
+        } catch (Exception e) {
+
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
+    @GetMapping("/test")
+    public String teste(){
+        return "success";
+    }
 }
