@@ -31,11 +31,11 @@ public class BoardController {
     private final ReportService reportService;
 
     @PostMapping("/")
-    public ResponseEntity<ResultResponseDto> saveBoard(@RequestBody BoardCreateRequestDto boardCreateRequestDto) {
+    public ResponseEntity<ResultResponseDto> boardAdd(@RequestBody BoardCreateRequestDto boardCreateRequestDto) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
-            boardService.createBoard(boardCreateRequestDto);
+            boardService.addBoard(boardCreateRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
             message = "fail";
@@ -47,11 +47,11 @@ public class BoardController {
     }
 
     @GetMapping("/{boardIndex}")
-    public ResponseEntity<BoardStarResponseDto> findBoard(@PathVariable Long boardIndex) {
+    public ResponseEntity<BoardStarResponseDto> boardDetails (@PathVariable Long boardIndex) {
         HttpStatus status = HttpStatus.OK;
         BoardStarResponseDto dto = null;
         try {
-            dto = boardService.showBoardDetail(boardIndex);
+            dto = boardService.findBoard(boardIndex);
 
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
@@ -63,11 +63,11 @@ public class BoardController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<ResultResponseDto> updateBoard(@RequestBody BoardUpdateRequestDto boardUpdateRequestDto) {
+    public ResponseEntity<ResultResponseDto> boardModify(@RequestBody BoardUpdateRequestDto boardUpdateRequestDto) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
-            boardService.updateBoard(boardUpdateRequestDto);
+            boardService.modifyBoard(boardUpdateRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
             message = "fail";
@@ -79,11 +79,11 @@ public class BoardController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<ResultResponseDto> deleteBoard(@RequestBody BoardDeleteRequestDto boardDeleteRequestDto) {
+    public ResponseEntity<ResultResponseDto> boardRemove(@RequestBody BoardDeleteRequestDto boardDeleteRequestDto) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
-            boardService.deleteBoard(boardDeleteRequestDto);
+            boardService.removeBoard(boardDeleteRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
             message = "fail";
@@ -96,12 +96,11 @@ public class BoardController {
 
 
     @GetMapping("/star/{memberIndex}")
-    public ResponseEntity<Map<String, Object>> findAllBoardToStar(@PathVariable Long memberIndex, @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<Map<String, Object>> boardListToStar(@PathVariable Long memberIndex, @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.ASC) Pageable pageable) {
         Map<String, Object> responseBody = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-        List<BoardListResponseDto> list = new ArrayList<>();
         try {
-            responseBody = boardService.showAllBoard(memberIndex, pageable);
+            responseBody = boardService.findBoardList(memberIndex, pageable);
 
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
@@ -112,12 +111,11 @@ public class BoardController {
 
     @GetMapping("/list/{memberIndex}")
 
-    public ResponseEntity<Map<String, Object>> findAllBoardtoList(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<Map<String, Object>> boardListToList(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable) {
         Map<String, Object> responseBody = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-        List<BoardListResponseDto> list = new ArrayList<>();
         try {
-            responseBody = boardService.showAllBoard(memberIndex, pageable);
+            responseBody = boardService.findBoardList(memberIndex, pageable);
 
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
@@ -128,13 +126,12 @@ public class BoardController {
 
 
     @GetMapping("/like/{memberIndex}")
-    public ResponseEntity<Map<String, Object>> findMyHeartBoard(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<Map<String, Object>> heartedBoardList(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable){
         Map<String, Object> responseBody = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-        List<BoardListResponseDto> list = new ArrayList<>();
         try {
-            responseBody = boardService.showMyHeartBoard(memberIndex, pageable);
-            
+            responseBody = boardService.findHeartedBoardList(memberIndex, pageable);
+
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
             responseBody.put("error", e.getMessage());
@@ -143,7 +140,7 @@ public class BoardController {
     }
 
     @PostMapping("/like")
-    public ResponseEntity<ResultResponseDto> saveHeart(@RequestBody HeartRequestDto heartRequestDto){
+    public ResponseEntity<ResultResponseDto> heartAdd(@RequestBody HeartRequestDto heartRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";
 
@@ -160,7 +157,7 @@ public class BoardController {
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
     @DeleteMapping("/like")
-    public ResponseEntity<ResultResponseDto> deleteHeart(@RequestBody HeartRequestDto heartRequestDto){
+    public ResponseEntity<ResultResponseDto> heartRemove(@RequestBody HeartRequestDto heartRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";
 
@@ -177,7 +174,7 @@ public class BoardController {
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
     @PostMapping("/report")
-    public ResponseEntity<ResultResponseDto> saveReport(@RequestBody BoardReportRequestDto boardReportRequestDto){
+    public ResponseEntity<ResultResponseDto> reportAdd(@RequestBody BoardReportRequestDto boardReportRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";
 

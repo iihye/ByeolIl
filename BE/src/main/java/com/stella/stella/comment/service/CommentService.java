@@ -26,7 +26,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MulticommentRepository multicommentRepository;
 
-    public void saveComment(CommentCreateRequestDto dto){
+    public void addComment(CommentCreateRequestDto dto){
         System.out.println("Save 시작");
         System.out.println(dto.getCommentContent());
         System.out.println(dto.getBoardIndex());

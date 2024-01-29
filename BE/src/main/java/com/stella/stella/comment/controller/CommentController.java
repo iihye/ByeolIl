@@ -18,12 +18,12 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/")
-    public ResponseEntity<ResultResponseDto> createComment(@RequestBody CommentCreateRequestDto commentCreateRequestDto){
+    public ResponseEntity<ResultResponseDto> commendAdd(@RequestBody CommentCreateRequestDto commentCreateRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         System.out.println("try 밖");
         try{
-            commentService.saveComment(commentCreateRequestDto);
+            commentService.addComment(commentCreateRequestDto);
             System.out.println("메서드 끝");
         }catch (Exception e){
             status = HttpStatus.BAD_REQUEST;
@@ -33,5 +33,5 @@ public class CommentController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<ResultResponseDto> deleteComment(@RequestBody)
+    public ResponseEntity<ResultResponseDto> commentRemove(@RequestBody)
 }

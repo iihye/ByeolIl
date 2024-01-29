@@ -39,7 +39,7 @@ public class BoardService {
     private final HashRepository hashRepository;
 
     @Transactional
-    public void createBoard(BoardCreateRequestDto dto) {
+    public void addBoard(BoardCreateRequestDto dto) {
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
         if(boardRepository.countByBoardLocation(dto.getBoardLocation())!=0) throw new CustomException(CustomExceptionStatus.ALREADY_LOCATED);
         //location이 중복 안되게 유니크를 줘서 등록은 안되는데 entity가 만들어졌다가 등록이 안되는 거라
@@ -82,7 +82,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardStarResponseDto showBoardDetail(Long boardId) {
+    public BoardStarResponseDto findBoard(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
         List<Media> medias = mediaRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
         List<String> mediaLocations = medias.stream()
@@ -108,7 +108,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateBoard(BoardUpdateRequestDto dto) {
+    public void modifyBoard(BoardUpdateRequestDto dto) {
         Board board = boardRepository.findById(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
         if (board.getMember().getMemberIndex() == dto.getMemberIndex()) {
 
@@ -135,7 +135,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoard(BoardDeleteRequestDto dto) {
+    public void removeBoard(BoardDeleteRequestDto dto) {
         int boardCount = boardRepository.countByBoardIndex(dto.getBoardIndex());
         if (boardCount == 1) {
             if(boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow().getMember().getMemberIndex()==dto.getMemberIndex()){
@@ -150,7 +150,7 @@ public class BoardService {
     }
 
     @Transactional
-    public Map<String, Object> showAllBoard (Long memberIndex, Pageable pageable){
+    public Map<String, Object> findBoardList (Long memberIndex, Pageable pageable){
         Map<String, Object> responseBody = new HashMap<>();
         List<BoardListResponseDto> list = new ArrayList<>();
         Page<Board> boards = boardRepository.findByMemberMemberIndex(memberIndex,pageable);
@@ -168,7 +168,7 @@ public class BoardService {
 
     }
 
-    public Map<String, Object> showMyHeartBoard (Long memberIndex, Pageable pageable){
+    public Map<String, Object> findHeartedBoardList (Long memberIndex, Pageable pageable){
         Map<String, Object> responseBody = new HashMap<>();
         List<BoardListResponseDto> list = new ArrayList<>();
        List<Heart> Hearts = heartRepository.findAllByMemberMemberIndex(memberIndex).orElse(Collections.emptyList());
