@@ -3,6 +3,7 @@ package com.stella.stella.comment.service;
 import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.comment.dto.CommentCreateRequestDto;
+import com.stella.stella.comment.dto.CommentDeleteRequestDto;
 import com.stella.stella.comment.entity.Comment;
 import com.stella.stella.comment.repository.CommentRepository;
 import com.stella.stella.comment.repository.MulticommentRepository;
@@ -27,22 +28,24 @@ public class CommentService {
     private final MulticommentRepository multicommentRepository;
 
     public void addComment(CommentCreateRequestDto dto){
-        System.out.println("Save 시작");
-        System.out.println(dto.getCommentContent());
-        System.out.println(dto.getBoardIndex());
-        System.out.println(dto.getMemberIndex());
         Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.BOARDID_INVALID));
-        System.out.println("board 불러옴");
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.MEMBERID_INVALID));
-        System.out.println("member 불러옴 ");
 
         Comment comment = Comment.builder()
                 .commentContent(dto.getCommentContent())
                 .board(board)
                 .member(member).build();
-        System.out.println("Comment 생성");
-        System.out.println("Save 하기");
         commentRepository.save(comment);
-        System.out.println("Save 완");
     }
+
+    public void removeComment(CommentDeleteRequestDto dto){
+        Comment comment = commentRepository.findByCommentIndex(dto.getCommentIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.COMMENTID_INVALID));
+        if(comment.getMember().getMemberIndex() == dto.getMemberIndex()){
+            commentRepository.delete(comment);
+        }else{
+            throw new CustomException(CustomExceptionStatus.MEMBERID_INVALID);
+        }
+
+    }
+
 }

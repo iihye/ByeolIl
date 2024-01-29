@@ -18,12 +18,13 @@ public enum CustomExceptionStatus {
 
     // board 관련
     BOARDID_INVALID(1101, "유효하지 않은 게시글 정보입니다."),
-    MEMBERID_INVALID(1102, "본인의 작성글이 아닙니다."),
+    MEMBERID_INVALID(1102, "유효한 멤버 정보가 아닙니다."),
     ALREADY_LOCATED(1103,"이미 지정된 자리입니다."),
     NO_HEART_CONTENT(1104, "좋아요한 게시글이 없습니다."),
     HEART_INVALID(1105,"유효한 좋아요 정보가 아닙니다."),
     ALREADY_HEARTED(1106,"이미 좋아요한 게시글입니다."),
     ALREADY_REPORTED(1107,"이미 신고한 게시글입니다."),
+    COMMENTID_INVALID(1108, "유효한 댓글 정보가 아닙니다."),
     // follow 관련
     FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다"),
 

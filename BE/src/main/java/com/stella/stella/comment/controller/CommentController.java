@@ -2,6 +2,7 @@ package com.stella.stella.comment.controller;
 
 import com.stella.stella.board.dto.ResultResponseDto;
 import com.stella.stella.comment.dto.CommentCreateRequestDto;
+import com.stella.stella.comment.dto.CommentDeleteRequestDto;
 import com.stella.stella.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +22,8 @@ public class CommentController {
     public ResponseEntity<ResultResponseDto> commendAdd(@RequestBody CommentCreateRequestDto commentCreateRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";
-        System.out.println("try 밖");
         try{
             commentService.addComment(commentCreateRequestDto);
-            System.out.println("메서드 끝");
         }catch (Exception e){
             status = HttpStatus.BAD_REQUEST;
             message = "fail";
@@ -33,5 +32,16 @@ public class CommentController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<ResultResponseDto> commentRemove(@RequestBody)
+    public ResponseEntity<ResultResponseDto> commentRemove(@RequestBody CommentDeleteRequestDto commentDeleteRequestDto){
+        HttpStatus status = HttpStatus.OK;
+        String message = "success";
+        try{
+            commentService.removeComment(commentDeleteRequestDto);
+        }catch (Exception e){
+            status = HttpStatus.BAD_REQUEST;
+            message = "fail";
+        }
+        return ResponseEntity.status(status).body(new ResultResponseDto(message));
+
+    }
 }
