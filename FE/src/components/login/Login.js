@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // + 아이디 찾기, 비밀번호 찾기, 회원가입 navigate
@@ -46,8 +46,6 @@ function Login() {
             memberPlatform: 'origin',
         };
 
-        console.log(process.env.REACT_APP_API_URL);
-
         const fetchData = async () => {
             try {
                 const response = await axios.post(
@@ -55,14 +53,20 @@ function Login() {
                     loginInfo
                 );
 
-                const token = `Bearer ${response.data.token}`;
-                localStorage.setItem('token', token);
-                axios.defaults.headers.common[
-                    'token'
-                ] = `Bearer ${response.data.token}`;
-                // navigate('/');
+                if (response.status === 200) {
+                    console.log(response);
+
+                    const token = `Bearer ${response.data.token}`;
+                    localStorage.setItem('token', token);
+                    axios.defaults.headers.common[
+                        'token'
+                    ] = `Bearer ${response.data.token}`;
+                    // navigate('/');
+                }
             } catch (error) {
-                console.log('로그인 요청 실패', error);
+                if (error.response.status === 400) {
+                    alert(error.response.data.message);
+                }
             }
         };
 

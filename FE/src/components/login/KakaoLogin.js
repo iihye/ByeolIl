@@ -16,6 +16,7 @@ function KakaoLogin() {
             .then((res) => res.json())
             .then((data) => {
                 if (data.access_token) {
+                    console.log('됨');
                     localStorage.setItem('token', data.access_token);
                 } else {
                     console.log(data);
