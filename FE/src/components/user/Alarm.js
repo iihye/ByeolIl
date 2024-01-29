@@ -2,21 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// 추후 에러핸들링 필요
+// 추후 return 반복되는 부분 리팩토링 필요
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
 
     const navigate = useNavigate();
-    // const moveBoardDetail = (receiveUserIndex, boardIndex) => {
-    //     navigate(`/space/${receiveUserIndex}/starDetail/${boardIndex}`);
-    // };
+    const moveBoardDetail = (boardIndex) => {
+        navigate(`/space/starDetail/${boardIndex}`);
+    };
+
+    const handleClose = (idx) => {
+        const alarmInfo = {
+            alarmIndex: idx,
+            memberIndex: 1,
+        };
+
+        axios
+            .post(`${process.env.REACT_APP_API_URL}/alarm/check`, alarmInfo)
+            .then((response) => console.log(response, '삭제완료'))
+            .catch((error) => console.log(error));
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             await axios
-                .get(`${process.env.REACT_APP_API_URL}/alarm/list/2`)
+                .get(`${process.env.REACT_APP_API_URL}/alarm/list/1`)
                 .then((response) => {
-                    console.log(response);
-                    setAlarmData(response.data);
+                    console.log(response.data.result);
+                    setAlarmData(response.data.result);
                 })
                 .catch((e) => console.log(e));
         };
@@ -34,36 +48,59 @@ function Alarm() {
                     switch (it.alarmType) {
                         case 'FOLLOW':
                             return (
-                                <div>
-                                    {it.toMemberNickName}님이 나를
+                                <div key={it.alarmIndex}>
+                                    {it.fromMemberNickName}님이 나를
                                     팔로우했습니다
+                                    <div className="alarmClose">
+                                        <button
+                                            onClick={() =>
+                                                handleClose(it.alarmIndex)
+                                            }
+                                        >
+                                            X
+                                        </button>
+                                    </div>
                                 </div>
                             );
 
                         case 'COMMENT':
                             return (
                                 <div
-                                // onClick={() =>
-                                //     moveBoardDetail(
-                                //         it.receiveUserIndex,
-                                //         it.boardIndex
-                                //     )
-                                // }
+                                    onClick={() =>
+                                        moveBoardDetail(it.boardIndex)
+                                    }
+                                    key={it.alarmIndex}
                                 >
-                                    {it.toMemberNickName}님이 내 게시글에 댓글을
-                                    남겼습니다
+                                    {it.fromMemberNickName}님이 내 게시글에
+                                    댓글을 남겼습니다
+                                    <div className="alarmClose">
+                                        <button
+                                            onClick={() =>
+                                                handleClose(it.alarmIndex)
+                                            }
+                                        >
+                                            X
+                                        </button>
+                                    </div>
                                 </div>
                             );
                         case 'MULTICOMMENT':
                             return (
                                 <div
-                                // onClick={moveBoardDetail(
-                                //     it.receiveUserIndex,
-                                //     it.boardIndex
-                                // )}
+                                    key={it.alarmIndex}
+                                    onClick={moveBoardDetail(it.boardIndex)}
                                 >
-                                    {it.toMemberNickName}님이 내 댓글에 답댓글을
-                                    남겼습니다
+                                    {it.fromMemberNickName}님이 내 댓글에
+                                    답댓글을 남겼습니다
+                                    <div className="alarmClose">
+                                        <button
+                                            onClick={() =>
+                                                handleClose(it.alarmIndex)
+                                            }
+                                        >
+                                            X
+                                        </button>
+                                    </div>
                                 </div>
                             );
                         default:
