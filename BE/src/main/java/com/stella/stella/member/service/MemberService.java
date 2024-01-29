@@ -92,7 +92,8 @@ public class MemberService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestAPIKey);
-        params.add("redirect_uri", "http://localhost:8080/" + url);
+        params.add("redirect_uri", "https://i10b209.p.ssafy.io/" + url);
+//        params.add("redirect_uri", "http://localhost:8080/" + url);
         params.add("code", code);
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
