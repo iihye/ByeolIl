@@ -6,16 +6,14 @@ function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
 
     const navigate = useNavigate();
-    const moveBoardDetail = (receiveUserIndex, boardIndex) => {
-        navigate(`/space/${receiveUserIndex}/starDetail/${boardIndex}`);
-    };
+    // const moveBoardDetail = (receiveUserIndex, boardIndex) => {
+    //     navigate(`/space/${receiveUserIndex}/starDetail/${boardIndex}`);
+    // };
 
     useEffect(() => {
         const fetchData = async () => {
             await axios
-                .get(
-                    'https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/alarm/2'
-                )
+                .get(`${process.env.REACT_APP_API_URL}/alarm/list/2`)
                 .then((response) => {
                     console.log(response);
                     setAlarmData(response.data);
@@ -37,33 +35,34 @@ function Alarm() {
                         case 'FOLLOW':
                             return (
                                 <div>
-                                    {it.sendUserIndex}님이 나를 팔로우했습니다
+                                    {it.toMemberNickName}님이 나를
+                                    팔로우했습니다
                                 </div>
                             );
 
                         case 'COMMENT':
                             return (
                                 <div
-                                    onClick={() =>
-                                        moveBoardDetail(
-                                            it.receiveUserIndex,
-                                            it.boardIndex
-                                        )
-                                    }
+                                // onClick={() =>
+                                //     moveBoardDetail(
+                                //         it.receiveUserIndex,
+                                //         it.boardIndex
+                                //     )
+                                // }
                                 >
-                                    {it.sendUserIndex}님이 내 게시글에 댓글을
+                                    {it.toMemberNickName}님이 내 게시글에 댓글을
                                     남겼습니다
                                 </div>
                             );
                         case 'MULTICOMMENT':
                             return (
                                 <div
-                                    onClick={moveBoardDetail(
-                                        it.receiveUserIndex,
-                                        it.boardIndex
-                                    )}
+                                // onClick={moveBoardDetail(
+                                //     it.receiveUserIndex,
+                                //     it.boardIndex
+                                // )}
                                 >
-                                    {it.sendUserIndex}님이 내 댓글에 답댓글을
+                                    {it.toMemberNickName}님이 내 댓글에 답댓글을
                                     남겼습니다
                                 </div>
                             );
