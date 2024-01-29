@@ -4,7 +4,10 @@ import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.comment.dto.CommentCreateRequestDto;
 import com.stella.stella.comment.dto.CommentDeleteRequestDto;
+import com.stella.stella.comment.dto.CommentListResponseDto;
+import com.stella.stella.comment.dto.MultiCommentListResponseDto;
 import com.stella.stella.comment.entity.Comment;
+import com.stella.stella.comment.entity.MultiComment;
 import com.stella.stella.comment.repository.CommentRepository;
 import com.stella.stella.comment.repository.MulticommentRepository;
 import com.stella.stella.common.exception.CustomException;
@@ -15,6 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -45,6 +51,30 @@ public class CommentService {
             throw new CustomException(CustomExceptionStatus.MEMBERID_INVALID);
         }
 
+    }
+
+    public List<CommentListResponseDto> findCommentList(Long BoardIndex){
+        Board board = boardRepository.findByBoardIndex(BoardIndex).orElseThrow(()-> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+
+        List<CommentListResponseDto> list = new ArrayList<>();
+
+        for(Comment c : board.getComments()){
+
+            List<MultiCommentListResponseDto> mList = new ArrayList<>();
+
+            for(MultiComment m : c.getMultiComments()){
+                mList.add(MultiCommentListResponseDto.builder()
+                        .MultiCommentContent(m.getMultiCommentContent())
+                        .build());
+            }
+
+            list.add(CommentListResponseDto.builder()
+                    .commentContent(c.getCommentContent())
+                    .multiComments(mList)
+                    .build());
+        }
+
+        return list;
     }
 
 }
