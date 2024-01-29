@@ -40,6 +40,9 @@ public class SecurityConfig {
 								.requestMatchers("/member/find/**").permitAll()
 								.requestMatchers("/member/ban").hasRole("ADMIN")
 								.requestMatchers("/member/search/list").permitAll()
+								.requestMatchers("/board/**").permitAll()
+								.requestMatchers("/comment/**").permitAll()
+								.requestMatchers("/multicomment/**").permitAll()
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 								.anyRequest().authenticated()
 

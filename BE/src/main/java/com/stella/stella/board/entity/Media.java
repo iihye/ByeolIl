@@ -21,7 +21,7 @@ public class Media {
     @Column(name = "media_location", nullable = false, length = 100)
     private String mediaLocation;
 
-    @ManyToOne(optional = true)
+    @ManyToOne()
     @JoinColumn(name = "board_index", referencedColumnName = "board_index")
     private Board board;
 

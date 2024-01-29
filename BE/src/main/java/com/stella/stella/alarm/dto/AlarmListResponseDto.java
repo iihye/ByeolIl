@@ -7,7 +7,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlarmDeleteRequestDto {
-    Long memberIndex;
+public class AlarmListResponseDto {
     Long alarmIndex;
+    String toMemberNickName;
+    String alarmType;
+    Long boardIndex;
 }

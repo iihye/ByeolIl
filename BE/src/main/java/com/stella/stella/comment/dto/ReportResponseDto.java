@@ -1,6 +1,5 @@
 package com.stella.stella.comment.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommentCreateRequestDto {
-  private  Long boardIndex;
-  private  Long memberIndex;
-  private  String commentContent;
+public class ReportResponseDto {
+    private Long reportIndex;
+    private Long boardIndex;
+    private String memberNickname;
+    private String reportContent;
+    private String reportRegdate;
 }
