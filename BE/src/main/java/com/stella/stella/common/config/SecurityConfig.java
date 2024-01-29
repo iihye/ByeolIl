@@ -33,6 +33,7 @@ public class SecurityConfig {
 						authorizeRequests
 								.requestMatchers("/api/member/login/**").permitAll()
 								.requestMatchers("/api/member/join/**").permitAll()
+								.requestMatchers("/api/member/join/").permitAll()
 								.requestMatchers("/api/follow/**").permitAll()
 								.requestMatchers("/api/member/dup-check/**").permitAll()
 								.requestMatchers("/api/member/test").hasRole("USER")
@@ -40,6 +41,7 @@ public class SecurityConfig {
 								.requestMatchers("/api/member/find/**").permitAll()
 								.requestMatchers("/api/member/ban").hasRole("ADMIN")
 								.requestMatchers("/api/member/search/list").permitAll()
+								.requestMatchers("/api/alarm/**").permitAll()
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 								.anyRequest().authenticated()
 
