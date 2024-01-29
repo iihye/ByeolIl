@@ -14,7 +14,7 @@ const items = [
     { name: "나의 친구", path:"/FollowList"},
     { name: "다른 우주 찾기", path:"/FindUser"},
     { name: "태그로 별 찾기", path:"/StarTagSearch"},
-    { name: "환경설정", path:"/??"},
+    // { name: "환경설정", path:"/"},  //path를 모르겠어유
     { name: "알림창", path:"/Alarm"}, // 알림은 메인페이지에 있으면 더 좋을듯
 ];
 

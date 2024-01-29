@@ -1,12 +1,35 @@
 import React, { useRef, useState } from "react";
+import PWCheck from "./PWCheckAlert";
+import { useNavigate } from 'react-router-dom';
 
-// 사이드바에-> 소셜로그인회원은 안되고 일반로그인회원은 비밀번호 수정 버튼 있다. -> 
-// PWCheck를 먼저 가고 -> PWCheck에서 비밀번호 검사-> 검사 통과시에 ChangeInfo에 연결.
-// 비밀번호만 수정할 수 있다.
+
+// Sidebar에서 회원정보 수정 버튼 누름 -> PWCheckAlert를 먼저 가서 비밀번호 검사
+// -> 검사 통과시에 ChangeInfo에 연결. -> 소셜로그인 회원은 비밀번호 수정이 없고 닉네임 수정만 있다.
+// -> 소셜로그인 회원은 비밀번호 수정이 없고 닉네임 수정만 있다.
+// + 닉네임수정은 메인화면에서 "OO님의 우주" 옆에 수정 아이콘을 눌러서 바로 수정이 되는 기능도
 
 export default function ChangeInfo() {
+ // 모달창을 열기위해서 모달창을 여닫는 boolean 변수는 디폴트값 true
+ const [isModalOpen, setIsModalOpen] = useState(true);
+
+ // 비밀번호 일치시 동작할 함수. 
+ const handleModalClose = () => {
+  setIsModalOpen(false);
+};
+ // 패스워드 검사버튼 함수.
+const handleSubmit = () => {
+  if (password === "1234") {
+    setIsModalOpen(false);
+    useNavigate("/next-page");
+  } else {
+    alert("패스워드가 일치하지 않습니다.");
+  }
+};
+
+ // 패스워드, 패스워드확인 
  const password = useRef("");
  const passwordConfirm = useRef("");
+
 
  // 오류메세지 상태 저장
  const [passwordMessage, setPasswordMessage] = useState("");
@@ -44,31 +67,35 @@ export default function ChangeInfo() {
 
  return (
    <>
-     <h3>비밀번호 수정</h3>
-     <div className="form">
-       <div className="form-el">
-         <label htmlFor="password">*비밀번호</label> <br />
-         <input
-           id="password"
-           name="password"
-           ref={password}
-           onBlur={onChangePassword}
-         />
-         <p className="message">{passwordMessage}</p>
-       </div>
-       <div className="form-el">
-         <label htmlFor="passwordConfirm">*비밀번호확인</label> <br />
-         <input
-           id="passwordConfirm"
-           name="passwordConfirm"
-           ref={passwordConfirm}
-           onBlur={onChangePasswordConfirm}
-         />
-         <p className="message">{passwordConfirmMessage}</p>
-       </div>
-       <br />
-       <button type="submit" disabled={!(isPassword && isPasswordConfirm)}>수정하기</button>
-     </div>
+     {isModalOpen && (<PWCheck setIsModalOpen={setIsModalOpen}/>)}
+     {!isModalOpen && 
+     (<div className="changePW">
+        <h3>비밀번호 수정</h3>
+        <div className="form">
+          <div className="form-el">
+            <label htmlFor="password">*새로운 비밀번호</label> <br />
+            <input
+              id="password"
+              name="password"
+              ref={password}
+              onBlur={onChangePassword}
+            />
+            <p className="message">{passwordMessage}</p>
+          </div>
+          <div className="form-el">
+            <label htmlFor="passwordConfirm">*비밀번호 확인</label> <br />
+            <input
+              id="passwordConfirm"
+              name="passwordConfirm"
+              ref={passwordConfirm}
+              onBlur={onChangePasswordConfirm}
+            />
+            <p className="message">{passwordConfirmMessage}</p>
+          </div>
+          <br />
+          <button type="submit" disabled={!(isPassword && isPasswordConfirm)}>수정하기</button>
+        </div>
+      </div>)}
    </>
  );
 };
