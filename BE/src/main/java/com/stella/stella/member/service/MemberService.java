@@ -47,6 +47,9 @@ public class MemberService {
     @Value("${kakao.key}")
     private String kakaoRestAPIKey;
 
+    @Value("@{kakao.url}")
+    private String kakaoRedirectUrl;
+
     @Transactional
     public String login(String memberId, String memberPassword, String memberPlatform) throws Exception{
 
@@ -92,7 +95,8 @@ public class MemberService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestAPIKey);
-        params.add("redirect_uri", "http://localhost:8080/" + url);
+        params.add("redirect_uri", kakaoRedirectUrl + url);
+//        params.add("redirect_uri", "http://localhost:8080/" + url);
         params.add("code", code);
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
