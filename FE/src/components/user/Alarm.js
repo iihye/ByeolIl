@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // 추후 에러핸들링 필요
-// 추후 return 반복되는 부분 리팩토링 필요
+// onClose, get에서 유저 인덱스로 변경
+
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
 
@@ -12,15 +13,23 @@ function Alarm() {
         navigate(`/space/starDetail/${boardIndex}`);
     };
 
-    const handleClose = (idx) => {
+    const CloseButton = ({ onClose, alarmIndex }) => (
+        <div className="alarmClose">
+            <button onClick={() => onClose(alarmIndex)}>X</button>
+        </div>
+    );
+
+    const onClose = (index) => {
         const alarmInfo = {
-            alarmIndex: idx,
+            alarmIndex: index,
             memberIndex: 1,
         };
 
         axios
             .post(`${process.env.REACT_APP_API_URL}/alarm/check`, alarmInfo)
-            .then((response) => console.log(response, '삭제완료'))
+            .then(
+                setAlarmData(alarmData.filter((it) => it.alarmIndex !== index))
+            )
             .catch((error) => console.log(error));
     };
 
@@ -51,15 +60,10 @@ function Alarm() {
                                 <div key={it.alarmIndex}>
                                     {it.fromMemberNickName}님이 나를
                                     팔로우했습니다
-                                    <div className="alarmClose">
-                                        <button
-                                            onClick={() =>
-                                                handleClose(it.alarmIndex)
-                                            }
-                                        >
-                                            X
-                                        </button>
-                                    </div>
+                                    <CloseButton
+                                        onClose={onClose}
+                                        alarmIndex={it.alarmIndex}
+                                    />
                                 </div>
                             );
 
@@ -73,15 +77,10 @@ function Alarm() {
                                 >
                                     {it.fromMemberNickName}님이 내 게시글에
                                     댓글을 남겼습니다
-                                    <div className="alarmClose">
-                                        <button
-                                            onClick={() =>
-                                                handleClose(it.alarmIndex)
-                                            }
-                                        >
-                                            X
-                                        </button>
-                                    </div>
+                                    <CloseButton
+                                        onClose={onClose}
+                                        alarmIndex={it.alarmIndex}
+                                    />
                                 </div>
                             );
                         case 'MULTICOMMENT':
@@ -92,15 +91,10 @@ function Alarm() {
                                 >
                                     {it.fromMemberNickName}님이 내 댓글에
                                     답댓글을 남겼습니다
-                                    <div className="alarmClose">
-                                        <button
-                                            onClick={() =>
-                                                handleClose(it.alarmIndex)
-                                            }
-                                        >
-                                            X
-                                        </button>
-                                    </div>
+                                    <CloseButton
+                                        onClose={onClose}
+                                        alarmIndex={it.alarmIndex}
+                                    />
                                 </div>
                             );
                         default:
