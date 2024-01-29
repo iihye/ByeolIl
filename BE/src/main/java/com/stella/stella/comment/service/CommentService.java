@@ -25,7 +25,6 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
-    private final MulticommentRepository multicommentRepository;
 
     public void addComment(CommentCreateRequestDto dto){
         Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.BOARDID_INVALID));

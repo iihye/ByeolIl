@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MulticommentCreateRequestDto {
-    private Long commentIndex;
-    private Long boardIndex;
+public class MultcommentDeleteRequestDto {
+    private Long multcommentIndex;
     private Long memberIndex;
-    private String commentContent;
 }

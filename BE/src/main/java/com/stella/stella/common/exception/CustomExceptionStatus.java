@@ -25,6 +25,7 @@ public enum CustomExceptionStatus {
     ALREADY_HEARTED(1106,"이미 좋아요한 게시글입니다."),
     ALREADY_REPORTED(1107,"이미 신고한 게시글입니다."),
     COMMENTID_INVALID(1108, "유효한 댓글 정보가 아닙니다."),
+    MULTICOMMENTINDEX_INVALID(1109,"유효한 답댓글 정보가 아닙니다."),
     // follow 관련
     FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다"),
 
