@@ -8,10 +8,7 @@ function App() {
         <div className="App">
             <Header />
             <Routes>
-                <Route
-                    path="/member/login/kakao"
-                    element={<KakaoLogin />}
-                ></Route>
+                <Route path="/" element={<KakaoLogin />}></Route>
                 <Route path="/landing/login" element={<Login />}></Route>
             </Routes>
         </div>
