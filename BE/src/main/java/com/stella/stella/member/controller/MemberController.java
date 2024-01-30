@@ -35,7 +35,6 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> originLogin(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-        log.info("dto={}", memberLoginRequestDto);
         String accessToken = "";
         try {
             accessToken = memberService.login(memberLoginRequestDto.getMemberId(),
@@ -57,8 +56,24 @@ public class MemberController {
         try {
             String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/login/kakao");
             Map<String, Object> kakaoMemberInfo = memberService.getKakaoMemberInfo(kakaoAcessToken);
-            log.info(kakaoMemberInfo.toString());
             accessToken = memberService.login(kakaoMemberInfo.get("id").toString(), "", "kakao");
+            resultMap.put("message", "success");
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).header("accessToken", accessToken).body(resultMap);
+    }
+
+    @GetMapping("/login/google")
+    public ResponseEntity<Map<String, Object>> googleLogin(@RequestParam("code") String code) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        String accessToken = "";
+        try {
+            String googleAccessToken = memberService.getGoogleAccessToken(code, "api/member/login/google");
+            Map<String, Object> googleMemberInfo = memberService.getGoogleMemberInfo(googleAccessToken);
+            accessToken = memberService.login(googleMemberInfo.get("id").toString(), "", "google");
             resultMap.put("message", "success");
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
@@ -89,8 +104,21 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/join/kakao");
-            log.info(kakaoAcessToken);
             resultMap = memberService.getKakaoMemberInfo(kakaoAcessToken);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
+    @GetMapping("/join/google")
+    public ResponseEntity<Map<String, Object>> googleJoin(@RequestParam("code") String code) {
+        HttpStatus status = HttpStatus.OK;
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            String googleAccessToken = memberService.getGoogleAccessToken(code, "api/member/join/google");
+            resultMap = memberService.getGoogleMemberInfo(googleAccessToken);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
@@ -106,9 +134,7 @@ public class MemberController {
         try {
             //토큰으로 유저 정보 받아옴
             Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
-            log.info("accessMemberIndex={}", accessMemberIndex);
             result = memberService.info(accessMemberIndex);
-            log.info("result={}", result);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
         } catch (Exception e) {
@@ -138,8 +164,6 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            log.info("id={}", id);
-            log.info("result={}", memberRepository.findByMemberIdAndMemberPlatform(id, "origin"));
             memberRepository.findByMemberIdAndMemberPlatform(id, "origin")
                     .orElseThrow(() -> new UsernameNotFoundException("사용 가능한 아이디입니다."));
             resultMap.put("message", "이미 존재하는 아이디입니다.");
@@ -195,7 +219,6 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             //신청유저 != 대상유저인데 관리자도 아니라면
-            log.info("index={}", memberUpdateRequestDto);
             if ((Long) request.getAttribute("accessMemberIndex") != memberUpdateRequestDto.getMemberIndex()
                     && !request.getAttribute("accessMemberRole").equals("ADMIN")) {
                 status = HttpStatus.UNAUTHORIZED;

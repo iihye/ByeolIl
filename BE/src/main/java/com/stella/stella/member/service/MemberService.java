@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -27,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -94,18 +93,42 @@ public class MemberService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestAPIKey);
-        log.info(kakaoRedirectUrl);
-        log.info(code);
+
         params.add("redirect_uri", kakaoRedirectUrl + url);
 //        params.add("redirect_uri", "http://localhost:8080/" + url);
         params.add("code", code);
-        log.info(params.toString());
+
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         //
         ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(REQUEST_URL, request, String.class);
 
-        log.info(stringResponseEntity.toString());
+        JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
+
+        return jsonObject.getString("access_token");
+    }
+
+    public String getGoogleAccessToken(String code, String url) {
+        String REQUEST_URL = "https://oauth2.googleapis.com/token";
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Set Header
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.add("Accept", "application/json");
+
+        // Set parameter
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "351246438629-hkjmrho1kv9ovk5v4nd0be9gmh3tkl0g.apps.googleusercontent.com");
+        params.add("client_secret", "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");
+        params.add("redirect_uri", "http://localhost:8080/" + url);
+        params.add("code", code);
+
+        // Set http entity
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        //
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(REQUEST_URL, request, String.class);
 
         JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
 
@@ -113,7 +136,7 @@ public class MemberService {
     }
 
     public HashMap<String, Object> getKakaoMemberInfo(String kakaoAcessToken) {
-        String postURL = "https://kapi.kakao.com/v2/user/me";
+        String KAKAO_USERINFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -126,7 +149,7 @@ public class MemberService {
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(postURL, request, String.class);
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(KAKAO_USERINFO_REQUEST_URL, request, String.class);
 
         JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
 
@@ -145,6 +168,35 @@ public class MemberService {
         } catch (JSONException e) {
             memberInfo.put("birthday", null);
         }
+        return memberInfo;
+    }
+
+    public HashMap<String, Object> getGoogleMemberInfo(String googleAccessToken) {
+        String GOOGLE_USERINFO_REQUEST_URL="https://www.googleapis.com/oauth2/v1/userinfo";
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        //header에 accessToken을 담는다.
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.add("Authorization","Bearer "+googleAccessToken);
+
+        //HttpEntity를 하나 생성해 헤더를 담아서 restTemplate으로 구글과 통신하게 된다.
+        HttpEntity request = new HttpEntity(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                GOOGLE_USERINFO_REQUEST_URL,
+                HttpMethod.GET,
+                request,
+                String.class
+        );
+
+        JSONObject jsonObject = new JSONObject(response.getBody());
+
+        HashMap<String, Object> memberInfo = new HashMap<>();
+        memberInfo.put("id",jsonObject.getString("id"));
+        memberInfo.put("email",jsonObject.getString("email"));
+        memberInfo.put("name",jsonObject.getString("name"));
 
         return memberInfo;
     }

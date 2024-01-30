@@ -16,6 +16,7 @@ import com.stella.stella.common.Jwt.JwtTokenProvider;
 import com.stella.stella.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Configuration
 @EnableWebSecurity
