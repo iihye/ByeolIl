@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { userIndexState } from 'components/atom';
 import { useRecoilValue } from 'recoil';
+import StarDetail from 'components/star/StarDetail';
 
 // 추후 에러핸들링 필요
 // onClose, get에서 유저 인덱스로 변경
@@ -11,9 +11,10 @@ function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
     const userIndex = useRecoilValue(userIndexState);
 
-    const navigate = useNavigate();
     const moveBoardDetail = (boardIndex) => {
-        navigate(`/space/starDetail/${boardIndex}`);
+        // Detail 모달창에 response 뿌려주기
+        console.log(boardIndex);
+        <StarDetail starIndex={boardIndex} />;
     };
 
     const CloseButton = ({ onClose, alarmIndex }) => (
@@ -31,7 +32,9 @@ function Alarm() {
         axios
             .post(`${process.env.REACT_APP_API_URL}/alarm/check`, alarmInfo)
             .then(
-                setAlarmData(alarmData.filter((it) => it.alarmIndex !== index))
+                setAlarmData((currentAlarmData) =>
+                    currentAlarmData.filter((it) => it.alarmIndex !== index)
+                )
             )
             .catch((error) => console.log(error));
     };
@@ -41,7 +44,7 @@ function Alarm() {
             await axios
                 .get(`${process.env.REACT_APP_API_URL}/alarm/list/${userIndex}`)
                 .then((response) => {
-                    console.log(response.data.result);
+                    // console.log(response.data.result);
                     setAlarmData(response.data.result);
                 })
                 .catch((e) => console.log(e, userIndex));
@@ -70,7 +73,7 @@ function Alarm() {
                                 </div>
                             );
 
-                        case 'COMMENT':
+                        case 'CMT':
                             return (
                                 <div
                                     onClick={() =>
@@ -86,7 +89,7 @@ function Alarm() {
                                     />
                                 </div>
                             );
-                        case 'MULTICOMMENT':
+                        case 'MULTICMT':
                             return (
                                 <div
                                     key={it.alarmIndex}

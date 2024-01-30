@@ -1,7 +1,8 @@
-import Modal from "../reusable/Modal";
+import Modal from '../reusable/Modal';
 
 function StarDetail({ starIndex }) {
-  return <Modal starIndex={starIndex} />;
+    console.log('진입');
+    return <Modal starIndex={starIndex} />;
 }
 
 export default StarDetail;
