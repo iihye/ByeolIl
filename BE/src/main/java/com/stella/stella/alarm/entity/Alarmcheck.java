@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity(name = "alarm_check")
 @Builder
 @Getter
@@ -17,6 +19,6 @@ public class Alarmcheck {
     private Long alarmCheckIndex;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "alarm_index", referencedColumnName = "alarm_index")
+    @JoinColumn(name = "alarm_index")
     private Alarm alarm;
 }
