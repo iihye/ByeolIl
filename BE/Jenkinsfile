@@ -17,11 +17,13 @@ pipeline {
         stage('Dockerimage build'){
             steps{
                 dir('BE'){
+                    sh '''
                     echo 'Dockerimage build...'
-                    sh 'docker stop springboot'
-                    sh 'docker rm springboot'
-                    sh 'docker images -q docker-react | xargs docker rmi'
-                    sh 'docker build -t docker-springboot:0.0.1 .'
+                    docker stop springboot
+                    docker rm springboot
+                    docker rmi docker-springboot:0.0.1
+                    docker build -t docker-springboot:0.0.1 .
+                    '''
                 }
             }
         }
@@ -31,7 +33,6 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Deploy BE...'
-
                     docker run -d -p 8081:8080 --name springboot docker-springboot:0.0.1
                     '''
                 }

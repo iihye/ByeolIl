@@ -19,11 +19,13 @@ pipeline {
         stage('Dockerimage build'){
             steps{
                 dir('FE'){
+                    sh '''
                     echo 'Dockerimage build...'
-                    sh 'docker stop react'
-                    sh 'docker rm react'
-                    sh 'docker images -q docker-react | xargs docker rmi'
-                    sh 'docker build -t docker-react:0.0.1 .'
+                    docker stop react
+                    docker rm react
+                    docker rmi docker-react:0.0.1
+                    docker build -t docker-react:0.0.1 .
+                    '''
                 }
             }
         }
