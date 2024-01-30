@@ -21,6 +21,9 @@ pipeline {
                 dir('FE'){
                     sh '''
                     echo 'Dockerimage build...'
+                    docker stop react
+                    docker rm react
+                    docker images -q docker-react | xargs docker rmi
                     docker build -t docker-react:0.0.1 .
                     '''
                 }
@@ -32,8 +35,6 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Deploy FE...'
-                    docker stop react
-                    docker rm react
                     docker run -d -p 3000:3000 --name react docker-react:0.0.1
                     '''
                 }

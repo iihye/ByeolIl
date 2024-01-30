@@ -19,6 +19,9 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Dockerimage build...'
+                    docker stop springboot
+                    docker rm springboot
+                    docker images -q docker-react | xargs docker rmi
                     docker build -t docker-springboot:0.0.1 .
                     '''
                 }
@@ -30,8 +33,7 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Deploy BE...'
-                    docker stop springboot
-                    docker rm springboot
+
                     docker run -d -p 8081:8080 --name springboot docker-springboot:0.0.1
                     '''
                 }
