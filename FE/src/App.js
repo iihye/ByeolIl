@@ -4,6 +4,7 @@ import Login from './components/login/Login';
 import Header from './components/Header';
 import { Routes, Route } from 'react-router-dom';
 import KakaoLogin from './components/login/KakaoLogin';
+import Settings from 'components/user/Settings';
 
 localStorage.setItem('isLogin', true); // 테스트용
 
@@ -20,6 +21,11 @@ function App() {
                     element={<KakaoLogin />}
                 ></Route>
                 <Route exact path="/landing/login" element={<Login />}></Route>
+                <Route
+                    exact
+                    path="/space/:id/settings"
+                    element={<Settings />}
+                ></Route>
             </Routes>
         </div>
     );
