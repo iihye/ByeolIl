@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import base64 from 'base-64';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userIndexState, userInfoState } from '../atom';
 
 // + 아이디 찾기, 비밀번호 찾기, 회원가입 navigate
@@ -76,8 +76,6 @@ function Login() {
                     `${process.env.REACT_APP_API_URL}/member/login/origin`,
                     loginInfo
                 );
-                console.log('성공');
-                console.log(response.headers);
 
                 if (response.status === 200) {
                     const token = `Bearer ${response.headers.accesstoken}`;
@@ -96,6 +94,7 @@ function Login() {
 
                     let dec = JSON.parse(base64.decode(payload));
                     setUserIndexState(dec.sub);
+
                     getUserIndex();
                     navigate(`/space/${dec.sub}`);
                 }

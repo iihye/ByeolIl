@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { userIndexState } from 'components/atom';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 // 추후 에러핸들링 필요
 // onClose, get에서 유저 인덱스로 변경
 
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
-    const userIndex = useRecoilState(userIndexState);
+    const userIndex = useRecoilValue(userIndexState);
+
+    console.log('유저 인덱스', userIndex);
 
     const navigate = useNavigate();
     const moveBoardDetail = (boardIndex) => {
@@ -44,11 +46,11 @@ function Alarm() {
                     console.log(response.data.result);
                     setAlarmData(response.data.result);
                 })
-                .catch((e) => console.log(e));
+                .catch((e) => console.log(e, userIndex));
         };
 
         fetchData();
-    }, []);
+    }, [userIndex]);
 
     // 알림 타입마다 다른 창이 떠야함
     // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
