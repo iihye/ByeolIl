@@ -17,13 +17,11 @@ pipeline {
         stage('Dockerimage build'){
             steps{
                 dir('BE'){
-                    sh '''
                     echo 'Dockerimage build...'
-                    docker stop springboot
-                    docker rm springboot
-                    docker images -q docker-react | xargs docker rmi
-                    docker build -t docker-springboot:0.0.1 .
-                    '''
+                    sh 'docker stop springboot'
+                    sh 'docker rm springboot'
+                    sh 'docker images -q docker-react | xargs docker rmi'
+                    sh 'docker build -t docker-springboot:0.0.1 .'
                 }
             }
         }
