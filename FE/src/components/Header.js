@@ -8,6 +8,7 @@ function Header() {
             <Link to="/landing/login">
                 <button>로그인</button>
             </Link>
+            <Link to="/member/search/list">유저 검색</Link>
         </div>
     );
 }

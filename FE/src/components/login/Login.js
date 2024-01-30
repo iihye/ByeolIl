@@ -76,8 +76,6 @@ function Login() {
                     `${process.env.REACT_APP_API_URL}/member/login/origin`,
                     loginInfo
                 );
-                console.log('성공');
-                console.log(response.headers);
 
                 if (response.status === 200) {
                     const token = `Bearer ${response.headers.accesstoken}`;
@@ -117,7 +115,7 @@ function Login() {
                         },
                     }
                 );
-                console.log(response.data);
+
                 setUserInfoState(response.data);
             } catch (error) {
                 console.log('회원정보 가져오기 실패', error);
