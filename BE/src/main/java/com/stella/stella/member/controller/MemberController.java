@@ -89,6 +89,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/join/kakao");
+            log.info(kakaoAcessToken);
             resultMap = memberService.getKakaoMemberInfo(kakaoAcessToken);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());

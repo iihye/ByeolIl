@@ -46,8 +46,7 @@ public class MemberService {
 
     @Value("${kakao.key}")
     private String kakaoRestAPIKey;
-
-    @Value("@{kakao.url}")
+    @Value("${kakao.url}")
     private String kakaoRedirectUrl;
 
     @Transactional
@@ -95,13 +94,18 @@ public class MemberService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestAPIKey);
+        log.info(kakaoRedirectUrl);
+        log.info(code);
         params.add("redirect_uri", kakaoRedirectUrl + url);
 //        params.add("redirect_uri", "http://localhost:8080/" + url);
         params.add("code", code);
+        log.info(params.toString());
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         //
         ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(REQUEST_URL, request, String.class);
+
+        log.info(stringResponseEntity.toString());
 
         JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
 
