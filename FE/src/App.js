@@ -14,9 +14,9 @@ function App() {
 
   return (
     <div className="App">
-      <RadioModal />
-      <StarDetail starIndex={1} />
-      <ReportDetail reportInfo={reportInfo} />
+      {/* <RadioModal /> */}
+      <StarDetail starIndex={0} />
+      {/* <ReportDetail reportInfo={reportInfo} /> */}
     </div>
   );
 }

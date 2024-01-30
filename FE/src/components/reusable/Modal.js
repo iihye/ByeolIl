@@ -14,6 +14,10 @@ function StarContent({ type, starIndex, reportInfo }) {
       await axios
         .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`)
         .then((response) => {
+          const data = response.data;
+          data.boardInputDate = data.boardInputDate.split('-');
+          data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
+
           setData(response.data);
         })
         .catch((err) => {
@@ -21,17 +25,24 @@ function StarContent({ type, starIndex, reportInfo }) {
 
           const data = {
             boardRegTime: "2888-88-88 88:88:88.88888",
+            boardUpdateDate: "2042-52-34 16:26",
             boardInputDate: "2099-99-99",
             boardContent: "더미내용",
             boardMedia: ["이미지 링크1", "이미지 링크2"],
             boardAccess: "OPEN",
             boardLike: 3,
             hashContent: ["해시태그1 ", "해시태그2 ", "해시태그3 "],
-          };
+          };          
+
+          data.boardInputDate = data.boardInputDate.split('-');
+          data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
+          
           setData(data);
         });
     };
     fetchData();
+
+    
   }, []);
 
   const handleDelete = () => {
@@ -67,9 +78,9 @@ function StarContent({ type, starIndex, reportInfo }) {
       {/* 최상단 */}
       <div style={{ display: "flex" }}>
         {/* 지정일 */}
-        <div>{data ? `${data.boardInputDate.split("-")[0]}년 ${data.boardInputDate.split("-")[1]}월 ${data.boardInputDate.split("-")[2]}일` : "로딩중"}</div>
+        <div>{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</div>
         {/* 작성일(수정일) */}
-        <div>{data ? `${data.boardRegTime.split(" ")[0].split("-")[0]}년 ${data.boardRegTime.split(" ")[0].split("-")[1]}월 ${data.boardRegTime.split(" ")[0].split("-")[2]}일` : "로딩중"}</div>
+        <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div>
       </div>
       <div>
         {/* 이미지 영역 */}
@@ -87,7 +98,7 @@ function StarContent({ type, starIndex, reportInfo }) {
       <div>{/* 댓글 리스트 영역 */}</div>
       {type === "star" ? (
         <div>
-          {/* 댓글 작성 영역 */}
+          {/* 댓글 작성 영역 : 비로그인시 출력 안되게*/}
           <input />
           <button onClick={() => {handleRegistReply();}}>등록</button>
         </div>
