@@ -7,6 +7,8 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Springboot build...'
+                    echo 'pwd'
+                    echo 'ls -al'
                     chmod +x gradlew
                     ./gradlew clean build
                     '''
@@ -18,10 +20,14 @@ pipeline {
             steps{
                 dir('BE'){
                     sh '''
+                    echo 'pwd'
+                    echo 'ls -al'
                     echo 'Dockerimage build...'
                     docker stop springboot
                     docker rm springboot
+                    echo 'docker images'
                     docker rmi docker-springboot:0.0.1
+                    echo 'docker images'
                     docker build -t docker-springboot:0.0.1 .
                     '''
                 }
