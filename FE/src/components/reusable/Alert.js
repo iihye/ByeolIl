@@ -11,7 +11,7 @@ function Alert({ type, boardIndex, setIsModalOpen }) {
   const alertTypes = {
     block: <Block />,
     delete: <Delete boardIndex={boardIndex} />,
-    PWCheck: <InputAlert type={type} />,
+    PWCheck: <InputAlert type={type} setIsModalOpen={setIsModalOpen}/>,
     report: <InputAlert type={type} />,
   };
 
@@ -22,7 +22,7 @@ function Alert({ type, boardIndex, setIsModalOpen }) {
   );
 }
 
-function InputAlert({ type }) {
+function InputAlert({ type, setIsModalOpen }) {
   const input = useRef(null);
 
   const toEnter = {
@@ -69,11 +69,8 @@ function InputAlert({ type }) {
     if (buttonValue[type] === "신고") {
       reqReport(inputData);
     } else if (buttonValue[type] === "입력") {
-
-      
-      if (password === "1234") {
+      if (input === "1234") {
         setIsModalOpen(false);
-        useNavigate("/next-page");
       } else {
         alert("패스워드가 일치하지 않습니다.");
       }

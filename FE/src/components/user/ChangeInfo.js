@@ -12,20 +12,6 @@ export default function ChangeInfo() {
  // 모달창을 열기위해서 모달창을 여닫는 boolean 변수는 디폴트값 true
  const [isModalOpen, setIsModalOpen] = useState(true);
 
- // 비밀번호 일치시 동작할 함수. 
- const handleModalClose = () => {
-  setIsModalOpen(false);
-};
- // 패스워드 검사버튼 함수.
-const handleSubmit = () => {
-  if (password === "1234") {
-    setIsModalOpen(false);
-    useNavigate("/next-page");
-  } else {
-    alert("패스워드가 일치하지 않습니다.");
-  }
-};
-
  // 패스워드, 패스워드확인 
  const password = useRef("");
  const passwordConfirm = useRef("");
@@ -64,6 +50,9 @@ const handleSubmit = () => {
      setIsPasswordConfirm(true);
    }
  };
+
+// 비밀번호 수정하는 axios 추가해야함
+
 
  return (
    <>
