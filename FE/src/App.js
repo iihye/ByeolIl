@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
 import Login from './components/login/Login';
@@ -29,6 +30,32 @@ function App() {
                 <Route path="/space/star/:star-id" element={<StarDetail/>}></Route>
 >>>>>>> feature-FE/modal
             </Routes>
+=======
+//Find
+import FindID from "./components/login/FindID";
+import FindPW from "./components/login/FindPW";
+// Modal
+import RadioModal from "./components/radio/RadioModal";
+import StarDetail from "./components/star/StarDetail";
+// Alert
+import StarDeleteAlert from "./components/star/StarDeleteAlert";
+import StarReportAlert from "./components/star/StarReportAlert";
+import BlockAlert from "./components/user/BlockAlert";
+import PWCheck from "./components/user/PWCheckAlert";
+// Reply
+import StarReplyList from "./components/star/StarReplyList";
+import StarReplyListItem from "./components/star/StarReplyListItem";
+
+function App() {
+  return (
+    <div>
+      <div>
+        <StarReplyList />
+      </div>
+    </div>
+  );
+}
+>>>>>>> feature-FE/reply
 
             <Link to="/space/star/0">
                 <button>게시글 상세보기 테스트 페이지</button>
