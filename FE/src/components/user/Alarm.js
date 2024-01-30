@@ -11,8 +11,6 @@ function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
     const userIndex = useRecoilValue(userIndexState);
 
-    console.log('유저 인덱스', userIndex);
-
     const navigate = useNavigate();
     const moveBoardDetail = (boardIndex) => {
         navigate(`/space/starDetail/${boardIndex}`);
