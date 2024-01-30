@@ -7,8 +7,7 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Springboot build...'
-                    chmod +x gradlew
-                    ./gradlew clean build
+                    gradlew clean build
                     '''
                 }
             }
