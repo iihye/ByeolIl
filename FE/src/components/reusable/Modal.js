@@ -17,8 +17,8 @@ function StarContent({ type, starIndex, reportInfo }) {
           setData(response.data);
         })
         .catch((err) => {
-          console.log(err, "에러 발생으로 인해 더미 데이터가 출력됩니다.");
-          // dummy data : api 요청 제한 걸려서 임시로 넣어둠,, 테스트용
+          console.log(err, "에러 발생으로 임시 데이터로 테스트");
+
           const data = {
             boardRegTime: "2888-88-88 88:88:88.88888",
             boardInputDate: "2099-99-99",
@@ -31,16 +31,36 @@ function StarContent({ type, starIndex, reportInfo }) {
           setData(data);
         });
     };
-
     fetchData();
   }, []);
 
-  const deleteStar = async () => {
-    await axios
-      .put(`${process.env.REACT_APP_API_URL}}/board`) // 참고해서 다시 작성
-      .then((response) => console.log(response.data))
-      .catch((e) => console.log(e));
+  const handleDelete = () => {
+    /* 삭제하시겠습니까 alert 띄우기 */
   };
+
+  const handleReport = () => {
+    /* 신고 내용 입력 alert 출력 */
+  };
+
+  const handleModify = () => {
+    /* 게시글 수정 화면 띄우기 */
+  };
+
+  const handleLike = () => {
+    /* 게시글 좋아요 Req */
+  };
+
+  const handleRegistReply = () => {
+    /* 댓글 작성 Req */
+  };
+
+  const handleBlock = () => {
+    /* 정말 차단할까요 alert 띄우기 */
+  }
+
+  const handleClose = () => {
+    /* 이전 페이지로 이동 */
+  }
 
   return (
     <div className="modal">
@@ -60,41 +80,31 @@ function StarContent({ type, starIndex, reportInfo }) {
       <div>
         {/* 해시태그 */}
         <div style={{ display: "flex" }}>
-          {data
-            ? data.hashContent.map((i, idx) => {
-                return <div key={idx}>{i}</div>;
-              })
-            : "로딩중"}
+          {data ? data.hashContent.map((i, idx) => <div key={idx}>{i}</div>) : "로딩중"}
         </div>
       </div>
       {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
-      <div>{/* 댓글 영역 */}</div>
+      <div>{/* 댓글 리스트 영역 */}</div>
       {type === "star" ? (
         <div>
           {/* 댓글 작성 영역 */}
           <input />
-          <button>등록</button>
+          <button onClick={() => {handleRegistReply();}}>등록</button>
         </div>
       ) : null}
       <div>
         {/* 최하단 */}
         {type === "star" ? (
           <>
-            <button>LIKE</button>
-            <button>REPORT</button>
-            <button
-              onClick={() => {
-                deleteStar();
-              }}
-            >
-              DELETE
-            </button>
-            <button>MODIFY</button>
+            <button onClick={() => {handleLike();}}>LIKE</button>
+            <button onClick={() => {handleReport();}}>REPORT</button>
+            <button onClick={() => {handleDelete();}}>DELETE</button>
+            <button onClick={() => {handleModify();}}>MODIFY</button>
           </>
         ) : (
-          <button>차단</button>
+          <button onClick={() => {handleBlock();}}>차단</button>
         )}
-        <button>CLOSE</button>
+        <button onClick={()=>{handleClose();}}>CLOSE</button>
       </div>
     </div>
   );
@@ -104,64 +114,58 @@ function RadioContent() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      // 추후 env URL로 대체
-      const URL = "https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io";
-
-      await axios
-        .get(`${URL}/radio`)
-        .then((response) => {
-          setData(response.data);
-        })
-        .catch((err) => {
-          console.log(err, "에러 발생으로 인해 더미 데이터가 출력됩니다.");
-          // dummy data : api 요청 제한 걸려서 임시로 넣어둠,, 테스트용
-          const data = {
-            radioIndex: 1,
-            boardIndex: 1,
-            boardContent: "더미 데이터",
-            boardInputDate: "2099-99-99",
-          };
-          setData(data);
-        });
-    };
-
-    fetchData();
+    // const fetchData = async () => {
+    //   await axios
+    //     .get(`${process.env.REACT_APP_API_URL}/radio`)
+    //     .then((response) => {
+    //       setData(response.data);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err, "에러 발생으로 인해 더미 데이터가 출력됩니다.");
+    //       // dummy data : api 요청 제한 걸려서 임시로 넣어둠,, 테스트용
+    //       const data = {
+    //         radioIndex: 1,
+    //         boardIndex: 1,
+    //         boardContent: "더미 데이터",
+    //         boardInputDate: "2099-99-99",
+    //       };
+    //       setData(data);
+    //     });
+    // };
+    // fetchData();
   }, []);
+
+  const handleReport = () => {
+    /* 신고 내용 입력 alert 출력 */
+  }
+  const handleClose = () => {
+    /* 이전 페이지로 이동 */
+  }
+  const handlePlay = () => {
+    /* 음성 파일 실행 */
+  }
+  const handleResend = () => {
+    /* 라디오 송신 Req */
+  }
 
   return (
     <div>
       <div>
         {/*라디오 모달 상단 헤더 */}
         <div>{data ? `${data.boardInputDate.split("-")[0]}년 ${data.boardInputDate.split("-")[1]}월 ${data.boardInputDate.split("-")[2]}일의 기록...` : "로딩중"}</div>
-        <button>REPORT</button>
-        <button>CLOSE</button>
+        <button onClick={() => {handleReport()}}>REPORT</button>
+        <button onClick={() => {handleClose()}}>CLOSE</button>
       </div>
       <div>
         {/*라디오 내용 */}
         <div>{data ? data.boardContent : "로딩중"}</div>
       </div>
       <div>
-        <button>PLAY</button>
-        <button>재송신하기</button>
+        <button onClick={() => {handlePlay()}}>PLAY</button>
+        <button onClick={() => {handleResend()}}>재송신하기</button>
       </div>
     </div>
   );
 }
-
-const reqStarReport = async (data) => {
-  const URL = "https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io";
-
-  try {
-    return await axios.post(`${URL}/board/report`, data, { header: { "Content-Type": "application/json" } });
-  } catch (err) {
-    console.log("asfddsafsaf");
-    return {
-      radioIndex: 1,
-      boardIndex: 1,
-      boardContent: "샘플 내용",
-    };
-  }
-};
 
 export default Modal;
