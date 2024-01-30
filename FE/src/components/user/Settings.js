@@ -6,8 +6,8 @@ import { useRecoilValue } from 'recoil';
 function Settings() {
     const options = [
         { name: '흐린', value: 'OLD' },
-        { name: '아련한', value: 'OLD' },
-        { name: '어렴풋한', value: 'OLD' },
+        { name: '아련한', value: 'OLDER' },
+        { name: '어렴풋한', value: 'OLDEST' },
     ];
 
     const [settingValue, setSettingValue] = useState('');
