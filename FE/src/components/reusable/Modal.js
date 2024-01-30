@@ -1,28 +1,38 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 
 // type: "radio", "star", "report"
-function Modal({ type, starIndex, reportInfo }) {
-  return <div style={{ border: "1px solid black", margin: "5px" }}>{type === "radio" ? <RadioContent /> : <StarContent type={type} starIndex={starIndex} reportInfo={reportInfo} />}</div>;
+function Modal({ type, reportInfo }) {
+  return <div style={{ border: "1px solid black", margin: "5px" }}>{type === "radio" ? <RadioContent /> : <StarContent type={type} reportInfo={reportInfo} />}</div>;
 }
 
-function StarContent({ type, starIndex, reportInfo }) {
+function StarContent({ type,  reportInfo }) {
   const [data, setData] = useState(null);
+  const params = useParams();
+  const starIndex = params["star-id"];
 
-  useEffect(() => {
+  useEffect(() => { 
+    
     const fetchData = async (starIndex) => {
+      console.log(localStorage.getItem('token') ?? "");
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`)
+        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`,
+        {
+          headers: {
+            token: localStorage.getItem('token') ?? "",
+          },
+        })
         .then((response) => {
           const data = response.data;
           data.boardInputDate = data.boardInputDate.split('-');
           data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
-
+  
           setData(response.data);
         })
         .catch((err) => {
           console.log(err, "에러 발생으로 임시 데이터로 테스트");
-
+        
           const data = {
             boardRegTime: "2888-88-88 88:88:88.88888",
             boardUpdateDate: "2042-52-34 16:26",
@@ -36,11 +46,10 @@ function StarContent({ type, starIndex, reportInfo }) {
 
           data.boardInputDate = data.boardInputDate.split('-');
           data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
-          
           setData(data);
         });
     };
-    fetchData();
+    fetchData(starIndex);
 
     
   }, []);
@@ -84,7 +93,7 @@ function StarContent({ type, starIndex, reportInfo }) {
       </div>
       <div>
         {/* 이미지 영역 */}
-        <div style={{ display: "flex" }}>{data && data.boardMedia.map((i, index) => <div>이미지 {index}</div>)}</div>
+        <div style={{ display: "flex" }}>{data && data.boardMedia.map((i, index) => <div key={index}>이미지 {index}</div>)}</div>
         {/* 게시글 내용 */}
         <div>{data ? data.boardContent : "로딩중"}</div>
       </div>

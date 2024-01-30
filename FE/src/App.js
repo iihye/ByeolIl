@@ -1,24 +1,30 @@
-// Modal
-import RadioModal from "./components/radio/RadioModal";
-import StarDetail from "./components/star/StarDetail";
-import ReportDetail from "./components/admin/ReportDetail";
+import MainPage from './pages/MainPage';
+import LandingPage from './pages/LandingPage';
+import Login from './components/login/Login';
+import Header from './components/Header';
+import { Routes, Route } from 'react-router-dom';
+import KakaoLogin from './components/login/KakaoLogin';
+import StarDetail from 'components/star/StarDetail';
+import { Link } from 'react-router-dom';
+
+localStorage.setItem('isLogin', true); // 테스트용
 
 function App() {
-  const reportInfo = {
-    reportIndex: 1,
-    boardIndex: 1,
-    userNickname: "유저닉네임",
-    reportContent: "신고 내용",
-    reportInputDate: "신고 날짜",
-  };
+    const isLogin = localStorage.getItem('isLogin');
+  
+    return (
+        <div className="App">
+            <Header />
+            <Routes>
+                <Route path="/" element={<KakaoLogin />}></Route>
+                <Route path="/landing/login" element={<Login />}></Route>
+                <Route path="/space/star/:star-id" element={<StarDetail/>}></Route>
+            </Routes>
 
-  return (
-    <div className="App">
-      {/* <RadioModal /> */}
-      <StarDetail starIndex={0} />
-      {/* <ReportDetail reportInfo={reportInfo} /> */}
-    </div>
-  );
+            <Link to="/space/star/0">
+                <button>게시글 상세보기 테스트 페이지</button>
+            </Link>
+        </div>
+    );
 }
-
 export default App;
