@@ -42,6 +42,7 @@ public class SecurityConfig {
 								.requestMatchers("/api/member/ban").hasRole("ADMIN")
 								.requestMatchers("/api/member/search/list").permitAll()
 								.requestMatchers("/api/alarm/**").permitAll()
+								.requestMatchers("/api/board/").permitAll()
                                 .requestMatchers("/api/board/**").permitAll()
                                 .requestMatchers("/api/comment/**").permitAll()
                                 .requestMatchers("/api/multicomment/**").permitAll()
