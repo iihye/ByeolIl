@@ -22,17 +22,12 @@ function Modal({ starIndex }) {
 function StarContent({ starIndex }) {
     const [data, setData] = useState(null);
 
-    console.log('진입');
-
     /**
      * 별 상세정보 요청
      * @param {Number} starIndex
      * @returns
      */
     const reqStarInfo = async (starIndex) => {
-        const URL =
-            'https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io';
-
         try {
             return await axios.get(
                 `${process.env.REACT_APP_API_URL}/board/${starIndex}`

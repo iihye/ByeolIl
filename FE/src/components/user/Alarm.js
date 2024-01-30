@@ -9,12 +9,13 @@ import StarDetail from 'components/star/StarDetail';
 
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
+    const [detailModal, setDetailModal] = useState(false);
+    const [boardState, setBoardState] = useState('');
     const userIndex = useRecoilValue(userIndexState);
 
-    const moveBoardDetail = (boardIndex) => {
-        // Detail 모달창에 response 뿌려주기
-        console.log(boardIndex);
-        <StarDetail starIndex={boardIndex} />;
+    const ModalOpen = (boardIndex) => {
+        setDetailModal(true);
+        setBoardState(boardIndex);
     };
 
     const CloseButton = ({ onClose, alarmIndex }) => (
@@ -76,9 +77,7 @@ function Alarm() {
                         case 'CMT':
                             return (
                                 <div
-                                    onClick={() =>
-                                        moveBoardDetail(it.boardIndex)
-                                    }
+                                    onClick={() => ModalOpen(it.boardIndex)}
                                     key={it.alarmIndex}
                                 >
                                     {it.fromMemberNickName}님이 내 게시글에
@@ -87,13 +86,25 @@ function Alarm() {
                                         onClose={onClose}
                                         alarmIndex={it.alarmIndex}
                                     />
+                                    {detailModal &&
+                                        boardState === it.boardIndex && (
+                                            <div>
+                                                {
+                                                    <StarDetail
+                                                        starIndex={
+                                                            it.boardIndex
+                                                        }
+                                                    />
+                                                }
+                                            </div>
+                                        )}
                                 </div>
                             );
                         case 'MULTICMT':
                             return (
                                 <div
                                     key={it.alarmIndex}
-                                    onClick={moveBoardDetail(it.boardIndex)}
+                                    onClick={() => ModalOpen(it.boardIndex)}
                                 >
                                     {it.fromMemberNickName}님이 내 댓글에
                                     답댓글을 남겼습니다
