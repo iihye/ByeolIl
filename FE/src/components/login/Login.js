@@ -80,10 +80,6 @@ function Login() {
 
                     localStorage.setItem('token', token);
 
-                    axios.defaults.headers.common[
-                        'Authorization'
-                    ] = `Bearer ${response.headers.accesstoken}`;
-
                     // JWT 디코딩
                     let payload = token.substring(
                         token.indexOf('.') + 1,
