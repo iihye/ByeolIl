@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import SearchBar from './SearchBar';
-import { filterState, listState, userIndexState } from 'components/atom';
+import { filterState, listState } from 'components/atom';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import axios from 'axios';
 
 function List() {
     const [listData, setListData] = useRecoilState(listState);
     const filterData = useRecoilValue(filterState);
-    const memberIndex = useRecoilValue(userIndexState);
+    const memberIndex = localStorage.getItem('memberIndex');
 
     const deleteStar = (boardIndex, memberIndex) => {
         axios
