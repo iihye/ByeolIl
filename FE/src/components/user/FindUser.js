@@ -31,6 +31,9 @@ function FindUser() {
         };
 
         fetchData();
+        // if (userToken) {
+        //     fetchData();
+        // }
     }, []);
 
     // 검색 결과와 일치하는 유저 닉네임 렌더링

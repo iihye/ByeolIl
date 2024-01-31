@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
+import { isAddedStar, starsState, isStarRegistOpenState, curPageState } from "components/user/UserSpace";
 import axios from 'axios';
+import { useParams } from "react-router";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 function StarRegist (props){
+    const params = useParams();
+    const curPage = useRecoilValue(curPageState);
+    const setStars = useSetRecoilState(starsState);
+    const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+
     const type = props.type;
     const location = props.location;
     
@@ -39,7 +47,6 @@ function StarRegist (props){
             "hashContent": hashContent,
         }
 
-        console.log(data);
         try{
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/`,data,
             {
@@ -47,10 +54,24 @@ function StarRegist (props){
                     token: localStorage.getItem('token'),
                 },
             });
-    
+
             if (response.status === 200){
-                console.log(response.data);
                 alert("게시글 작성 성공");
+                
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/board/star/${params.user_id}`,
+                {
+                  header: {
+                    token: localStorage.getItem('token') ?? "",
+                  },
+                  params: {
+                    page: curPage ?? 0,
+                  }
+                })
+
+                isAddedStar.clear();
+                res.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+                setStars(res.data);
+                setIsStarRegistOpen(-1);
             } else {
                 console.log(response.data);
                 alert("게시글 작성 실패");
@@ -123,23 +144,26 @@ const HashtagArea = (props) => {
     const handleKeyDown = (e) => {
         
         if(e.code === "Enter" || e.code === "Space"){
+            
+            // 한글 문자 두번씩 입력되는 오류 방지하기 위해 추가
             if(e.nativeEvent.isComposing) return;
+
+            // 문자열 파싱 및 input value 비우기
             const value = input.current.value.trim();
             input.current.value = null;
+
+            // 공백 해시태그 추가 방지
             if(value === "") return;
+            
 
-            // 1. input 밸류 값 파싱
-
-            // input 밸류 제거
-
-            // 2. Set에 저장되어 있는지 체크
+            // Set에 저장되어 있는지 체크
             if (!props.hashtagSet.has(value)){
-                // 3-1. 새로운 값일 때
+                // 새로운 값일 때
 
-                // set에 값 저장
+                // Set에 해시태그 값 저장
                 props.hashtagSet.add(value);
 
-                // hashtagList state 갱신
+                // 해시태그 리스트 갱신
                 const tmp = [...hashtagList];
                 tmp.push(value);
                 setHashtagList(tmp);
