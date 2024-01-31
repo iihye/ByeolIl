@@ -62,6 +62,7 @@ public class BoardService {
                         .hashContent(s)
                         .board(board)
                         .member(member).build();
+                hashRepository.save(hash);
             }
         }
 
