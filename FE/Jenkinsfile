@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        string(name: 'containerName', defaultValue: 'react', description: 'docker containerName')
-    }
-
     tools {
         nodejs "Node20"
     }
@@ -24,11 +20,11 @@ pipeline {
             steps{
                 dir('FE'){
                     script {
-                        def containerExists = sh(script: "docker ps -a --format '{{.Names}}' | grep ${params.containerName}", returnStatus: true) == 0
+                        def containerExists = sh(script: "docker ps -a --format '{{.Names}}' | grep react", returnStatus: true) == 0
 
                         if (containerExists) {
-                            sh 'docker stop ${params.containerName}'
-                            sh 'docker rm ${params.containerName}'
+                            sh 'docker stop react'
+                            sh 'docker rm react'
                         }
 
                         sh '''
