@@ -5,25 +5,25 @@ pipeline {
         string(name: 'NAME', defaultValue: 'springboot')
     }
 
-    stage('SCM') {
-        steps {
-            sh "echo 'SCM...'"
-            checkout scm
+    stages {
+        stage('SCM') {
+            steps {
+                sh "echo 'SCM...'"
+                checkout scm
+            }
         }
-    }
 
-    stage('SonarQube Analysis') {
-        steps {
-            withSonarQubeEnv() {
-                dir('BE') {
-                    sh "echo 'SonarQube Analysis...'"
-                    sh "./gradlew sonar"
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv() {
+                    dir('BE') {
+                        sh "echo 'SonarQube Analysis...'"
+                        sh "./gradlew sonar"
+                    }
                 }
             }
         }
-    }
 
-    stages {
         stage('Springboot build'){
             steps{
                 dir('BE'){
