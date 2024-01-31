@@ -6,6 +6,8 @@ import { Routes, Route } from 'react-router-dom';
 import KakaoLogin from './components/login/KakaoLogin';
 import FindUser from 'components/user/FindUser';
 import List from 'components/reusable/List';
+import StarDetail from 'components/star/StarDetail';
+import { Link } from 'react-router-dom';
 
 localStorage.setItem('isLogin', true); // 테스트용
 
@@ -33,6 +35,10 @@ function App() {
                     element={<List />}
                 ></Route>
             </Routes>
+
+            <Link to="/space/star/0">
+                <button>게시글 상세보기 테스트 페이지</button>
+            </Link>
         </div>
     );
 }

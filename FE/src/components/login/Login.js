@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import base64 from 'base-64';
-import { useSetRecoilState } from 'recoil';
-import { userIndexState, userInfoState } from '../atom';
 
 // + 아이디 찾기, 비밀번호 찾기, 회원가입 navigate
 
@@ -14,8 +12,6 @@ function Login() {
     const [passwordValue, setPasswordValue] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isDisable, setIsDisble] = useState(true);
-    const setUserIndexState = useSetRecoilState(userIndexState);
-    const setUserInfoState = useSetRecoilState(userInfoState);
     const idRef = useRef('');
 
     const navigate = useNavigate();
@@ -29,6 +25,8 @@ function Login() {
     };
 
     const onLogOut = () => {
+        localStorage.removeItem('memberIndex');
+        localStorage.removeItem('nickname');
         localStorage.removeItem('token');
         window.location.reload();
     };
@@ -93,7 +91,7 @@ function Login() {
                     );
 
                     let dec = JSON.parse(base64.decode(payload));
-                    setUserIndexState(dec.sub);
+                    localStorage.setItem('memberIndex', dec.sub);
                     getUserIndex();
                     navigate(`/space/${dec.sub}`);
                 }
@@ -116,7 +114,7 @@ function Login() {
                     }
                 );
 
-                setUserInfoState(response.data);
+                localStorage.setItem('nickname', response.data.memberNickname);
             } catch (error) {
                 console.log('회원정보 가져오기 실패', error);
             }
