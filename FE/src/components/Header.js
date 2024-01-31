@@ -7,7 +7,7 @@ function Header() {
     const userIndexValue = useRecoilValue(userIndexState);
     return (
         <div className="Header">
-            <div>고정된 헤더입니다</div>
+            <div>고정된 헤더입니다!!</div>
             <Link to="/landing/login">
                 <button>로그인</button>
             </Link>
