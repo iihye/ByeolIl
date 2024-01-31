@@ -15,7 +15,11 @@ function FindUser() {
     useEffect(() => {
         const fetchData = async () => {
             await axios
-                .get(`${process.env.REACT_APP_API_URL}/member/search/list`)
+                .get(`${process.env.REACT_APP_API_URL}/member/search/list`, {
+                    headers: {
+                        token: localStorage.getItem('token') ?? '',
+                    },
+                })
                 .then((response) => {
                     setListData(response.data);
                 })
