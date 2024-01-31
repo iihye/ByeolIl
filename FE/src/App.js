@@ -42,7 +42,7 @@ function App() {
             </Link>
 
 
-            <StarRegist type={"regist"} location={50} />
+            {/* <StarRegist type={"regist"} location={50} /> */}
 
         </div>
     );
