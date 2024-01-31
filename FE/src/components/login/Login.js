@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import base64 from 'base-64';
+import Sidebar from 'components/Sidebar';
 
 // + 아이디 찾기, 비밀번호 찾기, 회원가입 navigate
 
@@ -135,6 +136,7 @@ function Login() {
             {localStorage.getItem('token') ? (
                 <div className="LogOut">
                     <button onClick={onLogOut}>로그아웃</button>
+                    <Sidebar props={localStorage.getItem('memberNickname')} />
                 </div>
             ) : (
                 <div className="Login">

@@ -6,6 +6,7 @@ import axios from 'axios';
 
 // 유저 검색 기능
 function FindUser() {
+    console.log('들어왔음');
     const setListData = useSetRecoilState(listState);
     const filterData = useRecoilValue(filterState);
 

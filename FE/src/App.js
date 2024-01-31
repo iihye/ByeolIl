@@ -4,19 +4,22 @@ import Login from './components/login/Login';
 import Header from './components/Header';
 import ChangeInfo from 'components/user/ChangeInfo';
 import StarList from 'components/star/StarList';
-import { Routes, Route } from 'react-router-dom';
+import ErrorPage from 'pages/ErrorPage';
+import FindUser from 'components/user/FindUser';
 import KakaoLogin from './components/login/KakaoLogin';
 import StarDetail from 'components/star/StarDetail';
-import { Link } from 'react-router-dom';
 import StarRegist from 'components/star/StarRegist';
-import { useRef } from 'react';
-import ErrorPage from 'pages/ErrorPage';
+import StarFavorList from 'components/star/StarFavorList';
+import FollowList from 'components/user/FollowList';
+// StarTagSearch, Settings 추가
+import { Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 localStorage.setItem('isLogin', true); // 테스트용
 
 function App() {
     const isLogin = localStorage.getItem('isLogin');
-    
+
     return (
         <div className="App">
             <Header />
@@ -27,23 +30,30 @@ function App() {
                     element={<KakaoLogin />}
                 ></Route>
                 <Route exact path="/landing/login" element={<Login />}></Route>
-                <Route path="/space/:user_id" element={<MainPage/>}>
-                    <Route path="changeInfo" element={<ChangeInfo/>}/>
-                    <Route path="starList" element={<StarList/>}/>
-                    <Route path="star/:star_id"element={<StarDetail/>}/>
-                    <Route path="*" element={<ErrorPage/>}/>
+                <Route path="/space/:user_id" element={<MainPage />}>
+                    <Route path="editInfo" element={<ChangeInfo />} />
+                    <Route path="starMine" element={<StarList />} />
+                    <Route path="starFavor" element={<StarFavorList />} />
+                    <Route path="follow" element={<FollowList />} />
+                    <Route path="findUser" element={<FindUser />} />
+                    {/* <Route path="tagSearch" element={<StarTagSearch />} />
+                    <Route path="Settings" element={<Settings />}></Route> */}
+                    <Route path="star/:star_id" element={<StarDetail />} />
+
+                    <Route path="*" element={<ErrorPage />} />
                 </Route>
             </Routes>
 
-            <div> 테스트 버튼들 ---------------------------------------------</div>
-            
+            <div>
+                {' '}
+                테스트 버튼들 ---------------------------------------------
+            </div>
+
             <Link to="/space/1">
                 <button>1번 유저의 메인 페이지로 이동</button>
             </Link>
 
-
-            <StarRegist type={"regist"} location={50} />
-
+            <StarRegist type={'regist'} location={50} />
         </div>
     );
 }
