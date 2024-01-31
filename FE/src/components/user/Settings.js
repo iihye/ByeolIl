@@ -10,18 +10,21 @@ function Settings() {
 
     const [settingValue, setSettingValue] = useState('');
     const memberIndex = localStorage.getItem('memberIndex');
+    const userToken = localStorage.getItem('token');
 
     const handleOption = (e) => {
+        const currentRadioState = e.target.value;
+
         axios
             .put(
                 `${process.env.REACT_APP_API_URL}/member`,
                 {
                     memberIndex: memberIndex,
-                    memberRadioStatus: e.target.value,
+                    memberRadioStatus: currentRadioState,
                 },
                 {
                     headers: {
-                        token: localStorage.getItem('token') ?? '',
+                        token: userToken,
                     },
                 }
             )

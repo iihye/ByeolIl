@@ -43,6 +43,7 @@ function App() {
             <Link to="/space/1">
                 <button>1번 유저의 메인 페이지로 이동</button>
             </Link>
+            <Settings />
 
             {/* <StarRegist type={"regist"} location={50} /> */}
         </div>
