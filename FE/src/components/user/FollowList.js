@@ -27,6 +27,11 @@ function FollowList() {
                     axios.get(
                         `${process.env.REACT_APP_API_URL}/follow/follower/1`
                     ),
+                    {
+                        headers: {
+                            token: localStorage.getItem('token') ?? '',
+                        },
+                    },
                 ]);
 
                 setFollowData(followResponse.data.result);
