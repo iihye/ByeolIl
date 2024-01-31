@@ -10,12 +10,11 @@ function Modal({ type, reportInfo }) {
 function StarContent({ type,  reportInfo }) {
   const [data, setData] = useState(null);
   const params = useParams();
-  const starIndex = params["star-id"];
+  const starIndex = params["star_id"];
 
   useEffect(() => { 
     
     const fetchData = async (starIndex) => {
-      console.log(localStorage.getItem('token') ?? "");
       await axios
         .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`,
         {
