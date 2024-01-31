@@ -4,6 +4,7 @@ import axios from 'axios';
 function StarRegist (props){
     const type = props.type;
     const location = props.location;
+    
     const buttonValue = {
         regist: "등록",
         modify: "수정",
