@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { userIndexState } from 'components/atom';
 import { useRecoilValue } from 'recoil';
 import StarDetail from 'components/star/StarDetail';
 
@@ -11,7 +10,7 @@ function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
     const [detailModal, setDetailModal] = useState(false);
     const [boardState, setBoardState] = useState('');
-    const userIndex = useRecoilValue(userIndexState);
+    const userIndex = localStorage.getItem('memberIndex');
 
     const ModalOpen = (boardIndex) => {
         setDetailModal(true);
