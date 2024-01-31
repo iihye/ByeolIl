@@ -15,10 +15,7 @@ import FollowList from 'components/user/FollowList';
 import { Link } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 
-localStorage.setItem('isLogin', true); // 테스트용
-
 function App() {
-    const isLogin = localStorage.getItem('isLogin');
     return (
         <div className="App">
             <Header />
@@ -38,7 +35,6 @@ function App() {
                     {/* <Route path="tagSearch" element={<StarTagSearch />} />
                     <Route path="Settings" element={<Settings />}></Route> */}
                     <Route path="star/:star_id" element={<StarDetail />} />
-
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
             </Routes>

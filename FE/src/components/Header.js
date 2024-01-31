@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
 function Header() {
+    const memberIndex = localStorage.getItem('memberIndex');
     return (
         <div className="Header">
             <div>고정된 헤더입니다!!</div>
