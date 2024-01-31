@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RadioCreateRequestDto {
-    private Long memberIndex;
+public class RadioResponseDto {
+    private Long radioIndex;
     private Long boardIndex;
+    private String boardContent;
+    private String boardInputDate;
 }
