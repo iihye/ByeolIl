@@ -7,8 +7,6 @@ pipeline {
                 dir('BE'){
                     sh '''
                     echo 'Springboot build...'
-                    pwd
-                    ls -al
                     chmod +x gradlew
                     ./gradlew clean build
                     '''
@@ -17,19 +15,23 @@ pipeline {
         }
 
         stage('Dockerimage build'){
-            steps{
-                dir('BE'){
-                    sh '''
-                    pwd
-                    ls -al
-                    echo 'Dockerimage build...'
-                    docker stop springboot
-                    docker rm springboot
-                    docker images
-                    docker rmi docker-springboot:0.0.1
-                    docker images
-                    docker build -t docker-springboot:0.0.1 .
-                    '''
+            steps {
+                dir('BE') {
+                    script {
+                        def containerName = 'springboot'
+                        def containerExists = sh(script: "docker ps -a --format '{{.Names}}' | grep ${containerName}", returnStatus: true) == 0
+
+                        if (containerExists) {
+                            sh 'docker stop ${containerName}'
+                            sh 'docker rm ${containerName}'
+                        }
+
+                        sh '''
+                        echo 'Dockerimage build...'
+                        docker rmi docker-springboot:0.0.1
+                        docker build -t docker-springboot:0.0.1 .
+                        '''
+                    }
                 }
             }
         }

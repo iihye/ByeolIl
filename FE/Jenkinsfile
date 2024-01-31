@@ -19,13 +19,21 @@ pipeline {
         stage('Dockerimage build'){
             steps{
                 dir('FE'){
-                    sh '''
-                    echo 'Dockerimage build...'
-                    docker stop react
-                    docker rm react
-                    docker rmi docker-react:0.0.1
-                    docker build -t docker-react:0.0.1 .
-                    '''
+                    script {
+                        def containerName = 'react'
+                        def containerExists = sh(script: "docker ps -a --format '{{.Names}}' | grep ${containerName}", returnStatus: true) == 0
+
+                        if (containerExists) {
+                            sh 'docker stop ${containerName}'
+                            sh 'docker rm ${containerName}'
+                        }
+
+                        sh '''
+                        echo 'Dockerimage build...'
+                        docker rmi docker-react:0.0.1
+                        docker build -t docker-react:0.0.1 .
+                        '''
+                    }
                 }
             }
         }
