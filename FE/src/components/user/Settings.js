@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { userIndexState } from '../atom';
-import { useRecoilValue } from 'recoil';
 
 function Settings() {
     const options = [
@@ -11,15 +9,14 @@ function Settings() {
     ];
 
     const [settingValue, setSettingValue] = useState('');
-    const userIndexValue = useRecoilValue(userIndexState);
+    const memberIndex = localStorage.getItem('memberIndex');
 
-    // userIndex, options value는 실제 API 완성되면 수정
     const handleOption = (e) => {
         axios
             .put(
                 `${process.env.REACT_APP_API_URL}/member`,
                 {
-                    memberIndex: userIndexValue,
+                    memberIndex: memberIndex,
                     memberRadioStatus: e.target.value,
                 },
                 {
