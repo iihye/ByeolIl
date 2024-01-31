@@ -10,6 +10,8 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository{
 
     @Override
     public Member findByRandMember() {
-        return entityManager.createQuery("select m from Member m ORDER BY RAND() limit 1", Member.class).getSingleResult();
+        return entityManager.
+                createQuery("select m from Member m ORDER BY RAND() limit 1", Member.class)
+                .getSingleResult();
     }
 }
