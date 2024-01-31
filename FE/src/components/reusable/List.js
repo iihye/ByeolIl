@@ -1,13 +1,38 @@
 import React, { useEffect } from 'react';
 import SearchBar from './SearchBar';
 import { filterState, listState, userIndexState } from 'components/atom';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import axios from 'axios';
 
 function List() {
-    const setListData = useSetRecoilState(listState);
+    const [listData, setListData] = useRecoilState(listState);
     const filterData = useRecoilValue(filterState);
     const memberIndex = useRecoilValue(userIndexState);
+
+    const deleteStar = (boardIndex, memberIndex) => {
+        axios
+            .delete(
+                `${process.env.REACT_APP_API_URL}/board/`,
+                {
+                    data: {
+                        boardIndex: boardIndex,
+                        memberIndex: memberIndex,
+                    },
+                },
+                {
+                    headers: {
+                        token: localStorage.getItem('token') ?? '',
+                    },
+                }
+            )
+            .then(() => {
+                setListData((currentListData) =>
+                    currentListData.filter((it) => it.boardIndex !== boardIndex)
+                );
+                console.log('삭제완료');
+            })
+            .catch((error) => console.log(error));
+    };
 
     // 리스트 전체 값 불러오기
     useEffect(() => {
@@ -33,6 +58,13 @@ function List() {
                     <li key={it.boardIndex} style={{ border: '1px solid' }}>
                         {it.boardRegTime}&nbsp;{it.boardInputDate}&nbsp;
                         {it.boardContent}
+                        <button
+                            onClick={() =>
+                                deleteStar(it.boardIndex, it.memberIndex)
+                            }
+                        >
+                            X
+                        </button>
                     </li>
                 ))}
             </div>
