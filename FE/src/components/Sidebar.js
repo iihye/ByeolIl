@@ -26,9 +26,9 @@ function SidebarList(props) {
         <div className="sidebarList">
             <h2>{props.name}님의 우주</h2>
             {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
-            {items.map((item) => {
+            {items.map((item, index) => {
                 return (
-                    <div className="sidebarItem">
+                    <div className="sidebarItem" key={index}>
                         <Link to={item.path}>
                             <p>{item.name}</p>
                         </Link>

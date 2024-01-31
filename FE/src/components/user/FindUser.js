@@ -19,7 +19,7 @@ function FindUser() {
                 .then((response) => {
                     setListData(response.data);
                 })
-                .catch((e) => console.log(e.response.status));
+                .catch((e) => console.log(e.response));
         };
 
         fetchData();
