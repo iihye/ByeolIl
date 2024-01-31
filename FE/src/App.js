@@ -52,9 +52,7 @@ function App() {
                 <button>1번 유저의 메인 페이지로 이동</button>
             </Link>
 
-
             {/* <StarRegist type={"regist"} location={50} /> */}
-
         </div>
     );
 }
