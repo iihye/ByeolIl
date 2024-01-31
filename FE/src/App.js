@@ -26,14 +26,10 @@ function App() {
                     element={<KakaoLogin />}
                 ></Route>
                 <Route exact path="/landing/login" element={<Login />}></Route>
-                <Route
-                    exact
-                    path="/space/:id/settings"
-                    element={<Settings />}
-                ></Route>
                 <Route path="/space/:user_id" element={<MainPage />}>
                     <Route path="changeInfo" element={<ChangeInfo />} />
                     <Route path="starList" element={<StarList />} />
+                    <Route path="settings" element={<Settings />} />
                     <Route path="star/:star_id" element={<StarDetail />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
