@@ -11,6 +11,7 @@ import StarDetail from 'components/star/StarDetail';
 import StarRegist from 'components/star/StarRegist';
 import StarFavorList from 'components/star/StarFavorList';
 import FollowList from 'components/user/FollowList';
+import Settings from 'components/user/Settings';
 // StarTagSearch, Settings 추가
 import { Link } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
@@ -32,8 +33,8 @@ function App() {
                     <Route path="starFavor" element={<StarFavorList />} />
                     <Route path="follow" element={<FollowList />} />
                     <Route path="findUser" element={<FindUser />} />
-                    {/* <Route path="tagSearch" element={<StarTagSearch />} />
-                    <Route path="Settings" element={<Settings />}></Route> */}
+                    {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
+                    <Route path="Settings" element={<Settings />}></Route>
                     <Route path="star/:star_id" element={<StarDetail />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
