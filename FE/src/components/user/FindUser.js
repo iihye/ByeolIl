@@ -10,14 +10,18 @@ function FindUser() {
     const setListData = useSetRecoilState(listState);
     const listValue = useRecoilValue(listState);
     const filterData = useRecoilValue(filterState);
+    const userToken = localStorage.getItem('token') ?? '';
 
     // API로 유저 전체 리스트를 받아와서 listData 상태 변경
     useEffect(() => {
+        if (userToken === null || userToken === undefined) {
+            return;
+        }
         const fetchData = async () => {
             await axios
                 .get(`${process.env.REACT_APP_API_URL}/member/search/list`, {
                     headers: {
-                        token: localStorage.getItem('token') ?? '',
+                        token: userToken,
                     },
                 })
                 .then((response) => {
@@ -27,7 +31,6 @@ function FindUser() {
         };
 
         fetchData();
-        console.log(listValue);
     }, []);
 
     // 검색 결과와 일치하는 유저 닉네임 렌더링
