@@ -27,7 +27,7 @@ public class RadioService {
     public void addRadio(RadioCreateRequestDto dto){
         Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.BOARDID_INVALID));
         if(board.getMember().getMemberIndex()==dto.getMemberIndex()) {
-            Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.MEMBERID_INVALID));
+            Member member = memberRepository.findByRandMember();
 
             Radio radio = Radio.builder()
                     .board(board)

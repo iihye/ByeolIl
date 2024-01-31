@@ -26,28 +26,28 @@ public class RadioController {
             radioService.addRadio(radioCreateRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
-            message = "fail";
+            message = e.getMessage();
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            message = "fail";
+            message = e.getMessage();
         }
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<RadioResponseDto> radioDetails(){
-        HttpStatus status = HttpStatus.OK;
-        String message = "success";
-        RadioResponseDto radioResponseDto =null;
-        try {
-            radioResponseDto =  radioService.findRadio();
-        } catch (NullPointerException e) {
-            status = HttpStatus.NOT_FOUND;
-            message = "fail";
-        } catch (Exception e) {
-            status = HttpStatus.BAD_REQUEST;
-            message = "fail";
-        }
-        return ResponseEntity.status(status).body(radioResponseDto);
-    }
+//    @GetMapping("/")
+//    public ResponseEntity<RadioResponseDto> radioDetails(){
+//        HttpStatus status = HttpStatus.OK;
+//        String message = "success";
+//        RadioResponseDto radioResponseDto =null;
+//        try {
+//            radioResponseDto =  radioService.findRadio();
+//        } catch (NullPointerException e) {
+//            status = HttpStatus.NOT_FOUND;
+//            message = "fail";
+//        } catch (Exception e) {
+//            status = HttpStatus.BAD_REQUEST;
+//            message = "fail";
+//        }
+//        return ResponseEntity.status(status).body(radioResponseDto);
+//    }
 }
