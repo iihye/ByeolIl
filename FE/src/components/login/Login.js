@@ -7,7 +7,7 @@ import { userIndexState, userInfoState } from '../atom';
 
 // + 아이디 찾기, 비밀번호 찾기, 회원가입 navigate
 
-const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&response_type=code`;
+const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_URI}&response_type=code`;
 
 function Login() {
     const [idValue, setIdValue] = useState('');

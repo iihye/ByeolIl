@@ -1,19 +1,15 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 
-/**
- *
- * @param {Number} radioIndex
- * @param {Number} starIndex
- * @returns
- */
-function Modal({ starIndex }) {
+// type: "radio", "star", "report"
+function Modal({ type, reportInfo }) {
     return (
-        <div>
-            {starIndex ? (
-                <StarContent starIndex={starIndex} />
-            ) : (
+        <div style={{ border: '1px solid black', margin: '5px' }}>
+            {type === 'radio' ? (
                 <RadioContent />
+            ) : (
+                <StarContent type={type} reportInfo={reportInfo} />
             )}
         </div>
     );
@@ -28,10 +24,11 @@ function StarContent({ starIndex }) {
      * @returns
      */
     const reqStarInfo = async (starIndex) => {
+        const URL =
+            'https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io';
+
         try {
-            return await axios.get(
-                `${process.env.REACT_APP_API_URL}/board/${starIndex}`
-            );
+            return await axios.get(`${URL}/board/${starIndex}`);
         } catch (err) {
             console.log(err, '에러 발생으로 인해 더미 데이터가 출력됩니다.');
             // dummy data : api 요청 제한 걸려서 임시로 넣어둠,, 테스트용

@@ -1,7 +1,10 @@
 import Modal from '../reusable/Modal';
 
-function StarDetail({ starIndex }) {
-    return <Modal starIndex={starIndex} />;
+/**
+ * starIndex : 별 번호
+ */
+function StarDetail() {
+    return <Modal type={'star'} />;
 }
 
 export default StarDetail;
