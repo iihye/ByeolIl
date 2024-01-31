@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { atom, useRecoilValue, useSetRecoilState } from 'recoil';
-import { listState } from './List';
-
-export const filterState = atom({
-    key: 'filterState',
-    default: [],
-});
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { filterState, listState } from 'components/atom';
 
 // useDebounce를 이용하여 상태가 변경될 때마다 화면이 깜빡이는 이슈 해결
 const useDebounce = (value, delay) => {

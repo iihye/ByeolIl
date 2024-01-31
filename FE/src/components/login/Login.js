@@ -75,8 +75,6 @@ function Login() {
                     `${process.env.REACT_APP_API_URL}/member/login/origin`,
                     loginInfo
                 );
-                console.log('성공');
-                console.log(response.headers);
 
                 if (response.status === 200) {
                     const token = `Bearer ${response.headers.accesstoken}`;

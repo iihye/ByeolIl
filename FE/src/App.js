@@ -7,6 +7,8 @@ import StarList from 'components/star/StarList';
 import ErrorPage from 'pages/ErrorPage';
 import FindUser from 'components/user/FindUser';
 import KakaoLogin from './components/login/KakaoLogin';
+import FindUser from 'components/user/FindUser';
+import List from 'components/reusable/List';
 import StarDetail from 'components/star/StarDetail';
 import StarRegist from 'components/star/StarRegist';
 import StarFavorList from 'components/star/StarFavorList';
@@ -19,7 +21,6 @@ localStorage.setItem('isLogin', true); // 테스트용
 
 function App() {
     const isLogin = localStorage.getItem('isLogin');
-
     return (
         <div className="App">
             <Header />
