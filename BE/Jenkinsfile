@@ -1,9 +1,11 @@
 pipeline {
     agent any
+    
+    parameters{
+        string(name: 'NAME', defaultValue: 'springboot')
+    }
+
     stages {
-        parameters{
-            string(name: 'NAME', defaultValue: 'springboot')
-        }
         stage('Springboot build'){
             steps{
                 dir('BE'){
