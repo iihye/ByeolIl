@@ -7,8 +7,8 @@ import axios from 'axios';
 
 // 유저 검색 기능
 function FindUser() {
-    console.log('들어왔음');
     const setListData = useSetRecoilState(listState);
+    const listValue = useRecoilValue(listState);
     const filterData = useRecoilValue(filterState);
 
     // API로 유저 전체 리스트를 받아와서 listData 상태 변경
@@ -23,6 +23,7 @@ function FindUser() {
         };
 
         fetchData();
+        console.log(listValue);
     }, []);
 
     // 검색 결과와 일치하는 유저 닉네임 렌더링
