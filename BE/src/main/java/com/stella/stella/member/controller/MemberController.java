@@ -82,6 +82,23 @@ public class MemberController {
         return ResponseEntity.status(status).header("accessToken", accessToken).body(resultMap);
     }
 
+    @GetMapping("/login/naver")
+    public ResponseEntity<Map<String, Object>> naverLogin(@RequestParam("code") String code) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        String accessToken = "";
+        try {
+            String naverAccessToken = memberService.getNaverAccessToken(code, "api/member/login/naver");
+            Map<String, Object> googleMemberInfo = memberService.getNaverMemberInfo(naverAccessToken);
+            accessToken = memberService.login(googleMemberInfo.get("id").toString(), "", "naver");
+            resultMap.put("message", "success");
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).header("accessToken", accessToken).body(resultMap);
+    }
+
     //회원가입
     @PostMapping("/join")
     public ResponseEntity<Map<String, Object>> originJoin(@RequestBody MemberJoinRequestDto memberJoinDto) {
@@ -125,6 +142,19 @@ public class MemberController {
         }
         return ResponseEntity.status(status).body(resultMap);
     }
+    @GetMapping("/join/naver")
+    public ResponseEntity<Map<String, Object>> naverJoin(@RequestParam("code") String code) {
+        HttpStatus status = HttpStatus.OK;
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            String naverAccessToken = memberService.getNaverAccessToken(code, "api/member/join/naver");
+            resultMap = memberService.getNaverMemberInfo(naverAccessToken);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
 
     //토큰에 저장된 인덱스로 본인 정보
     @GetMapping("/info/mine")
@@ -142,22 +172,6 @@ public class MemberController {
         }
         return ResponseEntity.status(status).body(new MyInfoResponseDto(result));
     }
-
-    // 남의 정보 가져올 예정
-//	@GetMapping("/info")
-//	public ResponseEntity<MemberInfoResponseDto> memberInfo(@RequestParam("index") long memberIndex,HttpServletRequest request) {
-//		Member result = null;
-//		HttpStatus status = HttpStatus.OK;
-//		String accessToken = request.getHeader("accessToken");
-//		try {
-//			result = memberService.info(memberIndex);
-//		} catch(NullPointerException e) {
-//			status = HttpStatus.NOT_FOUND;
-//		} catch(Exception e) {
-//			status = HttpStatus.BAD_REQUEST;
-//		}
-//		return ResponseEntity.status(status).body(new MemberInfoResponseDto(result));
-//	}
     // 아이디 중복 체크: 홈페이지 로그인만 체크 요청이 들어온다고 가정
     @GetMapping("/dup-check/id")
     public ResponseEntity<Map<String, Object>> dupCheckId(@RequestParam("id") String id) {
