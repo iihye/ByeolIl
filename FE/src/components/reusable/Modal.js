@@ -24,9 +24,9 @@ function StarContent({ type,  reportInfo }) {
         })
         .then((response) => {
           const data = response.data;
-          data.boardInputDate = data.boardInputDate.split('-');
-          data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
-  
+          data.boardInputDate = data.boardInputDate.split('.');
+          data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('.');
+          
           setData(response.data);
         })
         .catch((err) => {
@@ -41,7 +41,7 @@ function StarContent({ type,  reportInfo }) {
             boardAccess: "OPEN",
             boardLike: 3,
             hashContent: ["해시태그1 ", "해시태그2 ", "해시태그3 "],
-          };          
+          };
 
           data.boardInputDate = data.boardInputDate.split('-');
           data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
@@ -49,7 +49,6 @@ function StarContent({ type,  reportInfo }) {
         });
     };
     fetchData(starIndex);
-
     
   }, []);
 
@@ -81,6 +80,10 @@ function StarContent({ type,  reportInfo }) {
     /* 이전 페이지로 이동 */
   }
 
+  const isWriter = () => {
+    return params["user_id"] === localStorage.getItem('memberIndex');
+  }
+
   return (
     <div className="modal">
       {/* 최상단 */}
@@ -108,22 +111,27 @@ function StarContent({ type,  reportInfo }) {
         <div>
           {/* 댓글 작성 영역 : 비로그인시 출력 안되게*/}
           <input />
-          <button onClick={() => {handleRegistReply();}}>등록</button>
+          <button onClick={handleRegistReply}>등록</button>
         </div>
       ) : null}
       <div>
         {/* 최하단 */}
         {type === "star" ? (
           <>
-            <button onClick={() => {handleLike();}}>LIKE</button>
-            <button onClick={() => {handleReport();}}>REPORT</button>
-            <button onClick={() => {handleDelete();}}>DELETE</button>
-            <button onClick={() => {handleModify();}}>MODIFY</button>
+            <button onClick={handleLike}>LIKE</button>
+            <button onClick={handleReport}>REPORT</button>
+            {
+              isWriter() &&
+              <>
+                <button onClick={handleDelete}>DELETE</button>
+                <button onClick={handleModify}>MODIFY</button>
+              </>
+            }
           </>
         ) : (
-          <button onClick={() => {handleBlock();}}>차단</button>
+          <button onClick={handleBlock}>차단</button>
         )}
-        <button onClick={()=>{handleClose();}}>CLOSE</button>
+        <button onClick={handleClose}>CLOSE</button>
       </div>
     </div>
   );

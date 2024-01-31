@@ -380,6 +380,7 @@ function Star(props) {
 
   const mesh = useRef(null);
   const stars = useRecoilValue(starsState);
+  const navigate = useNavigate();
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
   
   // curStarState: 해당 별 객체 정보를 모두 담고 있다.
@@ -443,9 +444,9 @@ function Star(props) {
   //   }
   // };
   const handleClick = (locationNum) => {
-    if ((isAddedStar.get(locationNum))){
-      // 별 상세보기 라우팅
-      alert("별상세보기");
+    const starInfo = isAddedStar.get(locationNum)
+    if (starInfo){
+      navigate(`star/${starInfo.boardIndex}`)
     } else {
       // 별 등록 모달 띄우기
       setIsStarRegistOpen(locationNum);

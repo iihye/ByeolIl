@@ -31,13 +31,12 @@ function App() {
                 <Route path="/space/:user_id" element={<MainPage />}>
                     <Route path="changeInfo" element={<ChangeInfo />} />
                     <Route path="starList" element={<StarList />} />
-                    <Route path="star/:star_id" element={<StarDetail />} />
+                    <Route path="star/:star_id" element={<StarDetail/>} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
-            </Routes>
+            </Routes>   
 
             <div>
-                {' '}
                 테스트 버튼들 ---------------------------------------------
             </div>
 
