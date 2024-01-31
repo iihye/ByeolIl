@@ -5,6 +5,7 @@ import Header from './components/Header';
 import { Routes, Route } from 'react-router-dom';
 import KakaoLogin from './components/login/KakaoLogin';
 import FindUser from 'components/user/FindUser';
+import List from 'components/reusable/List';
 
 localStorage.setItem('isLogin', true); // 테스트용
 
@@ -25,6 +26,11 @@ function App() {
                     exact
                     path="/member/search/list"
                     element={<FindUser />}
+                ></Route>
+                <Route
+                    exact
+                    path="/space/:id/starMine"
+                    element={<List />}
                 ></Route>
             </Routes>
         </div>

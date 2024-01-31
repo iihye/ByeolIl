@@ -1,28 +1,28 @@
 import React, { useEffect } from 'react';
 import SearchBar from './SearchBar';
-import { filterState, listState } from 'components/atom';
+import { filterState, listState, userIndexState } from 'components/atom';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 import axios from 'axios';
 
 function List() {
     const setListData = useSetRecoilState(listState);
     const filterData = useRecoilValue(filterState);
+    const memberIndex = useRecoilValue(userIndexState);
 
-    // 추후 url https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/board/list/{userIndex}로 변경, 의존성 배열에 userIndex 넣기
     // 리스트 전체 값 불러오기
     useEffect(() => {
         const fetchData = async () => {
             await axios
                 .get(
-                    'https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/board/list/1'
+                    `${process.env.REACT_APP_API_URL}/board/list/${memberIndex}`
                 )
                 .then((response) => {
-                    setListData(response.data);
+                    setListData(response.data.BoardListResponseDtoList);
                 })
                 .catch((e) => console.log(e));
         };
         fetchData();
-    }, []);
+    }, [memberIndex]);
 
     // 검색 결과와 일치하는 값을 렌더링
     return (
@@ -31,7 +31,7 @@ function List() {
             <div className="searchList">
                 {filterData.map((it) => (
                     <li key={it.boardIndex} style={{ border: '1px solid' }}>
-                        {it.boardRegTime}&nbsp;{it.boardInputTime}&nbsp;
+                        {it.boardRegTime}&nbsp;{it.boardInputDate}&nbsp;
                         {it.boardContent}
                     </li>
                 ))}
