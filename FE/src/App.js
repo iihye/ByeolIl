@@ -7,6 +7,8 @@ import StarList from 'components/star/StarList';
 import { Routes, Route } from 'react-router-dom';
 import KakaoLogin from './components/login/KakaoLogin';
 import Settings from 'components/user/Settings';
+import FindUser from 'components/user/FindUser';
+import List from 'components/reusable/List';
 import StarDetail from 'components/star/StarDetail';
 import { Link } from 'react-router-dom';
 import StarRegist from 'components/star/StarRegist';
@@ -24,13 +26,11 @@ function App() {
                     element={<KakaoLogin />}
                 ></Route>
                 <Route exact path="/landing/login" element={<Login />}></Route>
-
                 <Route
                     exact
                     path="/space/:id/settings"
                     element={<Settings />}
                 ></Route>
-
                 <Route path="/space/:user_id" element={<MainPage />}>
                     <Route path="changeInfo" element={<ChangeInfo />} />
                     <Route path="starList" element={<StarList />} />
@@ -48,7 +48,7 @@ function App() {
                 <button>1번 유저의 메인 페이지로 이동</button>
             </Link>
 
-            <StarRegist type={'regist'} location={50} />
+            {/* <StarRegist type={"regist"} location={50} /> */}
         </div>
     );
 }

@@ -74,17 +74,11 @@ function Login() {
                     `${process.env.REACT_APP_API_URL}/member/login/origin`,
                     loginInfo
                 );
-                console.log('성공');
-                console.log(response.headers);
 
                 if (response.status === 200) {
                     const token = `Bearer ${response.headers.accesstoken}`;
 
                     localStorage.setItem('token', token);
-
-                    axios.defaults.headers.common[
-                        'Authorization'
-                    ] = `Bearer ${response.headers.accesstoken}`;
 
                     // JWT 디코딩
                     let payload = token.substring(

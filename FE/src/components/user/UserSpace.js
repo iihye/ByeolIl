@@ -7,6 +7,7 @@ import * as THREE from "three";
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useNavigate, useParams } from "react-router-dom";
+import StarRegist from "components/star/StarRegist";
 
 // position : 별 [번호, x, y, z]
 const position = [
@@ -236,6 +237,11 @@ const starsState = atom({
   default: [],
 });
 
+const isStarRegistOpenState = atom({
+  key: "isStarRegistOpen",
+  default: -1,
+})
+
 const tmpStars = [
   // fetchData
   {
@@ -374,6 +380,9 @@ function Star(props) {
 
   const mesh = useRef(null);
   const stars = useRecoilValue(starsState);
+  const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+  
+  // curStarState: 해당 별 객체 정보를 모두 담고 있다.
   const [curStarState, setCurStarState] = useState(null);
 
   useEffect(() => {
@@ -382,7 +391,7 @@ function Star(props) {
 
   const colors = {
     OPEN: "yellow",
-    CLOSE: "red",
+    PARTOPEN: "red",
   };
 
   // const updateStarState = () => {
@@ -433,12 +442,13 @@ function Star(props) {
   //     }
   //   }
   // };
-  const a = useNavigate();
   const handleClick = (locationNum) => {
-    if ((isAddedStar.get(locationNum) ?? -1) !== -1){
+    if ((isAddedStar.get(locationNum))){
       // 별 상세보기 라우팅
+      alert("별상세보기");
     } else {
-      // 별 등록 모달
+      // 별 등록 모달 띄우기
+      setIsStarRegistOpen(locationNum);
     }
   }
 
@@ -454,7 +464,7 @@ function Star(props) {
 }
 
 function GroupStar(props) {
-  console.log(`GROUP-STAR ${props.groupNum} MOUNTED`);
+  // console.log(`GROUP-STAR ${props.groupNum} MOUNTED`);
 
   const stars = useRecoilValue(starsState);
   const [lineState, setLineState] = useState([]);
@@ -554,26 +564,34 @@ function SceneStars() {
   useEffect(() => {
     const fetchData = async () => {
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/star/${userId}/?page=${curPage}`,
+        .get(`${process.env.REACT_APP_API_URL}/board/star/${userId}`,
         {
           header: {
             token: localStorage.getItem('token') ?? "",
           },
+          params: {
+            page: curPage ?? 0,
+          }
         })
         .then((response) => {
           isAddedStar.clear();
           response.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+          console.log(response.data);
           setStars(response.data);
         })
         .catch((e) => {
           // 임시 데이터 - 나중에 제거할 예정
           console.log(e);
-          isAddedStar.clear();
-          tmpStars.forEach((star) => isAddedStar.set(star.boardLocation, star));
-          setStars(tmpStars);
+          // isAddedStar.clear();
+          // tmpStars.forEach((star) => isAddedStar.set(star.boardLocation, star));
+          // setStars(tmpStars);
         });
     };
     fetchData();
+
+        // isAddedStar.clear();
+        // tmpStars.forEach((star) => isAddedStar.set(star.boardLocation, star));
+        // setStars(tmpStars);
   }, [curPage]);
 
   return (
@@ -614,7 +632,21 @@ function SceneEnvironment() {
   );
 }
 
+function StarRegistArea (){
+  const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
+  console.log(isStarRegistOpen);
+
+  return(
+    <div>
+        {
+          isStarRegistOpen !== -1 && <StarRegist type={"regist"} location={isStarRegistOpen}/>
+        }
+    </div>
+  )
+}
+
 function UserSpace() {
+
   return (
     <>
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
@@ -622,12 +654,23 @@ function UserSpace() {
           <SceneStars />
           <SceneLights />
           <SceneEnvironment />
-          <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
+          <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={false} />
           <PerspectiveCamera makeDefault position={[-0.01, 0, 0.1]} fov={60} zoom={1} aspect={window.innerWidth / window.innerHeight} />
         </Canvas>
+      </div>
+      <div>
+        <StarRegistArea />
       </div>
     </>
   );
 }
 
+// 등록버튼 누르면
+// 성공했을 때
+  // 별 리스트 다시 요청하기
+    // curPage, user_id 필요
+  // isAddedStar에 props.location : starInfo 저장하기
+  // starsState 갱신하기
+  // isStarRegistOpenState를 -1로 변경하기
+export { isAddedStar, isStarRegistOpenState, starsState, curPageState}
 export default UserSpace;
