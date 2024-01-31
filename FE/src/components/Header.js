@@ -8,6 +8,9 @@ function Header() {
             <Link to="/landing/login">
                 <button>로그인</button>
             </Link>
+            <Link to="/space/alarm">
+                <button>알림창</button>
+            </Link>
         </div>
     );
 }
