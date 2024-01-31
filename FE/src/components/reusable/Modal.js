@@ -1,6 +1,8 @@
 import axios from "axios";
+import StarReplyList from "components/star/StarReplyList";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 // type: "radio", "star", "report"
 function Modal({ type, reportInfo }) {
@@ -8,10 +10,10 @@ function Modal({ type, reportInfo }) {
 }
 
 function StarContent({ type,  reportInfo }) {
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const params = useParams();
   const starIndex = params["star_id"];
-
   useEffect(() => { 
     
     const fetchData = async (starIndex) => {
@@ -78,10 +80,17 @@ function StarContent({ type,  reportInfo }) {
 
   const handleClose = () => {
     /* 이전 페이지로 이동 */
+    navigate(-1);
   }
 
+  /* 게시글 작성자 체크*/
   const isWriter = () => {
     return params["user_id"] === localStorage.getItem('memberIndex');
+  }
+
+  /* 로그인 체크 */
+  const isLogin = () => {
+    return localStorage.getItem('token') ? true : false;
   }
 
   return (
@@ -106,12 +115,19 @@ function StarContent({ type,  reportInfo }) {
         </div>
       </div>
       {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
-      <div>{/* 댓글 리스트 영역 */}</div>
+      <div>{/* 댓글 리스트 영역 */}
+        <StarReplyList/>
+      </div>
       {type === "star" ? (
         <div>
-          {/* 댓글 작성 영역 : 비로그인시 출력 안되게*/}
-          <input />
-          <button onClick={handleRegistReply}>등록</button>
+          {/* 댓글 작성 영역 */}
+          {
+            isLogin() && 
+            <>
+              <input />
+              <button onClick={handleRegistReply}>등록</button>
+            </>
+          }
         </div>
       ) : null}
       <div>
