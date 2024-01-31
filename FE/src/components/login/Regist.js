@@ -1,7 +1,5 @@
 import React, { useRef, useState } from "react";
-
-// 회원가입 폼에 들어오기전에 먼저 일반회원가입/소셜회원가입선택.
-// 소셜회원가입시, 선택한 해당링크로 가서 인증 후, 받을 수 있는 데이터를 받아와 회원가입 폼에 넣어준다.
+import axios from 'axios';
 
 export default function Regist() {
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -23,20 +21,20 @@ export default function Regist() {
 }
 
  function RegistFoam() {
-
  // 초기값 - 아이디, 닉네임, 비밀번호, 비밀번호확인, 이메일, 생년월일
  const id = useRef("");
  const name = useRef("");
+ const nickName = useRef("");
  const password = useRef("");
  const passwordConfirm = useRef("");
  const email = useRef("");
  const authCode = useRef("");
  const birth = useRef("");
- 
 
  // 오류메세지 상태 저장
  const [idMessage, setIdMessage] = useState("");
  const [nameMessage, setNameMessage] = useState("");
+ const [nickNameMessage, setNickNameMessage] = useState("");
  const [passwordMessage, setPasswordMessage] = useState("");
  const [passwordConfirmMessage, setPasswordConfirmMessage] = useState("");
  const [emailMessage, setEmailMessage] = useState("");
@@ -46,6 +44,7 @@ export default function Regist() {
  // 유효성 검사
  const [isId, setIsId] = useState(false);
  const [isname, setIsName] = useState(false);
+ const [isNickName, setIsNickName] = useState(false);
  const [isPassword, setIsPassword] = useState(false);
  const [isPasswordConfirm, setIsPasswordConfirm] = useState(false);
  const [isEmail, setIsEmail] = useState(false);
@@ -53,6 +52,10 @@ export default function Regist() {
  const [isBirth, setIsBirth] = useState(false);
  const [openAuthFoam, setOpenAuthFoam] = useState(false);
  
+ // 인증코드
+
+ const [AUTH_CODE, setAUTH_CODE] = useState("");
+
  const onChangeId = () => {
    const idRegExp = /^[a-z0-9]{4,20}$/;
    if (!idRegExp.test(id.current.value)) {
@@ -60,23 +63,41 @@ export default function Regist() {
      setIsId(false);
     } else {
       // 아이디 중복체크
-
-      setIdMessage("사용가능한 아이디 입니다.");
-      setIsId(true);
+      axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/id?id=${id.current.value}`)
+      .then((response) => {
+        setIdMessage(response.data.message);
+        if(response.data.message === "사용 가능한 아이디입니다.")setIsId(true)
+        else setIsId(false);
+    })
     }
  };
 
  const onChangeName = () => {
-  const nameRegExp = /^[가-힣a-zA-Z0-9]{2,10}$/;
+  const nameRegExp = /^[가-힣a-zA-Z]{2,20}$/;
    if (!nameRegExp.test(name.current.value)) {
-     setNameMessage("2-10사이 한글 영문 숫자만 입력가능!");
+     setNameMessage("이름을 확인해 주세요.");
      setIsName(false);
    } else {
-    // 닉네임 중복체크
-
-     setNameMessage("사용가능한 닉네임 입니다.");
+     setNameMessage("사용가능한 이름입니다.");
      setIsName(true);
    }
+ };
+
+ const onChangeNickName = () => {
+  const nickNameRegExp = /^[가-힣a-zA-Z0-9_]{2,10}$/;
+   if (!nickNameRegExp.test(nickName.current.value)) {
+     setNickNameMessage("2-10사이 한글, 영문, 숫자, '_' 만 입력가능!");
+     setIsNickName(false);
+   } else {
+    // 닉네임 중복체크  /member/dup-check/nickname/{nickname}
+    axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/nickname?nickname=${nickName.current.value}`)
+    .then((response) => {
+      setNickNameMessage(response.data.message);
+      if(response.data.message === '사용 가능한 닉네임입니다.') setIsNickName(true);
+      else setIsNickName(false);
+  })
+  }
+   
  };
 
  const onChangePassword = () => {
@@ -108,16 +129,18 @@ export default function Regist() {
    if (!emailRegExp.test(email.current.value)) {
      setEmailMessage("이메일의 형식이 올바르지 않습니다!");
      setIsEmail(false);
-   } else { 
-    // 이메일 중복체크
-
-     setEmailMessage("사용 가능한 이메일 입니다.");
-     setIsEmail(true);
-   }
- };
-
+    } else { 
+    // 이메일 중복체크  /member/dup-check/email/{email}
+    axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/email?email=${email.current.value}`)
+    .then((response) => {
+      setEmailMessage(response.data.message);
+      if(response.data.message ===  "사용 가능한 이메일입니다.") setIsEmail(true);
+      else setIsEmail(false);
+    });
+  }
+ }; 
+ // 인증번호 일치 검사
   const onChangeAuthCode = () => {
-    const AUTH_CODE = ""; // 서버로부터 받아온다.
     if (authCode.current.value !== AUTH_CODE) {
       setAuthMessage("인증번호 불일치!");
       setIsAuthCode(false);
@@ -126,6 +149,7 @@ export default function Regist() {
       setIsAuthCode(true);
     }
   }
+
   const onChangeBirth = () => {
   const dateRegex1 = /^\d{4}-\d{2}-\d{2}$/; //? YYYY-MM-DD 형식의 정규식
   const dateRegex2 = /^(19|20)\d{2}-(0[1-9]|1[0-2])-([0-2][1-9]|3[01])$/; //YYYY-MM-DD 각 자리에 유효한 생년월일인지 확인
@@ -148,14 +172,27 @@ export default function Regist() {
 
 const doAuth = function() {
   setOpenAuthFoam(true);
-  // 이메일로 인증코드 보내기.
-  
-
+  // 이메일로 인증코드 보내기.  /member/check/{email}
+  axios.get(`${process.env.REACT_APP_API_URL}/member/check/email?email=${email.current.value}`)
+  .then((response) => {
+    console.log(response.data.code);
+    setAUTH_CODE(response.data.code);
+  })
 }
 
-const doRegist = function() {
+const doRegist = () => {
   // 중복체크 및 인증 완료시 회원가입 성공
-    
+  const data = {
+    "memberId": id.current.value,
+    "memberPass": password.current.value, //소셜로그인일 경우 ""로 입력 (null 아님)
+    "memberPlatform": "origin", //소셜로그인인지 일반로그인인지
+    "memberName": name.current.value,
+    "memberNickname": nickName.current.value,
+    "memberEmail": email.current.value,
+    "memberBirth": birth.current.value //형식 준수해야함
+  };
+
+  axios.post(`${process.env.REACT_APP_API_URL}/member/join`, data).then((response) => {console.log(response)})
 }
 
 
@@ -169,9 +206,14 @@ const doRegist = function() {
          <p className="message"> {idMessage} </p>
        </div>
        <div className="form-el">  
-         <label htmlFor="name">*닉네임</label> <br />
+         <label htmlFor="name">*이름</label> <br />
          <input id="name" name="name" ref={name} onBlur={onChangeName} />
          <p className="message">{nameMessage}</p>
+       </div>
+       <div className="form-el">  
+         <label htmlFor="nickName">*닉네임</label> <br />
+         <input id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
+         <p className="message">{nickNameMessage}</p>
        </div>
        <div className="form-el">
          <label htmlFor="password">*비밀번호</label> <br />
