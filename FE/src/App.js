@@ -18,11 +18,6 @@ localStorage.setItem('isLogin', true); // 테스트용
 
 function App() {
     const isLogin = localStorage.getItem('isLogin');
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 0b40ad00aed37bfb276893d4be1e0d595af9c018
     return (
         <div className="App">
             <Header />
@@ -33,36 +28,24 @@ function App() {
                     element={<KakaoLogin />}
                 ></Route>
                 <Route exact path="/landing/login" element={<Login />}></Route>
-<<<<<<< HEAD
-                <Route
-                    exact
-                    path="/member/search/list"
-                    element={<FindUser />}
-                ></Route>
-                <Route
-                    exact
-                    path="/space/:id/starMine"
-                    element={<List />}
-                ></Route>
-=======
-                <Route path="/space/:user_id" element={<MainPage/>}>
-                    <Route path="changeInfo" element={<ChangeInfo/>}/>
-                    <Route path="starList" element={<StarList/>}/>
-                    <Route path="star/:star_id"element={<StarDetail/>}/>
-                    <Route path="*" element={<ErrorPage/>}/>
+                <Route path="/space/:user_id" element={<MainPage />}>
+                    <Route path="changeInfo" element={<ChangeInfo />} />
+                    <Route path="starList" element={<StarList />} />
+                    <Route path="star/:star_id" element={<StarDetail />} />
+                    <Route path="*" element={<ErrorPage />} />
                 </Route>
->>>>>>> 0b40ad00aed37bfb276893d4be1e0d595af9c018
             </Routes>
 
-            <div> 테스트 버튼들 ---------------------------------------------</div>
-            
+            <div>
+                {' '}
+                테스트 버튼들 ---------------------------------------------
+            </div>
+
             <Link to="/space/1">
                 <button>1번 유저의 메인 페이지로 이동</button>
             </Link>
 
-
-            <StarRegist type={"regist"} location={50} />
-
+            <StarRegist type={'regist'} location={50} />
         </div>
     );
 }
