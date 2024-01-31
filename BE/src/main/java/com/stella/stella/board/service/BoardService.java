@@ -77,7 +77,7 @@ public class BoardService {
                         .build();
 
                 mediaRepository.save(media);
-            }git ad
+            }
         }
         //List<String> 형태로 미디어 파일의 경로를 받아서 저장
     }
