@@ -35,7 +35,7 @@ function StarRegist (props){
         // 해쉬태그 데이터 Set -> Array
         const hashContent = [];
         hashtagSet.forEach((it) => hashContent.push(it));
-
+        
         const data = {
             "memberIndex": 1,
             "boardContent": contentRef.current.value,
@@ -46,7 +46,7 @@ function StarRegist (props){
             "boardDeleteYN" :"N",
             "hashContent": hashContent,
         }
-
+        console.log(data);
         try{
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/`,data,
             {
@@ -70,6 +70,7 @@ function StarRegist (props){
 
                 isAddedStar.clear();
                 res.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+                console.log(res.data);
                 setStars(res.data);
                 setIsStarRegistOpen(-1);
             } else {
@@ -142,7 +143,6 @@ const HashtagArea = (props) => {
     const [hashtagList, setHashtagList] = useState([]);
     
     const handleKeyDown = (e) => {
-        
         if(e.code === "Enter" || e.code === "Space"){
             
             // 한글 문자 두번씩 입력되는 오류 방지하기 위해 추가
