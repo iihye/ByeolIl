@@ -1,6 +1,9 @@
 pipeline {
     agent any
     stages {
+        parameters{
+            string(name: 'NAME', defaultValue: 'springboot')
+        }
         stage('Springboot build'){
             steps{
                 dir('BE'){
@@ -17,11 +20,11 @@ pipeline {
             steps {
                 dir('BE') {
                     script {
-                        def containerExists = sh(script: "docker ps -a --format '{{.Names}}' | grep springboot", returnStatus: true) == 0
+                        def containerExists = sh(script: "docker ps -a --format '{{.Names}}' | grep ${params.NAME}", returnStatus: true) == 0
 
                         if (containerExists) {
-                            sh 'docker stop springboot'
-                            sh 'docker rm springboot'
+                            sh "docker stop ${params.NAME}"
+                            sh "docker rm ${params.NAME}"
                         }
 
                         sh '''
