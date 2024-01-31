@@ -668,8 +668,9 @@ function UserSpace() {
 // 등록버튼 누르면
 // 성공했을 때
   // 별 리스트 다시 요청하기
+    // curPage, user_id 필요
   // isAddedStar에 props.location : starInfo 저장하기
   // starsState 갱신하기
   // isStarRegistOpenState를 -1로 변경하기
-export { isAddedStar, isStarRegistOpenState, starsState}
+export { isAddedStar, isStarRegistOpenState, starsState, curPageState}
 export default UserSpace;
