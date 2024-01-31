@@ -1,8 +1,21 @@
 import axios from "axios";
+import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
+import StarReportAlert from "components/star/StarReportAlert";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useNavigate } from "react-router-dom";
+import { atom, useRecoilState, useSetRecoilState } from "recoil";
+
+const isDeleteAlertOpenState = atom({
+  key: "isDeleteAlertOpen",
+  default: false,
+})
+
+const isReportAlertOpenState = atom({
+  key: "isReportAlertOpen",
+  default: false,
+})
 
 // type: "radio", "star", "report"
 function Modal({ type, reportInfo }) {
@@ -11,9 +24,13 @@ function Modal({ type, reportInfo }) {
 
 function StarContent({ type,  reportInfo }) {
   const navigate = useNavigate();
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
+  const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const [data, setData] = useState(null);
   const params = useParams();
   const starIndex = params["star_id"];
+
+
   useEffect(() => { 
     
     const fetchData = async (starIndex) => {
@@ -56,10 +73,12 @@ function StarContent({ type,  reportInfo }) {
 
   const handleDelete = () => {
     /* 삭제하시겠습니까 alert 띄우기 */
+    setIsDeleteAlertOpen(true);
   };
 
   const handleReport = () => {
     /* 신고 내용 입력 alert 출력 */
+    setIsReportAlertOpen(true);
   };
 
   const handleModify = () => {
@@ -148,6 +167,14 @@ function StarContent({ type,  reportInfo }) {
           <button onClick={handleBlock}>차단</button>
         )}
         <button onClick={handleClose}>CLOSE</button>
+      </div>
+      <div className="alert">
+          {
+            isDeleteAlertOpen && <StarDeleteAlert/>
+          }
+          {
+            isReportAlertOpen && <StarReportAlert/>
+          }
       </div>
     </div>
   );

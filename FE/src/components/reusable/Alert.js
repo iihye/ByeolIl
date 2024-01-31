@@ -32,7 +32,7 @@ function InputAlert({ type }) {
     input.current.addEventListener("keydown", handleEnter);
 
     return () => {
-      input.current.removeEventListener("keydown", handleEnter);
+      // input.current.removeEventListener("keydown", handleEnter);
     };
   }, []);
 
