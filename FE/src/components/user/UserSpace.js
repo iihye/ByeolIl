@@ -683,7 +683,7 @@ function UserSpace() {
                     />
                 </Canvas>
             </div>
-            <div class="modal-area">
+            <div className="modal-area">
                 <StarRegistArea />
                 <StarDetailArea />
             </div>

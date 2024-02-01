@@ -69,12 +69,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
           setData(data);
         });
 
-      // await axios.get(`${process.env.REACT_APP_API_URL}/board/like/${memberIndex}`)
-      // .then((res) => setLikeData(res.data))
-      // .catch((error) => console.log(error));
     };
     fetchData(starIndex);
-    
   }, []);
 
   const handleDelete = () => {
@@ -107,15 +103,6 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
       })
 
       if(response.request.status === 200){
-        const likeList = async () => {
-          await axios.get(`${process.env.REACT_APP_API_URL}/board/like/${memberIndex}`)
-          .then((res) => setLikeData(res.data))
-          .catch((error) => console.log(error));
-          console.log(likeList);
-        }
-
-        console.log(likeList.data);
-
         console.log("좋아요 성공")
       } else {
         console.log("좋아요 실패")
@@ -220,34 +207,9 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
 function RadioContent() {
     const [data, setData] = useState(null);
 
-    /**
-     * 라디오 수신 정보 요청
-     * @returns
-     */
-    const reqRadioInfo = async () => {
-        const URL =
-            'https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io';
+    // useEffect(() => {
 
-        try {
-            return await axios.get(`${URL}/radio`);
-        } catch (err) {
-            console.log(err, '에러 발생으로 인해 더미 데이터가 출력됩니다.');
-            // dummy data : api 요청 제한 걸려서 임시로 넣어둠,, 테스트용
-            return {
-                data: {
-                    radioIndex: 1,
-                    boardIndex: 1,
-                    boardContent: '더미 데이터 로딩중',
-                },
-            };
-        }
-    };
-
-    useEffect(() => {
-        reqRadioInfo().then((res) => {
-            setData(res.data);
-        });
-    }, []);
+    // }, []);
 
     return (
         <div>
