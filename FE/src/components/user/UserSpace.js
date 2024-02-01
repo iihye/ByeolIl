@@ -265,7 +265,7 @@ function SceneStars() {
 
     const params = useParams();
     const userId = params.user_id;
-
+    console.log(userId);
     // 페이지 내 별 정보 불러오기
     useEffect(() => {
         const fetchData = async () => {
@@ -426,7 +426,6 @@ function UserSpace() {
         setLoginIndex(loginIndex);
     }, [loginToken, loginIndex]);
 
-    // 해당 우주 유저 닉네임 가져오기
     useEffect(() => {
         const fetchData = async () => {
             try {
