@@ -34,7 +34,7 @@ function App() {
                     <Route path="starFavor" element={<StarFavorList />} />
                     <Route path="follow" element={<FollowList />} />
                     <Route path="findUser" element={<FindUser />} />
-                    <Route path="/alarm" element={<Alarm />} />
+                    <Route path="alarm" element={<Alarm />} />
                     {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
                     <Route path="Settings" element={<Settings />}></Route>
                     <Route path="star/:star_id" element={<StarDetail />} />
