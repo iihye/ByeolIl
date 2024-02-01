@@ -2,8 +2,8 @@ import axios from "axios";
 import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
+import { isStarDetailOpenState } from 'components/atom';
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
 import { useNavigate } from "react-router-dom";
 import { atom, useRecoilState, useSetRecoilState } from "recoil";
 
@@ -18,21 +18,23 @@ const isReportAlertOpenState = atom({
 })
 
 // type: "radio", "star", "report"
-function Modal({ type, reportInfo }) {
-  return <div style={{ border: "1px solid black", margin: "5px" }}>{type === "radio" ? <RadioContent /> : <StarContent type={type} reportInfo={reportInfo} />}</div>;
+function Modal(props) {
+  return <div style={{ border: "1px solid black", margin: "5px" }}>{props.type === "radio" ? <RadioContent /> : <StarContent type={props.type} reportInfo={props.reportInfo} starIndex={props.starIndex} userIndex={props.userIndex}/>}</div>;
 }
 
-function StarContent({ type,  reportInfo }) {
+function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const navigate = useNavigate();
+
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+  
   const [data, setData] = useState(null);
-  const params = useParams();
-  const starIndex = params["star_id"];
+  const [likeData, setLikeData] = useState([]);
 
-
-  useEffect(() => { 
-    
+  const memberIndex = localStorage.getItem('memberIndex');
+  console.log(starIndex);
+  useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
         .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`,
@@ -66,6 +68,10 @@ function StarContent({ type,  reportInfo }) {
           data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
           setData(data);
         });
+
+      // await axios.get(`${process.env.REACT_APP_API_URL}/board/like/${memberIndex}`)
+      // .then((res) => setLikeData(res.data))
+      // .catch((error) => console.log(error));
     };
     fetchData(starIndex);
     
@@ -85,8 +91,39 @@ function StarContent({ type,  reportInfo }) {
     /* 게시글 수정 화면 띄우기 */
   };
 
-  const handleLike = () => {
+  const handleLike = async () => {
     /* 게시글 좋아요 Req */
+    const data = {
+      boardIndex: starIndex,
+      memberIndex:localStorage.getItem('memberIndex'),
+    }
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/like`,data,
+      {
+        headers: {
+          token: localStorage.getItem('token'),
+        },
+      })
+
+      if(response.request.status === 200){
+        const likeList = async () => {
+          await axios.get(`${process.env.REACT_APP_API_URL}/board/like/${memberIndex}`)
+          .then((res) => setLikeData(res.data))
+          .catch((error) => console.log(error));
+          console.log(likeList);
+        }
+
+        console.log(likeList.data);
+
+        console.log("좋아요 성공")
+      } else {
+        console.log("좋아요 실패")
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleRegistReply = () => {
@@ -98,13 +135,13 @@ function StarContent({ type,  reportInfo }) {
   }
 
   const handleClose = () => {
-    /* 이전 페이지로 이동 */
-    navigate(-1);
+    /* 모달 닫기 */
+    setIsStarDetailOpen([])
   }
 
   /* 게시글 작성자 체크*/
   const isWriter = () => {
-    return params["user_id"] === localStorage.getItem('memberIndex');
+      return userIndex === localStorage.getItem('memberIndex');
   }
 
   /* 로그인 체크 */

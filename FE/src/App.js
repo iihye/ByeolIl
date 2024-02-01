@@ -35,7 +35,6 @@ function App() {
                     <Route path="findUser" element={<FindUser />} />
                     {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
                     <Route path="Settings" element={<Settings />}></Route>
-                    <Route path="star/:star_id" element={<StarDetail />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
             </Routes>   

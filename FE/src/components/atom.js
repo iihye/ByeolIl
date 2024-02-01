@@ -10,3 +10,13 @@ export const listState = atom({
     key: 'listState',
     default: [],
 });
+
+export const isStarRegistOpenState = atom({
+    key: 'isStarRegistOpen',
+    default: -1,
+});
+
+export const isStarDetailOpenState = atom({
+    key: 'isStarDetailOpen',
+    default: [],
+})
