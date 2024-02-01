@@ -16,6 +16,7 @@ function SidebarList(props) {
         localStorage.getItem('memberIndex')
     );
     const [items, setItems] = useState([]);
+    const isAdmin = localStorage.getItem('role');
 
     console.log('이름값', props.value);
 
@@ -37,6 +38,9 @@ function SidebarList(props) {
             { name: '환경설정', path: `/space/${memberIndex}/settings` },
         ]);
     }, [memberIndex]);
+
+    if (isAdmin == 'ROLE_USER')
+        setItems([...items, { name: '신고관리', path: `/space/admin/report` }]);
 
     return (
         <div className="sidebarList">
