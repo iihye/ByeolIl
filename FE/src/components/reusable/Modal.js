@@ -218,61 +218,77 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
 }
 
 function RadioContent() {
-  const [data, setData] = useState(null);
+    const [data, setData] = useState(null);
 
-  useEffect(() => {
-    // const fetchData = async () => {
-    //   await axios
-    //     .get(`${process.env.REACT_APP_API_URL}/radio`)
-    //     .then((response) => {
-    //       setData(response.data);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err, "에러 발생으로 인해 더미 데이터가 출력됩니다.");
-    //       // dummy data : api 요청 제한 걸려서 임시로 넣어둠,, 테스트용
-    //       const data = {
-    //         radioIndex: 1,
-    //         boardIndex: 1,
-    //         boardContent: "더미 데이터",
-    //         boardInputDate: "2099-99-99",
-    //       };
-    //       setData(data);
-    //     });
-    // };
-    // fetchData();
-  }, []);
+    /**
+     * 라디오 수신 정보 요청
+     * @returns
+     */
+    const reqRadioInfo = async () => {
+        const URL =
+            'https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io';
 
-  const handleReport = () => {
-    /* 신고 내용 입력 alert 출력 */
-  }
-  const handleClose = () => {
-    /* 이전 페이지로 이동 */
-  }
-  const handlePlay = () => {
-    /* 음성 파일 실행 */
-  }
-  const handleResend = () => {
-    /* 라디오 송신 Req */
-  }
+        try {
+            return await axios.get(`${URL}/radio`);
+        } catch (err) {
+            console.log(err, '에러 발생으로 인해 더미 데이터가 출력됩니다.');
+            // dummy data : api 요청 제한 걸려서 임시로 넣어둠,, 테스트용
+            return {
+                data: {
+                    radioIndex: 1,
+                    boardIndex: 1,
+                    boardContent: '더미 데이터 로딩중',
+                },
+            };
+        }
+    };
 
-  return (
-    <div>
-      <div>
-        {/*라디오 모달 상단 헤더 */}
-        <div>{data ? `${data.boardInputDate.split("-")[0]}년 ${data.boardInputDate.split("-")[1]}월 ${data.boardInputDate.split("-")[2]}일의 기록...` : "로딩중"}</div>
-        <button onClick={() => {handleReport()}}>REPORT</button>
-        <button onClick={() => {handleClose()}}>CLOSE</button>
-      </div>
-      <div>
-        {/*라디오 내용 */}
-        <div>{data ? data.boardContent : "로딩중"}</div>
-      </div>
-      <div>
-        <button onClick={() => {handlePlay()}}>PLAY</button>
-        <button onClick={() => {handleResend()}}>재송신하기</button>
-      </div>
-    </div>
-  );
+    useEffect(() => {
+        reqRadioInfo().then((res) => {
+            setData(res.data);
+        });
+    }, []);
+
+    return (
+        <div>
+            <div>
+                {/*라디오 모달 상단 헤더 */}
+                <div>n년 n월 n일</div>
+                <button>REPORT</button>
+                <button>CLOSE</button>
+            </div>
+            <div>
+                {/*라디오 내용 */}
+                <div>{data ? data.boardContent : '로딩중'}</div>
+            </div>
+            <div>
+                <button>PLAY</button>
+                <button>재송신하기</button>
+            </div>
+        </div>
+    );
 }
+
+/**
+ * 별 신고하기 기능
+ * @param {Object} data
+ * @returns
+ */
+const reqStarReport = async (data) => {
+    const URL = 'https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io';
+
+    try {
+        return await axios.post(`${URL}/board/report`, data, {
+            header: { 'Content-Type': 'application/json' },
+        });
+    } catch (err) {
+        console.log('asfddsafsaf');
+        return {
+            radioIndex: 1,
+            boardIndex: 1,
+            boardContent: '샘플 내용',
+        };
+    }
+};
 
 export default Modal;

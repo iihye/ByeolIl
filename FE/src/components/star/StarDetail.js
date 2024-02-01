@@ -1,4 +1,4 @@
-import Modal from "../reusable/Modal";
+import Modal from '../reusable/Modal';
 
 /**
  * starIndex : 별 번호
