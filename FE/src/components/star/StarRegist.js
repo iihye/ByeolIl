@@ -39,7 +39,7 @@ function StarRegist (props){
         hashtagSet.forEach((it) => hashContent.push(it));
 
         const data = {
-            "memberIndex": 1,
+            "memberIndex": localStorage.getItem('memberIndex'),
             "boardContent": contentRef.current.value,
             "boardInputDate" : "2024-01-23",
             "mediaContent": [],
@@ -48,7 +48,7 @@ function StarRegist (props){
             "boardDeleteYN" :"N",
             "hashContent": hashContent,
         }
-
+        console.log(data);
         try{
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/`,data,
             {
