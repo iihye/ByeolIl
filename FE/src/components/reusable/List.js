@@ -9,9 +9,7 @@ function List() {
     const filterData = useRecoilValue(filterState);
     const memberIndex = localStorage.getItem('memberIndex');
 
-    const [token, setToken] = useState(localStorage.getItem('token'));
-
-    useEffect(() => [setToken(token)], [token]);
+    const token = Number(localStorage.getItem('token'));
 
     const deleteStar = (boardIndex, memberIndex) => {
         axios
