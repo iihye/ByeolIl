@@ -16,7 +16,7 @@ function SidebarList(props) {
         localStorage.getItem('memberIndex')
     );
     const [items, setItems] = useState([]);
-    const isAdmin = localStorage.getItem('role');
+    const isAdmin = localStorage.getItem('auth');
 
     console.log('이름값', props.value);
 
@@ -39,8 +39,13 @@ function SidebarList(props) {
         ]);
     }, [memberIndex]);
 
-    if (isAdmin == 'ROLE_USER')
-        setItems([...items, { name: '신고관리', path: `/space/admin/report` }]);
+    useEffect(() => {
+        if (isAdmin == 'ROLE_ADMIN')
+            setItems((prevItems) => [
+                ...prevItems,
+                { name: '신고관리', path: `/space/admin/report` },
+            ]);
+    }, []);
 
     return (
         <div className="sidebarList">
