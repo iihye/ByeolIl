@@ -5,12 +5,13 @@ import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import './axiosConfig';
+import Find from 'components/reusable/Find';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <RecoilRoot>
         <BrowserRouter>
-            <App />
+            <Find toFind="PW"></Find>
         </BrowserRouter>
     </RecoilRoot>
 );
