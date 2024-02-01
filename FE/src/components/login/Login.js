@@ -88,6 +88,7 @@ function Login() {
                     );
 
                     let dec = JSON.parse(base64.decode(payload));
+                    localStorage.setItem('auth', dec.auth);
                     localStorage.setItem('memberIndex', dec.sub);
                     getUserIndex();
                     navigate(`/space/${dec.sub}`);
