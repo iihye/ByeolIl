@@ -45,4 +45,22 @@ public class BoardListResponseDto {
         }
         return dtoList;
     }
+
+    public static List<BoardListResponseDto> getSearchList(List<Board> list){
+        List<BoardListResponseDto> dtoList = new ArrayList<>();
+        for(Board b : list){
+            dtoList.add(BoardListResponseDto.builder()
+                    .boardIndex(b.getBoardIndex())
+                    .memberIndex(b.getMember().getMemberIndex())
+                    .boardRegTime(b.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
+                    .boardUpdateDate(b.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
+                    .boardInputDate(b.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                    .boardContent(b.getBoardContent())
+                    .boardLocation(b.getBoardLocation())
+                    .boardAccess(b.getBoardAccess())
+                    .boardHeart(b.getHearts().size())
+                    .Hash(b.getHashes().stream().map(com.stella.stella.board.entity.Hash::getHashContent).toList()).build());
+        }
+        return dtoList;
+    }
 }
