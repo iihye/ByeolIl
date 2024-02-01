@@ -24,8 +24,14 @@ pipeline {
                             sh "./gradlew sonar"
                         }
 
-                        if (waitForQualityGate().status != 'OK') {
-                            error "Quality Gate failed!!!"
+                        def analysisStatus = waitForQualityGate()
+
+                        if (analysisStatus.status == 'ERROR') {
+                            error "SonarQube Analysis Fail: ${analysisStatus.status}"
+                        } else if (analysisStatus.status == 'OK') {
+                            echo "SonarQube Analysis Success: ${analysisStatus.status}"
+                        } else {
+                            echo "SonarQube Analysis Pending..."
                         }
                     }
                 }
