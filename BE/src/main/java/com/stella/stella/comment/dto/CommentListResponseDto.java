@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -14,6 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CommentListResponseDto {
+    private Long memberIndex;
+    private Long commentIndex;
     private String commentContent;
+    private LocalDateTime commentRegdate;
     private List<MultiCommentListResponseDto> multiComments;
 }
