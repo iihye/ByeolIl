@@ -33,7 +33,7 @@ pipeline {
                     timeout(time: 1, unit: 'MINUTES') {
                         script{
                             def analysisStatus = waitForQualityGate()
-
+                            echo "Status: ${analysisStatus.status}"
                             if (analysisStatus.status == 'ERROR') {
                                 error "SonarQube Analysis Fail: ${analysisStatus.status}"
                             } else if (analysisStatus.status == 'OK') {
