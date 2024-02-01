@@ -18,20 +18,29 @@ pipeline {
                 dir('BE') {
                     script{
                         withSonarQubeEnv('sonarqube') {
-
                             sh "echo 'SonarQube Analysis...'"
                             sh "chmod +x gradlew"
                             sh "./gradlew sonar"
                         }
+                    }
+                }
+            }
+        }
 
-                        def analysisStatus = waitForQualityGate()
+        stage('SonarQube Wait') {
+            steps {
+                dir('BE') {
+                    timeout(time: 1, unit: 'MINUTES') {
+                        script{
+                            def analysisStatus = waitForQualityGate()
 
-                        if (analysisStatus.status == 'ERROR') {
-                            error "SonarQube Analysis Fail: ${analysisStatus.status}"
-                        } else if (analysisStatus.status == 'OK') {
-                            echo "SonarQube Analysis Success: ${analysisStatus.status}"
-                        } else {
-                            echo "SonarQube Analysis Pending..."
+                            if (analysisStatus.status == 'ERROR') {
+                                error "SonarQube Analysis Fail: ${analysisStatus.status}"
+                            } else if (analysisStatus.status == 'OK') {
+                                echo "SonarQube Analysis Success: ${analysisStatus.status}"
+                            } else {
+                                echo "SonarQube Analysis Pending..."
+                            }
                         }
                     }
                 }
