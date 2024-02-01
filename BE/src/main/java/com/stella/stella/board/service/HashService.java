@@ -2,6 +2,7 @@ package com.stella.stella.board.service;
 
 import com.stella.stella.board.dto.BoardListResponseDto;
 import com.stella.stella.board.entity.Board;
+import com.stella.stella.board.entity.BoardDeleteYN;
 import com.stella.stella.board.entity.Hash;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.board.repository.HashRepository;
@@ -35,7 +36,7 @@ public class HashService {
         List<Hash> hashes= hashRepository.findByHashContentContaining(hashContent).orElseThrow(()->new CustomException(CustomExceptionStatus.NO_HASH_TAG));
 
         Page<Board> boards =boardRepository
-                .findByBoardIndexIn(hashes.stream().map(h->h.getBoard().getBoardIndex()).toList(),pageable);
+                .findByBoardIndexInAndBoardDeleteYN(hashes.stream().map(h->h.getBoard().getBoardIndex()).toList(), BoardDeleteYN.N,pageable);
 
 
         responseBody.put("totalPage", boards.getTotalPages());

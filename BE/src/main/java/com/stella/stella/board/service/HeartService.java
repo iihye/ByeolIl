@@ -2,6 +2,7 @@ package com.stella.stella.board.service;
 
 import com.stella.stella.board.dto.HeartRequestDto;
 import com.stella.stella.board.entity.Board;
+import com.stella.stella.board.entity.BoardDeleteYN;
 import com.stella.stella.board.entity.Heart;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.board.repository.HeartRepository;
@@ -28,6 +29,11 @@ public class HeartService {
     public void addHeart(HeartRequestDto dto) {
         Board board = boardRepository.findByBoardIndex(dto.getBoardIndex())
                 .orElseThrow(()->new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+
+        if(board.getBoardDeleteYN()== BoardDeleteYN.Y){
+            throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
+        }
+
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex())
                 .orElseThrow(()->new CustomException(CustomExceptionStatus.MEMBER_INVALID));
         if(heartRepository.countByBoardBoardIndexAndMemberMemberIndex(dto.getBoardIndex(),dto.getMemberIndex())!=0) throw new CustomException(CustomExceptionStatus.ALREADY_HEARTED);

@@ -16,6 +16,7 @@ import com.stella.stella.common.Jwt.JwtTokenProvider;
 import com.stella.stella.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Configuration
 @EnableWebSecurity
@@ -49,6 +50,7 @@ public class SecurityConfig {
 								.requestMatchers("/api/radio/**").permitAll()
 								.requestMatchers("/api/search/**").permitAll()
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
+								.requestMatchers("/api/file/**").permitAll()
 								.anyRequest().authenticated()
 
 				)

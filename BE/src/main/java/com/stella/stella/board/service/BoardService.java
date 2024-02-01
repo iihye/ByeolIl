@@ -1,10 +1,7 @@
 package com.stella.stella.board.service;
 
 import com.stella.stella.board.dto.*;
-import com.stella.stella.board.entity.Board;
-import com.stella.stella.board.entity.Hash;
-import com.stella.stella.board.entity.Heart;
-import com.stella.stella.board.entity.Media;
+import com.stella.stella.board.entity.*;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.board.repository.HashRepository;
 import com.stella.stella.board.repository.HeartRepository;
@@ -48,8 +45,6 @@ public class BoardService {
                 .boardInputDate(dto.getBoardInputDate())
                 .boardContent(dto.getBoardContent())
                 .boardLocation(dto.getBoardLocation())
-                .boardAccess(dto.getBoardAccess())
-                .boardDeleteYN(dto.getBoardDeleteYN())
                 .member(member)
                 .build();
         //dto에서 받은 memberid로 member를 찾아서 board를 만듦
@@ -85,6 +80,10 @@ public class BoardService {
     @Transactional
     public BoardStarResponseDto findBoard(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+        if(board.getBoardDeleteYN()==BoardDeleteYN.Y){
+            throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
+        }
+
         List<Media> medias = mediaRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
         List<String> mediaLocations = medias.stream()
                 .map(Media::getMediaLocation)
@@ -111,6 +110,10 @@ public class BoardService {
     @Transactional
     public void modifyBoard(BoardUpdateRequestDto dto) {
         Board board = boardRepository.findById(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+        if(board.getBoardDeleteYN()==BoardDeleteYN.Y){
+            throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
+        }
+
         if (board.getMember().getMemberIndex() == dto.getMemberIndex()) {
 
             board.setBoardContent(dto.getBoardContent());
@@ -140,7 +143,12 @@ public class BoardService {
         int boardCount = boardRepository.countByBoardIndex(dto.getBoardIndex());
         if (boardCount == 1) {
             if(boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow().getMember().getMemberIndex()==dto.getMemberIndex()){
-                boardRepository.deleteById(dto.getBoardIndex());
+                Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()-> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+                if(board.getBoardDeleteYN()==BoardDeleteYN.Y){
+                    throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
+                }
+
+                board.setBoardDeleteYN(BoardDeleteYN.Y);
             }else{
                 throw new CustomException(CustomExceptionStatus.MEMBER_INVALID);
             }
@@ -154,7 +162,7 @@ public class BoardService {
     public Map<String, Object> findBoardList (Long memberIndex, Pageable pageable){
         Map<String, Object> responseBody = new HashMap<>();
         List<BoardListResponseDto> list = new ArrayList<>();
-        Page<Board> boards = boardRepository.findByMemberMemberIndex(memberIndex,pageable);
+        Page<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex,BoardDeleteYN.N,pageable);
 
         responseBody.put("totalPage", boards.getTotalPages());
         //총 페이지 넘버
@@ -181,7 +189,7 @@ public class BoardService {
        for(Heart H : Hearts){
            boardIndexList.add(H.getBoard().getBoardIndex());
        }
-        Page<Board> boards = boardRepository.findByBoardIndexIn(boardIndexList,pageable);
+        Page<Board> boards = boardRepository.findByBoardIndexInAndBoardDeleteYN(boardIndexList,BoardDeleteYN.N,pageable);
         responseBody.put("totalPage", boards.getTotalPages());
         responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
         responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
