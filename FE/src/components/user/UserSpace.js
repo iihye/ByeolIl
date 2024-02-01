@@ -133,6 +133,7 @@ function Star(props) {
     };
 
     const handleClick = (locationNum) => {
+        console.log(locationNum);
         const starInfo = isAddedStar.get(locationNum);
         if (starInfo) {
             // 별 상세보기 모달 띄우기
@@ -172,7 +173,7 @@ function StarSurround(props){
             onPointerEnter={() => setOpacity(0.14)}
             onPointerLeave={() => setOpacity(0)}
             >
-            <sphereGeometry args={[0.6, 48, 48]}/>
+            <sphereGeometry args={[0.8, 48, 48]}/>
             <meshStandardMaterial transparent={true} opacity={opacity}/>
         </mesh>
     )
@@ -231,7 +232,7 @@ function SceneStars() {
 
     const params = useParams();
     const userId = params.user_id;
-    console.log(userId);
+
     // 페이지 내 별 정보 불러오기
     useEffect(() => {
         const fetchData = async () => {
@@ -314,7 +315,6 @@ function SceneEnvironment() {
 
 function StarRegistArea() {
     const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-    console.log(isStarRegistOpen);
 
     return (
         <div>
