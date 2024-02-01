@@ -33,8 +33,7 @@ pipeline {
                     sh "echo 'SonarQube Quality Gate...'"
                     timeout(time: 1, unit: 'MINUTES') {
                         script{
-                            echo "SonarQube Quality Gate..."
-                            def analysisStatus = waitForQualityGate()
+                            def analysisStatus = waitForQualityGate('sonarqube')
                             echo "Status: ${analysisStatus.status}"
                             if (analysisStatus.status != 'OK') {
                                 echo "SonarQube Analysis Fail..."
