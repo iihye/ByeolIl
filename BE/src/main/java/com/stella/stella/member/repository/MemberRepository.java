@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>{
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository{
     Optional<Member> findByMemberIndex(Long memberIndex);
     Optional<Member> findByMemberIdAndMemberPlatform(String memberId,String memberPlatform);
     Optional<Member> findByMemberEmail(String email);
@@ -18,4 +18,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
     Optional<Member> findByMemberIdAndMemberNameAndMemberEmailAndMemberPlatform(String memberId, String memberName,String memberEmail,String memberPlatform);
     @Query("SELECT m FROM Member m WHERE m.memberIndex <> :memberIndex")
     List<Member> findAllExcept(long memberIndex);
+
 }

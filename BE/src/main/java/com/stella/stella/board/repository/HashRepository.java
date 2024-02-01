@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface HashRepository extends JpaRepository<Hash, Long> {
 Optional<List<Hash>> findByBoardBoardIndex(Long BoardIndex);
+Optional<List<Hash>> findByHashContentContaining(String HashContent);
 }
