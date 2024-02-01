@@ -4,9 +4,8 @@ import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
 import { isStarDetailOpenState } from 'components/atom';
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { atom, useRecoilState, useSetRecoilState } from "recoil";
-import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isDeleteAlertOpenState, isReportAlertOpenState, renderReplyState } from "components/atom";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -21,6 +20,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const [data, setData] = useState(null);
   const [likeData, setLikeData] = useState([]);
 
+  // memberIndex : 현재 사용자
+  // userIndex : 글쓴이 정보
   const memberIndex = Number(localStorage.getItem('memberIndex'));
 
   const replyInputRef = useRef();
@@ -104,37 +105,6 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     }
   };
 
-  const handleRegistReply = async () => {
-    /* 댓글 작성 Req */
-    const data = {
-      boardIndex: starIndex,
-      memberIndex: memberIndex,
-      commentContent: replyInputRef.current.value.trim(),
-    }
-
-    if (data.commentContent === ""){
-      alert("내용을 입력해주세요.");
-      return;
-    }
-
-    await axios.post(`${process.env.REACT_APP_API_URL}/comment/`,data,
-    {
-      header: {
-        token: localStorage.getItem('token'),
-      },
-    })
-    .then((response) => {
-      
-      if(response.data.map.response === 'success'){
-        console.log("댓글 등록 성공");
-      } else {
-        console.log("댓글 등록 실패");
-      }
-
-    })
-    .catch((error) => console.log(error));
-  };
-
   const handleBlock = () => {
     /* 정말 차단할까요 alert 띄우기 */
   }
@@ -157,7 +127,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   }
 
   return (
-    <div className="modal">
+    <div className="modal mt-4">
       {/* 최상단 */}
       <div style={{ display: "flex" }}>
         {/* 지정일 */}
@@ -185,14 +155,10 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
         <div>
           {/* 댓글 작성 영역 */}
           {
-            isLogin() && 
-            <>
-              <input ref={replyInputRef}/>
-              <button onClick={handleRegistReply}>등록</button>
-            </>
+            isLogin() && <ReplyRegistArea starIndex={starIndex} memberIndex={memberIndex}/>
           }
         </div>
-      ) : null}
+      ) : null} 
       <div>
         {/* 최하단 */}
         {type === "star" ? (
@@ -224,6 +190,56 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   );
 }
 
+// const ReplyRegistArea = forwardRef((props, ref) => {
+
+function ReplyRegistArea (props){
+
+  const inputRef = useRef();
+
+  const [renderReply, setRenderReply] = useRecoilState(renderReplyState);
+
+  const handleRegistReply = async () => {
+
+    const data = {
+      boardIndex: props.starIndex,
+      memberIndex: props.memberIndex,
+      commentContent: inputRef.current.value.trim(),
+    }
+
+    if (data.commentContent === ""){
+      alert("내용을 입력해주세요.");
+      return;
+    }
+
+    await axios.post(`${process.env.REACT_APP_API_URL}/comment/`,data,
+    {
+      header: {
+        token: localStorage.getItem('token'),
+      },
+    })
+    .then((response) => {
+      
+      if(response.data.map.response === 'success'){
+        setRenderReply(!renderReply);
+        console.log("댓글 등록 성공");
+      } else {
+        console.log("댓글 등록 실패");
+      }
+
+    })
+    .catch((error) => console.log(error));
+  };
+
+  return (
+    <>
+      <input ref={inputRef}/>
+      <button onClick={handleRegistReply}>등록</button>
+    </>
+  )
+}
+
+
+
 function RadioContent() {
     const [data, setData] = useState(null);
 
@@ -250,27 +266,5 @@ function RadioContent() {
         </div>
     );
 }
-
-/**
- * 별 신고하기 기능
- * @param {Object} data
- * @returns
- */
-const reqStarReport = async (data) => {
-    const URL = 'https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io';
-
-    try {
-        return await axios.post(`${URL}/board/report`, data, {
-            header: { 'Content-Type': 'application/json' },
-        });
-    } catch (err) {
-        console.log('asfddsafsaf');
-        return {
-            radioIndex: 1,
-            boardIndex: 1,
-            boardContent: '샘플 내용',
-        };
-    }
-};
 
 export default Modal;

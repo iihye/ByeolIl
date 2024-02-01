@@ -34,3 +34,9 @@ export const isReportAlertOpenState = atom({
     key: "isReportAlertOpen",
     default: false,
 })
+
+// 댓글 리렌더링 atom
+export const renderReplyState = atom({
+    key: "renderReply",
+    default: false,
+})
