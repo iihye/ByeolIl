@@ -122,7 +122,10 @@ function Star(props) {
 
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
-
+    
+    const newPos = [...props.position];
+    
+    console.log(newPos, props.position);
     useEffect(() => {
         setCurStarState(isAddedStar.get(props.location));
     }, [stars]);
@@ -145,19 +148,36 @@ function Star(props) {
         }
     };
 
+    function StarSurround(){
+        const [opacity, setOpacity] = useState(0);
+
+        return(
+            <mesh position={newPos}
+                onClick={() => {
+                    handleClick(props.location);
+                }}
+                onPointerEnter={() => setOpacity(0.14)}
+                onPointerLeave={() => setOpacity(0)}
+                >
+                <sphereGeometry args={[0.6, 48, 48]}/>
+                <meshStandardMaterial transparent={true} opacity={opacity}/>
+            </mesh>
+        )
+    }
+
     return (
-        <mesh
-            ref={mesh}
-            position={props.position}
-            onClick={() => {
-                handleClick(props.location);
-            }}
-        >
-            <sphereGeometry args={props.size} />
-            <meshStandardMaterial
-                color={curStarState ? colors[curStarState.boardAccess] : 'grey'}
-            />
-        </mesh>
+        <>
+            <mesh
+                ref={mesh}
+                position={props.position}
+            >
+                <sphereGeometry args={props.size} />
+                <meshStandardMaterial
+                    color={curStarState ? colors[curStarState.boardAccess] : 'grey'}
+                />
+            </mesh>
+            <StarSurround/>
+        </>
     );
 }
 
@@ -237,12 +257,7 @@ function GroupStar(props) {
 
     return (
         <>
-            <group
-                ref={group}
-                onPointerOver={() => {
-                    console.log(`Over ${props.groupNum}`);
-                }}
-            >
+            <group ref={group}>
                 {props.position.map((val, index) => (
                     <Star
                         key={index}
