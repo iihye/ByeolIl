@@ -3,7 +3,7 @@ import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
 import { isStarDetailOpenState } from 'components/atom';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { atom, useRecoilState, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
@@ -22,6 +22,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const [likeData, setLikeData] = useState([]);
 
   const memberIndex = Number(localStorage.getItem('memberIndex'));
+
+  const replyInputRef = useRef();
 
   useEffect(() => {
     const fetchData = async (starIndex) => {
@@ -102,8 +104,35 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     }
   };
 
-  const handleRegistReply = () => {
+  const handleRegistReply = async () => {
     /* 댓글 작성 Req */
+    const data = {
+      boardIndex: starIndex,
+      memberIndex: memberIndex,
+      commentContent: replyInputRef.current.value.trim(),
+    }
+
+    if (data.commentContent === ""){
+      alert("내용을 입력해주세요.");
+      return;
+    }
+
+    await axios.post(`${process.env.REACT_APP_API_URL}/comment/`,data,
+    {
+      header: {
+        token: localStorage.getItem('token'),
+      },
+    })
+    .then((response) => {
+      
+      if(response.data.map.response === 'success'){
+        console.log("댓글 등록 성공");
+      } else {
+        console.log("댓글 등록 실패");
+      }
+
+    })
+    .catch((error) => console.log(error));
   };
 
   const handleBlock = () => {
@@ -150,7 +179,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
       </div>
       {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
       <div>{/* 댓글 리스트 영역 */}
-        <StarReplyList/>
+        <StarReplyList boardIndex={starIndex}/>
       </div>
       {type === "star" ? (
         <div>
@@ -158,7 +187,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
           {
             isLogin() && 
             <>
-              <input />
+              <input ref={replyInputRef}/>
               <button onClick={handleRegistReply}>등록</button>
             </>
           }
