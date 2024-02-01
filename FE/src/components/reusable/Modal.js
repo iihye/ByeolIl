@@ -1,21 +1,32 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import StarDeleteAlert from "components/star/StarDeleteAlert";
+import StarReplyList from "components/star/StarReplyList";
+import StarReportAlert from "components/star/StarReportAlert";
+import { isStarDetailOpenState } from 'components/atom';
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { atom, useRecoilState, useSetRecoilState } from "recoil";
+import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
 
 // type: "radio", "star", "report"
-function Modal({ type, reportInfo }) {
-  return <div style={{ border: "1px solid black", margin: "5px" }}>{type === "radio" ? <RadioContent /> : <StarContent type={type} reportInfo={reportInfo} />}</div>;
+function Modal(props) {
+  return <div style={{ border: "1px solid black", margin: "5px" }}>{props.type === "radio" ? <RadioContent /> : <StarContent type={props.type} reportInfo={props.reportInfo} starIndex={props.starIndex} userIndex={props.userIndex}/>}</div>;
 }
 
-function StarContent({ type,  reportInfo }) {
+function StarContent({ type,  reportInfo, starIndex, userIndex }) {
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
+  const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+  
   const [data, setData] = useState(null);
-  const params = useParams();
-  const starIndex = params["star-id"];
+  const [likeData, setLikeData] = useState([]);
 
-  useEffect(() => { 
-    
+  const memberIndex = Number(localStorage.getItem('memberIndex'));
+
+  const replyInputRef = useRef();
+
+  useEffect(() => {
     const fetchData = async (starIndex) => {
-      console.log(localStorage.getItem('token') ?? "");
       await axios
         .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`,
         {
@@ -25,9 +36,9 @@ function StarContent({ type,  reportInfo }) {
         })
         .then((response) => {
           const data = response.data;
-          data.boardInputDate = data.boardInputDate.split('-');
-          data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
-  
+          data.boardInputDate = data.boardInputDate.split('.');
+          data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('.');
+          
           setData(response.data);
         })
         .catch((err) => {
@@ -42,36 +53,86 @@ function StarContent({ type,  reportInfo }) {
             boardAccess: "OPEN",
             boardLike: 3,
             hashContent: ["해시태그1 ", "해시태그2 ", "해시태그3 "],
-          };          
+          };
 
           data.boardInputDate = data.boardInputDate.split('-');
           data.boardUpdateDate = data.boardUpdateDate.split(' ')[0].split('-');
           setData(data);
         });
+
     };
     fetchData(starIndex);
-
-    
   }, []);
 
   const handleDelete = () => {
     /* 삭제하시겠습니까 alert 띄우기 */
+    setIsDeleteAlertOpen(true);
   };
 
   const handleReport = () => {
     /* 신고 내용 입력 alert 출력 */
+    setIsReportAlertOpen(true);
   };
 
   const handleModify = () => {
     /* 게시글 수정 화면 띄우기 */
   };
 
-  const handleLike = () => {
+  const handleLike = async () => {
     /* 게시글 좋아요 Req */
+    const data = {
+      boardIndex: starIndex,
+      memberIndex:localStorage.getItem('memberIndex'),
+    }
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/like`,data,
+      {
+        headers: {
+          token: localStorage.getItem('token'),
+        },
+      })
+
+      if(response.request.status === 200){
+        console.log("좋아요 성공")
+      } else {
+        console.log("좋아요 실패")
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleRegistReply = () => {
+  const handleRegistReply = async () => {
     /* 댓글 작성 Req */
+    const data = {
+      boardIndex: starIndex,
+      memberIndex: memberIndex,
+      commentContent: replyInputRef.current.value.trim(),
+    }
+
+    if (data.commentContent === ""){
+      alert("내용을 입력해주세요.");
+      return;
+    }
+
+    await axios.post(`${process.env.REACT_APP_API_URL}/comment/`,data,
+    {
+      header: {
+        token: localStorage.getItem('token'),
+      },
+    })
+    .then((response) => {
+      
+      if(response.data.map.response === 'success'){
+        console.log("댓글 등록 성공");
+      } else {
+        console.log("댓글 등록 실패");
+      }
+
+    })
+    .catch((error) => console.log(error));
   };
 
   const handleBlock = () => {
@@ -79,7 +140,20 @@ function StarContent({ type,  reportInfo }) {
   }
 
   const handleClose = () => {
-    /* 이전 페이지로 이동 */
+    /* 모달 닫기 */
+    setIsDeleteAlertOpen(false);
+    setIsReportAlertOpen(false);
+    setIsStarDetailOpen([])
+  }
+
+  /* 게시글 작성자 체크*/
+  const isWriter = () => {
+      return userIndex === localStorage.getItem('memberIndex');
+  }
+
+  /* 로그인 체크 */
+  const isLogin = () => {
+    return localStorage.getItem('token') ? true : false;
   }
 
   return (
@@ -104,88 +178,99 @@ function StarContent({ type,  reportInfo }) {
         </div>
       </div>
       {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
-      <div>{/* 댓글 리스트 영역 */}</div>
+      <div>{/* 댓글 리스트 영역 */}
+        <StarReplyList boardIndex={starIndex}/>
+      </div>
       {type === "star" ? (
         <div>
-          {/* 댓글 작성 영역 : 비로그인시 출력 안되게*/}
-          <input />
-          <button onClick={() => {handleRegistReply();}}>등록</button>
+          {/* 댓글 작성 영역 */}
+          {
+            isLogin() && 
+            <>
+              <input ref={replyInputRef}/>
+              <button onClick={handleRegistReply}>등록</button>
+            </>
+          }
         </div>
       ) : null}
       <div>
         {/* 최하단 */}
         {type === "star" ? (
           <>
-            <button onClick={() => {handleLike();}}>LIKE</button>
-            <button onClick={() => {handleReport();}}>REPORT</button>
-            <button onClick={() => {handleDelete();}}>DELETE</button>
-            <button onClick={() => {handleModify();}}>MODIFY</button>
+            <button onClick={handleLike}>LIKE</button>
+            <button onClick={handleReport}>REPORT</button>
+            {
+              isWriter() &&
+              <>
+                <button onClick={handleDelete}>DELETE</button>
+                <button onClick={handleModify}>MODIFY</button>
+              </>
+            }
           </>
         ) : (
-          <button onClick={() => {handleBlock();}}>차단</button>
+          <button onClick={handleBlock}>차단</button>
         )}
-        <button onClick={()=>{handleClose();}}>CLOSE</button>
+        <button onClick={handleClose}>CLOSE</button>
+      </div>
+      <div className="alert">
+          {
+            isDeleteAlertOpen && <StarDeleteAlert boardIndex={starIndex} userIndex={memberIndex}/>
+          }
+          {
+            isReportAlertOpen && <StarReportAlert boardIndex={starIndex} userIndex={memberIndex}/>
+          }
       </div>
     </div>
   );
 }
 
 function RadioContent() {
-  const [data, setData] = useState(null);
+    const [data, setData] = useState(null);
 
-  useEffect(() => {
-    // const fetchData = async () => {
-    //   await axios
-    //     .get(`${process.env.REACT_APP_API_URL}/radio`)
-    //     .then((response) => {
-    //       setData(response.data);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err, "에러 발생으로 인해 더미 데이터가 출력됩니다.");
-    //       // dummy data : api 요청 제한 걸려서 임시로 넣어둠,, 테스트용
-    //       const data = {
-    //         radioIndex: 1,
-    //         boardIndex: 1,
-    //         boardContent: "더미 데이터",
-    //         boardInputDate: "2099-99-99",
-    //       };
-    //       setData(data);
-    //     });
-    // };
-    // fetchData();
-  }, []);
+    // useEffect(() => {
 
-  const handleReport = () => {
-    /* 신고 내용 입력 alert 출력 */
-  }
-  const handleClose = () => {
-    /* 이전 페이지로 이동 */
-  }
-  const handlePlay = () => {
-    /* 음성 파일 실행 */
-  }
-  const handleResend = () => {
-    /* 라디오 송신 Req */
-  }
+    // }, []);
 
-  return (
-    <div>
-      <div>
-        {/*라디오 모달 상단 헤더 */}
-        <div>{data ? `${data.boardInputDate.split("-")[0]}년 ${data.boardInputDate.split("-")[1]}월 ${data.boardInputDate.split("-")[2]}일의 기록...` : "로딩중"}</div>
-        <button onClick={() => {handleReport()}}>REPORT</button>
-        <button onClick={() => {handleClose()}}>CLOSE</button>
-      </div>
-      <div>
-        {/*라디오 내용 */}
-        <div>{data ? data.boardContent : "로딩중"}</div>
-      </div>
-      <div>
-        <button onClick={() => {handlePlay()}}>PLAY</button>
-        <button onClick={() => {handleResend()}}>재송신하기</button>
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <div>
+                {/*라디오 모달 상단 헤더 */}
+                <div>n년 n월 n일</div>
+                <button>REPORT</button>
+                <button>CLOSE</button>
+            </div>
+            <div>
+                {/*라디오 내용 */}
+                <div>{data ? data.boardContent : '로딩중'}</div>
+            </div>
+            <div>
+                <button>PLAY</button>
+                <button>재송신하기</button>
+            </div>
+        </div>
+    );
 }
+
+/**
+ * 별 신고하기 기능
+ * @param {Object} data
+ * @returns
+ */
+const reqStarReport = async (data) => {
+    const URL = 'https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io';
+
+    try {
+        return await axios.post(`${URL}/board/report`, data, {
+            header: { 'Content-Type': 'application/json' },
+        });
+    } catch (err) {
+        console.log('asfddsafsaf');
+        return {
+            radioIndex: 1,
+            boardIndex: 1,
+            boardContent: '샘플 내용',
+        };
+    }
+};
 
 export default Modal;

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
-import { isAddedStar, starsState, isStarRegistOpenState, curPageState } from "components/user/UserSpace";
+import { isAddedStar, starsState, curPageState } from "components/user/UserSpace";
+import { isStarRegistOpenState } from 'components/atom';
+
 import axios from 'axios';
 import { useParams } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -37,7 +39,7 @@ function StarRegist (props){
         hashtagSet.forEach((it) => hashContent.push(it));
         
         const data = {
-            "memberIndex": 1,
+            "memberIndex": localStorage.getItem('memberIndex'),
             "boardContent": contentRef.current.value,
             "boardInputDate" : "2024-01-23",
             "mediaContent": [],
