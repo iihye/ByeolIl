@@ -1,7 +1,7 @@
 import Alert from "../reusable/Alert";
 
-function StarReportAlert() {
-  return <Alert type={"report"} />;
+function StarReportAlert(props) {
+  return <Alert type={"report"} boardIndex={props.boardIndex} userIndex={props.userIndex}/>;
 }
 
 export default StarReportAlert;

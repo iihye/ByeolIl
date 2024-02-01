@@ -2,25 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
-function Alert({ type, boardIndex }) {
+function Alert(props) {
   const alertTypes = {
     block: <Block />,
-    delete: <Delete boardIndex={boardIndex} />,
-    PWCheck: <InputAlert type={type} />,
-    report: <InputAlert type={type} />,
+    delete: <Delete boardIndex={props.boardIndex} />,
+    PWCheck: <InputAlert type={props.type} />,
+    report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex}/>,
   };
 
   return (
     <div className="alert" style={{ border: "1px solid black" }}>
-      {alertTypes[type]}
+      {alertTypes[props.type]}
     </div>
   );
 }
 
 // Input 요소를 가진 alert
-function InputAlert({ type }) {
+function InputAlert(props) {
+  console.log(props);
   const input = useRef(null);
-
   useEffect(() => {
     // Enter 키 입력으로 input 내용 처리하기
     const handleEnter = (e) => {
@@ -30,10 +30,6 @@ function InputAlert({ type }) {
     };
 
     input.current.addEventListener("keydown", handleEnter);
-
-    return () => {
-      // input.current.removeEventListener("keydown", handleEnter);
-    };
   }, []);
 
   const toEnter = {
@@ -46,16 +42,23 @@ function InputAlert({ type }) {
     report: "신고",
   };
 
-  const handleReport = (inputData) => {
+  const handleReport = async (inputData) => {
     const reportData = {
-      boardIndex: "", // 게시글 번호
-      userindex: "", // 유저 번호
+      boardIndex: props.boardIndex, // 게시글 번호
+      userIndex: props.userIndex, // 유저 번호
       reportContent: inputData,
     };
+    console.log(reportData);
 
-    axios
-      .post(`${process.env.REACT_APP_API_URL}/board/report`, {}, { params: reportData })
+    await axios
+      .post(`${process.env.REACT_APP_API_URL}/board/report`, reportData, 
+      {
+        headers: {
+          token: localStorage.getItem('token'),
+        }
+      })
       .then((response) => {
+        console.log(response.data);
         /* 1. 신고 완료 모달 띄우기 */
         /* 2. 신고 완료 모달 자동으로 닫기
         /* 3. 신고 내용 입력 자동으로 닫기 */
@@ -80,13 +83,13 @@ function InputAlert({ type }) {
     const inputData = input.current.value;
 
     if (!emptyCheck(inputData)) {
-      alert(`${toEnter[type]} 입력해주세요!`);
+      alert(`${toEnter[props.type]} 입력해주세요!`);
       return;
     }
 
-    if (buttonValue[type] === "신고") {
+    if (buttonValue[props.type] === "신고") {
       handleReport(inputData);
-    } else if (buttonValue[type] === "입력") {
+    } else if (buttonValue[props.type] === "입력") {
       handlePWChange(inputData);
     }
   };
@@ -95,12 +98,12 @@ function InputAlert({ type }) {
 
   return (
     <>
-      <div>{toEnter[type]} 입력해주세요.</div>
+      <div>{toEnter[props.type]} 입력해주세요.</div>
       <div>
         <input ref={input} />
       </div>
       <div>
-        <button onClick={() => {handleSubmit()}}>{buttonValue[type]}</button>
+        <button onClick={() => {handleSubmit()}}>{buttonValue[props.type]}</button>
         <button onClick={() => {handleClose()}}>취소</button>
       </div>
     </>

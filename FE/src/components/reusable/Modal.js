@@ -6,6 +6,7 @@ import { isStarDetailOpenState } from 'components/atom';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { atom, useRecoilState, useSetRecoilState } from "recoil";
+import { isAddedStar } from "components/user/UserSpace";
 
 const isDeleteAlertOpenState = atom({
   key: "isDeleteAlertOpen",
@@ -32,8 +33,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const [data, setData] = useState(null);
   const [likeData, setLikeData] = useState([]);
 
-  const memberIndex = localStorage.getItem('memberIndex');
-  console.log(starIndex);
+  const memberIndex = Number(localStorage.getItem('memberIndex'));
+
   useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
@@ -197,7 +198,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
             isDeleteAlertOpen && <StarDeleteAlert/>
           }
           {
-            isReportAlertOpen && <StarReportAlert/>
+            isReportAlertOpen && <StarReportAlert boardIndex={starIndex} userIndex={memberIndex}/>
           }
       </div>
     </div>
