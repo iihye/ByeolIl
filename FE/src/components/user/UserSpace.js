@@ -20,8 +20,6 @@ import StarRegist from 'components/star/StarRegist';
 import StarDetail from 'components/star/StarDetail';
 import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
 
-const loginIndex = localStorage.getItem('memberIndex');
-
 // position : 별 [번호, x, y, z]
 const position = [
     [
@@ -667,6 +665,106 @@ function UserSpace() {
     const params = useParams();
     const userId = params.user_id;
 
+    const [loginToken, setLoginToken] = useState(localStorage.getItem('token'));
+    const [loginIndex, setLoginIndex] = useState(
+        localStorage.getItem('memberIndex')
+    );
+    const [userName, setUserName] = useState(null);
+    const [followState, setFollowState] = useState('');
+
+    const handleFollow = (followState) => {
+        const relationData = {
+            toMemberIndex: userId,
+            fromMemberIndex: loginIndex,
+        };
+        if (followState === '언팔로우') {
+            // 팔로우 취소 api 호출
+            axios
+                .delete(
+                    `${process.env.REACT_APP_API_URL}/follow/following`,
+                    {
+                        data: relationData,
+                    },
+                    {
+                        headers: {
+                            token: loginToken,
+                        },
+                    }
+                )
+                .then(() => setFollowState('팔로우'));
+        } else if (followState === '팔로우') {
+            // 팔로우 api 호출
+            axios
+                .post(
+                    `${process.env.REACT_APP_API_URL}/follow/following`,
+                    relationData,
+                    {
+                        headers: {
+                            token: loginToken,
+                        },
+                    }
+                )
+                .then(() => setFollowState('언팔로우'));
+        }
+    };
+
+    useEffect(() => {
+        setLoginToken(loginToken);
+        setLoginIndex(loginIndex);
+    }, [loginToken, loginIndex]);
+
+    // 해당 우주 유저 닉네임 가져오기
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API_URL}/member/search/list`,
+                    {
+                        headers: {
+                            token: loginToken,
+                        },
+                    }
+                );
+                const user = response.data.find(
+                    (it) => it.memberIndex == userId
+                );
+
+                if (user) setUserName(user.memberNickname);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchData();
+    }, [userId]);
+
+    // 우주 주인 닉네임과 나의 팔로우 목록을 비교하여 일치하면 팔로우 관계
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`,
+                    {
+                        headers: {
+                            token: loginToken,
+                        },
+                    }
+                );
+                const isFollow = response.data.result.some(
+                    (it) => it.memberName === userName
+                );
+
+                isFollow
+                    ? setFollowState('언팔로우')
+                    : setFollowState('팔로우');
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchData();
+    }, [userName]);
+
     return (
         <>
             <div
@@ -692,7 +790,16 @@ function UserSpace() {
                     />
                 </Canvas>
             </div>
-            {userId !== loginIndex && <button>버튼</button>}
+            {userName && (
+                <>
+                    <div className="space-name">{userName}님의 우주입니다</div>
+                    {userId !== loginIndex && (
+                        <button onClick={() => handleFollow(followState)}>
+                            {followState}
+                        </button>
+                    )}
+                </>
+            )}
 
             <div className="modal-area">
                 <StarRegistArea />
