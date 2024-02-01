@@ -6,17 +6,7 @@ import { isStarDetailOpenState } from 'components/atom';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { atom, useRecoilState, useSetRecoilState } from "recoil";
-import { isAddedStar } from "components/user/UserSpace";
-
-const isDeleteAlertOpenState = atom({
-  key: "isDeleteAlertOpen",
-  default: false,
-})
-
-const isReportAlertOpenState = atom({
-  key: "isReportAlertOpen",
-  default: false,
-})
+import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -24,8 +14,6 @@ function Modal(props) {
 }
 
 function StarContent({ type,  reportInfo, starIndex, userIndex }) {
-  const navigate = useNavigate();
-
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
