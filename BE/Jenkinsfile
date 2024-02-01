@@ -32,7 +32,7 @@ pipeline {
                 dir('BE') {
                     timeout(time: 1, unit: 'MINUTES') {
                         script{
-                            def analysisStatus = waitForQualityGate()
+                            def analysisStatus = waitForQualityGate('sonarqube')
                             echo "Status: ${analysisStatus.status}"
                             if (analysisStatus.status == 'ERROR') {
                                 updateGitlabCommitStatus(name: "SonarQube Quality Gate", state: "failed")
