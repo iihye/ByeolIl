@@ -17,6 +17,12 @@ export const isStarRegistOpenState = atom({
     default: -1,
 });
 
+// 게시글 수정 모달
+export const isStarModifyOpenState = atom({
+    key: 'isStarModifyOpen',
+    default: -1,
+})
+
 // 게시글 상세보기 모달
 export const isStarDetailOpenState = atom({
     key: 'isStarDetailOpen',

@@ -2,11 +2,11 @@ import axios from "axios";
 import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
-import { isStarDetailOpenState } from 'components/atom';
+import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { atom, useRecoilState, useSetRecoilState } from "recoil";
-import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
+import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState } from "components/atom";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -17,7 +17,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
-  
+  const isStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
+
   const [data, setData] = useState(null);
   const [likeData, setLikeData] = useState([]);
 
@@ -75,7 +76,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   };
 
   const handleModify = () => {
-    /* 게시글 수정 화면 띄우기 */
+    isStarModifyOpen(data);
   };
 
   const handleLike = async () => {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
 import { isAddedStar, starsState, curPageState } from "components/user/UserSpace";
-import { isStarRegistOpenState } from 'components/atom';
+import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState } from 'components/atom';
 
 import axios from 'axios';
 import { useParams } from "react-router";
@@ -11,10 +11,13 @@ function StarRegist (props){
     const curPage = useRecoilValue(curPageState);
     const setStars = useSetRecoilState(starsState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+    const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+    const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
 
     const type = props.type;
     const location = props.location;
-    
+    const preBoard = props.preBoard;
+
     const buttonValue = {
         regist: "등록",
         modify: "수정",
@@ -35,76 +38,91 @@ function StarRegist (props){
 
     const handleRegist = async () => {
         // 해쉬태그 데이터 Set -> Array
-        const hashContent = [];
-        hashtagSet.forEach((it) => hashContent.push(it));
-        
-        const data = {
-            "memberIndex": localStorage.getItem('memberIndex'),
-            "boardContent": contentRef.current.value,
-            "boardInputDate" : "2024-01-23",
-            "mediaContent": [],
-            "boardLocation": location,
-            "boardAccess": accessRangeRef.current.value,
-            "boardDeleteYN" :"N",
-            "hashContent": hashContent,
-        }
-        console.log(data);
-        try{
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/`,data,
-            {
-                header: {
-                    token: localStorage.getItem('token'),
-                },
-            });
-
-            if (response.status === 200){
-                alert("게시글 작성 성공");
-                
-                const res = await axios.get(`${process.env.REACT_APP_API_URL}/board/star/${params.user_id}`,
-                {
-                  header: {
-                    token: localStorage.getItem('token') ?? "",
-                  },
-                  params: {
-                    page: curPage ?? 0,
-                  }
-                })
-
-                isAddedStar.clear();
-                res.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
-                console.log(res.data);
-                setStars(res.data);
-                setIsStarRegistOpen(-1);
-            } else {
-                console.log(response.data);
-                alert("게시글 작성 실패");
+        if (type === "regist"){
+            const hashContent = [];
+            hashtagSet.forEach((it) => hashContent.push(it));
+    
+            const data = {
+                "memberIndex": localStorage.getItem('memberIndex'),
+                "boardContent": contentRef.current.value,
+                "boardInputDate" : "2024-01-23",
+                "mediaContent": [],
+                "boardLocation": location,
+                "boardAccess": accessRangeRef.current.value,
+                "boardDeleteYN" :"N",
+                "hashContent": hashContent,
             }
-        } catch (error) {
-            console.log(error);
+
+            try{
+                const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/`,data,
+                {
+                    header: {
+                        token: localStorage.getItem('token'),
+                    },
+                });
+    
+                if (response.status === 200){
+                    alert("게시글 작성 성공");
+                    
+                    const res = await axios.get(`${process.env.REACT_APP_API_URL}/board/star/${params.user_id}`,
+                    {
+                      header: {
+                        token: localStorage.getItem('token') ?? "",
+                      },
+                      params: {
+                        page: curPage ?? 0,
+                      }
+                    })
+    
+                    isAddedStar.clear();
+                    res.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+                    console.log(res.data);
+                    setStars(res.data);
+                    setIsStarRegistOpen(-1);
+                } else {
+                    console.log(response.data);
+                    alert("게시글 작성 실패");
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (type === "modify"){
+            
+            try {
+                await axios.put(`${process.env.REACT_APP_API_URL}/board`)
+                .then((response) => {
+                    if (response.status === 200){
+                        setIsStarDetailOpen(preBoard.boardIndex);
+                        setIsStarModifyOpen(-1);
+                    }
+                })
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 
     const handleClose = () => {
-        setIsStarRegistOpen(-1);
+
     }
     
     return (
         <div className="star-regist" style={{border: "1px solid black"}}>
             <div style={{display: "flex"}}>
                 {/* 최상단 */}
-                <DateArea ref={dateRef}/>
-                <AccessRangeArea ref={accessRangeRef}/>
+                <DateArea ref={dateRef} type={type}/>
+                <AccessRangeArea ref={accessRangeRef} preBoard={preBoard}/>
             </div>
             <div>
                 {/* 글 작성 영역 */}
                 {
                     media.length > 0 && <div>사진 미리보기</div>
                 }
-                <textarea ref={contentRef}/>
+                <textarea ref={contentRef} value={preBoard && preBoard.boardContent}/>
             </div>
             <div>
                 {
-                    <HashtagArea hashtagSet={hashtagSet}/>
+                    <HashtagArea hashtagSet={hashtagSet} preBoard={preBoard}/>
                 }
             </div>
             <div>
@@ -131,7 +149,7 @@ const DateArea = forwardRef((props, ref) => {
 const AccessRangeArea = forwardRef((props, ref) => {
 
     return(
-    <select name="access" ref={ref}>
+    <select name="access" ref={ref} value={props.preBoard && props.preBoard.boardAccess}>
         <option value="OPEN">전체 공개</option>
         <option value="PARTOPEN">친구 공개</option>
         <option value="NOOPEN">비공개</option>
@@ -143,8 +161,13 @@ const HashtagArea = (props) => {
 
     const input = useRef();
     const [hashtagList, setHashtagList] = useState([]);
+
+    if (props.preBoard){
+        setHashtagList(props.preBoard.hashContent);
+    }
     
     const handleKeyDown = (e) => {
+        
         if(e.code === "Enter" || e.code === "Space"){
             
             // 한글 문자 두번씩 입력되는 오류 방지하기 위해 추가
