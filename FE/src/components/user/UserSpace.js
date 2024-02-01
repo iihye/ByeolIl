@@ -123,9 +123,6 @@ function Star(props) {
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
     
-    const newPos = [...props.position];
-    
-    console.log(newPos, props.position);
     useEffect(() => {
         setCurStarState(isAddedStar.get(props.location));
     }, [stars]);
@@ -152,7 +149,7 @@ function Star(props) {
         const [opacity, setOpacity] = useState(0);
 
         return(
-            <mesh position={newPos}
+            <mesh position={props.position}
                 onClick={() => {
                     handleClick(props.location);
                 }}
@@ -188,54 +185,6 @@ function GroupStar(props) {
     const [lineState, setLineState] = useState([]);
     const [lineColor, setLineColor] = useState(true);
     const group = useRef(null);
-
-    // // 별자리 생성 체크용 트리
-    // const range = starRange[props.groupNum];
-    // const size = 1 << (Math.ceil(Math.log(range[1] - range[0] + 1) / Math.log(2)) + 1);
-    // const constellationTree = Array(size).fill(true);
-
-    // const initTree = (node, start, end) => {
-    //   if (start === end) {
-    //     constellationTree[node] = isAddedStar.get(range[0] + start) ? true : false;
-    //     return;
-    //   }
-
-    //   let mid = Math.floor((start + end) / 2);
-    //   initTree(node * 2, start, mid);
-    //   initTree(node * 2 + 1, mid + 1, end);
-    //   constellationTree[node] = constellationTree[node * 2] && constellationTree[node * 2 + 1];
-    // };
-
-    // const updateTree = (node, start, end, idx, val) => {
-    //   if (idx < start || end < idx) {
-    //     return;
-    //   }
-
-    //   if (start === end) {
-    //     constellationTree[node] = val;
-    //     return;
-    //   }
-
-    //   let mid = Math.floor((start + end) / 2);
-    //   updateTree(node * 2, start, mid, idx, val);
-    //   updateTree(node * 2 + 1, mid + 1, end, idx, val);
-    //   constellationTree[node] = constellationTree[node * 2] && constellationTree[node * 2 + 1];
-    // };
-
-    // const queryTree = (node, start, end, left, right) => {
-    //   if (end < left || right < start) {
-    //     return true;
-    //   }
-
-    //   if (left <= start && end <= right) {
-    //     return constellationTree[node];
-    //   }
-
-    //   let mid = Math.floor((start + end) / 2);
-    //   let l = queryTree(node * 2, start, mid, left, right);
-    //   let r = queryTree(node * 2 + 1, mid + 1, end, left, right);
-    //   return l && r;
-    // };
 
     useEffect(() => {
         const lastStarOfThisGroup =
