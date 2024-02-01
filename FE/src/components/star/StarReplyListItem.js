@@ -39,11 +39,12 @@ function MultiReplyInput(props){
   const input = useRef(null);
   const handleMultiReplyQuit = () => {props.setMultiReply(false)}
   const handleMultiReplySubmit = async () => {
+
     const data = {
-      "commentIndex": 1,
-      "boardIndex": 1,
-      "memberIndex": 1,
-      "commentContent": "답댓글입니다"
+      "commentIndex": 1, // 코멘트번호?
+      "boardIndex": 1, // 글 번호
+      "memberIndex": 1, // 작성자
+      "commentContent": "답댓글입니다" // 대댓글 내용
     }
 
     await axios.post(`${process.env.REACT_APP_API_URL}/multicomment/`,data,
@@ -52,7 +53,11 @@ function MultiReplyInput(props){
         token: localStorage.getItem('token'),
       },
     })
-    .then((response) => console.log(response))
+    .then((response) => {
+      if(response.data.map.response === 'success'){
+        props.setMultiReply(false);
+      }
+    })
     .catch((error) => console.log(error))
   }
 
