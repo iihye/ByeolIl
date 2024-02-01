@@ -10,7 +10,7 @@ function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
     const [detailModal, setDetailModal] = useState(false);
     const [boardState, setBoardState] = useState('');
-    const userIndex = localStorage.getItem('memberIndex');
+    const userIndex = Number(localStorage.getItem('memberIndex'));
 
     const ModalOpen = (boardIndex) => {
         setDetailModal(true);

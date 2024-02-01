@@ -27,16 +27,22 @@ export const isStarModifyOpenState = atom({
 export const isStarDetailOpenState = atom({
     key: 'isStarDetailOpen',
     default: [],
-})
+});
 
 // 게시글 삭제 알럿
 export const isDeleteAlertOpenState = atom({
-    key: "isDeleteAlertOpen",
+    key: 'isDeleteAlertOpen',
     default: false,
-  })
-  
+});
+
 // 게시글 신고 알럿
 export const isReportAlertOpenState = atom({
-    key: "isReportAlertOpen",
+    key: 'isReportAlertOpen',
     default: false,
-})
+});
+
+// 신고 상세보기 알럿
+export const reportModalState = atom({
+    key: 'reportModalState',
+    default: '',
+});

@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 function Header() {
-    const memberIndex = localStorage.getItem('memberIndex');
+    const [memberIndex, setMemberIndex] = useState(
+        Number(localStorage.getItem('memberIndex'))
+    );
+
+    useEffect(() => {
+        setMemberIndex(memberIndex);
+    }, [memberIndex]);
+
     return (
         <div className="Header">
             <div>고정된 헤더입니다!!</div>
