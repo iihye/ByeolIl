@@ -7,12 +7,15 @@ import com.stella.stella.common.exception.CustomExceptionStatus;
 import com.stella.stella.member.entity.Member;
 import com.stella.stella.member.repository.MemberRepository;
 import com.stella.stella.radio.dto.RadioCreateRequestDto;
+import com.stella.stella.radio.dto.RadioResponseDto;
 import com.stella.stella.radio.entity.Radio;
 import com.stella.stella.radio.repository.RadioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
@@ -38,4 +41,18 @@ public class RadioService {
             throw new CustomException(CustomExceptionStatus.MEMBERID_INVALID);
         }
     }
+
+    @Transactional
+    public RadioResponseDto findRadio(Long memberIndex){
+        Radio radio = radioRepository.findRadio(memberIndex);
+        RadioResponseDto dto  = RadioResponseDto.builder()
+                .radioIndex(radio.getRadioIndex())
+                .boardIndex(radio.getBoard().getBoardIndex())
+                .boardContent(radio.getBoard().getBoardContent())
+                .boardInputDate(radio.getBoard().getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                .build();
+        radioRepository.deleteByRadioIndex(radio.getRadioIndex());
+        return dto;
+    }
+
 }
