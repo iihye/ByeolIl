@@ -16,15 +16,17 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 dir('BE') {
-                    withSonarQubeEnv('sonarqube') {
+                    script{
+                        withSonarQubeEnv('sonarqube') {
 
-                        sh "echo 'SonarQube Analysis...'"
-                        sh "chmod +x gradlew"
-                        sh "./gradlew sonar"
-                    }
+                            sh "echo 'SonarQube Analysis...'"
+                            sh "chmod +x gradlew"
+                            sh "./gradlew sonar"
+                        }
 
-                    if (waitForQualityGate().status != 'OK') {
-                        error "Quality Gate failed!!!"
+                        if (waitForQualityGate().status != 'OK') {
+                            error "Quality Gate failed!!!"
+                        }
                     }
                 }
             }
