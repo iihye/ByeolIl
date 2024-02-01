@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import { filterState, listState } from 'components/atom';
 import { useRecoilValue, useRecoilState } from 'recoil';
@@ -8,6 +8,10 @@ function List() {
     const [listData, setListData] = useRecoilState(listState);
     const filterData = useRecoilValue(filterState);
     const memberIndex = localStorage.getItem('memberIndex');
+
+    const [token, setToken] = useState(localStorage.getItem('token'));
+
+    useEffect(() => [setToken(token)], [token]);
 
     const deleteStar = (boardIndex, memberIndex) => {
         axios
@@ -21,7 +25,7 @@ function List() {
                 },
                 {
                     headers: {
-                        token: localStorage.getItem('token') ?? '',
+                        token: token,
                     },
                 }
             )
