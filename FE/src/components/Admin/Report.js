@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReportDetail from './ReportDetail';
-import { atom, useRecoilState } from 'recoil';
-
-export const reportModalState = atom({
-    key: 'reportModalState',
-    default: false,
-});
+import { useRecoilState } from 'recoil';
+import { reportModalState } from 'components/atom';
 
 function Report() {
     const [reportData, setReportData] = useState([]);
@@ -29,7 +25,6 @@ function Report() {
         };
 
         fetchData();
-        console.log(reportData);
     }, []);
 
     //  boardIndex를 매개변수로 넘겨 일치하는 데이터 받아오기
@@ -45,7 +40,7 @@ function Report() {
                 );
 
                 const newBoardContent = responses.map(
-                    (res, index) => res.data[index].boardContent
+                    (res) => res.data.boardContent
                 );
 
                 const newBoardIndex = reportData.map((res) => res.boardIndex);
@@ -67,19 +62,19 @@ function Report() {
             {reportData.length > 0 && boardContent.length > 0 ? (
                 reportData.map((it, index) => (
                     <>
-                        {reportModal && (
+                        {reportModal === it.boardIndex && (
                             <ReportDetail
-                                boardIndex={boardIndex[index]}
+                                boardIndex={it.boardIndex}
                                 reportContent={it.reportContent}
                             />
                         )}
                         <li
                             key={it.reportIndex}
-                            onClick={() => setReportModal(true)}
+                            onClick={() => setReportModal(it.boardIndex)}
                         >
                             {boardContent[index]}
-                            {it.reportInputDate}
-                            {it.userNickname}
+                            {it.reportRegdate}
+                            {it.memberNickname}
                             {it.reportContent}
                         </li>
                     </>

@@ -3,6 +3,7 @@ import StarDeleteAlert from 'components/star/StarDeleteAlert';
 import StarReplyList from 'components/star/StarReplyList';
 import StarReportAlert from 'components/star/StarReportAlert';
 import { isStarDetailOpenState } from 'components/atom';
+import { reportModalState } from 'components/atom';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { atom, useRecoilState, useSetRecoilState } from 'recoil';
@@ -37,6 +38,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex }) {
         isReportAlertOpenState
     );
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+    const [reportModal, setReportModal] = useRecoilState(reportModalState);
 
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
@@ -63,24 +65,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex }) {
                     setData(response.data);
                 })
                 .catch((err) => {
-                    console.log(err, '에러 발생으로 임시 데이터로 테스트');
-
-                    const data = {
-                        boardRegTime: '2888-88-88 88:88:88.88888',
-                        boardUpdateDate: '2042-52-34 16:26',
-                        boardInputDate: '2099-99-99',
-                        boardContent: '더미내용',
-                        boardMedia: ['이미지 링크1', '이미지 링크2'],
-                        boardAccess: 'OPEN',
-                        boardLike: 3,
-                        hashContent: ['해시태그1 ', '해시태그2 ', '해시태그3 '],
-                    };
-
-                    data.boardInputDate = data.boardInputDate.split('-');
-                    data.boardUpdateDate = data.boardUpdateDate
-                        .split(' ')[0]
-                        .split('-');
-                    setData(data);
+                    console.log(err);
                 });
         };
         fetchData(starIndex);
@@ -166,6 +151,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex }) {
         setIsDeleteAlertOpen(false);
         setIsReportAlertOpen(false);
         setIsStarDetailOpen([]);
+        setReportModal('');
     };
 
     /* 게시글 작성자 체크*/
