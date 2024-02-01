@@ -1,3 +1,4 @@
+import Alarm from './components/user/Alarm';
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
 import Login from './components/login/Login';
@@ -33,24 +34,15 @@ function App() {
                     <Route path="starFavor" element={<StarFavorList />} />
                     <Route path="follow" element={<FollowList />} />
                     <Route path="findUser" element={<FindUser />} />
+                    <Route path="alarm" element={<Alarm />} />
                     {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
                     <Route path="Settings" element={<Settings />}></Route>
-                    <Route path="star/:star_id" element={<StarDetail />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
             </Routes>
-
-            <div>
-                {' '}
-                테스트 버튼들 ---------------------------------------------
-            </div>
-
             <Link to="/space/1">
-                <button>1번 유저의 메인 페이지로 이동</button>
+                <button>1번 유저의 페이지로 이동</button>
             </Link>
-            <Settings />
-
-            {/* <StarRegist type={"regist"} location={50} /> */}
         </div>
     );
 }
