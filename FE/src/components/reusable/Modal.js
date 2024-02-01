@@ -24,7 +24,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const memberIndex = Number(localStorage.getItem('memberIndex'));
 
   const replyInputRef = useRef();
-
+  
   useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
@@ -225,23 +225,43 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
 }
 
 function RadioContent() {
-    const [data, setData] = useState(null);
+    const [rdata, setRdata] = useState(null);
+    const test = "테스트 텍스트 입니다.";
 
-    // useEffect(() => {
+    useEffect(() => {
+      // 최초1회 데이터를 수신한다. 
+      // axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`,
+      // {
+      //   headers: {
+      //     token: localStorage.getItem('token') ?? "",
+      //   },
+      // })
+      // .then((response) => {
+      //   console.log(response.data);
+      //   setRdata(response.data);
+      // })
 
-    // }, []);
+      // TTS 음성수신 
+      axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=${test}`,{
+        headers: {
+          token: localStorage.getItem('token') ?? "",
+        },
+      })
+      .then((response) => {console.log(response.data);
+      })
+    }, []);
 
     return (
         <div>
             <div>
                 {/*라디오 모달 상단 헤더 */}
-                <div>n년 n월 n일</div>
+                {rdata ? <div>{rdata.boardInputDate.split('-')[0]}년 {rdata.boardInputDate.split('-')[1]}월 {rdata.boardInputDate.split('-')[2]}일</div> : '로딩중'}
                 <button>REPORT</button>
                 <button>CLOSE</button>
             </div>
             <div>
                 {/*라디오 내용 */}
-                <div>{data ? data.boardContent : '로딩중'}</div>
+                <div>{rdata ? rdata.boardContent : '로딩중'}</div>
             </div>
             <div>
                 <button>PLAY</button>

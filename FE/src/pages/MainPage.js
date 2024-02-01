@@ -9,6 +9,7 @@ import ChangeInfo from '../components/user/ChangeInfo'
 import StarList from '../components/star/StarList'
 import ErrorPage from "./ErrorPage";
 import UserSpace from "components/user/UserSpace";
+import Radio from "components/radio/Radio";
 // import StarFavoList from './star/StarFavorList'
 // import FollowList from './user/FollowList'
 // import FindUser from './user/FindUser'
@@ -23,6 +24,9 @@ export default function MainPage() {
                 <div className="mainContainer">
                     <UserSpace/>
                     <Outlet/>
+                </div>
+                <div>
+                    <Radio/>
                 </div>
                 <nav className="sideContainer">
                     <Sidebar/>  
