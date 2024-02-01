@@ -1,19 +1,24 @@
+import Report from './components/Admin/Report';
+import Alarm from './components/user/Alarm';
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
 import Login from './components/login/Login';
 import Header from './components/Header';
-import { Routes, Route } from 'react-router-dom';
-import KakaoLogin from './components/login/KakaoLogin';
+import ChangeInfo from 'components/user/ChangeInfo';
+import ErrorPage from 'pages/ErrorPage';
 import FindUser from 'components/user/FindUser';
+import KakaoLogin from './components/login/KakaoLogin';
 import List from 'components/reusable/List';
 import StarDetail from 'components/star/StarDetail';
+import StarRegist from 'components/star/StarRegist';
+import StarFavorList from 'components/star/StarFavorList';
+import FollowList from 'components/user/FollowList';
+import Settings from 'components/user/Settings';
+// StarTagSearch, Settings 추가
 import { Link } from 'react-router-dom';
-
-localStorage.setItem('isLogin', true); // 테스트용
+import { Routes, Route } from 'react-router-dom';
 
 function App() {
-    const isLogin = localStorage.getItem('isLogin');
-
     return (
         <div className="App">
             <Header />
@@ -24,20 +29,21 @@ function App() {
                     element={<KakaoLogin />}
                 ></Route>
                 <Route exact path="/landing/login" element={<Login />}></Route>
-                <Route
-                    exact
-                    path="/member/search/list"
-                    element={<FindUser />}
-                ></Route>
-                <Route
-                    exact
-                    path="/space/:id/starMine"
-                    element={<List />}
-                ></Route>
+                <Route path="/space/:user_id" element={<MainPage />}>
+                    <Route path="editInfo" element={<ChangeInfo />} />
+                    <Route path="starMine" element={<List />} />
+                    <Route path="starFavor" element={<StarFavorList />} />
+                    <Route path="follow" element={<FollowList />} />
+                    <Route path="findUser" element={<FindUser />} />
+                    <Route path="alarm" element={<Alarm />} />
+                    {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
+                    <Route path="Settings" element={<Settings />} />
+                    <Route path="report" element={<Report />} />
+                    <Route path="*" element={<ErrorPage />} />
+                </Route>
             </Routes>
-
-            <Link to="/space/star/0">
-                <button>게시글 상세보기 테스트 페이지</button>
+            <Link to="/space/1">
+                <button>1번 유저의 페이지로 이동</button>
             </Link>
         </div>
     );
