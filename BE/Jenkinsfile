@@ -18,6 +18,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     dir('BE') {
                         sh "echo 'SonarQube Analysis...'"
+                        sh "chmod +x gradlew"
                         sh "./gradlew sonar"
                     }
                 }
