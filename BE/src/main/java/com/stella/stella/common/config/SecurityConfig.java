@@ -46,7 +46,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/board/**").permitAll()
                                 .requestMatchers("/api/comment/**").permitAll()
                                 .requestMatchers("/api/multicomment/**").permitAll()
-//                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
+								.requestMatchers("/api/file/**").permitAll()
 								.anyRequest().authenticated()
 
 				)

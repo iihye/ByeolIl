@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class MemberController {
     private final MemberService memberService;
 
     //홈페이지 로그인
-    @PostMapping("/login/origin")
+    @PostMapping(value = "/login/origin")
     public ResponseEntity<Map<String, Object>> originLogin(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
@@ -334,8 +335,5 @@ public class MemberController {
         return ResponseEntity.status(status).body(resultMap);
     }
 
-    @GetMapping("/test")
-    public String teste(){
-        return "success";
-    }
+
 }
