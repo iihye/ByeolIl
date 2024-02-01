@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class Comment {
 
     @CreatedDate
     @Column(name = "comment_regdate")
-    private LocalDate commentRegdate;           //댓글 등록 날짜
+    private LocalDateTime commentRegdate;           //댓글 등록 날짜
 
     @Column(name = "comment_content", length = 200)
     private String commentContent;              //댓글 내용

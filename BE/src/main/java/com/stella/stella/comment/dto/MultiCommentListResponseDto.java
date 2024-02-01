@@ -5,10 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class MultiCommentListResponseDto {
-    private String MultiCommentContent;
+    private Long memberIndex;
+    private Long multiCommentIndex;
+    private String multiCommentContent;
+    private LocalDateTime multiCommentRegdate;
 }

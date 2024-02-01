@@ -54,7 +54,8 @@ public class CommentService {
     }
 
     public List<CommentListResponseDto> findCommentList(Long BoardIndex){
-        Board board = boardRepository.findByBoardIndex(BoardIndex).orElseThrow(()-> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+        Board board = boardRepository.findByBoardIndex(BoardIndex)
+                .orElseThrow(()-> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
 
         List<CommentListResponseDto> list = new ArrayList<>();
 
@@ -64,12 +65,18 @@ public class CommentService {
 
             for(MultiComment m : c.getMultiComments()){
                 mList.add(MultiCommentListResponseDto.builder()
-                        .MultiCommentContent(m.getMultiCommentContent())
+                        .memberIndex(m.getMember().getMemberIndex())
+                        .multiCommentIndex(m.getMultiCommentIndex())
+                        .multiCommentContent(m.getMultiCommentContent())
+                        .multiCommentRegdate(m.getMultiCommentRegdate())
                         .build());
             }
 
             list.add(CommentListResponseDto.builder()
+                    .memberIndex(c.getMember().getMemberIndex())
+                    .commentIndex(c.getCommentIndex())
                     .commentContent(c.getCommentContent())
+                    .commentRegdate(c.getCommentRegdate())
                     .multiComments(mList)
                     .build());
         }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +32,10 @@ public class MemberController {
     private final MemberService memberService;
 
     //홈페이지 로그인
-    @PostMapping("/login/origin")
+    @PostMapping(value = "/login/origin")
     public ResponseEntity<Map<String, Object>> originLogin(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-        log.info("dto={}", memberLoginRequestDto);
         String accessToken = "";
         try {
             accessToken = memberService.login(memberLoginRequestDto.getMemberId(),
@@ -57,8 +57,41 @@ public class MemberController {
         try {
             String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/login/kakao");
             Map<String, Object> kakaoMemberInfo = memberService.getKakaoMemberInfo(kakaoAcessToken);
-            log.info(kakaoMemberInfo.toString());
             accessToken = memberService.login(kakaoMemberInfo.get("id").toString(), "", "kakao");
+            resultMap.put("message", "success");
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).header("accessToken", accessToken).body(resultMap);
+    }
+
+    @GetMapping("/login/google")
+    public ResponseEntity<Map<String, Object>> googleLogin(@RequestParam("code") String code) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        String accessToken = "";
+        try {
+            String googleAccessToken = memberService.getGoogleAccessToken(code, "api/member/login/google");
+            Map<String, Object> googleMemberInfo = memberService.getGoogleMemberInfo(googleAccessToken);
+            accessToken = memberService.login(googleMemberInfo.get("id").toString(), "", "google");
+            resultMap.put("message", "success");
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).header("accessToken", accessToken).body(resultMap);
+    }
+
+    @GetMapping("/login/naver")
+    public ResponseEntity<Map<String, Object>> naverLogin(@RequestParam("code") String code) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        String accessToken = "";
+        try {
+            String naverAccessToken = memberService.getNaverAccessToken(code, "api/member/login/naver");
+            Map<String, Object> googleMemberInfo = memberService.getNaverMemberInfo(naverAccessToken);
+            accessToken = memberService.login(googleMemberInfo.get("id").toString(), "", "naver");
             resultMap.put("message", "success");
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
@@ -89,8 +122,34 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/join/kakao");
-            log.info(kakaoAcessToken);
             resultMap = memberService.getKakaoMemberInfo(kakaoAcessToken);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
+    @GetMapping("/join/google")
+    public ResponseEntity<Map<String, Object>> googleJoin(@RequestParam("code") String code) {
+        HttpStatus status = HttpStatus.OK;
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            String googleAccessToken = memberService.getGoogleAccessToken(code, "api/member/join/google");
+            resultMap = memberService.getGoogleMemberInfo(googleAccessToken);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+    @GetMapping("/join/naver")
+    public ResponseEntity<Map<String, Object>> naverJoin(@RequestParam("code") String code) {
+        HttpStatus status = HttpStatus.OK;
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            String naverAccessToken = memberService.getNaverAccessToken(code, "api/member/join/naver");
+            resultMap = memberService.getNaverMemberInfo(naverAccessToken);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
@@ -106,9 +165,7 @@ public class MemberController {
         try {
             //토큰으로 유저 정보 받아옴
             Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
-            log.info("accessMemberIndex={}", accessMemberIndex);
             result = memberService.info(accessMemberIndex);
-            log.info("result={}", result);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
         } catch (Exception e) {
@@ -116,30 +173,12 @@ public class MemberController {
         }
         return ResponseEntity.status(status).body(new MyInfoResponseDto(result));
     }
-
-    // 남의 정보 가져올 예정
-//	@GetMapping("/info")
-//	public ResponseEntity<MemberInfoResponseDto> memberInfo(@RequestParam("index") long memberIndex,HttpServletRequest request) {
-//		Member result = null;
-//		HttpStatus status = HttpStatus.OK;
-//		String accessToken = request.getHeader("accessToken");
-//		try {
-//			result = memberService.info(memberIndex);
-//		} catch(NullPointerException e) {
-//			status = HttpStatus.NOT_FOUND;
-//		} catch(Exception e) {
-//			status = HttpStatus.BAD_REQUEST;
-//		}
-//		return ResponseEntity.status(status).body(new MemberInfoResponseDto(result));
-//	}
     // 아이디 중복 체크: 홈페이지 로그인만 체크 요청이 들어온다고 가정
     @GetMapping("/dup-check/id")
     public ResponseEntity<Map<String, Object>> dupCheckId(@RequestParam("id") String id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            log.info("id={}", id);
-            log.info("result={}", memberRepository.findByMemberIdAndMemberPlatform(id, "origin"));
             memberRepository.findByMemberIdAndMemberPlatform(id, "origin")
                     .orElseThrow(() -> new UsernameNotFoundException("사용 가능한 아이디입니다."));
             resultMap.put("message", "이미 존재하는 아이디입니다.");
@@ -195,7 +234,6 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             //신청유저 != 대상유저인데 관리자도 아니라면
-            log.info("index={}", memberUpdateRequestDto);
             if ((Long) request.getAttribute("accessMemberIndex") != memberUpdateRequestDto.getMemberIndex()
                     && !request.getAttribute("accessMemberRole").equals("ADMIN")) {
                 status = HttpStatus.UNAUTHORIZED;
@@ -297,8 +335,5 @@ public class MemberController {
         return ResponseEntity.status(status).body(resultMap);
     }
 
-    @GetMapping("/test")
-    public String teste(){
-        return "success";
-    }
+
 }
