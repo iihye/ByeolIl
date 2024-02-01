@@ -37,7 +37,7 @@ pipeline {
                             if (analysisStatus.status == 'ERROR') {
                                 updateGitlabCommitStatus(name: "SonarQube Quality Gate", state: "failed")
                                 error "SonarQube Analysis Fail: ${analysisStatus.status}"
-                            } else if (analysisStatus.status == 'OK') {
+                            } else if (analysisStatus.status == 'SUCCESS') {
                                 updateGitlabCommitStatus(name: "SonarQube Quality Gate", state: "success")
                                 echo "SonarQube Analysis Success: ${analysisStatus.status}"
                             } else {
