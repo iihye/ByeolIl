@@ -8,7 +8,6 @@ function StarReplyList(props) {
   const [data, setData] = useState([]);
   const renderReply = useRecoilValue(renderReplyState);
 
-  console.log("List Render");
   useEffect(() => {
     const fetchData = async () => {
       await axios.get(`${process.env.REACT_APP_API_URL}/comment/${props.boardIndex}`)
@@ -16,6 +15,7 @@ function StarReplyList(props) {
       .catch((error) => console.log(error));
     }
     fetchData();
+    console.log(data);
   }, [renderReply])
 
   return (

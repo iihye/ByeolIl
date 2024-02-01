@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import StarMultiReplyList from "./StarMultiReplyList";
+import axios from "axios";
 
 function StarReplyListItem(props) {
   const [multiReply, setMultiReply] = useState(false);
-  console.log(props.reply);
+  const [multiReplyList, setMultiReplyList] = useState(props.reply.multiComments);
   
   const handleDelete = async () => {
     /* 댓글 작성자 체크 */  
@@ -23,8 +24,10 @@ function StarReplyListItem(props) {
           <button onClick={handleDelete}>댓글 삭제</button>
         </div>
       </div>
-      <div onClick={() => {setMultiReply(!multiReply)}}>답글달기</div>
-      <StarMultiReplyList/>
+      {
+        !multiReply && <div onClick={() => {setMultiReply(true)}}>답글달기</div>
+      }
+      <StarMultiReplyList multiReplyList={multiReplyList}/>
       {
         multiReply && <MultiReplyInput setMultiReply={setMultiReply}/>
       }
@@ -35,7 +38,23 @@ function StarReplyListItem(props) {
 function MultiReplyInput(props){
   const input = useRef(null);
   const handleMultiReplyQuit = () => {props.setMultiReply(false)}
-  const handleMultiReplySubmit = () => {}
+  const handleMultiReplySubmit = async () => {
+    const data = {
+      "commentIndex": 1,
+      "boardIndex": 1,
+      "memberIndex": 1,
+      "commentContent": "답댓글입니다"
+    }
+
+    await axios.post(`${process.env.REACT_APP_API_URL}/multicomment/`,data,
+    {
+      headers: {
+        token: localStorage.getItem('token'),
+      },
+    })
+    .then((response) => console.log(response))
+    .catch((error) => console.log(error))
+  }
 
   return (
     <div>
