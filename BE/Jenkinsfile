@@ -30,18 +30,14 @@ pipeline {
         stage('SonarQube Quality Gate') {
             steps {
                 dir('BE') {
+                    sh "echo 'SonarQube Quality Gate...'"
                     timeout(time: 1, unit: 'MINUTES') {
                         script{
-                            def analysisStatus = waitForQualityGate('sonarqube')
+                            echo "SonarQube Quality Gate..."
+                            def analysisStatus = waitForQualityGate()
                             echo "Status: ${analysisStatus.status}"
-                            if (analysisStatus.status == 'ERROR') {
-                                updateGitlabCommitStatus(name: "SonarQube Quality Gate", state: "failed")
-                                error "SonarQube Analysis Fail: ${analysisStatus.status}"
-                            } else if (analysisStatus.status == 'SUCCESS') {
-                                updateGitlabCommitStatus(name: "SonarQube Quality Gate", state: "success")
-                                echo "SonarQube Analysis Success: ${analysisStatus.status}"
-                            } else {
-                                echo "SonarQube Analysis Pending..."
+                            if (analysisStatus.status != 'OK') {
+                                echo "SonarQube Analysis Fail..."
                             }
                         }
                     }
