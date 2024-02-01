@@ -112,6 +112,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
 
   const handleClose = () => {
     /* 모달 닫기 */
+    setIsDeleteAlertOpen(false);
+    setIsReportAlertOpen(false);
     setIsStarDetailOpen([])
   }
 
