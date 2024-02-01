@@ -29,6 +29,7 @@ function Report() {
         };
 
         fetchData();
+        console.log(reportData);
     }, []);
 
     //  boardIndex를 매개변수로 넘겨 일치하는 데이터 받아오기

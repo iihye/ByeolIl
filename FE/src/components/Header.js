@@ -11,6 +11,9 @@ function Header() {
             <Link to="/space/alarm">
                 <button>알림창</button>
             </Link>
+            <Link to="/space/admin/report">
+                <button>신고리스트</button>
+            </Link>
         </div>
     );
 }
