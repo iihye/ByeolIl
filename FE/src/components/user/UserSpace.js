@@ -17,6 +17,8 @@ import {
 } from 'recoil';
 import { useNavigate, useParams } from 'react-router-dom';
 import StarRegist from 'components/star/StarRegist';
+import StarDetail from 'components/star/StarDetail';
+import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
 
 // position : 별 [번호, x, y, z]
 const position = [
@@ -249,11 +251,6 @@ const starsState = atom({
     default: [],
 });
 
-const isStarRegistOpenState = atom({
-    key: 'isStarRegistOpen',
-    default: -1,
-});
-
 const tmpStars = [
     // fetchData
     {
@@ -403,9 +400,12 @@ function Sphere(props) {
 function Star(props) {
     // console.log(`STAR ${props.location} MOUNTED`);
 
-    const mesh = useRef(null);
-    const stars = useRecoilValue(starsState);
-    const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+  const params = useParams();  
+  const mesh = useRef(null);
+  const stars = useRecoilValue(starsState);
+
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+  const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
@@ -419,58 +419,11 @@ function Star(props) {
         PARTOPEN: 'red',
     };
 
-    // const updateStarState = () => {
-    //   // 등록된 별이 아닐 때
-    //   if (!curStarState) {
-    //     if (window.confirm("별을 등록할까요?")) {
-    //       // axios : 별 등록 요청
-    //       // {현재 별 페이지 번호 - 1} * {한 페이지당 별 개수} + {현재 별의 위치 번호} -> 별의 location 값
-    //       // 별 등록이 성공적으로 이루어졌다면 별 상태를 바꾼다 -> 요건 추후에 API에 맞춰서 수정
-    //       setCurStarState({ boardAccess: "OPEN" });
-
-    //       // starData : 임시 데이터, 작성된 게시글로 추후 치환
-    //       const starData = {
-    //         boardIndex: 2,
-    //         userIndex: 1,
-    //         boardRegTime: "2099-99-99",
-    //         boardInputDate: "2099-99-99",
-    //         boardContent: "더미 컨텐츠",
-    //         boardLocation: props.location,
-    //         boardAccess: curStarState,
-    //         boardLike: 3,
-    //         tagContent: [],
-    //       };
-
-    //       isAddedStar.set(props.location, starData);
-
-    //       // 별자리가 완성됐을 때, 선 보이게 하기
-    //       if (constellationCheck(props.location)) {
-    //         props.setLineColor(false);
-    //       }
-    //     }
-
-    //     // 등록된 별일 때
-    //   } else {
-    //     if (curStarState.boardAccess === "OPEN") {
-    //       if (window.confirm("별 상세 내용 \n 별을 비공개 처리할까요?")) {
-    //         // axios : 별 정보 수정 요청 (공개범위수정)
-    //         let tmp = { ...isAddedStar.get(props.location) };
-    //         tmp.boardAccess = "CLOSE";
-    //         setCurStarState(tmp);
-    //       }
-    //     } else if (curStarState.boardAccess === "CLOSE") {
-    //       if (window.confirm("비공개 별입니다 \n 별을 삭제할까요?")) {
-    //         // axios : 별 정보 수정 요청 (별 삭제 처리)
-    //         props.setLineColor(true);
-    //         isAddedStar.delete(props.location);
-    //       }
-    //     }
-    //   }
-    // };
     const handleClick = (locationNum) => {
-        if (isAddedStar.get(locationNum)) {
-            // 별 상세보기 라우팅
-            alert('별상세보기');
+      const starInfo = isAddedStar.get(locationNum);
+        if (starInfo) {
+            // 별 상세보기 모달 띄우기
+            setIsStarDetailOpen([starInfo.boardIndex, params["user_id"]]);
         } else {
             // 별 등록 모달 띄우기
             setIsStarRegistOpen(locationNum);
@@ -621,18 +574,11 @@ function SceneStars() {
                     setStars(response.data);
                 })
                 .catch((e) => {
-                    // 임시 데이터 - 나중에 제거할 예정
                     console.log(e);
-                    // isAddedStar.clear();
-                    // tmpStars.forEach((star) => isAddedStar.set(star.boardLocation, star));
-                    // setStars(tmpStars);
                 });
         };
         fetchData();
 
-        // isAddedStar.clear();
-        // tmpStars.forEach((star) => isAddedStar.set(star.boardLocation, star));
-        // setStars(tmpStars);
     }, [curPage]);
 
     return (
@@ -701,6 +647,16 @@ function StarRegistArea() {
     );
 }
 
+function StarDetailArea(){
+    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
+
+    return (
+        <div>
+            {isStarDetailOpen.length !== 0 && <StarDetail starIndex={isStarDetailOpen[0]} userIndex={isStarDetailOpen[1]}/>}
+        </div>
+    )
+}
+
 function UserSpace() {
     return (
         <>
@@ -727,19 +683,13 @@ function UserSpace() {
                     />
                 </Canvas>
             </div>
-            <div>
+            <div className="modal-area">
                 <StarRegistArea />
+                <StarDetailArea />
             </div>
         </>
     );
 }
 
-// 등록버튼 누르면
-// 성공했을 때
-// 별 리스트 다시 요청하기
-// curPage, user_id 필요
-// isAddedStar에 props.location : starInfo 저장하기
-// starsState 갱신하기
-// isStarRegistOpenState를 -1로 변경하기
-export { isAddedStar, isStarRegistOpenState, starsState, curPageState };
+export { isAddedStar, isStarRegistOpenState, isStarDetailOpenState, starsState, curPageState };
 export default UserSpace;

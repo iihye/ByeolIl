@@ -37,13 +37,11 @@ function App() {
                     <Route path="alarm" element={<Alarm />} />
                     {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
                     <Route path="Settings" element={<Settings />}></Route>
-                    <Route path="star/:star_id" element={<StarDetail />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
-            </Routes>
+            </Routes>   
 
             <div>
-                {' '}
                 테스트 버튼들 ---------------------------------------------
             </div>
 
