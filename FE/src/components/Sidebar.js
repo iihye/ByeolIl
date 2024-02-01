@@ -11,6 +11,7 @@ import FindUser from './user/FindUser';
 import { Link } from 'react-router-dom';
 
 const memberIndex = localStorage.getItem('memberIndex');
+
 const items = [
     { name: '회원정보수정', path: `/space/${memberIndex}/editInfo` },
     { name: '나의 별 목록', path: `/space/${memberIndex}/starMine` },

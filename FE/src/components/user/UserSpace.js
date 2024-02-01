@@ -20,6 +20,8 @@ import StarRegist from 'components/star/StarRegist';
 import StarDetail from 'components/star/StarDetail';
 import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
 
+const loginIndex = localStorage.getItem('memberIndex');
+
 // position : 별 [번호, x, y, z]
 const position = [
     [
@@ -400,12 +402,12 @@ function Sphere(props) {
 function Star(props) {
     // console.log(`STAR ${props.location} MOUNTED`);
 
-  const params = useParams();  
-  const mesh = useRef(null);
-  const stars = useRecoilValue(starsState);
+    const params = useParams();
+    const mesh = useRef(null);
+    const stars = useRecoilValue(starsState);
 
-  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
-  const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+    const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+    const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
@@ -420,10 +422,10 @@ function Star(props) {
     };
 
     const handleClick = (locationNum) => {
-      const starInfo = isAddedStar.get(locationNum);
+        const starInfo = isAddedStar.get(locationNum);
         if (starInfo) {
             // 별 상세보기 모달 띄우기
-            setIsStarDetailOpen([starInfo.boardIndex, params["user_id"]]);
+            setIsStarDetailOpen([starInfo.boardIndex, params['user_id']]);
         } else {
             // 별 등록 모달 띄우기
             setIsStarRegistOpen(locationNum);
@@ -578,7 +580,6 @@ function SceneStars() {
                 });
         };
         fetchData();
-
     }, [curPage]);
 
     return (
@@ -647,17 +648,25 @@ function StarRegistArea() {
     );
 }
 
-function StarDetailArea(){
+function StarDetailArea() {
     const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
     return (
         <div>
-            {isStarDetailOpen.length !== 0 && <StarDetail starIndex={isStarDetailOpen[0]} userIndex={isStarDetailOpen[1]}/>}
+            {isStarDetailOpen.length !== 0 && (
+                <StarDetail
+                    starIndex={isStarDetailOpen[0]}
+                    userIndex={isStarDetailOpen[1]}
+                />
+            )}
         </div>
-    )
+    );
 }
 
 function UserSpace() {
+    const params = useParams();
+    const userId = params.user_id;
+
     return (
         <>
             <div
@@ -683,6 +692,8 @@ function UserSpace() {
                     />
                 </Canvas>
             </div>
+            {userId !== loginIndex && <button>버튼</button>}
+
             <div className="modal-area">
                 <StarRegistArea />
                 <StarDetailArea />
@@ -691,5 +702,11 @@ function UserSpace() {
     );
 }
 
-export { isAddedStar, isStarRegistOpenState, isStarDetailOpenState, starsState, curPageState };
+export {
+    isAddedStar,
+    isStarRegistOpenState,
+    isStarDetailOpenState,
+    starsState,
+    curPageState,
+};
 export default UserSpace;
