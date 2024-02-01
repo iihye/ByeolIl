@@ -40,10 +40,10 @@ public class BoardController {
             boardService.addBoard(boardCreateRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
-            message = "fail";
+            message =e.getMessage();
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            message = "fail";
+            message =e.getMessage();
         }
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
@@ -72,10 +72,10 @@ public class BoardController {
             boardService.modifyBoard(boardUpdateRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
-            message = "fail";
+            message = e.getMessage();
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            message = "fail";
+            message = e.getMessage();
         }
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
@@ -88,15 +88,14 @@ public class BoardController {
             boardService.removeBoard(boardDeleteRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
-            message = "fail";
+            message = e.getMessage();
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            message = "fail";
+            message = e.getMessage();
+
         }
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
-
-
     @GetMapping("/star/{memberIndex}")
     public ResponseEntity<Map<String, Object>> boardListToStar(@PathVariable Long memberIndex, @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.ASC) Pageable pageable) {
         Map<String, Object> responseBody = new HashMap<>();
@@ -150,10 +149,10 @@ public class BoardController {
             heartService.addHeart(heartRequestDto);
         }catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
-            message = "fail";
+            message = e.getMessage();
         } catch (Exception e) {
         status = HttpStatus.BAD_REQUEST;
-        message = "fail";
+        message = e.getMessage();
     }
 
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
@@ -167,10 +166,10 @@ public class BoardController {
             heartService.removeHeart(heartRequestDto);
         }catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
-            message = "fail";
+            message = e.getMessage();
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            message = "fail";
+            message = e.getMessage();
         }
 
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
@@ -184,10 +183,10 @@ public class BoardController {
             reportService.addReport(boardReportRequestDto);
         }catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
-            message = "fail";
+            message = e.getMessage();
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            message = "fail";
+            message = e.getMessage();
         }
 
         return ResponseEntity.status(status).body(new ResultResponseDto(message));

@@ -17,4 +17,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByMemberMemberIndex(Long MemberIndex, Pageable pageable);
 
     Page<Board> findByBoardIndexIn(List<Long> list, Pageable pageable);
+
 }
