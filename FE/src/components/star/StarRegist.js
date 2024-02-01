@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
 import { isAddedStar, starsState, curPageState } from "components/user/UserSpace";
 import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState } from 'components/atom';
-
+import styled from "styled-components";
 import axios from 'axios';
 import { useParams } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -106,29 +106,38 @@ function StarRegist (props){
 
     }
     
+    let Container = styled.div`
+        background-color: black;
+        position: absolute;
+        top: 0,
+        left: 0,
+    `;
+
     return (
-        <div className="star-regist" style={{border: "1px solid black"}}>
-            <div style={{display: "flex"}}>
-                {/* 최상단 */}
-                <DateArea ref={dateRef} type={type}/>
-                <AccessRangeArea ref={accessRangeRef} preBoard={preBoard}/>
-            </div>
-            <div>
-                {/* 글 작성 영역 */}
-                {
-                    media.length > 0 && <div>사진 미리보기</div>
-                }
-                <textarea ref={contentRef} value={preBoard && preBoard.boardContent}/>
-            </div>
-            <div>
-                {
-                    <HashtagArea hashtagSet={hashtagSet} preBoard={preBoard}/>
-                }
-            </div>
-            <div>
-                <input type="file" onClick={handleMediaUpload}/>
-                <button onClick={handleRegist}>{buttonValue[type]}</button>
-                <button onClick={handleClose}>취소</button>
+        <div style={{position: 'absolute', top: 0, left: 0, display: 'flex'}}>
+            <div className="star-regist" style={{border: "1px solid black"}}>
+                <div style={{display: "flex"}}>
+                    {/* 최상단 */}
+                    <DateArea ref={dateRef} type={type}/>
+                    <AccessRangeArea ref={accessRangeRef} preBoard={preBoard}/>
+                </div>
+                <div>
+                    {/* 글 작성 영역 */}
+                    {
+                        media.length > 0 && <div>사진 미리보기</div>
+                    }
+                    <textarea ref={contentRef} value={preBoard && preBoard.boardContent}/>
+                </div>
+                <div>
+                    {
+                        <HashtagArea hashtagSet={hashtagSet} preBoard={preBoard}/>
+                    }
+                </div>
+                <div>
+                    <input type="file" onClick={handleMediaUpload}/>
+                    <button onClick={handleRegist}>{buttonValue[type]}</button>
+                    <button onClick={handleClose}>취소</button>
+                </div>
             </div>
         </div>
     )
