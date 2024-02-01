@@ -17,11 +17,14 @@ function StarReplyList(props) {
   }, [])
 
   return (
-    <div className="star-reply-list" style={{ border: "1px solid black", margin: "5px", overflowY: "scroll", height: "100px" }}>
-      {data.map((reply, index) => (
-        <StarReplyListItem reply={reply} key={index} />
-      ))}
-    </div>
+    <>
+      <div>댓글 ----</div>
+      <div className="star-reply-list" style={{ border: "1px solid black", margin: "5px", overflowY: "scroll", height: "50px" }}>
+        {data.map((reply, index) => (
+          <StarReplyListItem reply={reply} key={index} />
+        ))}
+      </div>
+    </>
   );
 }
 

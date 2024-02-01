@@ -18,7 +18,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import StarRegist from 'components/star/StarRegist';
 import StarDetail from 'components/star/StarDetail';
-import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
+import { isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from 'components/atom';
 import { position } from '../../data';
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
@@ -315,12 +315,20 @@ function SceneEnvironment() {
 
 function StarRegistArea() {
     const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-
+    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
+    
     return (
         <div>
-            {isStarRegistOpen !== -1 && (
-                <StarRegist type={'regist'} location={isStarRegistOpen} />
-            )}
+            {
+                isStarRegistOpen !== -1 && (
+                    <StarRegist type={'regist'} location={isStarRegistOpen} />
+                )
+            }
+            {
+                isStarModifyOpen !== -1 && (
+                    <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
+                )
+            }
         </div>
     );
 }
@@ -444,7 +452,7 @@ function UserSpace() {
     }, [userName]);
 
     return (
-        <>
+        <div className='user-space'>
             <div
                 id="canvas-container"
                 style={{ height: '100vh', width: '100vw' }}
@@ -478,12 +486,9 @@ function UserSpace() {
                     )}
                 </>
             )}
-
-            <div className="modal-area">
-                <StarRegistArea />
-                <StarDetailArea />
-            </div>
-        </>
+            <StarRegistArea />
+            <StarDetailArea />
+        </div>
     );
 }
 
