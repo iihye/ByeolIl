@@ -22,6 +22,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Table(name = "your_table_name", uniqueConstraints = @UniqueConstraint(columnNames = {"member_index", "board_location"}))
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +43,7 @@ public class Board {
     @Column(name = "board_content", nullable = false, length = 500)
     private String boardContent;        //게시글 내용
 
-    @Column(name = "board_location", unique = true)
+    @Column(name = "board_location")
     private Long boardLocation;         //하늘에서 별 위치
 
     @Column(name = "board_access", nullable = false, length = 10)

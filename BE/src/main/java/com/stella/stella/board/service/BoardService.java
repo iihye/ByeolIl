@@ -56,19 +56,20 @@ public class BoardService {
 
         boardRepository.save(board);
         List<String> hashes = dto.getHashContent();
-        if(hashes != null && hashes.isEmpty()){
+        if(hashes != null && !hashes.isEmpty()){
             for(String s: hashes){
                 Hash hash = Hash.builder()
                         .hashContent(s)
                         .board(board)
                         .member(member).build();
+                hashRepository.save(hash);
             }
         }
 
 
         List<String> medias = dto.getMediaContent();
         //dto에서 받은 media 경로 정보를 확인하고 media 테이블에 저장
-        if (medias!=null && medias.isEmpty()) {
+        if (medias!=null && !medias.isEmpty()) {
             for (String s : medias) {
                 Media media = Media.builder()
                         .mediaLocation(s)

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -24,7 +25,7 @@ public class MultiComment {
 
     @CreatedDate
     @Column(name = "multicomment_regdate")
-    private LocalDate multiCommentRegdate;          //대댓글 등록 시점
+    private LocalDateTime multiCommentRegdate;          //대댓글 등록 시점
 
     @Column(name = "multicomment_content", length = 200)
     private String multiCommentContent;
