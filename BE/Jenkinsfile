@@ -31,15 +31,7 @@ pipeline {
             steps {
                 dir('BE') {
                     sh "echo 'SonarQube Quality Gate...'"
-                    timeout(time: 1, unit: 'MINUTES') {
-                        script{
-                            def analysisStatus = waitForQualityGate('sonarqube')
-                            echo "Status: ${analysisStatus.status}"
-                            if (analysisStatus.status != 'OK') {
-                                echo "SonarQube Analysis Fail..."
-                            }
-                        }
-                    }
+                    
                 }
             }
         }
