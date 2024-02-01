@@ -23,6 +23,7 @@ public class RadioController {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
+            System.out.println("시작");
             radioService.addRadio(radioCreateRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;

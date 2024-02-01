@@ -1,6 +1,7 @@
 package com.stella.stella.radio.service;
 
 import com.stella.stella.board.entity.Board;
+import com.stella.stella.board.entity.BoardDeleteYN;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.common.exception.CustomException;
 import com.stella.stella.common.exception.CustomExceptionStatus;
@@ -26,12 +27,16 @@ public class RadioService {
     private final RadioRepository radioRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
+
     @Transactional
     public void addRadio(RadioCreateRequestDto dto){
+
         Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+        if(board.getBoardDeleteYN()== BoardDeleteYN.Y){
+            throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
+        }
         if(board.getMember().getMemberIndex()==dto.getMemberIndex()) {
             Member member = memberRepository.findByRandMember();
-
             Radio radio = Radio.builder()
                     .board(board)
                     .member(member).build();

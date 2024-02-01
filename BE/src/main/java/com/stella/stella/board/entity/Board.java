@@ -6,6 +6,8 @@ import com.stella.stella.report.entity.Report;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,6 +24,8 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@DynamicInsert
+@DynamicUpdate
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,14 +49,14 @@ public class Board {
     @Column(name = "board_location", unique = true)
     private Long boardLocation;         //하늘에서 별 위치
 
-    @Column(name = "board_access", nullable = false, length = 10)
+    @Column(name = "board_access", length = 10)
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'OPEN'")
     private BoardAccessStatus boardAccess;         //게시글 접근 범위
 
-    @Column(name = "delete_yn", nullable = false)
+    @Column(name = "delete_yn")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'Y'")
+    @ColumnDefault("'N'")
     private BoardDeleteYN boardDeleteYN;
 
     @ManyToOne(optional = false)

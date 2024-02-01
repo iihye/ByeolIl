@@ -80,7 +80,7 @@ public class BoardController {
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
 
-    @DeleteMapping("/")
+    @PutMapping("/delete")
     public ResponseEntity<ResultResponseDto> boardRemove(@RequestBody BoardDeleteRequestDto boardDeleteRequestDto) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
