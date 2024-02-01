@@ -1,26 +1,38 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from 'axios';
 
 export default function Regist() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
- const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=b1189e38a050b511cf3ae169bea072fe&redirect_uri=https://i10b209.p.ssafy.io/api/member/join/kakao&response_type=code`; 
+  const [formOpen, setFormOpen] = useState(false);
+  const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=b1189e38a050b511cf3ae169bea072fe&redirect_uri=https://i10b209.p.ssafy.io/api/member/join/kakao&response_type=code`; 
+  const [data,setData] = useState();
+
+  useEffect(() =>{
+   // 리스너 설치해서 인증성공시, 동작하도록해야할까..
+  },[data])
+
   return (
     <div className="Regist">
-      {isModalOpen &&
+      {!formOpen &&
         <div className="modal">
-          <button onClick={() => setIsModalOpen(false)}>일반회원가입</button>
-          <a href={kakao_join_uri}>카카오</a>
+          <button onClick={() => setFormOpen(true)}>일반회원가입</button>
+          <button onClick={() => {window.location.assign(kakao_join_uri)}}>카카오</button>
           <a>네이버</a>
           <a>구글</a> 
           <a>깃헙</a>
         </div>
       }
-      {!isModalOpen && <RegistFoam/>}
+      {formOpen && <RegistForm/>} 
     </div>
   )
 }
+//  처음들어왔을때, 모달창을 통해서 일반과 소셜중 선택 가능하게해야한다. = <Regist/>는 모달창
+//  소셜 회원가입을 선택시, 모달창이 하나더 뜨면서 선택한 소셜로그인 인증을 진행 = <Regist/>에서 모달창으로 띄운다.
+//  소셜인증이 성공해서 데이터를 받았거나, 일반회원가입 버튼을 눌렀을때, RegistForm이 교체로 렌더링 되면서 자연스럽게 모달창이 길어진다.
+//  소셜인증을 했다면, 필요한 데이터들은 미리 채워져서 RegistForm에서 수정이 비활성화 되게끔해야한다. 
+//  이후에 회원가입버튼 누를시, 그사람의 회원가입 플랫폼(origin/ kakao/ naver/google/github)을 스트링으로 보내주어야함.
+          
 
- function RegistFoam() {
+ function RegistForm(data) {
  // 초기값 - 아이디, 닉네임, 비밀번호, 비밀번호확인, 이메일, 생년월일
  const id = useRef("");
  const name = useRef("");
@@ -89,7 +101,7 @@ export default function Regist() {
      setNickNameMessage("2-10사이 한글, 영문, 숫자, '_' 만 입력가능!");
      setIsNickName(false);
    } else {
-    // 닉네임 중복체크  /member/dup-check/nickname/{nickname}
+    // 닉네임 중복체크 
     axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/nickname?nickname=${nickName.current.value}`)
     .then((response) => {
       setNickNameMessage(response.data.message);
@@ -130,7 +142,7 @@ export default function Regist() {
      setEmailMessage("이메일의 형식이 올바르지 않습니다!");
      setIsEmail(false);
     } else { 
-    // 이메일 중복체크  /member/dup-check/email/{email}
+    // 이메일 중복체크 
     axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/email?email=${email.current.value}`)
     .then((response) => {
       setEmailMessage(response.data.message);
