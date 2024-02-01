@@ -9,6 +9,8 @@ import { isDeleteAlertOpenState, isReportAlertOpenState, renderReplyState } from
 
 // type: "radio", "star", "report"
 function Modal(props) {
+  console.log("별 인덱스 : ", props.starIndex);
+
   return <div style={{ border: "1px solid black", margin: "5px" }}>{props.type === "radio" ? <RadioContent /> : <StarContent type={props.type} reportInfo={props.reportInfo} starIndex={props.starIndex} userIndex={props.userIndex}/>}</div>;
 }
 
@@ -23,7 +25,6 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   // memberIndex : 현재 사용자
   // userIndex : 글쓴이 정보
   const memberIndex = Number(localStorage.getItem('memberIndex'));
-
   const replyInputRef = useRef();
 
   useEffect(() => {
@@ -210,7 +211,7 @@ function ReplyRegistArea (props){
       alert("내용을 입력해주세요.");
       return;
     }
-
+    console.log(data);
     await axios.post(`${process.env.REACT_APP_API_URL}/comment/`,data,
     {
       header: {

@@ -421,6 +421,7 @@ function Star(props) {
 
     const handleClick = (locationNum) => {
       const starInfo = isAddedStar.get(locationNum);
+      console.log(starInfo);
         if (starInfo) {
             // 별 상세보기 모달 띄우기
             setIsStarDetailOpen([starInfo.boardIndex, params["user_id"]]);
@@ -566,6 +567,7 @@ function SceneStars() {
                     },
                 })
                 .then((response) => {
+                    console.log(response.data);
                     isAddedStar.clear();
                     response.data.BoardListResponseDtoList.forEach((star) =>
                         isAddedStar.set(star.boardLocation, star)
