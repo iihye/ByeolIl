@@ -1,3 +1,4 @@
+import Report from './components/Admin/Report';
 import Alarm from './components/user/Alarm';
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
@@ -36,7 +37,8 @@ function App() {
                     <Route path="findUser" element={<FindUser />} />
                     <Route path="alarm" element={<Alarm />} />
                     {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
-                    <Route path="Settings" element={<Settings />}></Route>
+                    <Route path="Settings" element={<Settings />} />
+                    <Route path="report" element={<Report />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
             </Routes>
