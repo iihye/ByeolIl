@@ -139,7 +139,9 @@ function Star(props) {
             setIsStarDetailOpen([starInfo.boardIndex, params['user_id']]);
         } else {
             // 별 등록 모달 띄우기
-            setIsStarRegistOpen(locationNum);
+            if (params["user_id"] === localStorage.getItem("memberIndex")){
+                setIsStarRegistOpen(locationNum);
+            }
         }
     };
 

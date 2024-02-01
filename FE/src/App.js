@@ -39,17 +39,10 @@ function App() {
                     <Route path="Settings" element={<Settings />}></Route>
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
-            </Routes>   
-
-            <div>
-                테스트 버튼들 ---------------------------------------------
-            </div>
-
+            </Routes>
             <Link to="/space/1">
-                <button>1번 유저의 메인 페이지로 이동</button>
+                <button>1번 유저의 페이지로 이동</button>
             </Link>
-
-            {/* <StarRegist type={"regist"} location={50} /> */}
         </div>
     );
 }
