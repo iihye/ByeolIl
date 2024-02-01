@@ -140,6 +140,7 @@ function Star(props) {
             setIsStarDetailOpen([starInfo.boardIndex, params['user_id']]);
         } else {
             // 별 등록 모달 띄우기
+            console.log(params["user_id"], localStorage.getItem('memberIndex'));
             if (params["user_id"] === localStorage.getItem("memberIndex")){
                 setIsStarRegistOpen(locationNum);
             }
@@ -246,6 +247,7 @@ function SceneStars() {
                     },
                 })
                 .then((response) => {
+                    console.log(response.data);
                     isAddedStar.clear();
                     response.data.BoardListResponseDtoList.forEach((star) =>
                         isAddedStar.set(star.boardLocation, star)
