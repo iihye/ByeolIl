@@ -14,12 +14,16 @@ function Report() {
     const [boardIndex, setBoardIndex] = useState([]); // 게시글에서 boardIndex만 뽑아옴
     const [reportModal, setReportModal] = useRecoilState(reportModalState); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
 
+    const token = localStorage.getItem('token');
+
     useEffect(() => {
         const fetchData = async () => {
             await axios
-                .get(
-                    'https://d9434a94-4844-4787-a437-ceb2559ee35c.mock.pstmn.io//board/adminlist'
-                )
+                .get(`${process.env.REACT_APP_API_URL}/board/adminlist`, {
+                    headers: {
+                        token: token,
+                    },
+                })
                 .then((response) => setReportData(response.data))
                 .catch((e) => e);
         };
@@ -34,7 +38,7 @@ function Report() {
                 const responses = await Promise.all(
                     reportData.map((it) =>
                         axios.get(
-                            `https://d9434a94-4844-4787-a437-ceb2559ee35c.mock.pstmn.io/board/${it.boardIndex}`
+                            `${process.env.REACT_APP_API_URL}/board/${it.boardIndex}`
                         )
                     )
                 );
