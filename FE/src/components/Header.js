@@ -8,7 +8,7 @@ function Header() {
             <Link to="/landing/login">
                 <button>로그인</button>
             </Link>
-            <Link to="/space/alarm">
+            <Link to={`/space/${memberIndex}/alarm`}>
                 <button>알림창</button>
             </Link>
             <Link to="/space/admin/report">
