@@ -195,7 +195,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
       </div>
       <div className="alert">
           {
-            isDeleteAlertOpen && <StarDeleteAlert/>
+            isDeleteAlertOpen && <StarDeleteAlert boardIndex={starIndex} userIndex={memberIndex}/>
           }
           {
             isReportAlertOpen && <StarReportAlert boardIndex={starIndex} userIndex={memberIndex}/>

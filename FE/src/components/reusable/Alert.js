@@ -5,7 +5,7 @@ import axios from "axios";
 function Alert(props) {
   const alertTypes = {
     block: <Block />,
-    delete: <Delete boardIndex={props.boardIndex} />,
+    delete: <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />,
     PWCheck: <InputAlert type={props.type} />,
     report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex}/>,
   };
@@ -110,13 +110,14 @@ function InputAlert(props) {
   );
 }
 
-function Delete({ boardIndex }) {
+function Delete(props) {
   const handleDelete = async () => {
     const data = {
-      boardIndex: boardIndex,
-      userIndex: "",
+      boardIndex: props.boardIndex,
+      userIndex: props.userIndex,
     };
 
+    await axios.put(`${process.env.REACT_APP_API_URL}/board`, )
     /* 게시글 삭제  요청 보내기 */
     /* - 게시글 정상 삭제시) 해당 alert 닫기 -> 게시글 modal 닫기*/
     /* - 게시글 삭제 실패시) 오류 모달 띄우기? */
