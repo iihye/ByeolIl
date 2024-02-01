@@ -5,6 +5,7 @@ import styled from "styled-components";
 import axios from 'axios';
 import { useParams } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import "./star.css";
 
 function StarRegist (props){
     const params = useParams();
@@ -114,14 +115,14 @@ function StarRegist (props){
     `;
 
     return (
-        <div style={{position: 'absolute', top: 0, left: 0, display: 'flex'}}>
+        <div className="star-regist-container">
             <div className="star-regist" style={{border: "1px solid black"}}>
-                <div style={{display: "flex"}}>
+                <div className="star-regist-top">
                     {/* 최상단 */}
                     <DateArea ref={dateRef} type={type}/>
                     <AccessRangeArea ref={accessRangeRef} preBoard={preBoard}/>
                 </div>
-                <div>
+                <div className="star-regist-middle">
                     {/* 글 작성 영역 */}
                     {
                         media.length > 0 && <div>사진 미리보기</div>
@@ -158,11 +159,14 @@ const DateArea = forwardRef((props, ref) => {
 const AccessRangeArea = forwardRef((props, ref) => {
 
     return(
-    <select name="access" ref={ref} value={props.preBoard && props.preBoard.boardAccess}>
-        <option value="OPEN">전체 공개</option>
-        <option value="PARTOPEN">친구 공개</option>
-        <option value="NOOPEN">비공개</option>
-    </select>
+    <div style={{display: 'flex'}}>
+        <div>공개 범위</div>
+        <select name="access" ref={ref} value={props.preBoard && props.preBoard.boardAccess}>
+            <option value="OPEN">전체 공개</option>
+            <option value="PARTOPEN">친구 공개</option>
+            <option value="NOOPEN">비공개</option>
+        </select>
+    </div>
     )
 })
 

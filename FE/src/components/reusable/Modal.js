@@ -7,21 +7,24 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { atom, useRecoilState, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState } from "components/atom";
+import "./Modal.css";
 
 // type: "radio", "star", "report"
 function Modal(props) {
     return (
-        <div style={{ border: '1px solid black', margin: '5px' }}>
-            {props.type === 'radio' ? (
-                <RadioContent />
-            ) : (
-                <StarContent
-                    type={props.type}
-                    reportInfo={props.reportInfo}
-                    starIndex={props.starIndex}
-                    userIndex={props.userIndex}
-                />
-            )}
+        <div className="modal-container">
+            <div className="modal" style={{ border: '1px solid black', margin: '5px' }}>
+                {props.type === 'radio' ? (
+                    <RadioContent />
+                ) : (
+                    <StarContent
+                        type={props.type}
+                        reportInfo={props.reportInfo}
+                        starIndex={props.starIndex}
+                        userIndex={props.userIndex}
+                    />
+                )}
+            </div>
         </div>
     );
 }
@@ -159,9 +162,9 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     };
 
     return (
-        <div className="modal">
+        <div className="star-content">
             {/* 최상단 */}
-            <div style={{ display: 'flex' }}>
+            <div className="star-content-top">
                 {/* 지정일 */}
                 <div>
                     {data
@@ -175,7 +178,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
                         : '로딩중'}
                 </div>
             </div>
-            <div>
+            <div className="star-content-content">
                 {/* 이미지 영역 */}
                 <div style={{ display: 'flex' }}>
                     {data &&
