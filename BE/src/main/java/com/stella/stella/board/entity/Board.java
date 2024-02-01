@@ -24,7 +24,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "your_table_name", uniqueConstraints = @UniqueConstraint(columnNames = {"member_index", "board_location"}))
+@Table(name = "board", uniqueConstraints = @UniqueConstraint(columnNames = {"member_index", "board_location"}))
 @DynamicInsert
 @DynamicUpdate
 public class Board {
