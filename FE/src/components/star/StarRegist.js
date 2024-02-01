@@ -85,7 +85,7 @@ function StarRegist (props){
     }
 
     const handleClose = () => {
-
+        setIsStarRegistOpen(-1);
     }
     
     return (

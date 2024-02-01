@@ -350,7 +350,6 @@ function SceneEnvironment() {
 
 function StarRegistArea() {
     const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-    console.log(isStarRegistOpen);
 
     return (
         <div>
