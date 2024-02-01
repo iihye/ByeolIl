@@ -226,6 +226,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
 
 function RadioContent() {
     const [rdata, setRdata] = useState(null);
+
     const test = "테스트 텍스트 입니다.";
 
     useEffect(() => {
@@ -251,6 +252,13 @@ function RadioContent() {
       })
     }, []);
 
+    // 라디오 송신 API는 memberIndex, boardIndex가 필요,
+    // 수신 API로는 memberIndex가 없다. -> db에서 memberIndex를 이용해서 찾는게아니라면
+    // 그냥 수신한 유저의 memberIndex 를 memberIndex에 담아서 보내도됨?? 
+    // function handleRepost() {
+    //   axios.post()
+    // }
+
     return (
         <div>
             <div>
@@ -265,7 +273,7 @@ function RadioContent() {
             </div>
             <div>
                 <button>PLAY</button>
-                <button>재송신하기</button>
+                <button onClick={() => {handleRepost()}}>재송신하기</button>
             </div>
         </div>
     );
