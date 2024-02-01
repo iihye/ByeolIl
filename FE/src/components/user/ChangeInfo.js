@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import PWCheck from "./PWCheckAlert";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 
 
 // Sidebar에서 회원정보 수정 버튼 누름 -> PWCheckAlert를 먼저 가서 비밀번호 검사
@@ -51,8 +52,18 @@ export default function ChangeInfo() {
    }
  };
 
-// 비밀번호 수정하는 axios 추가해야함
-
+// 비밀번호 수정기능
+ const handlesubmit = () => {
+  const data = {
+    "memberIndex":localStorage.getItem('memberIndex'),
+    "memberPass":password.current.value,
+  }
+  axios.put(`${process.env.REACT_APP_API_URL}/member`,data, {
+    headers: {
+      token: localStorage.getItem('token') ?? "",
+    },
+  }).then((response) => {console.log(response.data)});
+ }
 
  return (
    <>
@@ -82,7 +93,7 @@ export default function ChangeInfo() {
             <p className="message">{passwordConfirmMessage}</p>
           </div>
           <br />
-          <button type="submit" disabled={!(isPassword && isPasswordConfirm)}>수정하기</button>
+          <button onClick={() => {handlesubmit()}} disabled={!(isPassword && isPasswordConfirm)}>수정하기</button>
         </div>
       </div>)}
    </>

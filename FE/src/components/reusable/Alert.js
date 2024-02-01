@@ -7,7 +7,7 @@ import axios from "axios";
 
 */
 
-function Alert({ type, boardIndex, setIsModalOpen }) {
+function  Alert({ type, boardIndex, setIsModalOpen }) {
   const alertTypes = {
     block: <Block />,
     delete: <Delete boardIndex={boardIndex} />,
@@ -65,21 +65,21 @@ function InputAlert({ type, setIsModalOpen }) {
       alert(`${toEnter[type]} 입력해주세요!`);
       return;
     }
-
-    if (buttonValue[type] === "신고") {
-      reqReport(inputData);
-    } else if (buttonValue[type] === "입력") {
-      if (input === "1234") {
-        setIsModalOpen(false);
-      } else {
-        alert("패스워드가 일치하지 않습니다.");
-      }
   
       /* 1. 비밀번호 일치하는지 체크 */
 
       /* 2. - 일치할 경우) 해당 모달 내리고 개인정보 수정 모달 띄우기 */
 
       /* 3. - 일치하지 않을 경우) '비밀번호가 일치하지 않습니다.' 띄우기 */
+    if (buttonValue[type] === "신고") {
+      reqReport(inputData);
+    } else if (buttonValue[type] === "입력") {
+      if (inputData === "1234") {
+        setIsModalOpen(false);
+      } else {
+        alert("패스워드가 일치하지 않습니다.");
+      }
+
 
     }
   };
