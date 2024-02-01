@@ -145,23 +145,6 @@ function Star(props) {
         }
     };
 
-    function StarSurround(){
-        const [opacity, setOpacity] = useState(0);
-
-        return(
-            <mesh position={props.position}
-                onClick={() => {
-                    handleClick(props.location);
-                }}
-                onPointerEnter={() => setOpacity(0.14)}
-                onPointerLeave={() => setOpacity(0)}
-                >
-                <sphereGeometry args={[0.6, 48, 48]}/>
-                <meshStandardMaterial transparent={true} opacity={opacity}/>
-            </mesh>
-        )
-    }
-
     return (
         <>
             <mesh
@@ -173,9 +156,26 @@ function Star(props) {
                     color={curStarState ? colors[curStarState.boardAccess] : 'grey'}
                 />
             </mesh>
-            <StarSurround/>
+            <StarSurround position={props.position} location={props.location} handleClick={handleClick} />
         </>
     );
+}
+
+function StarSurround(props){
+    const [opacity, setOpacity] = useState(0);
+
+    return(
+        <mesh position={props.position}
+            onClick={() => {
+                props.handleClick(props.location);
+            }}
+            onPointerEnter={() => setOpacity(0.14)}
+            onPointerLeave={() => setOpacity(0)}
+            >
+            <sphereGeometry args={[0.6, 48, 48]}/>
+            <meshStandardMaterial transparent={true} opacity={opacity}/>
+        </mesh>
+    )
 }
 
 function GroupStar(props) {
