@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface HeartRepository extends JpaRepository<Heart, Long> {
     int countByBoardBoardIndex(Long BoardIndex);
 
-    Optional<List<Heart>> findAllByMemberMemberIndex(Long MemberIndex);
+    List<Heart> findAllByMemberMemberIndex(Long MemberIndex);
 
     void deleteByBoardBoardIndexAndMemberMemberIndex(Long BoardIndex, Long MemberIndex);
 

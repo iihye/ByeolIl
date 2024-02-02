@@ -1,5 +1,6 @@
 package com.stella.stella.board.controller;
 
+import com.stella.stella.board.dto.BoardListResponseDto;
 import com.stella.stella.board.service.HashService;
 import com.stella.stella.common.exception.CustomException;
 import com.stella.stella.common.exception.CustomExceptionStatus;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -27,19 +30,18 @@ public class SearchController {
     private final HashService hashService;
 
     @GetMapping("")
-    public ResponseEntity<Map<String, Object>> hashSearch(@RequestParam("tag") String tag, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC)Pageable pageable){
-        Map<String, Object> responseBody = new HashMap<>();
+    public ResponseEntity<List<BoardListResponseDto>> hashSearch(@RequestParam("tag") String tag) {
+        List<BoardListResponseDto> list = new ArrayList<>();
         HttpStatus status = HttpStatus.OK;
-        if(tag.trim().length()==0) {
+        if (tag.trim().length() == 0) {
             throw new CustomException(CustomExceptionStatus.INPUT_DATA_NONE);
         }
         try {
-            responseBody = hashService.searchBoardList(tag, pageable);
+            list = hashService.searchBoardList(tag);
 
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            responseBody.put("error", e.getMessage());
         }
-        return ResponseEntity.status(status).body(responseBody);
+        return ResponseEntity.status(status).body(list);
     }
 }
