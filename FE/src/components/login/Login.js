@@ -92,7 +92,9 @@ function Login() {
                     localStorage.setItem('auth', dec.auth);
                     localStorage.setItem('memberIndex', dec.sub);
                     getUserIndex();
-                    navigate(`/space/${dec.sub}`);
+                    if (dec.sub) {
+                        navigate(`/space/${dec.sub}`);
+                    }
                 }
             } catch (error) {
                 if (error.response.status === 400) {
@@ -129,50 +131,41 @@ function Login() {
 
     return (
         <div>
-            {localStorage.getItem('token') ? (
-                <div className="LogOut">
-                    <button onClick={onLogOut}>로그아웃</button>
-                    <Sidebar props={localStorage.getItem('memberNickname')} />
+            <div className="Login">
+                <div className="inputForm">
+                    <input
+                        type="text"
+                        name="ID"
+                        ref={idRef}
+                        value={idValue}
+                        onChange={handleIdValue}
+                        maxLength="20"
+                    />
+                    {errorMessage && (
+                        <p className="idErrorMessage">{errorMessage}</p>
+                    )}
+                    <input
+                        type="password"
+                        name="PW"
+                        value={passwordValue}
+                        onChange={handlePwValue}
+                    />
                 </div>
-            ) : (
-                <div className="Login">
-                    <div className="inputForm">
-                        <input
-                            type="text"
-                            name="ID"
-                            ref={idRef}
-                            value={idValue}
-                            onChange={handleIdValue}
-                            maxLength="20"
-                        />
-                        {errorMessage && (
-                            <p className="idErrorMessage">{errorMessage}</p>
-                        )}
-                        <input
-                            type="password"
-                            name="PW"
-                            value={passwordValue}
-                            onChange={handlePwValue}
-                        />
-                    </div>
 
-                    <div className="loginOption">
-                        <p>아이디 찾기</p>
-                        <p>비밀번호 찾기</p>
-                        <p>회원가입</p>
-                    </div>
-                    <div className="loginButton">
-                        <button onClick={onLogin} disabled={isDisable}>
-                            로그인
-                        </button>
-                    </div>
-                    <div className="kakaoLoginButton">
-                        <button onClick={onKakaoLogin}>
-                            카카오로 로그인하기
-                        </button>
-                    </div>
+                <div className="loginOption">
+                    <p>아이디 찾기</p>
+                    <p>비밀번호 찾기</p>
+                    <p>회원가입</p>
                 </div>
-            )}
+                <div className="loginButton">
+                    <button onClick={onLogin} disabled={isDisable}>
+                        로그인
+                    </button>
+                </div>
+                <div className="kakaoLoginButton">
+                    <button onClick={onKakaoLogin}>카카오로 로그인하기</button>
+                </div>
+            </div>
         </div>
     );
 }
