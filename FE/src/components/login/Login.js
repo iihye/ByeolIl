@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import base64 from 'base-64';
 import Sidebar from 'components/Sidebar';
+import FindID from './FindID';
+import FindPW from './FindPW';
 
-// + 아이디 찾기, 비밀번호 찾기, 회원가입 navigate
+// + 회원가입 navigate
 
 const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_URI}&response_type=code`;
 
@@ -128,6 +130,7 @@ function Login() {
     const onKakaoLogin = () => {
         window.location.href = kakaoLoginLink;
     };
+    // 아이디 찾기, 비밀번호 찾기, 회원가입  navigate 함수
 
     return (
         <div>
@@ -152,18 +155,21 @@ function Login() {
                     />
                 </div>
 
-                <div className="loginOption">
-                    <p>아이디 찾기</p>
-                    <p>비밀번호 찾기</p>
-                    <p>회원가입</p>
-                </div>
-                <div className="loginButton">
-                    <button onClick={onLogin} disabled={isDisable}>
-                        로그인
-                    </button>
-                </div>
-                <div className="kakaoLoginButton">
-                    <button onClick={onKakaoLogin}>카카오로 로그인하기</button>
+                    <div className="loginOption">
+                        <Link to={"/findId"}>아이디 찾기</Link>
+                        <Link to={"/findPw"}>비밀번호 찾기</Link>
+                        <Link to={"/regist"}>회원가입</Link>
+                    </div>
+                    <div className="loginButton">
+                        <button onClick={onLogin} disabled={isDisable}>
+                            로그인
+                        </button>
+                    </div>
+                    <div className="kakaoLoginButton">
+                        <button onClick={onKakaoLogin}>
+                            카카오로 로그인하기
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
