@@ -196,7 +196,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
                 <div style={{ display: 'flex' }}>
                     {data
                         ? data.hashContent.map((i, idx) => (
-                              <div key={idx}>{i}</div>
+                              <div key={idx}>#{i} </div>
                           ))
                         : '로딩중'}
                 </div>
