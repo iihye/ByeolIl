@@ -19,15 +19,17 @@ public class Radio {
     @Column(name = "radio_index", updatable = false)
     private Long radioIndex;
 
-    //엔티티 완성하기
+    @ManyToOne
+    @JoinColumn(name = "from_member_index", referencedColumnName = "member_index")
+    private Member fromMember;
 
     @ManyToOne
     @JoinColumn(name = "board_index", referencedColumnName = "board_index")
     private Board board;
 
     @ManyToOne
-    @JoinColumn(name = "member_index", referencedColumnName = "member_index")
-    private Member member;
+    @JoinColumn(name = "to_member_index", referencedColumnName = "member_index")
+    private Member toMember;
 
 
 }
