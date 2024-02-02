@@ -48,8 +48,6 @@ function FollowList() {
                         }
                     ),
                 ]);
-                console.log(followResponse);
-                console.log(followerResponse);
 
                 setFollowData(followResponse.data.result);
                 setFollowerData(followerResponse.data.result);

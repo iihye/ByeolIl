@@ -18,7 +18,11 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import StarRegist from 'components/star/StarRegist';
 import StarDetail from 'components/star/StarDetail';
-import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
+import {
+    isStarDetailOpenState,
+    isStarModifyOpenState,
+    isStarRegistOpenState,
+} from 'components/atom';
 import { position } from '../../data';
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
@@ -133,32 +137,53 @@ function Star(props) {
     };
 
     const handleClick = (locationNum) => {
-      const starInfo = isAddedStar.get(locationNum);
-      console.log(starInfo);
+        console.log(locationNum);
+        const starInfo = isAddedStar.get(locationNum);
         if (starInfo) {
             // 별 상세보기 모달 띄우기
             setIsStarDetailOpen([starInfo.boardIndex, params['user_id']]);
         } else {
             // 별 등록 모달 띄우기
-            console.log(params["user_id"], localStorage.getItem('memberIndex'));
-            if (params["user_id"] === localStorage.getItem("memberIndex")){
+            console.log(params['user_id'], localStorage.getItem('memberIndex'));
+            if (params['user_id'] === localStorage.getItem('memberIndex')) {
                 setIsStarRegistOpen(locationNum);
             }
         }
     };
 
     return (
+        <>
+            <mesh ref={mesh} position={props.position}>
+                <sphereGeometry args={props.size} />
+                <meshStandardMaterial
+                    color={
+                        curStarState ? colors[curStarState.boardAccess] : 'grey'
+                    }
+                />
+            </mesh>
+            <StarSurround
+                position={props.position}
+                location={props.location}
+                handleClick={handleClick}
+            />
+        </>
+    );
+}
+
+function StarSurround(props) {
+    const [opacity, setOpacity] = useState(0);
+
+    return (
         <mesh
-            ref={mesh}
             position={props.position}
             onClick={() => {
-                handleClick(props.location);
+                props.handleClick(props.location);
             }}
+            onPointerEnter={() => setOpacity(0.14)}
+            onPointerLeave={() => setOpacity(0)}
         >
-            <sphereGeometry args={props.size} />
-            <meshStandardMaterial
-                color={curStarState ? colors[curStarState.boardAccess] : 'grey'}
-            />
+            <sphereGeometry args={[0.8, 48, 48]} />
+            <meshStandardMaterial transparent={true} opacity={opacity} />
         </mesh>
     );
 }
@@ -170,54 +195,6 @@ function GroupStar(props) {
     const [lineState, setLineState] = useState([]);
     const [lineColor, setLineColor] = useState(true);
     const group = useRef(null);
-
-    // // 별자리 생성 체크용 트리
-    // const range = starRange[props.groupNum];
-    // const size = 1 << (Math.ceil(Math.log(range[1] - range[0] + 1) / Math.log(2)) + 1);
-    // const constellationTree = Array(size).fill(true);
-
-    // const initTree = (node, start, end) => {
-    //   if (start === end) {
-    //     constellationTree[node] = isAddedStar.get(range[0] + start) ? true : false;
-    //     return;
-    //   }
-
-    //   let mid = Math.floor((start + end) / 2);
-    //   initTree(node * 2, start, mid);
-    //   initTree(node * 2 + 1, mid + 1, end);
-    //   constellationTree[node] = constellationTree[node * 2] && constellationTree[node * 2 + 1];
-    // };
-
-    // const updateTree = (node, start, end, idx, val) => {
-    //   if (idx < start || end < idx) {
-    //     return;
-    //   }
-
-    //   if (start === end) {
-    //     constellationTree[node] = val;
-    //     return;
-    //   }
-
-    //   let mid = Math.floor((start + end) / 2);
-    //   updateTree(node * 2, start, mid, idx, val);
-    //   updateTree(node * 2 + 1, mid + 1, end, idx, val);
-    //   constellationTree[node] = constellationTree[node * 2] && constellationTree[node * 2 + 1];
-    // };
-
-    // const queryTree = (node, start, end, left, right) => {
-    //   if (end < left || right < start) {
-    //     return true;
-    //   }
-
-    //   if (left <= start && end <= right) {
-    //     return constellationTree[node];
-    //   }
-
-    //   let mid = Math.floor((start + end) / 2);
-    //   let l = queryTree(node * 2, start, mid, left, right);
-    //   let r = queryTree(node * 2 + 1, mid + 1, end, left, right);
-    //   return l && r;
-    // };
 
     useEffect(() => {
         const lastStarOfThisGroup =
@@ -239,12 +216,7 @@ function GroupStar(props) {
 
     return (
         <>
-            <group
-                ref={group}
-                onPointerOver={() => {
-                    console.log(`Over ${props.groupNum}`);
-                }}
-            >
+            <group ref={group}>
                 {props.position.map((val, index) => (
                     <Star
                         key={index}
@@ -269,7 +241,7 @@ function SceneStars() {
 
     const params = useParams();
     const userId = params.user_id;
-    console.log(userId);
+
     // 페이지 내 별 정보 불러오기
     useEffect(() => {
         const fetchData = async () => {
@@ -353,12 +325,15 @@ function SceneEnvironment() {
 
 function StarRegistArea() {
     const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-    console.log(isStarRegistOpen);
+    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
 
     return (
         <div>
             {isStarRegistOpen !== -1 && (
                 <StarRegist type={'regist'} location={isStarRegistOpen} />
+            )}
+            {isStarModifyOpen !== -1 && (
+                <StarRegist type={'modify'} preBoard={isStarModifyOpen} />
             )}
         </div>
     );
@@ -483,7 +458,7 @@ function UserSpace() {
     }, [userName]);
 
     return (
-        <>
+        <div className="user-space">
             <div
                 id="canvas-container"
                 style={{ height: '100vh', width: '100vw' }}
@@ -517,12 +492,9 @@ function UserSpace() {
                     )}
                 </>
             )}
-
-            <div className="modal-area">
-                <StarRegistArea />
-                <StarDetailArea />
-            </div>
-        </>
+            <StarRegistArea />
+            <StarDetailArea />
+        </div>
     );
 }
 

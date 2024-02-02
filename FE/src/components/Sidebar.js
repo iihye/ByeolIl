@@ -4,17 +4,30 @@ import StarList from './star/StarList';
 import StarFavorList from './star/StarFavorList';
 import FollowList from './user/FollowList';
 import FindUser from './user/FindUser';
+import axios from 'axios';
 // import StarTagSearch from './star/StarTagSearch';
 // import Settings from './user/Settings';
 // // 환경설정 컴포넌트..?
 // import Alarm from './user/Alarm'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useVideoTexture } from '@react-three/drei';
 
 function SidebarList(props) {
     const [memberIndex, setMemberIndex] = useState(
         localStorage.getItem('memberIndex')
     );
     const [items, setItems] = useState([]);
+    const isAdmin = localStorage.getItem('auth');
+
+    const navigate = useNavigate();
+
+    const handleLogOut = () => {
+        localStorage.removeItem('memberIndex');
+        localStorage.removeItem('nickname');
+        localStorage.removeItem('token');
+        localStorage.removeItem('auth');
+        navigate('');
+    };
 
     useEffect(() => {
         setMemberIndex(memberIndex);
@@ -35,6 +48,14 @@ function SidebarList(props) {
         ]);
     }, [memberIndex]);
 
+    useEffect(() => {
+        if (isAdmin == 'ROLE_ADMIN')
+            setItems((prevItems) => [
+                ...prevItems,
+                { name: '신고관리', path: `/space/admin/report` },
+            ]);
+    }, []);
+
     return (
         <div className="sidebarList">
             <h2>{props.name}님의 우주</h2>
@@ -48,13 +69,29 @@ function SidebarList(props) {
                     </div>
                 );
             })}
-            <button>로그아웃</button>
+            <button onClick={handleLogOut}>로그아웃</button>
         </div>
     );
 }
 
-export default function Sidebar(props) {
+export default function Sidebar() {
     const [viewSideBar, setViewSideBar] = useState(false);
+    const [name, setName] = useState('');
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userData = await axios.get(
+                    `${process.env.REACT_APP_API_URL}/member/info/mine`
+                );
+                setName(userData.data.memberNickname);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchData();
+    });
 
     return (
         <div className="Sidebar">
@@ -65,9 +102,7 @@ export default function Sidebar(props) {
             >
                 =
             </button>
-            <div>
-                {viewSideBar ? <SidebarList name={props.name} /> : <div />}
-            </div>
+            <div>{viewSideBar ? <SidebarList name={name} /> : <div />}</div>
         </div>
     );
 }
