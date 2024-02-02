@@ -29,6 +29,7 @@ function Login() {
         localStorage.removeItem('memberIndex');
         localStorage.removeItem('nickname');
         localStorage.removeItem('token');
+        localStorage.removeItem('auth');
         window.location.reload();
     };
 
