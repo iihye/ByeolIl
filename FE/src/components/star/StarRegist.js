@@ -98,7 +98,7 @@ function StarRegist (props){
         } else if (type === "modify"){
             
             try {
-                await axios.put(`${process.env.REACT_APP_API_URL}/board`)
+                await axios.put(`${process.env.REACT_APP_API_URL}/board/`)
                 .then((response) => {
                     if (response.status === 200){
                         setIsStarDetailOpen(preBoard.boardIndex);

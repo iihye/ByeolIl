@@ -87,7 +87,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
         /* 게시글 좋아요 Req */
         const data = {
             boardIndex: starIndex,
-            memberIndex: localStorage.getItem('memberIndex'),
+            memberIndex: Number(localStorage.getItem('memberIndex')),
         };
 
         try {
