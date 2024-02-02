@@ -1,14 +1,12 @@
 package com.stella.stella.board.controller;
 
 import com.stella.stella.board.dto.*;
-import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.service.BoardService;
 import com.stella.stella.board.service.HeartService;
 import com.stella.stella.comment.dto.ReportResponseDto;
 import com.stella.stella.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;

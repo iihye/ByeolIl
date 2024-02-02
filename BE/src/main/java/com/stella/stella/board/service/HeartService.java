@@ -46,7 +46,7 @@ public class HeartService {
     }
     @Transactional
     public void removeHeart(HeartRequestDto dto){
-        heartRepository.findByBoardBoardIndexAndMemberMemberIndex(dto.getBoardIndex(), dto.getMemberIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.HEART_INVALID));
+        Heart heart = heartRepository.findByBoardBoardIndexAndMemberMemberIndex(dto.getBoardIndex(), dto.getMemberIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.HEART_INVALID));
         heartRepository.deleteByBoardBoardIndexAndMemberMemberIndex(dto.getBoardIndex(), dto.getMemberIndex());
     }
 }

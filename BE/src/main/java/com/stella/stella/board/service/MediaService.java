@@ -1,8 +1,5 @@
 package com.stella.stella.board.service;
 
-import com.stella.stella.board.dto.BoardCreateRequestDto;
-import com.stella.stella.board.entity.Board;
-import com.stella.stella.board.entity.Media;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.board.repository.HashRepository;
 import com.stella.stella.board.repository.HeartRepository;
