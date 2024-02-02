@@ -22,17 +22,19 @@ function Modal(props) {
                         reportInfo={props.reportInfo}
                         starIndex={props.starIndex}
                         userIndex={props.userIndex}
+                        location={props.location}
                     />
                 )}
             </div>
         </div>
     );
 }
-function StarContent({ type,  reportInfo, starIndex, userIndex }) {
+
+function StarContent({ type,  reportInfo, starIndex, userIndex, location }) {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
-  const isStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
+  const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
 
 
     const [data, setData] = useState(null);
@@ -79,13 +81,14 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     
 
   const handleModify = () => {
-    isStarModifyOpen(data);
+    setIsStarModifyOpen([starIndex, {...data}, location]);
   };
+
     const handleLike = async () => {
         /* 게시글 좋아요 Req */
         const data = {
             boardIndex: starIndex,
-            memberIndex: localStorage.getItem('memberIndex'),
+            memberIndex: Number(localStorage.getItem('memberIndex')),
         };
 
         try {
@@ -116,7 +119,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
             memberIndex: memberIndex,
             commentContent: replyInputRef.current.value.trim(),
         };
-
+        console.log(data);
         if (data.commentContent === '') {
             alert('내용을 입력해주세요.');
             return;
@@ -146,13 +149,14 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
         /* 모달 닫기 */
         setIsDeleteAlertOpen(false);
         setIsReportAlertOpen(false);
+        setIsStarModifyOpen(false);
         setIsStarDetailOpen(false);
         // setReportModal('');
     };
 
     /* 게시글 작성자 체크*/
     const isWriter = () => {
-        return userIndex === localStorage.getItem('memberIndex');
+        return userIndex === Number(localStorage.getItem('memberIndex'));
     };
 
     /* 로그인 체크 */
@@ -161,78 +165,83 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     };
 
     return (
-        <div className="star-content">
-            {/* 최상단 */}
-            <div className="star-content-top">
-                {/* 지정일 */}
+        <>
+            <div className="star-content">
+                {/* 최상단 */}
+                <div className="star-content-top">
+                    {/* 지정일 */}
+                    <div>
+                        {data
+                            ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일`
+                            : '로딩중'}
+                    </div>
+                    {/* 작성일(수정일) */}
+                    <div>
+                        {data
+                            ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일`
+                            : '로딩중'}
+                    </div>
+                </div>
+                <div className="star-content-content">
+                    {/* 이미지 영역 */}
+                    <div style={{ display: 'flex' }}>
+                        {data &&
+                            data.boardMedia.map((i, index) => (
+                                <div key={index}>이미지 {index}</div>
+                            ))}
+                    </div>
+                    {/* 게시글 내용 */}
+                    <div>{data ? data.boardContent : '로딩중'}</div>
+                </div>
                 <div>
-                    {data
-                        ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일`
-                        : '로딩중'}
+                    {/* 해시태그 */}
+                    <div style={{ display: 'flex' }}>
+                        {data
+                            ? data.hashContent.map((i, idx) => (
+                                <div key={idx}>{i}</div>
+                            ))
+                            : '로딩중'}
+                    </div>
                 </div>
-                {/* 작성일(수정일) */}
+                {type === 'report' ? (
+                    <div>{reportInfo && reportInfo.reportContent}</div>
+                ) : null}
                 <div>
-                    {data
-                        ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일`
-                        : '로딩중'}
+                    {/* 댓글 리스트 영역 */}
+                    <StarReplyList boardIndex={starIndex} />
                 </div>
             </div>
-            <div className="star-content-content">
-                {/* 이미지 영역 */}
-                <div style={{ display: 'flex' }}>
-                    {data &&
-                        data.boardMedia.map((i, index) => (
-                            <div key={index}>이미지 {index}</div>
-                        ))}
-                </div>
-                {/* 게시글 내용 */}
-                <div>{data ? data.boardContent : '로딩중'}</div>
-            </div>
-            <div>
-                {/* 해시태그 */}
-                <div style={{ display: 'flex' }}>
-                    {data
-                        ? data.hashContent.map((i, idx) => (
-                              <div key={idx}>#{i} </div>
-                          ))
-                        : '로딩중'}
-                </div>
-            </div>
-            {type === 'report' ? (
-                <div>{reportInfo && reportInfo.reportContent}</div>
-            ) : null}
-            <div>
-                {/* 댓글 리스트 영역 */}
-                <StarReplyList boardIndex={starIndex} />
-            </div>
-            {type === 'star' ? (
-                <div>
-                    {/* 댓글 작성 영역 */}
-                    {isLogin() && (
-                        <>
-                            <input ref={replyInputRef} />
-                            <button onClick={handleRegistReply}>등록</button>
-                        </>
-                    )}
-                </div>
-            ) : null}
             <div>
                 {/* 최하단 */}
                 {type === 'star' ? (
-                    <>
-                        <button onClick={handleLike}>LIKE</button>
-                        <button onClick={handleReport}>REPORT</button>
-                        {isWriter() && (
+                    <div>
+                        {/* 댓글 작성 영역 */}
+                        {isLogin() && (
                             <>
-                                <button onClick={handleDelete}>DELETE</button>
-                                <button onClick={handleModify}>MODIFY</button>
+                                <input ref={replyInputRef} />
+                                <button onClick={handleRegistReply}>등록</button>
                             </>
                         )}
-                    </>
-                ) : (
-                    <button onClick={handleBlock}>차단</button>
-                )}
-                <button onClick={handleClose}>CLOSE</button>
+                    </div>
+                ) : null}
+                <div>
+                    {/* 최하단 */}
+                    {type === 'star' ? (
+                        <>
+                            <button onClick={handleLike}>LIKE</button>
+                            <button onClick={handleReport}>REPORT</button>
+                            {isWriter() && (
+                                <>
+                                    <button onClick={handleDelete}>DELETE</button>
+                                    <button onClick={handleModify}>MODIFY</button>
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <button onClick={handleBlock}>차단</button>
+                    )}
+                    <button onClick={handleClose}>CLOSE</button>
+                </div>
             </div>
             <div className="alert">
                 {isDeleteAlertOpen && (
@@ -248,7 +257,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
                     />
                 )}
             </div>
-        </div>
+        </>
     );
 }
 

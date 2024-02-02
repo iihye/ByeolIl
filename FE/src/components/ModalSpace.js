@@ -19,9 +19,9 @@ function StarRegistArea(){
     return (
         <>
             {
-                isStarRegistOpen && (
-                    <StarRegist type={'regist'} location={isStarRegistOpen} />
-                )
+                isStarRegistOpen ? (
+                    <StarRegist type={'regist'} location={isStarRegistOpen} /> 
+                ) : null
             }
 
         </>
@@ -34,9 +34,9 @@ function StarModifyArea(){
     return(
         <>
              {   
-                isStarModifyOpen && (
+                isStarModifyOpen ? (
                     <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
-                )
+                ) : null
             }
         </>
     )
@@ -51,6 +51,7 @@ function StarDetailArea(){
                 <StarDetail
                     starIndex={isStarDetailOpen[0]}
                     userIndex={isStarDetailOpen[1]}
+                    location={isStarDetailOpen[2]}
                 />
             )}
         </>

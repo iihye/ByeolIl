@@ -133,12 +133,12 @@ function Star(props) {
         console.log(starInfo);
         if (starInfo) {
             // 별 상세보기 모달 띄우기
-            setIsStarDetailOpen([starInfo.boardIndex, params['user_id'], locationNum]);
+            setIsStarDetailOpen([starInfo.boardIndex, Number(params['user_id']),locationNum]);
             console.log(params["user_id"], localStorage.getItem('memberIndex'));
         } else {
             
             // 별 등록 모달 띄우기
-            if (params["user_id"] === localStorage.getItem("memberIndex")){
+            if (Number(params["user_id"]) === Number(localStorage.getItem("memberIndex"))){
                 setIsStarRegistOpen(locationNum);
             }
         }

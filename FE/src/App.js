@@ -18,6 +18,8 @@ import Settings from 'components/user/Settings';
 import { Link } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 import ModalSpace, { StarDetailArea, StarRegistArea } from 'components/ModalSpace';
+import axios from 'axios';
+import { useEffect, useRef } from 'react';
 
 function App() {
     return (
