@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository{
     Optional<Member> findByMemberIndex(Long memberIndex);
     Optional<Member> findByMemberIdAndMemberPlatform(String memberId,String memberPlatform);
+    Optional<Member> findByMemberIdAndMemberPassAndMemberPlatform(String memberId,String memberPass, String memberPlatform);
     Optional<Member> findByMemberEmail(String email);
     Optional<Member> findByMemberNickname(String nickname);
     Optional<Member> findByMemberNameAndMemberEmailAndMemberPlatform(String memberName,String memberEmail,String memberPlatform);

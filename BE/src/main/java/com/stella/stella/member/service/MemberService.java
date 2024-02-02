@@ -55,24 +55,24 @@ public class MemberService {
     private String naverClientSecret;
 
     @Transactional
-    public String login(String memberId, String memberPassword, String memberPlatform) throws Exception{
+    public String login(String memberId, String memberPass, String memberPlatform) throws Exception {
 
         // 0. memberId와 memeberPlatform으로 memberIndex(PK) 검색
-        Member accessMember = memberRepository.findByMemberIdAndMemberPlatform(memberId, memberPlatform)
+        Member accessMember = memberRepository.findByMemberIdAndMemberPassAndMemberPlatform(memberId, memberPass, memberPlatform)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
 
-        if(accessMember.getMemberDeleteYN()== MemberDeleteYN.Y){
-           throw new IllegalAccessException("탈퇴 처리된 계정입니다. 탈퇴일: "+accessMember.getMemberDeleteDate());
+        if (accessMember.getMemberDeleteYN() == MemberDeleteYN.Y) {
+            throw new IllegalAccessException("탈퇴 처리된 계정입니다. 탈퇴일: " + accessMember.getMemberDeleteDate());
         }
 
-        if(accessMember.getMemberRole().equals(MemberRole.BAN)){
-           throw new IllegalAccessException("차단된 사용자입니다. 차단일: "+accessMember.getMemberBanDate());
+        if (accessMember.getMemberRole().equals(MemberRole.BAN)) {
+            throw new IllegalAccessException("차단된 사용자입니다. 차단일: " + accessMember.getMemberBanDate());
         }
 
         // 1. Login Index/PW 를 기반으로 Authentication 객체 생성
         // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                accessMember.getMemberIndex(), memberPassword);
+                accessMember.getMemberIndex(), memberPass);
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드
@@ -141,6 +141,7 @@ public class MemberService {
 
         return jsonObject.getString("access_token");
     }
+
     public String getNaverAccessToken(String code, String url) {
         String REQUEST_URL = "https://nid.naver.com/oauth2.0/token";
         RestTemplate restTemplate = new RestTemplate();
@@ -156,7 +157,7 @@ public class MemberService {
         params.add("client_id", naverClientId);
         params.add("client_secret", naverClientSecret);
         params.add("code", code);
-        params.add("state","1234");
+        params.add("state", "1234");
 
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
@@ -167,6 +168,7 @@ public class MemberService {
 
         return jsonObject.getString("access_token");
     }
+
     public HashMap<String, Object> getKakaoMemberInfo(String kakaoAcessToken) {
         String KAKAO_USERINFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
 
@@ -204,14 +206,14 @@ public class MemberService {
     }
 
     public HashMap<String, Object> getGoogleMemberInfo(String googleAccessToken) {
-        String GOOGLE_USERINFO_REQUEST_URL="https://www.googleapis.com/oauth2/v1/userinfo";
+        String GOOGLE_USERINFO_REQUEST_URL = "https://www.googleapis.com/oauth2/v1/userinfo";
 
         RestTemplate restTemplate = new RestTemplate();
 
         //header에 accessToken을 담는다.
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add("Authorization","Bearer "+googleAccessToken);
+        headers.add("Authorization", "Bearer " + googleAccessToken);
 
         //HttpEntity를 하나 생성해 헤더를 담아서 restTemplate으로 구글과 통신하게 된다.
         HttpEntity request = new HttpEntity(headers);
@@ -226,21 +228,22 @@ public class MemberService {
         JSONObject jsonObject = new JSONObject(response.getBody());
 
         HashMap<String, Object> memberInfo = new HashMap<>();
-        memberInfo.put("id",jsonObject.getString("id"));
-        memberInfo.put("email",jsonObject.getString("email"));
-        memberInfo.put("name",jsonObject.getString("name"));
+        memberInfo.put("id", jsonObject.getString("id"));
+        memberInfo.put("email", jsonObject.getString("email"));
+        memberInfo.put("name", jsonObject.getString("name"));
 
         return memberInfo;
     }
+
     public HashMap<String, Object> getNaverMemberInfo(String naverAccessToken) {
-        String NAVER_USERINFO_REQUEST_URL="https://openapi.naver.com/v1/nid/me";
+        String NAVER_USERINFO_REQUEST_URL = "https://openapi.naver.com/v1/nid/me";
 
         RestTemplate restTemplate = new RestTemplate();
 
         //header에 accessToken을 담는다.
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add("Authorization","Bearer "+naverAccessToken);
+        headers.add("Authorization", "Bearer " + naverAccessToken);
 
         //HttpEntity를 하나 생성해 헤더를 담아서 restTemplate으로 구글과 통신하게 된다.
         HttpEntity request = new HttpEntity(headers);
@@ -256,14 +259,15 @@ public class MemberService {
         jsonObject = jsonObject.getJSONObject("response");
 
         HashMap<String, Object> memberInfo = new HashMap<>();
-        memberInfo.put("id",jsonObject.getString("id"));
-        memberInfo.put("email",jsonObject.getString("email"));
-        memberInfo.put("name",jsonObject.getString("name"));
-        memberInfo.put("nickname",jsonObject.getString("nickname"));
-        memberInfo.put("birthday",jsonObject.getString("birthday"));
+        memberInfo.put("id", jsonObject.getString("id"));
+        memberInfo.put("email", jsonObject.getString("email"));
+        memberInfo.put("name", jsonObject.getString("name"));
+        memberInfo.put("nickname", jsonObject.getString("nickname"));
+        memberInfo.put("birthday", jsonObject.getString("birthday"));
 
         return memberInfo;
     }
+
     public void join(MemberJoinRequestDto memberJoinRequestDto) {
         Member newMember = memberJoinRequestDto.toEntity();
         memberRepository.save(newMember);

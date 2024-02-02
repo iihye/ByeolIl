@@ -50,7 +50,7 @@ public class SecurityConfig {
 								.requestMatchers("/api/radio/**").permitAll()
 								.requestMatchers("/api/search/**").permitAll()
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
-								.requestMatchers("/api/file/**").permitAll()
+								.requestMatchers("/api/media/**").permitAll()
 								.anyRequest().authenticated()
 
 				)

@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/api/media")
 @RequiredArgsConstructor
 public class S3Controller {
 
@@ -39,18 +39,19 @@ public class S3Controller {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @PostMapping(value ="/upload",consumes
-//            = "multipart/form-data")
-            = {MediaType.APPLICATION_JSON_VALUE,MediaType.IMAGE_PNG_VALUE})
+    @PostMapping(value ="/upload")
     public ResponseEntity<String> uploadFile
-    (@RequestPart("requestDto") String memberLoginRequestDto
-            , @RequestPart(value = "file",required = false) MultipartFile file)
+            (@RequestPart(value="requestDto") TestDto testDto,
+             @RequestPart(value = "file",required = false) MultipartFile[] files)
     {
         try {
-            log.info(memberLoginRequestDto.toString());
-            return ResponseEntity.ok(s3Service.saveFile(file));
+            log.info(testDto.toString());
+            for(MultipartFile file: files){
+                s3Service.saveFile(file);
+            }
+            return ResponseEntity.ok("success");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
