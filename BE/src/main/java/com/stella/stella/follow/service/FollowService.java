@@ -1,5 +1,9 @@
 package com.stella.stella.follow.service;
 
+import com.stella.stella.alarm.dto.AlarmRequestDto;
+import com.stella.stella.alarm.entity.Alarm;
+import com.stella.stella.alarm.entity.AlarmType;
+import com.stella.stella.alarm.repository.AlarmRepository;
 import com.stella.stella.common.exception.CustomException;
 import com.stella.stella.common.exception.CustomExceptionStatus;
 import com.stella.stella.follow.dto.FollowListResponseDto;
@@ -23,6 +27,7 @@ import java.util.List;
 public class FollowService {
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
+    private final AlarmRepository alarmRepository;
 
     // 팔로우 등록
     public void addFollow(FollowRequestDto followRequestDto) {
@@ -38,6 +43,14 @@ public class FollowService {
                         .build();
 
         followRepository.save(follow);
+
+        Alarm alarm = Alarm.builder()
+                .toMember(toMember)
+                .fromMember(fromMember)
+                .alarmType(AlarmType.FOLLOW)
+                .build();
+
+        alarmRepository.save(alarm);
     }
 
     // 팔로우 삭제

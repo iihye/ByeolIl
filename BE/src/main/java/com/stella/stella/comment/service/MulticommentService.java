@@ -1,5 +1,8 @@
 package com.stella.stella.comment.service;
 
+import com.stella.stella.alarm.entity.Alarm;
+import com.stella.stella.alarm.entity.AlarmType;
+import com.stella.stella.alarm.repository.AlarmRepository;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.comment.dto.MultcommentDeleteRequestDto;
 import com.stella.stella.comment.dto.MulticommentCreateRequestDto;
@@ -25,6 +28,7 @@ public class MulticommentService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final MulticommentRepository multicommentRepository;
+    private final AlarmRepository alarmRepository;
 
     public void addMultiComment(MulticommentCreateRequestDto dto){
         Comment comment = commentRepository.findByCommentIndex(dto.getCommentIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.COMMENTID_INVALID));
@@ -36,6 +40,15 @@ public class MulticommentService {
                 .member(member).build();
 
         multicommentRepository.save(multiComment);
+
+        Alarm alarm = Alarm.builder()
+                .toMember(comment.getBoard().getMember())
+                .fromMember(member)
+                .alarmType(AlarmType.MULTCMT)
+                .board(comment.getBoard())
+                .build();
+
+        alarmRepository.save(alarm);
     }
 
     public void removeMultiComment(MultcommentDeleteRequestDto dto){

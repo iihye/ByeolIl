@@ -1,5 +1,8 @@
 package com.stella.stella.comment.service;
 
+import com.stella.stella.alarm.entity.Alarm;
+import com.stella.stella.alarm.entity.AlarmType;
+import com.stella.stella.alarm.repository.AlarmRepository;
 import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.comment.dto.CommentCreateRequestDto;
@@ -31,6 +34,7 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
+    private final AlarmRepository alarmRepository;
 
     public void addComment(CommentCreateRequestDto dto){
         Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.BOARDID_INVALID));
@@ -41,6 +45,15 @@ public class CommentService {
                 .board(board)
                 .member(member).build();
         commentRepository.save(comment);
+
+        Alarm alarm = Alarm.builder()
+                .toMember(board.getMember())
+                .fromMember(member)
+                .alarmType(AlarmType.CMT)
+                .board(board)
+                .build();
+
+        alarmRepository.save(alarm);
     }
 
     public void removeComment(CommentDeleteRequestDto dto){
