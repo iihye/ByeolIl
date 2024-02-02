@@ -35,7 +35,8 @@ public class BoardService {
     @Transactional
     public void addBoard(BoardCreateRequestDto dto) {
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
-        if(boardRepository.countByBoardLocation(dto.getBoardLocation())!=0) throw new CustomException(CustomExceptionStatus.ALREADY_LOCATED);
+        if (boardRepository.countByBoardLocation(dto.getBoardLocation()) != 0)
+            throw new CustomException(CustomExceptionStatus.ALREADY_LOCATED);
         //location이 중복 안되게 유니크를 줘서 등록은 안되는데 entity가 만들어졌다가 등록이 안되는 거라
         //index값은 증가해버려서 방지하기 위해 넣음
         Board board = Board.builder()
@@ -48,8 +49,8 @@ public class BoardService {
 
         boardRepository.save(board);
         List<String> hashes = dto.getHashContent();
-        if(hashes != null && !hashes.isEmpty()){
-            for(String s: hashes){
+        if (hashes != null && !hashes.isEmpty()) {
+            for (String s : hashes) {
                 Hash hash = Hash.builder()
                         .hashContent(s)
                         .board(board)
@@ -61,7 +62,7 @@ public class BoardService {
 
         List<String> medias = dto.getMediaContent();
         //dto에서 받은 media 경로 정보를 확인하고 media 테이블에 저장
-        if (medias!=null && !medias.isEmpty()) {
+        if (medias != null && !medias.isEmpty()) {
             for (String s : medias) {
                 Media media = Media.builder()
                         .mediaLocation(s)
@@ -77,7 +78,7 @@ public class BoardService {
     @Transactional
     public BoardStarResponseDto findBoard(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
-        if(board.getBoardDeleteYN()==BoardDeleteYN.Y){
+        if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
 
@@ -107,7 +108,7 @@ public class BoardService {
     @Transactional
     public void modifyBoard(BoardUpdateRequestDto dto) {
         Board board = boardRepository.findById(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
-        if(board.getBoardDeleteYN()==BoardDeleteYN.Y){
+        if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
 
@@ -130,7 +131,7 @@ public class BoardService {
                     mediaRepository.save(media);
                 }
             }
-        }else{
+        } else {
             throw new CustomException(CustomExceptionStatus.MEMBERID_INVALID);
         }
     }
@@ -139,14 +140,14 @@ public class BoardService {
     public void removeBoard(BoardDeleteRequestDto dto) {
         int boardCount = boardRepository.countByBoardIndex(dto.getBoardIndex());
         if (boardCount == 1) {
-            if(boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow().getMember().getMemberIndex()==dto.getMemberIndex()){
-                Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()-> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
-                if(board.getBoardDeleteYN()==BoardDeleteYN.Y){
+            if (boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow().getMember().getMemberIndex() == dto.getMemberIndex()) {
+                Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+                if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
                     throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
                 }
 
                 board.setBoardDeleteYN(BoardDeleteYN.Y);
-            }else{
+            } else {
                 throw new CustomException(CustomExceptionStatus.MEMBER_INVALID);
             }
 
@@ -156,10 +157,9 @@ public class BoardService {
     }
 
     @Transactional
-    public Map<String, Object> findBoardList (Long memberIndex, Pageable pageable){
+    public Map<String, Object> findBoardListToPage(Long memberIndex, Pageable pageable) {
         Map<String, Object> responseBody = new HashMap<>();
-        List<BoardListResponseDto> list;
-        Page<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex,BoardDeleteYN.N,pageable);
+        Page<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex, BoardDeleteYN.N, pageable);
 
         responseBody.put("totalPage", boards.getTotalPages());
         //총 페이지 넘버
@@ -167,33 +167,34 @@ public class BoardService {
         //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
         responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
         //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
-        list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
-        responseBody.put("BoardListResponseDtoList", list);
-       return responseBody;
+        responseBody.put("BoardListResponseDtoList", BoardListResponseDto.wrap(memberIndex, boards.getContent()));
 
+        return responseBody;
 
     }
 
-    public Map<String, Object> findHeartedBoardList (Long memberIndex, Pageable pageable){
-        Map<String, Object> responseBody = new HashMap<>();
-        List<BoardListResponseDto> list;
-       List<Heart> Hearts = heartRepository.findAllByMemberMemberIndex(memberIndex).orElse(Collections.emptyList());
+    @Transactional
+    public List<BoardListResponseDto> findBoardListToList(Long memberIndex) {
+        List<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex, BoardDeleteYN.N);
 
-       if(Hearts.isEmpty()) throw new CustomException(CustomExceptionStatus.NO_HEART_CONTENT);
+        return BoardListResponseDto.wrap(memberIndex, boards);
 
-       List<Long> boardIndexList = new ArrayList<>();
+    }
 
-       for(Heart H : Hearts){
-           boardIndexList.add(H.getBoard().getBoardIndex());
-       }
-        Page<Board> boards = boardRepository.findByBoardIndexInAndBoardDeleteYN(boardIndexList,BoardDeleteYN.N,pageable);
-        responseBody.put("totalPage", boards.getTotalPages());
-        responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
-        responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
-        list = BoardListResponseDto.wrap(memberIndex, boards.getContent());
-        responseBody.put("BoardListResponseDtoList", list);
+    @Transactional
+    public List<BoardListResponseDto> findHeartedBoardList(Long memberIndex) {
+        List<Heart> Hearts = heartRepository.findAllByMemberMemberIndex(memberIndex);
 
-      return responseBody;
+        if (Hearts.isEmpty()) throw new CustomException(CustomExceptionStatus.NO_HEART_CONTENT);
+
+        List<Long> boardIndexList = new ArrayList<>();
+
+        for (Heart H : Hearts) {
+            boardIndexList.add(H.getBoard().getBoardIndex());
+        }
+        List<Board> boards = boardRepository.findByBoardIndexInAndBoardDeleteYN(boardIndexList, BoardDeleteYN.N);
+
+        return BoardListResponseDto.wrap(memberIndex, boards);
 
     }
 

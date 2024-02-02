@@ -99,7 +99,7 @@ public class BoardController {
         Map<String, Object> responseBody = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            responseBody = boardService.findBoardList(memberIndex, pageable);
+            responseBody = boardService.findBoardListToPage(memberIndex, pageable);
 
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
@@ -110,32 +110,31 @@ public class BoardController {
 
     @GetMapping("/list/{memberIndex}")
 
-    public ResponseEntity<Map<String, Object>> boardListToList(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable) {
-        Map<String, Object> responseBody = new HashMap<>();
+    public ResponseEntity<List<BoardListResponseDto>> boardListToList(@PathVariable Long memberIndex) {
+        List<BoardListResponseDto> list = new ArrayList();
         HttpStatus status = HttpStatus.OK;
         try {
-            responseBody = boardService.findBoardList(memberIndex, pageable);
+            list = boardService.findBoardListToList(memberIndex);
 
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            responseBody.put("error", e.getMessage());
+
         }
-        return ResponseEntity.status(status).body(responseBody);
+        return ResponseEntity.status(status).body(list);
     }
 
 
     @GetMapping("/like/{memberIndex}")
-    public ResponseEntity<Map<String, Object>> heartedBoardList(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable){
-        Map<String, Object> responseBody = new HashMap<>();
+    public ResponseEntity<List<BoardListResponseDto>> heartedBoardList(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable){
+        List<BoardListResponseDto> list = new ArrayList();
         HttpStatus status = HttpStatus.OK;
         try {
-            responseBody = boardService.findHeartedBoardList(memberIndex, pageable);
+            list = boardService.findHeartedBoardList(memberIndex);
 
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            responseBody.put("error", e.getMessage());
         }
-        return ResponseEntity.status(status).body(responseBody);
+        return ResponseEntity.status(status).body(list);
     }
 
     @PostMapping("/like")
