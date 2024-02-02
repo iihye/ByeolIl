@@ -1,3 +1,4 @@
+import Report from './components/admin/Report';
 import Alarm from './components/user/Alarm';
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
