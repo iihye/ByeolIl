@@ -18,6 +18,8 @@ function List() {
     }, [token]);
 
     const deleteStar = (boardIndex, memberIndex) => {
+        const data = { boardIndex: boardIndex, memberIndex: memberIndex };
+
         axios
             .put(`${process.env.REACT_APP_API_URL}/board/delete`, data, {
                 headers: {
