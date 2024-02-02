@@ -15,12 +15,11 @@ function StarRegist (props){
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
 
-    console.log(curPage);
-    
     const type = props.type;
-    const location = Number(props.location);
-    const preBoard = props.preBoard;
-
+    const location = props.location;
+    const preBoard = isAddedStar.get(props.preBoard[2]);
+    
+    console.log(preBoard);
     const buttonValue = {
         regist: "등록",
         modify: "수정",
@@ -96,16 +95,14 @@ function StarRegist (props){
                 console.log(error);
             }
         } else if (type === "modify"){
-            
-            const data = {
+            const data = 
+            {
+                "boardIndex": preBoard.boardIndex,
                 "memberIndex": Number(localStorage.getItem('memberIndex')),
+                "boardInputDate" : ("20"+preBoard.boardInputDate).split('.').join('-'),
                 "boardContent": contentRef.current.value,
-                "boardInputDate" : "2024-01-23",
-                "mediaContent": [],
-                "boardLocation": location,
+                "boardMedia": ["새 이미지 경로1","새 이미지 경로2"],
                 "boardAccess": accessRangeRef.current.value,
-                "boardDeleteYN" :"N",
-                "hashContent": hashContent,
             }
 
             try {
@@ -116,6 +113,8 @@ function StarRegist (props){
                 })
                 .then((response) => {
                     if (response.status === 200){
+
+                        
                         setIsStarDetailOpen(preBoard.boardIndex);
                         setIsStarModifyOpen(-1);
                     }
@@ -189,7 +188,7 @@ const AccessRangeArea = forwardRef((props, ref) => {
     return(
     <div style={{display: 'flex'}}>
         <div>공개 범위</div>
-        <select name="access" ref={ref} value={props.preBoard && props.preBoard.boardAccess}>
+        <select name="access" ref={ref} defaultvalue={props.preBoard && props.preBoard.boardAccess}>
             <option value="OPEN">전체 공개</option>
             <option value="PARTOPEN">친구 공개</option>
             <option value="NOOPEN">비공개</option>
@@ -202,10 +201,10 @@ const HashtagArea = (props) => {
 
     const input = useRef();
     const [hashtagList, setHashtagList] = useState([]);
-
+    
     useEffect(() => {        
         if (props.preBoard){
-            setHashtagList(props.preBoard.hashContent);
+            setHashtagList(props.preBoard.hash);
         }
     }, [])
 
