@@ -9,7 +9,6 @@ import com.stella.stella.member.entity.Member;
 import com.stella.stella.member.repository.MemberRepository;
 import com.stella.stella.radio.dto.RadioCreateRequestDto;
 import com.stella.stella.radio.dto.RadioResponseDto;
-import com.stella.stella.radio.dto.RadioTossRequestDto;
 import com.stella.stella.radio.entity.Radio;
 import com.stella.stella.radio.repository.RadioRepository;
 import lombok.RequiredArgsConstructor;
