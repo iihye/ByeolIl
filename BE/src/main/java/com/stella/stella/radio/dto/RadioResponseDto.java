@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class RadioResponseDto {
-    private Long radioIndex;
+
     private Long boardIndex;
     private String boardContent;
     private String boardInputDate;
