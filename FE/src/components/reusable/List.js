@@ -73,13 +73,17 @@ function List() {
             <SearchBar filterKey="boardContent" />
             <div className="searchList">
                 {filterData.map((it) => (
-                    <li
-                        key={it.boardIndex}
-                        style={{ border: '1px solid' }}
-                        onClick={() => onDetail(it.boardIndex, it.memberIndex)}
-                    >
-                        {it.boardRegTime}&nbsp;{it.boardInputDate}&nbsp;
-                        {it.boardContent}
+                    <>
+                        <li
+                            key={it.boardIndex}
+                            style={{ border: '1px solid' }}
+                            onClick={() =>
+                                onDetail(it.boardIndex, it.memberIndex)
+                            }
+                        >
+                            {it.boardRegTime}&nbsp;{it.boardInputDate}&nbsp;
+                            {it.boardContent}
+                        </li>
                         <button
                             onClick={() =>
                                 deleteStar(it.boardIndex, it.memberIndex)
@@ -87,7 +91,7 @@ function List() {
                         >
                             X
                         </button>
-                    </li>
+                    </>
                 ))}
             </div>
         </div>
