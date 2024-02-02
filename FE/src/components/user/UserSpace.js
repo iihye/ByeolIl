@@ -139,7 +139,7 @@ function Star(props) {
         const starInfo = isAddedStar.get(locationNum);
         if (starInfo) {
             // 별 상세보기 모달 띄우기
-            setIsStarDetailOpen([starInfo.boardIndex, params['user_id']]);
+            setIsStarDetailOpen([starInfo.boardIndex, params['user_id'], locationNum]);
         } else {
             // 별 등록 모달 띄우기
             console.log(params["user_id"], localStorage.getItem('memberIndex'));
@@ -334,7 +334,7 @@ function StarRegistArea() {
 
 function StarModifyArea() {
     const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-    
+
     return (
         <div>
             {
@@ -355,6 +355,7 @@ function StarDetailArea() {
                 <StarDetail
                     starIndex={isStarDetailOpen[0]}
                     userIndex={isStarDetailOpen[1]}
+                    location={isStarDetailOpen[2]}
                 />
             )}
         </div>
@@ -508,8 +509,6 @@ function UserSpace() {
 
 export {
     isAddedStar,
-    isStarRegistOpenState,
-    isStarDetailOpenState,
     starsState,
     curPageState,
 };

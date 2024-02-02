@@ -22,6 +22,7 @@ function Modal(props) {
                         reportInfo={props.reportInfo}
                         starIndex={props.starIndex}
                         userIndex={props.userIndex}
+                        location={props.location}
                     />
                 )}
             </div>
@@ -29,7 +30,7 @@ function Modal(props) {
     );
 }
 
-function StarContent({ type,  reportInfo, starIndex, userIndex }) {
+function StarContent({ type,  reportInfo, starIndex, userIndex, location }) {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
@@ -80,7 +81,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     
 
   const handleModify = () => {
-    setIsStarModifyOpen({...data});
+    setIsStarModifyOpen([starIndex, {...data}, location]);
   };
 
     const handleLike = async () => {
@@ -145,10 +146,10 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     };
 
     const handleClose = () => {
-      console.log("SDFSDF");
         /* 모달 닫기 */
         setIsDeleteAlertOpen(false);
         setIsReportAlertOpen(false);
+        setIsStarModifyOpen(-1);
         setIsStarDetailOpen([]);
         // setReportModal('');
     };
