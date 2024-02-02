@@ -24,8 +24,6 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "board",
-        uniqueConstraints = @UniqueConstraint(name = "UniqueIdandLocation", columnNames = { "member_index", "board_location" }))
 @DynamicInsert
 @DynamicUpdate
 public class Board {
@@ -48,7 +46,7 @@ public class Board {
     @Column(name = "board_content", nullable = false, length = 500)
     private String boardContent;        //게시글 내용
 
-    @Column(name = "board_location")
+    @Column(name = "board_location", unique = true)
     private Long boardLocation;         //하늘에서 별 위치
 
     @Column(name = "board_access", length = 10)
@@ -62,7 +60,7 @@ public class Board {
     private BoardDeleteYN boardDeleteYN;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "member_index", referencedColumnName = "member_index")
+    @JoinColumn(name = "member_index", referencedColumnName = "member_index", unique = true)
     private Member member;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
