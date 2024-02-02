@@ -19,25 +19,15 @@ function List() {
 
     const deleteStar = (boardIndex, memberIndex) => {
         axios
-            .put(
-                `${process.env.REACT_APP_API_URL}/board/delete`,
-                {
-                    data: {
-                        boardIndex: boardIndex,
-                        memberIndex: memberIndex,
-                    },
+            .put(`${process.env.REACT_APP_API_URL}/board/delete`, data, {
+                headers: {
+                    token: token,
                 },
-                {
-                    headers: {
-                        token: token,
-                    },
-                }
-            )
+            })
             .then(() => {
                 setListData((currentListData) =>
                     currentListData.filter((it) => it.boardIndex !== boardIndex)
                 );
-                console.log('삭제완료');
             })
             .catch((error) => console.log(error));
     };
