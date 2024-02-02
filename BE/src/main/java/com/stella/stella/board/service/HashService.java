@@ -23,13 +23,13 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class HashService {
 
     private final BoardRepository boardRepository;
     private final HashRepository hashRepository;
 
+    @Transactional
     public Map<String, Object> searchBoardList(String hashContent, Pageable pageable){
         Map<String, Object> responseBody = new HashMap<>();
         List<BoardListResponseDto> list;

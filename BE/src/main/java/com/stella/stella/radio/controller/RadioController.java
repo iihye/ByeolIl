@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -23,7 +24,6 @@ public class RadioController {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
-            System.out.println("시작");
             radioService.addRadio(radioCreateRequestDto);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
@@ -50,6 +50,21 @@ public class RadioController {
             message = e.getMessage();
         }
         return ResponseEntity.status(status).body(radioResponseDto);
+    }
+    @PostMapping("/toss")
+    public ResponseEntity<ResultResponseDto> radioToss(@RequestBody RadioCreateRequestDto radioCreateRequestDto){
+        HttpStatus status = HttpStatus.OK;
+        String message = "success";
+        try {
+            radioService.tossRadio(radioCreateRequestDto);
+        } catch (NullPointerException e) {
+            status = HttpStatus.NOT_FOUND;
+            message = e.getMessage();
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            message = e.getMessage();
+        }
+        return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
 }
 

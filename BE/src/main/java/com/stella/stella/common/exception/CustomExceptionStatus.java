@@ -19,16 +19,20 @@ public enum CustomExceptionStatus {
     // board 관련
     BOARDID_INVALID(1101, "유효하지 않은 게시글 정보입니다."),
     MEMBERID_INVALID(1102, "유효한 멤버 정보가 아닙니다."),
-    ALREADY_LOCATED(1103,"이미 지정된 자리입니다."),
-    NO_HEART_CONTENT(1104, "좋아요한 게시글이 없습니다."),
-    HEART_INVALID(1105,"유효한 좋아요 정보가 아닙니다."),
-    ALREADY_HEARTED(1106,"이미 좋아요한 게시글입니다."),
-    ALREADY_REPORTED(1107,"이미 신고한 게시글입니다."),
-    COMMENTID_INVALID(1108, "유효한 댓글 정보가 아닙니다."),
-    MULTICOMMENTINDEX_INVALID(1109,"유효한 답댓글 정보가 아닙니다."),
-    NO_HASH_TAG(1110,"해당하는 태그가 존재하지 않습니다."),
-    INPUT_DATA_NONE(1111,"입력값이 없습니다."),
-    BOARD_DELETED(1112, "삭제된 게시글 입니다."),
+    HEART_INVALID(1103,"유효한 좋아요 정보가 아닙니다."),
+    COMMENTID_INVALID(1104, "유효한 댓글 정보가 아닙니다."),
+    MULTICOMMENTINDEX_INVALID(1105,"유효한 답댓글 정보가 아닙니다."),
+
+    NO_HEART_CONTENT(1106, "좋아요한 게시글이 없습니다."),
+    NO_HASH_TAG(1107,"해당하는 태그가 존재하지 않습니다."),
+    NO_RADIO_CONTENT(1108,"유저에 해당하는 라디오가 존재하지 않습니다."),
+
+    ALREADY_LOCATED(1109,"이미 지정된 자리입니다."),
+    ALREADY_HEARTED(1110,"이미 좋아요한 게시글입니다."),
+    ALREADY_REPORTED(1111,"이미 신고한 게시글입니다."),
+
+    INPUT_DATA_NONE(1112,"입력값이 없습니다."),
+    BOARD_DELETED(1113, "삭제된 게시글 입니다."),
     // follow 관련
     FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다"),
 
