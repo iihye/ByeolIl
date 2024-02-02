@@ -79,7 +79,7 @@ function StarRegist (props){
                     res.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
                     console.log(res.data);
                     setStars(res.data);
-                    setIsStarRegistOpen(-1);
+                    handleClose();
                 } else {
                     console.log(response.data);
                     alert("게시글 작성 실패");
@@ -104,7 +104,11 @@ function StarRegist (props){
     }
 
     const handleClose = () => {
-
+        if(type === "regist"){
+            setIsStarRegistOpen(false);
+        } else if (type === 'modify'){
+            setIsStarModifyOpen(false);
+        }
     }
     
     let Container = styled.div`

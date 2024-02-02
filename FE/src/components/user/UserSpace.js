@@ -86,11 +86,6 @@ function Line(props) {
 }
 
 function Sphere(props) {
-    // console.log("SPHERE MOUNTED");
-
-    // const texture = useTexture("texture/bakedUniverse.png");
-    // console.log(texture);
-
     const mesh = useRef(null);
 
     return (
@@ -111,15 +106,12 @@ function Sphere(props) {
 }
 
 function Star(props) {
-    // console.log(`STAR ${props.location} MOUNTED`);
-
     const params = useParams();
     const mesh = useRef(null);
     const stars = useRecoilValue(starsState);
 
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
-
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
     
@@ -135,13 +127,15 @@ function Star(props) {
     const handleClick = (locationNum) => {
         console.log(locationNum);
         const starInfo = isAddedStar.get(locationNum);
+        
         if (starInfo) {
             // 별 상세보기 모달 띄우기
             setIsStarDetailOpen([starInfo.boardIndex, params['user_id']]);
         } else {
+
             // 별 등록 모달 띄우기
-            console.log(params["user_id"], localStorage.getItem('memberIndex'));
             if (params["user_id"] === localStorage.getItem("memberIndex")){
+                console.log(params["user_id"], localStorage.getItem('memberIndex'));
                 setIsStarRegistOpen(locationNum);
             }
         }
@@ -315,41 +309,6 @@ function SceneEnvironment() {
     );
 }
 
-function StarRegistArea() {
-    const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-    
-    return (
-        <div>
-            {
-                isStarRegistOpen !== -1 && (
-                    <StarRegist type={'regist'} location={isStarRegistOpen} />
-                )
-            }
-            {
-                isStarModifyOpen !== -1 && (
-                    <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
-                )
-            }
-        </div>
-    );
-}
-
-function StarDetailArea() {
-    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
-
-    return (
-        <div>
-            {isStarDetailOpen.length !== 0 && (
-                <StarDetail
-                    starIndex={isStarDetailOpen[0]}
-                    userIndex={isStarDetailOpen[1]}
-                />
-            )}
-        </div>
-    );
-}
-
 function UserSpace() {
     const params = useParams();
     const userId = params.user_id;
@@ -488,8 +447,6 @@ function UserSpace() {
                     )}
                 </>
             )}
-            <StarRegistArea />
-            <StarDetailArea />
         </div>
     );
 }

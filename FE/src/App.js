@@ -1,4 +1,4 @@
-import Report from './components/Admin/Report';
+import Report from './components/admin/Report';
 import Alarm from './components/user/Alarm';
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
@@ -17,6 +17,7 @@ import Settings from 'components/user/Settings';
 // StarTagSearch, Settings 추가
 import { Link } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
+import ModalSpace, { StarDetailArea, StarRegistArea } from 'components/ModalSpace';
 
 function App() {
     return (
@@ -44,6 +45,7 @@ function App() {
             <Link to="/space/1">
                 <button>1번 유저의 페이지로 이동</button>
             </Link>
+            <ModalSpace/>
         </div>
     );
 }
