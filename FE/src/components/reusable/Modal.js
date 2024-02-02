@@ -156,7 +156,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex, location }) {
 
     /* 게시글 작성자 체크*/
     const isWriter = () => {
-        return userIndex === localStorage.getItem('memberIndex');
+        return userIndex === Number(localStorage.getItem('memberIndex'));
     };
 
     /* 로그인 체크 */

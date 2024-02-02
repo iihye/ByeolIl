@@ -6,7 +6,7 @@ import Modal from '../reusable/Modal';
 function StarDetail(props) {
   return (
     <div>
-      <Modal type={"star"} starIndex={props.starIndex} userIndex={props.userIndex} location={props.location}/>
+      <Modal type={"star"} starIndex={props.starIndex} userIndex={Number(props.userIndex)} location={props.location}/>
     </div>
   )
 }

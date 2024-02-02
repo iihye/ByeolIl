@@ -17,7 +17,12 @@ function StarRegist (props){
 
     const type = props.type;
     const location = props.location;
-    const preBoard = isAddedStar.get(props.preBoard[2]);
+    console.log(props);
+    
+    let preBoard;
+    if (props.type === 'modify'){
+        preBoard = isAddedStar.get(props.preBoard[2]);
+    }
     
     console.log(preBoard);
     const buttonValue = {
@@ -113,10 +118,8 @@ function StarRegist (props){
                 })
                 .then((response) => {
                     if (response.status === 200){
-
-                        
                         setIsStarDetailOpen(preBoard.boardIndex);
-                        setIsStarModifyOpen(-1);
+                        handleClose();
                     }
                 })
             } catch (error) {
@@ -157,7 +160,7 @@ function StarRegist (props){
                 </div>
                 <div>
                     {
-                        <HashtagArea hashtagSet={hashtagSet} preBoard={preBoard}/>
+                        <HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={props}/>
                     }
                 </div>
                 <div>
@@ -187,7 +190,7 @@ const AccessRangeArea = forwardRef((props, ref) => {
     return(
     <div style={{display: 'flex'}}>
         <div>공개 범위</div>
-        <select name="access" ref={ref} defaultvalue={props.preBoard && props.preBoard.boardAccess}>
+        <select name="access" ref={ref} value={props.preBoard && props.preBoard.boardAccess}>
             <option value="OPEN">전체 공개</option>
             <option value="PARTOPEN">친구 공개</option>
             <option value="NOOPEN">비공개</option>
@@ -255,7 +258,7 @@ const HashtagArea = (props) => {
                 </div>)
             }
             {
-                hashtagList.length < 10 && <input ref={input} type="text" style={{width: "70px"}} onKeyDown={handleKeyDown}></input>
+                props.type === 'regist' && hashtagList.length < 10 && <input ref={input} type="text" style={{width: "70px"}} onKeyDown={handleKeyDown}></input>
             }
         </div>
     )

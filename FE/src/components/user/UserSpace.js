@@ -113,8 +113,6 @@ function Star(props) {
 
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
-
-
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
     
@@ -130,15 +128,15 @@ function Star(props) {
     const handleClick = (locationNum) => {
         console.log(locationNum);
         const starInfo = isAddedStar.get(locationNum);
-
+        console.log(starInfo);
         if (starInfo) {
             // 별 상세보기 모달 띄우기
-            setIsStarDetailOpen([starInfo.boardIndex, params['user_id'], locationNum]);
+            setIsStarDetailOpen([starInfo.boardIndex, Number(params['user_id']),locationNum]);
+            console.log(params["user_id"], localStorage.getItem('memberIndex'));
         } else {
-
+            
             // 별 등록 모달 띄우기
-            if (params["user_id"] === localStorage.getItem("memberIndex")){
-                console.log(params["user_id"], localStorage.getItem('memberIndex'));
+            if (Number(params["user_id"]) === Number(localStorage.getItem("memberIndex"))){
                 setIsStarRegistOpen(locationNum);
             }
         }
