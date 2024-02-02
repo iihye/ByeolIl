@@ -11,7 +11,7 @@ function List() {
         Number(localStorage.getItem('memberIndex'))
     );
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') ?? '';
 
     useEffect(() => {
         setMemberIndex(Number(localStorage.getItem('memberIndex')));
