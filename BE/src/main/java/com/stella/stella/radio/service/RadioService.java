@@ -64,6 +64,7 @@ public class RadioService {
                 .boardIndex(radio.getBoard().getBoardIndex())
                 .boardContent(radio.getBoard().getBoardContent())
                 .boardInputDate(radio.getBoard().getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                .fromMemberIndex(radio.getFromMember().getMemberIndex())
                 .build();
 
         radioRepository.deleteByRadioIndex(radio.getRadioIndex());

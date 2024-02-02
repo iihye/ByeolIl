@@ -14,4 +14,5 @@ public class RadioResponseDto {
     private Long boardIndex;
     private String boardContent;
     private String boardInputDate;
+    private Long fromMemberIndex;
 }
