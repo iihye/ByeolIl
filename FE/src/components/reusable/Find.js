@@ -19,20 +19,14 @@ function Find({ toFind }) {
     }
   };
 
-  /**
-   * ID 찾기 GET 요청
-   */
+  // ID 찾기 : 이름과 메일을 알려주면 일치하는 아이디를 바로 넘겨준다.
   function reqFindID() {
-    //이름과 메일을 알려주면 일치하는 아이디를 바로 넘겨준다.
   axios.get(`${process.env.REACT_APP_API_URL}/member/find/id?name=${membername.current.value}&email=${email.current.value}`)
   .then((response) => {alert(response.data)})
   }
 
-  /**
-  * PW 찾기 POST 요청
-  */
+  // PW 찾기 : 이름 아이디 메일 알려주면 해당 메일로 비밀번호 전송
   function reqFindPW() {
-  //  /member/find/pass  // 이름 아이디 메일 알려주면 해당 메일로 비밀번호 전송
   const data = {
     "memberId":ID.current.value,
     "memberName":membername.current.value,
