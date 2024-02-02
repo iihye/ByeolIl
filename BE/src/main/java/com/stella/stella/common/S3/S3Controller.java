@@ -57,7 +57,7 @@ public class S3Controller {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<UrlResource> downloadImage(@RequestParam("name") String originalFilename) {
+    public ResponseEntity<UrlResource> downloadFile(@RequestParam("name") String originalFilename) {
         UrlResource urlResource = new UrlResource(amazonS3.getUrl(bucket, originalFilename));
 
         String contentDisposition = "attachment; filename=\"" + originalFilename + "\"";
@@ -66,6 +66,18 @@ public class S3Controller {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                 .body(urlResource);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteFile(@RequestParam("name")String originalFileName){
+        HttpStatus status = HttpStatus.OK;
+        String message="success";
+        try{
+
+        }catch(Exception e){
+
+        }
+        return ResponseEntity.status(status).body(message);
     }
 
 //    @GetMapping("/download")

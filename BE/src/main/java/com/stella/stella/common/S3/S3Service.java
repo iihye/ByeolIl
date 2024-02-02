@@ -31,4 +31,8 @@ public class S3Service {
         amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
         return amazonS3.getUrl(bucket, originalFilename).toString();
     }
+
+    public void deleteFile(String originalFilename)  {
+        amazonS3.deleteObject(bucket, originalFilename);
+    }
 }
