@@ -179,7 +179,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            memberRepository.findByMemberIdAndMemberPlatform(id, "origin")
+            Member existMember = memberRepository.findByMemberIdAndMemberPlatform(id, "origin")
                     .orElseThrow(() -> new UsernameNotFoundException("사용 가능한 아이디입니다."));
             resultMap.put("message", "이미 존재하는 아이디입니다.");
         } catch (UsernameNotFoundException e) {
@@ -197,7 +197,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            memberRepository.findByMemberEmail(email)
+            Member existMember = memberRepository.findByMemberEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("사용 가능한 이메일입니다."));
             resultMap.put("message", "이미 존재하는 이메일입니다.");
         } catch (UsernameNotFoundException e) {
@@ -215,7 +215,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            memberRepository.findByMemberNickname(nickname)
+            Member existMember = memberRepository.findByMemberNickname(nickname)
                     .orElseThrow(() -> new UsernameNotFoundException("사용 가능한 닉네임입니다."));
             resultMap.put("message", "이미 존재하는 닉네임입니다.");
         } catch (UsernameNotFoundException e) {
