@@ -14,14 +14,18 @@ import StarRegist from 'components/star/StarRegist';
 import StarFavorList from 'components/star/StarFavorList';
 import FollowList from 'components/user/FollowList';
 import Settings from 'components/user/Settings';
+import FindID from 'components/login/FindID';
+import FindPW from 'components/login/FindPW';
+import Regist from 'components/login/Regist';
 // StarTagSearch, Settings 추가
 import { Link } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 
+
 function App() {
     return (
         <div className="App">
-            <Header />
+            <Header  />
             <Routes>
                 {/* url이 3000이 아니라서 클라이언트쪽에서 특정 페이지로 이동하게 만들지 못함 */}
                 <Route
@@ -29,6 +33,9 @@ function App() {
                     element={<KakaoLogin />}
                 ></Route>
                 <Route exact path="/landing/login" element={<Login />}></Route>
+                <Route path="/findId" element={<FindID />}/>
+                <Route path="/findPw" element={<FindPW />}/>
+                <Route path="/regist" element={<Regist />}/>
                 <Route path="/space/:user_id" element={<MainPage />}>
                     <Route path="editInfo" element={<ChangeInfo />} />
                     <Route path="starMine" element={<List />} />
@@ -37,7 +44,8 @@ function App() {
                     <Route path="findUser" element={<FindUser />} />
                     <Route path="alarm" element={<Alarm />} />
                     {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
-                    <Route path="Settings" element={<Settings />}></Route>
+                    <Route path="settings" element={<Settings />}></Route>
+                    <Route path="report" element={<Report />}></Route>
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
             </Routes>
