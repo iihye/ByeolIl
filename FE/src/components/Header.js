@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 function Header() {
+    const token = localStorage.getItem('token');
     const [memberIndex, setMemberIndex] = useState(
-        Number(localStorage.getItem('memberIndex'))
+        localStorage.getItem('memberIndex')
     );
 
     useEffect(() => {
-        setMemberIndex(memberIndex);
-    }, [memberIndex]);
+        setMemberIndex(localStorage.getItem('memberIndex'));
+    }, [token]);
 
     return (
         <div className="Header">
