@@ -15,7 +15,6 @@ import FindID from 'components/login/FindID';
 import FindPW from 'components/login/FindPW';
 import Regist from 'components/login/Regist';
 import StarTagSearch from 'components/star/StarTagSearch';
-import Settings from 'components/user/Settings';
 import { Link } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 
