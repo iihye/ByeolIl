@@ -8,7 +8,7 @@ import FindPW from './FindPW';
 
 // + 회원가입 navigate
 
-const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_URI}&response_type=code`;
+const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_URI}&response_type=code&prompt=login`;
 
 function Login() {
     const [idValue, setIdValue] = useState('');
@@ -25,14 +25,6 @@ function Login() {
 
     const handlePwValue = (e) => {
         setPasswordValue(e.target.value);
-    };
-
-    const onLogOut = () => {
-        localStorage.removeItem('memberIndex');
-        localStorage.removeItem('nickname');
-        localStorage.removeItem('token');
-        localStorage.removeItem('auth');
-        window.location.reload();
     };
 
     // 맨 처음 마운트 될 때 autofocus
@@ -155,23 +147,21 @@ function Login() {
                     />
                 </div>
 
-                    <div className="loginOption">
-                        <Link to={"/findId"}>아이디 찾기</Link>
-                        <Link to={"/findPw"}>비밀번호 찾기</Link>
-                        <Link to={"/regist"}>회원가입</Link>
-                    </div>
-                    <div className="loginButton">
-                        <button onClick={onLogin} disabled={isDisable}>
-                            로그인
-                        </button>
-                    </div>
-                    <div className="kakaoLoginButton">
-                        <button onClick={onKakaoLogin}>
-                            카카오로 로그인하기
-                        </button>
-                    </div>
+                <div className="loginOption">
+                    <Link to={'/findId'}>아이디 찾기</Link>
+                    <Link to={'/findPw'}>비밀번호 찾기</Link>
+                    <Link to={'/regist'}>회원가입</Link>
+                </div>
+                <div className="loginButton">
+                    <button onClick={onLogin} disabled={isDisable}>
+                        로그인
+                    </button>
+                </div>
+                <div className="kakaoLoginButton">
+                    <button onClick={onKakaoLogin}>카카오로 로그인하기</button>
                 </div>
             </div>
+        </div>
     );
 }
 
