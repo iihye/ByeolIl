@@ -1,44 +1,39 @@
-import axios from 'axios';
-import StarDeleteAlert from 'components/star/StarDeleteAlert';
-import StarReplyList from 'components/star/StarReplyList';
-import StarReportAlert from 'components/star/StarReportAlert';
-import { isStarDetailOpenState } from 'components/atom';
-import { reportModalState } from 'components/atom';
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { atom, useRecoilState, useSetRecoilState } from 'recoil';
-import {
-    isDeleteAlertOpenState,
-    isReportAlertOpenState,
-} from 'components/atom';
+import axios from "axios";
+import StarDeleteAlert from "components/star/StarDeleteAlert";
+import StarReplyList from "components/star/StarReplyList";
+import StarReportAlert from "components/star/StarReportAlert";
+import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renderReplyState } from "components/atom";
+import "./Modal.css";
 
 // type: "radio", "star", "report"
 function Modal(props) {
     return (
-        <div style={{ border: '1px solid black', margin: '5px' }}>
-            {props.type === 'radio' ? (
-                <RadioContent />
-            ) : (
-                <StarContent
-                    type={props.type}
-                    reportInfo={props.reportInfo}
-                    starIndex={props.starIndex}
-                    userIndex={props.userIndex}
-                />
-            )}
+        <div className="modal-container">
+            <div className="modal" style={{ border: '1px solid black', margin: '5px' }}>
+                {props.type === 'radio' ? (
+                    <RadioContent />
+                ) : (
+                    <StarContent
+                        type={props.type}
+                        reportInfo={props.reportInfo}
+                        starIndex={props.starIndex}
+                        userIndex={props.userIndex}
+                    />
+                )}
+            </div>
         </div>
     );
 }
+function StarContent({ type,  reportInfo, starIndex, userIndex }) {
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
+  const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+  const isStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
 
-function StarContent({ type, reportInfo, starIndex, userIndex }) {
-    const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(
-        isDeleteAlertOpenState
-    );
-    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(
-        isReportAlertOpenState
-    );
-    const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
-    const [reportModal, setReportModal] = useRecoilState(reportModalState);
 
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
@@ -81,10 +76,11 @@ function StarContent({ type, reportInfo, starIndex, userIndex }) {
         setIsReportAlertOpen(true);
     };
 
-    const handleModify = () => {
-        /* 게시글 수정 화면 띄우기 */
-    };
+    
 
+  const handleModify = () => {
+    isStarModifyOpen(data);
+  };
     const handleLike = async () => {
         /* 게시글 좋아요 Req */
         const data = {
@@ -151,7 +147,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex }) {
         setIsDeleteAlertOpen(false);
         setIsReportAlertOpen(false);
         setIsStarDetailOpen([]);
-        setReportModal('');
+        // setReportModal('');
     };
 
     /* 게시글 작성자 체크*/
@@ -165,9 +161,9 @@ function StarContent({ type, reportInfo, starIndex, userIndex }) {
     };
 
     return (
-        <div className="modal">
+        <div className="star-content">
             {/* 최상단 */}
-            <div style={{ display: 'flex' }}>
+            <div className="star-content-top">
                 {/* 지정일 */}
                 <div>
                     {data
@@ -181,7 +177,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex }) {
                         : '로딩중'}
                 </div>
             </div>
-            <div>
+            <div className="star-content-content">
                 {/* 이미지 영역 */}
                 <div style={{ display: 'flex' }}>
                     {data &&
@@ -256,6 +252,56 @@ function StarContent({ type, reportInfo, starIndex, userIndex }) {
     );
 }
 
+// const ReplyRegistArea = forwardRef((props, ref) => {
+
+function ReplyRegistArea (props){
+
+  const inputRef = useRef();
+
+  const [renderReply, setRenderReply] = useRecoilState(renderReplyState);
+
+  const handleRegistReply = async () => {
+
+    const data = {
+      boardIndex: props.starIndex,
+      memberIndex: props.memberIndex,
+      commentContent: inputRef.current.value.trim(),
+    }
+
+    if (data.commentContent === ""){
+      alert("내용을 입력해주세요.");
+      return;
+    }
+    console.log(data);
+    await axios.post(`${process.env.REACT_APP_API_URL}/comment/`,data,
+    {
+      header: {
+        token: localStorage.getItem('token'),
+      },
+    })
+    .then((response) => {
+      
+      if(response.data.map.response === 'success'){
+        setRenderReply(!renderReply);
+        console.log("댓글 등록 성공");
+      } else {
+        console.log("댓글 등록 실패");
+      }
+
+    })
+    .catch((error) => console.log(error));
+  };
+
+  return (
+    <>
+      <input ref={inputRef}/>
+      <button onClick={handleRegistReply}>등록</button>
+    </>
+  )
+}
+
+
+
 function RadioContent() {
     const [data, setData] = useState(null);
 
@@ -282,27 +328,5 @@ function RadioContent() {
         </div>
     );
 }
-
-/**
- * 별 신고하기 기능
- * @param {Object} data
- * @returns
- */
-const reqStarReport = async (data) => {
-    const URL = 'https://2eab5da4-08fb-4850-abed-0fd7f6b2bc4e.mock.pstmn.io';
-
-    try {
-        return await axios.post(`${URL}/board/report`, data, {
-            header: { 'Content-Type': 'application/json' },
-        });
-    } catch (err) {
-        console.log('asfddsafsaf');
-        return {
-            radioIndex: 1,
-            boardIndex: 1,
-            boardContent: '샘플 내용',
-        };
-    }
-};
 
 export default Modal;

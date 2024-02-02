@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
 import axios from "axios";
+import { useSetRecoilState } from "recoil";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
@@ -19,8 +21,12 @@ function Alert(props) {
 
 // Input 요소를 가진 alert
 function InputAlert(props) {
-  console.log(props);
+  
   const input = useRef(null);
+  
+  const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
+
+
   useEffect(() => {
     // Enter 키 입력으로 input 내용 처리하기
     const handleEnter = (e) => {
@@ -94,7 +100,9 @@ function InputAlert(props) {
     }
   };
   
-  const handleClose = () => {/* alert 닫기 */}
+  const handleClose = () => {
+    setIsReportAlertOpen(false);
+  }
 
   return (
     <>
@@ -111,6 +119,9 @@ function InputAlert(props) {
 }
 
 function Delete(props) {
+
+  const setIsDeleteAlertOpen = useSetRecoilState(isDeleteAlertOpenState);
+
   const handleDelete = async () => {
     const data = {
       boardIndex: props.boardIndex,
@@ -123,7 +134,10 @@ function Delete(props) {
     /* - 게시글 삭제 실패시) 오류 모달 띄우기? */
   };
 
-  const handleClose = () => {/* 모달 닫기 */}
+  const handleClose = () => {
+    setIsDeleteAlertOpen(false);
+  }
+  
   return (
     <>
       <div>

@@ -1,8 +1,8 @@
 import StarMultiReplyListItem from "./StarMultiReplyListItem";
 
-function StarMultiReplyList(){
-    const multiReplyList = [];
-
+function StarMultiReplyList(props){
+    const multiReplyList = props.multiReplyList;
+    
     return (
         <div className="star-multi-reply-list"> 
             {
