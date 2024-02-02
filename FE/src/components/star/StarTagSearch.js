@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 // 추후 카드 형식으로 나오게 css 변경
@@ -23,12 +23,12 @@ function StarTagSearch() {
     const fetchData = async (tag) => {
         await axios
             .get(
-                `https://d9434a94-4844-4787-a437-ceb2559ee35c.mock.pstmn.io/search?tag=${encodeURIComponent(
-                    tag
-                )}`
+                `${
+                    process.env.REACT_APP_API_URL
+                }/search?tag=${encodeURIComponent(tag)}`
             )
             .then((response) => {
-                setTagSearchData(response.data);
+                setTagSearchData(response.data.BoardListResponseDtoList);
             })
             .catch((e) => console.log(e));
     };
@@ -51,14 +51,19 @@ function StarTagSearch() {
             : tag;
 
         setReplaceTag(testedTag.replace(/\s/g, ''));
-        fetchData(replaceTag);
-
-        const reverseData = [...replaceTag].reverse();
-        setTagSearchData(reverseData);
 
         // 해시태그 모양 만들어주기
         setTag(' ');
     };
+
+    useEffect(() => {
+        if (replaceTag !== '') {
+            fetchData(replaceTag);
+
+            const reverseData = [...tagSearchData].reverse();
+            setTagSearchData(reverseData);
+        }
+    }, [replaceTag]);
 
     return (
         <div className="tagSearch">
@@ -89,8 +94,8 @@ function StarTagSearch() {
                 {tagSearchData &&
                     tagSearchData.map((it) => (
                         <li key={it.boardIndex}>
-                            {it.boardInputTime}&nbsp;{it.boardContent}&nbsp;
-                            {it.tagContent}
+                            {it.boardInputDate}&nbsp;{it.boardContent}&nbsp;
+                            {it.hash}
                         </li>
                     ))}
             </div>
