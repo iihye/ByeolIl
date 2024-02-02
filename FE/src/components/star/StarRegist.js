@@ -15,6 +15,8 @@ function StarRegist (props){
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
 
+    console.log(curPage);
+    
     const type = props.type;
     const location = props.location;
     const preBoard = props.preBoard;
@@ -32,6 +34,12 @@ function StarRegist (props){
     const contentRef = useRef();
 
     const hashtagSet = new Set();
+
+    useEffect(() => {
+        if (type === 'modify'){
+            contentRef.current.value = preBoard.boardContent;
+        }
+    }, [])
 
     const handleMediaUpload = () => {
 
@@ -104,7 +112,12 @@ function StarRegist (props){
     }
 
     const handleClose = () => {
-
+        console.log("SDF");
+        if(type === 'regist'){
+            setIsStarRegistOpen(-1);
+        } else if (type === 'modify'){
+            setIsStarModifyOpen(-1);
+        }
     }
     
     let Container = styled.div`
@@ -127,7 +140,7 @@ function StarRegist (props){
                     {
                         media.length > 0 && <div>사진 미리보기</div>
                     }
-                    <textarea ref={contentRef} value={preBoard && preBoard.boardContent}/>
+                    <textarea ref={contentRef}/>
                 </div>
                 <div>
                     {
@@ -175,10 +188,12 @@ const HashtagArea = (props) => {
     const input = useRef();
     const [hashtagList, setHashtagList] = useState([]);
 
-    if (props.preBoard){
-        setHashtagList(props.preBoard.hashContent);
-    }
-    
+    useEffect(() => {        
+        if (props.preBoard){
+            setHashtagList(props.preBoard.hashContent);
+        }
+    }, [])
+
     const handleKeyDown = (e) => {
         
         if(e.code === "Enter" || e.code === "Space"){

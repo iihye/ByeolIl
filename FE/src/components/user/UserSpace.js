@@ -116,9 +116,11 @@ function Star(props) {
     const params = useParams();
     const mesh = useRef(null);
     const stars = useRecoilValue(starsState);
+    const isStarModifyOpen = useRecoilState(isStarModifyOpenState);
 
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+
 
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
@@ -326,13 +328,23 @@ function StarRegistArea() {
                     <StarRegist type={'regist'} location={isStarRegistOpen} />
                 )
             }
+
+        </div>
+    );
+}
+
+function StarModifyArea() {
+    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
+    
+    return (
+        <div>
             {
                 isStarModifyOpen !== -1 && (
                     <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
                 )
             }
         </div>
-    );
+    )
 }
 
 function StarDetailArea() {
@@ -490,6 +502,7 @@ function UserSpace() {
             )}
             <StarRegistArea />
             <StarDetailArea />
+            <StarModifyArea />
         </div>
     );
 }

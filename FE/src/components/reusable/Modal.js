@@ -28,11 +28,12 @@ function Modal(props) {
         </div>
     );
 }
+
 function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
-  const isStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
+  const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
 
 
     const [data, setData] = useState(null);
@@ -79,8 +80,9 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     
 
   const handleModify = () => {
-    isStarModifyOpen(data);
+    setIsStarModifyOpen({...data});
   };
+
     const handleLike = async () => {
         /* 게시글 좋아요 Req */
         const data = {
@@ -143,6 +145,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
     };
 
     const handleClose = () => {
+      console.log("SDFSDF");
         /* 모달 닫기 */
         setIsDeleteAlertOpen(false);
         setIsReportAlertOpen(false);
