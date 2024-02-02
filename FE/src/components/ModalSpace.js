@@ -8,14 +8,14 @@ function ModalSpace(){
         <>
             <StarRegistArea/>
             <StarDetailArea/>
+            <StarModifyArea/>
         </>
     )
 }
 
-export function StarRegistArea(){
+function StarRegistArea(){
     const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-    
+    console.log(isStarRegistOpen);
     return (
         <>
             {
@@ -23,18 +23,28 @@ export function StarRegistArea(){
                     <StarRegist type={'regist'} location={isStarRegistOpen} />
                 )
             }
-            {
+
+        </>
+    );
+}
+
+function StarModifyArea(){
+    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
+    console.log(isStarModifyOpen);
+    return(
+        <>
+             {   
                 isStarModifyOpen && (
                     <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
                 )
             }
         </>
-    );
+    )
 }
 
-export function StarDetailArea(){
+function StarDetailArea(){
     const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
-
+    console.log(isStarDetailOpen);
     return (
         <>
             {isStarDetailOpen && (
