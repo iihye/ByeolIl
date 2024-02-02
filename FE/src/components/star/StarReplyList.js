@@ -7,8 +7,10 @@ import axios from "axios";
 function StarReplyList(props) {
   const [data, setData] = useState([]);
   const renderReply = useRecoilValue(renderReplyState);
-
+  console.log("댓글 목록 렌더링");
+  
   useEffect(() => {
+    console.log("댓글 목록 가져오기");
     const fetchData = async () => {
       await axios.get(`${process.env.REACT_APP_API_URL}/comment/${props.boardIndex}`)
       .then((res) => {setData(res.data)
