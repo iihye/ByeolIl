@@ -18,8 +18,6 @@ function SidebarList(props) {
     const [items, setItems] = useState([]);
     const isAdmin = localStorage.getItem('auth');
 
-    console.log('이름값', props.value);
-
     useEffect(() => {
         setMemberIndex(memberIndex);
         setItems([
