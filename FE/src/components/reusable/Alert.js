@@ -127,8 +127,14 @@ function Delete(props) {
       boardIndex: props.boardIndex,
       userIndex: props.userIndex,
     };
+    console.log(data);
 
-    await axios.put(`${process.env.REACT_APP_API_URL}/board`, )
+    await axios.put(`${process.env.REACT_APP_API_URL}/board/delete`, data, 
+    {
+      headers: {
+        token: localStorage.getItem('token'),
+      }
+    }).then((response) => console.log(response.data));
     /* 게시글 삭제  요청 보내기 */
     /* - 게시글 정상 삭제시) 해당 alert 닫기 -> 게시글 modal 닫기*/
     /* - 게시글 삭제 실패시) 오류 모달 띄우기? */

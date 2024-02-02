@@ -116,7 +116,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
             memberIndex: memberIndex,
             commentContent: replyInputRef.current.value.trim(),
         };
-
+        console.log(data);
         if (data.commentContent === '') {
             alert('내용을 입력해주세요.');
             return;
