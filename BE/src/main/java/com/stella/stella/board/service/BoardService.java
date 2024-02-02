@@ -13,9 +13,7 @@ import com.stella.stella.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -161,7 +159,7 @@ public class BoardService {
     @Transactional
     public Map<String, Object> findBoardList (Long memberIndex, Pageable pageable){
         Map<String, Object> responseBody = new HashMap<>();
-        List<BoardListResponseDto> list = new ArrayList<>();
+        List<BoardListResponseDto> list;
         Page<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex,BoardDeleteYN.N,pageable);
 
         responseBody.put("totalPage", boards.getTotalPages());
@@ -179,7 +177,7 @@ public class BoardService {
 
     public Map<String, Object> findHeartedBoardList (Long memberIndex, Pageable pageable){
         Map<String, Object> responseBody = new HashMap<>();
-        List<BoardListResponseDto> list = new ArrayList<>();
+        List<BoardListResponseDto> list;
        List<Heart> Hearts = heartRepository.findAllByMemberMemberIndex(memberIndex).orElse(Collections.emptyList());
 
        if(Hearts.isEmpty()) throw new CustomException(CustomExceptionStatus.NO_HEART_CONTENT);

@@ -1,7 +1,6 @@
 package com.stella.stella.follow.repository;
 
 import com.stella.stella.follow.entity.Follow;
-import com.stella.stella.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
