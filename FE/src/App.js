@@ -37,7 +37,7 @@ function App() {
                     <Route path="findUser" element={<FindUser />} />
                     <Route path="alarm" element={<Alarm />} />
                     {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
-                    <Route path="Settings" element={<Settings />} />
+                    <Route path="settings" element={<Settings />} />
                     <Route path="report" element={<Report />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
