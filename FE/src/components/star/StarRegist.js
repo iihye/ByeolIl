@@ -18,7 +18,7 @@ function StarRegist (props){
     console.log(curPage);
     
     const type = props.type;
-    const location = props.location;
+    const location = Number(props.location);
     const preBoard = props.preBoard;
 
     const buttonValue = {
