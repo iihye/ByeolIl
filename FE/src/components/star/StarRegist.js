@@ -118,6 +118,8 @@ function StarRegist (props){
                 })
                 .then((response) => {
                     if (response.status === 200){
+
+                        
                         setIsStarDetailOpen(preBoard.boardIndex);
                         handleClose();
                     }
@@ -190,7 +192,7 @@ const AccessRangeArea = forwardRef((props, ref) => {
     return(
     <div style={{display: 'flex'}}>
         <div>공개 범위</div>
-        <select name="access" ref={ref} value={props.preBoard && props.preBoard.boardAccess}>
+        <select name="access" ref={ref} defaultValue={props.preBoard && props.preBoard.boardAccess}>
             <option value="OPEN">전체 공개</option>
             <option value="PARTOPEN">친구 공개</option>
             <option value="NOOPEN">비공개</option>
