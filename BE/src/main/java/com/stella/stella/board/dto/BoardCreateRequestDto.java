@@ -1,7 +1,5 @@
 package com.stella.stella.board.dto;
 
-import com.stella.stella.board.entity.BoardAccessStatus;
-import com.stella.stella.board.entity.BoardDeleteYN;
 import lombok.*;
 
 import java.time.LocalDate;

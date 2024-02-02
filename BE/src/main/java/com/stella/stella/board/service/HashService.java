@@ -32,10 +32,10 @@ public class HashService {
 
     public Map<String, Object> searchBoardList(String hashContent, Pageable pageable){
         Map<String, Object> responseBody = new HashMap<>();
-        List<BoardListResponseDto> list = new ArrayList<>();
+        List<BoardListResponseDto> list;
         List<Hash> hashes= hashRepository.findByHashContentContaining(hashContent).orElseThrow(()->new CustomException(CustomExceptionStatus.NO_HASH_TAG));
 
-        Page<Board> boards =boardRepository
+        Page<Board> boards = boardRepository
                 .findByBoardIndexInAndBoardDeleteYN(hashes.stream().map(h->h.getBoard().getBoardIndex()).toList(), BoardDeleteYN.N,pageable);
 
 
