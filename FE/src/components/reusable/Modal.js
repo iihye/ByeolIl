@@ -149,8 +149,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex, location }) {
         /* 모달 닫기 */
         setIsDeleteAlertOpen(false);
         setIsReportAlertOpen(false);
-        setIsStarModifyOpen(-1);
-        setIsStarDetailOpen([]);
+        setIsStarModifyOpen(false);
+        setIsStarDetailOpen(false);
         // setReportModal('');
     };
 

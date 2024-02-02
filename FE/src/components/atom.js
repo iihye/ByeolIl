@@ -14,19 +14,19 @@ export const listState = atom({
 // 게시글 등록 모달
 export const isStarRegistOpenState = atom({
     key: 'isStarRegistOpen',
-    default: -1,
+    default: false,
 });
 
 // 게시글 수정 모달
 export const isStarModifyOpenState = atom({
     key: 'isStarModifyOpen',
-    default: -1,
+    default: false,
 })
 
 // 게시글 상세보기 모달
 export const isStarDetailOpenState = atom({
     key: 'isStarDetailOpen',
-    default: [],
+    default: false,
 });
 
 // 게시글 삭제 알럿
