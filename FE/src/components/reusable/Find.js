@@ -22,7 +22,7 @@ function Find({ toFind }) {
   // ID 찾기 : 이름과 메일을 알려주면 일치하는 아이디를 바로 넘겨준다.
   function reqFindID() {
   axios.get(`${process.env.REACT_APP_API_URL}/member/find/id?name=${membername.current.value}&email=${email.current.value}`)
-  .then((response) => {alert(response.data)})
+  .then((response) => {alert(`ID는 ${response.data.id} 입니다.`)})
   }
 
   // PW 찾기 : 이름 아이디 메일 알려주면 해당 메일로 비밀번호 전송
