@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import { filterState, listState } from 'components/atom';
 import { useRecoilValue, useRecoilState } from 'recoil';
@@ -7,29 +7,29 @@ import axios from 'axios';
 function List() {
     const [listData, setListData] = useRecoilState(listState);
     const filterData = useRecoilValue(filterState);
-    const memberIndex = localStorage.getItem('memberIndex');
+    const [memberIndex, setMemberIndex] = useState(
+        Number(localStorage.getItem('memberIndex'))
+    );
+
+    const token = localStorage.getItem('token') ?? '';
+
+    useEffect(() => {
+        setMemberIndex(Number(localStorage.getItem('memberIndex')));
+    }, [token]);
 
     const deleteStar = (boardIndex, memberIndex) => {
+        const data = { boardIndex: boardIndex, memberIndex: memberIndex };
+
         axios
-            .delete(
-                `${process.env.REACT_APP_API_URL}/board/`,
-                {
-                    data: {
-                        boardIndex: boardIndex,
-                        memberIndex: memberIndex,
-                    },
+            .put(`${process.env.REACT_APP_API_URL}/board/delete`, data, {
+                headers: {
+                    token: token,
                 },
-                {
-                    headers: {
-                        token: localStorage.getItem('token') ?? '',
-                    },
-                }
-            )
+            })
             .then(() => {
                 setListData((currentListData) =>
                     currentListData.filter((it) => it.boardIndex !== boardIndex)
                 );
-                console.log('삭제완료');
             })
             .catch((error) => console.log(error));
     };

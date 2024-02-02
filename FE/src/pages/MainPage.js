@@ -21,13 +21,10 @@ import axios from 'axios';
 export default function MainPage() {
     return (
         <div className="MainPage">
-            <div className="mainContainer" style={{position: 'relative'}}>
-                <UserSpace className="asdf"/>
+            <div className="mainContainer" style={{ position: 'relative' }}>
+                <UserSpace className="asdf" />
                 <Outlet />
             </div>
-            <nav className="sideContainer">
-                <Sidebar />
-            </nav>
         </div>
     );
 }
