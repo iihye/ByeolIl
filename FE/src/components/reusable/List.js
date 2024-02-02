@@ -1,33 +1,71 @@
-import React, { useEffect } from 'react';
-import SearchBar, { filterState } from './SearchBar';
-import { atom, useSetRecoilState, useRecoilValue } from 'recoil';
+import React, { useEffect, useState } from 'react';
+import SearchBar from './SearchBar';
+import { filterState, listState } from 'components/atom';
+import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
+import { isStarDetailOpenState } from 'components/atom';
 import axios from 'axios';
-
-// API로 받아온 전체 데이터를 관리하는 atom
-export const listState = atom({
-    key: 'listState',
-    default: [],
-});
+import StarDetail from 'components/star/StarDetail';
 
 function List() {
-    const setListData = useSetRecoilState(listState);
+    const [listData, setListData] = useRecoilState(listState);
     const filterData = useRecoilValue(filterState);
+    const [memberIndex, setMemberIndex] = useState(
+        Number(localStorage.getItem('memberIndex'))
+    );
+    const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
-    // 추후 url https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/board/list/{userIndex}로 변경, 의존성 배열에 userIndex 넣기
+    const token = localStorage.getItem('token') ?? '';
+
+    useEffect(() => {
+        setMemberIndex(Number(localStorage.getItem('memberIndex')));
+    }, [token]);
+
+    const deleteStar = (boardIndex, memberIndex) => {
+        const data = { boardIndex: boardIndex, memberIndex: memberIndex };
+
+        axios
+            .put(`${process.env.REACT_APP_API_URL}/board/delete`, data, {
+                headers: {
+                    token: token,
+                },
+            })
+            .then(() => {
+                setListData((currentListData) =>
+                    currentListData.filter((it) => it.boardIndex !== boardIndex)
+                );
+            })
+            .catch((error) => console.log(error));
+    };
+
+    const onDetail = (boardIndex, memberIndex) => {
+        setIsStarDetailOpen([boardIndex, memberIndex]);
+        return (
+            <div>
+                {isStarDetailOpen.length !== 0 && (
+                    <StarDetail
+                        startIndex={boardIndex}
+                        userIndex={memberIndex}
+                    />
+                )}
+            </div>
+        );
+    };
+
     // 리스트 전체 값 불러오기
     useEffect(() => {
         const fetchData = async () => {
             await axios
                 .get(
-                    'https://7e030bec-d09a-467e-93a6-3b1848ed02c4.mock.pstmn.io/board/list/1'
+                    `${process.env.REACT_APP_API_URL}/board/list/${memberIndex}`
                 )
                 .then((response) => {
-                    setListData(response.data);
+                    setListData(response.data.BoardListResponseDtoList);
                 })
                 .catch((e) => console.log(e));
         };
         fetchData();
-    }, []);
+    }, [memberIndex]);
 
     // 검색 결과와 일치하는 값을 렌더링
     return (
@@ -35,10 +73,25 @@ function List() {
             <SearchBar filterKey="boardContent" />
             <div className="searchList">
                 {filterData.map((it) => (
-                    <li key={it.boardIndex} style={{ border: '1px solid' }}>
-                        {it.boardRegTime}&nbsp;{it.boardInputTime}&nbsp;
-                        {it.boardContent}
-                    </li>
+                    <>
+                        <li
+                            key={it.boardIndex}
+                            style={{ border: '1px solid' }}
+                            onClick={() =>
+                                onDetail(it.boardIndex, it.memberIndex)
+                            }
+                        >
+                            {it.boardRegTime}&nbsp;{it.boardInputDate}&nbsp;
+                            {it.boardContent}
+                        </li>
+                        <button
+                            onClick={() =>
+                                deleteStar(it.boardIndex, it.memberIndex)
+                            }
+                        >
+                            X
+                        </button>
+                    </>
                 ))}
             </div>
         </div>
