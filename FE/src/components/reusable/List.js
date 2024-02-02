@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import { filterState, listState } from 'components/atom';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
+import { isStarDetailOpenState } from 'components/atom';
 import axios from 'axios';
+import StarDetail from 'components/star/StarDetail';
 
 function List() {
     const [listData, setListData] = useRecoilState(listState);
@@ -10,6 +12,8 @@ function List() {
     const [memberIndex, setMemberIndex] = useState(
         Number(localStorage.getItem('memberIndex'))
     );
+    const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
     const token = localStorage.getItem('token') ?? '';
 
@@ -18,28 +22,34 @@ function List() {
     }, [token]);
 
     const deleteStar = (boardIndex, memberIndex) => {
+        const data = { boardIndex: boardIndex, memberIndex: memberIndex };
+
         axios
-            .put(
-                `${process.env.REACT_APP_API_URL}/board/delete`,
-                {
-                    data: {
-                        boardIndex: boardIndex,
-                        memberIndex: memberIndex,
-                    },
+            .put(`${process.env.REACT_APP_API_URL}/board/delete`, data, {
+                headers: {
+                    token: token,
                 },
-                {
-                    headers: {
-                        token: token,
-                    },
-                }
-            )
+            })
             .then(() => {
                 setListData((currentListData) =>
                     currentListData.filter((it) => it.boardIndex !== boardIndex)
                 );
-                console.log('삭제완료');
             })
             .catch((error) => console.log(error));
+    };
+
+    const onDetail = (boardIndex, memberIndex) => {
+        setIsStarDetailOpen([boardIndex, memberIndex]);
+        return (
+            <div>
+                {isStarDetailOpen.length !== 0 && (
+                    <StarDetail
+                        startIndex={boardIndex}
+                        userIndex={memberIndex}
+                    />
+                )}
+            </div>
+        );
     };
 
     // 리스트 전체 값 불러오기
@@ -63,9 +73,17 @@ function List() {
             <SearchBar filterKey="boardContent" />
             <div className="searchList">
                 {filterData.map((it) => (
-                    <li key={it.boardIndex} style={{ border: '1px solid' }}>
-                        {it.boardRegTime}&nbsp;{it.boardInputDate}&nbsp;
-                        {it.boardContent}
+                    <>
+                        <li
+                            key={it.boardIndex}
+                            style={{ border: '1px solid' }}
+                            onClick={() =>
+                                onDetail(it.boardIndex, it.memberIndex)
+                            }
+                        >
+                            {it.boardRegTime}&nbsp;{it.boardInputDate}&nbsp;
+                            {it.boardContent}
+                        </li>
                         <button
                             onClick={() =>
                                 deleteStar(it.boardIndex, it.memberIndex)
@@ -73,7 +91,7 @@ function List() {
                         >
                             X
                         </button>
-                    </li>
+                    </>
                 ))}
             </div>
         </div>

@@ -18,7 +18,11 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import StarRegist from 'components/star/StarRegist';
 import StarDetail from 'components/star/StarDetail';
-import { isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from 'components/atom';
+import {
+    isStarDetailOpenState,
+    isStarModifyOpenState,
+    isStarRegistOpenState,
+} from 'components/atom';
 import { position } from '../../data';
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
@@ -117,7 +121,7 @@ function Star(props) {
 
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
-    
+
     useEffect(() => {
         setCurStarState(isAddedStar.get(props.location));
     }, [stars]);
@@ -146,35 +150,39 @@ function Star(props) {
 
     return (
         <>
-            <mesh
-                ref={mesh}
-                position={props.position}
-            >
+            <mesh ref={mesh} position={props.position}>
                 <sphereGeometry args={props.size} />
                 <meshStandardMaterial
-                    color={curStarState ? colors[curStarState.boardAccess] : 'grey'}
+                    color={
+                        curStarState ? colors[curStarState.boardAccess] : 'grey'
+                    }
                 />
             </mesh>
-            <StarSurround position={props.position} location={props.location} handleClick={handleClick} />
+            <StarSurround
+                position={props.position}
+                location={props.location}
+                handleClick={handleClick}
+            />
         </>
     );
 }
 
-function StarSurround(props){
+function StarSurround(props) {
     const [opacity, setOpacity] = useState(0);
 
-    return(
-        <mesh position={props.position}
+    return (
+        <mesh
+            position={props.position}
             onClick={() => {
                 props.handleClick(props.location);
             }}
             onPointerEnter={() => setOpacity(0.14)}
             onPointerLeave={() => setOpacity(0)}
-            >
-            <sphereGeometry args={[0.8, 48, 48]}/>
-            <meshStandardMaterial transparent={true} opacity={opacity}/>
+        >
+            <sphereGeometry args={[0.8, 48, 48]} />
+            <meshStandardMaterial transparent={true} opacity={opacity} />
         </mesh>
-    )
+    );
 }
 
 function GroupStar(props) {
@@ -312,6 +320,41 @@ function SceneEnvironment() {
     );
 }
 
+function StarRegistArea() {
+    const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
+    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
+    
+    return (
+        <div>
+            {
+                isStarRegistOpen !== -1 && (
+                    <StarRegist type={'regist'} location={isStarRegistOpen} />
+                )
+            }
+            {
+                isStarModifyOpen !== -1 && (
+                    <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
+                )
+            }
+        </div>
+    );
+}
+
+function StarDetailArea() {
+    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
+
+    return (
+        <div>
+            {isStarDetailOpen.length !== 0 && (
+                <StarDetail
+                    starIndex={isStarDetailOpen[0]}
+                    userIndex={isStarDetailOpen[1]}
+                />
+            )}
+        </div>
+    );
+}
+
 function UserSpace() {
     const params = useParams();
     const userId = params.user_id;
@@ -416,7 +459,7 @@ function UserSpace() {
     }, [userName]);
 
     return (
-        <div className='user-space'>
+        <div className="user-space">
             <div
                 id="canvas-container"
                 style={{ height: '100vh', width: '100vw' }}
