@@ -1,26 +1,33 @@
+import { useEffect, useState } from "react";
+import { renderReplyState } from "components/atom";
+import { useRecoilValue } from "recoil";
 import StarReplyListItem from "./StarReplyListItem";
+import axios from "axios";
 
-function StarReplyList() {
-  // replys : 더미 댓글 리스트
-  const replys = [];
+function StarReplyList(props) {
+  const [data, setData] = useState([]);
+  const renderReply = useRecoilValue(renderReplyState);
 
-  // 더미 댓글 생성
-  for (let i = 0; i < 10; ++i) {
-    replys[i] = {
-      comment_index: i,
-      board_index: 1,
-      comment_reg_time: "2099-99-99",
-      comment_content: `더미 댓글${i}`,
-      user_index: i % 3,
-    };
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      await axios.get(`${process.env.REACT_APP_API_URL}/comment/${props.boardIndex}`)
+      .then((res) => {setData(res.data)
+        console.log(res.data);
+      })
+      .catch((error) => console.log(error));
+    }
+    fetchData();
+  }, [renderReply])
 
   return (
-    <div className="star-reply-list" style={{ border: "1px solid black", margin: "5px", overflowY: "scroll", height: "100px" }}>
-      {replys.map((reply, index) => (
-        <StarReplyListItem reply={reply} key={index} />
-      ))}
-    </div>
+    <>
+      <div>댓글 ----</div>
+      <div className="star-reply-list" style={{ border: "1px solid black", margin: "5px", overflowY: "scroll", height: "50px" }}>
+        {data.map((reply, index) => (
+          <StarReplyListItem reply={reply} key={index} />
+        ))}
+      </div>
+    </>
   );
 }
 

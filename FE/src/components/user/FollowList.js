@@ -6,10 +6,19 @@ function FollowList() {
     const [followData, setFollowData] = useState([]);
     const [followerData, setFollowerData] = useState([]);
 
+    const loginIndex = localStorage.getItem('memberIndex');
+    const loginToken = localStorage.getItem('token');
+
     const menuArr = useMemo(() => {
         // 데이터를 받은 후에 content를 설정
-        const followContent = followData.map((it) => it.memberName);
-        const followerContent = followerData.map((it) => it.memberName);
+        const followContent = followData.map((it) => ({
+            memberName: it.memberName,
+            memberIndex: it.memberId,
+        }));
+        const followerContent = followerData.map((it) => ({
+            memberName: it.memberName,
+            memberIndex: it.memberId,
+        }));
 
         return [
             { name: '팔로우', content: followContent },
@@ -22,22 +31,28 @@ function FollowList() {
             try {
                 const [followResponse, followerResponse] = await axios.all([
                     axios.get(
-                        `${process.env.REACT_APP_API_URL}/follow/following/1`
+                        `${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`,
+                        {
+                            headers: {
+                                token: loginToken,
+                            },
+                        }
                     ),
+
                     axios.get(
-                        `${process.env.REACT_APP_API_URL}/follow/follower/1`
+                        `${process.env.REACT_APP_API_URL}/follow/follower/${loginIndex}`,
+                        {
+                            headers: {
+                                token: loginToken,
+                            },
+                        }
                     ),
-                    {
-                        headers: {
-                            token: localStorage.getItem('token') ?? '',
-                        },
-                    },
                 ]);
 
                 setFollowData(followResponse.data.result);
                 setFollowerData(followerResponse.data.result);
             } catch (error) {
-                console.error(error.response.status);
+                console.error(error);
             }
         };
 
@@ -59,10 +74,9 @@ function FollowList() {
                 </div>
             ))}
             <ul>
-                {menuArr[currentTab].content.map((userName, index) => (
+                {menuArr[currentTab].content.map((user, index) => (
                     <li key={index}>
-                        <p>{userName}</p>
-                        {/* <button>언팔로우</button> */}
+                        <p>{user.memberName}</p>
                     </li>
                 ))}
             </ul>
