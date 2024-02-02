@@ -5,7 +5,7 @@ import StarReportAlert from "components/star/StarReportAlert";
 import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renderReplyState } from "components/atom";
 import "./Modal.css";
 
@@ -25,8 +25,33 @@ function Modal(props) {
                     />
                 )}
             </div>
+            <AlertArea starIndex={props.starIndex} />
         </div>
     );
+}
+
+function AlertArea(props){
+    const starIndex = props.starIndex;
+    const memberIndex = Number(localStorage.getItem('memberIndex'));
+    const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
+    const isReportAlertOpen = useRecoilValue(isReportAlertOpenState);
+
+    return (
+        <div>
+                {isDeleteAlertOpen && (
+                    <StarDeleteAlert
+                        boardIndex={starIndex}
+                        userIndex={memberIndex}
+                    />
+                )}
+                {isReportAlertOpen && (
+                    <StarReportAlert
+                        boardIndex={starIndex}
+                        userIndex={memberIndex}
+                    />
+                )}
+        </div>
+    )
 }
 function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
@@ -34,7 +59,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const isStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
 
-
+    
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
 
@@ -236,8 +261,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
                     <button onClick={handleClose}>CLOSE</button>
                 </div>
             </div>
-            <div className="alert">
-                {isDeleteAlertOpen && (
+            {/* <div className="alert"> */}
+                {/* {isDeleteAlertOpen && (
                     <StarDeleteAlert
                         boardIndex={starIndex}
                         userIndex={memberIndex}
@@ -248,8 +273,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
                         boardIndex={starIndex}
                         userIndex={memberIndex}
                     />
-                )}
-            </div>
+                )} */}
+            {/* </div> */}
         </>
     );
 }

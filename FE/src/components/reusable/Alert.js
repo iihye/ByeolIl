@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
+import "./Alert.css";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
