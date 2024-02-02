@@ -66,7 +66,7 @@ function Login() {
     const onLogin = () => {
         const loginInfo = {
             memberId: idValue,
-            memberPass: idRef.current.value,
+            memberPass: passwordValue,
             memberPlatform: 'origin',
         };
 
