@@ -47,12 +47,12 @@ function StarRegist (props){
 
     const handleRegist = async () => {
         // 해쉬태그 데이터 Set -> Array
+        const hashContent = [];
+        hashtagSet.forEach((it) => hashContent.push(it));
         if (type === "regist"){
-            const hashContent = [];
-            hashtagSet.forEach((it) => hashContent.push(it));
     
             const data = {
-                "memberIndex": localStorage.getItem('memberIndex'),
+                "memberIndex": Number(localStorage.getItem('memberIndex')),
                 "boardContent": contentRef.current.value,
                 "boardInputDate" : "2024-01-23",
                 "mediaContent": [],
@@ -97,8 +97,23 @@ function StarRegist (props){
             }
         } else if (type === "modify"){
             
+            const data = {
+                "memberIndex": Number(localStorage.getItem('memberIndex')),
+                "boardContent": contentRef.current.value,
+                "boardInputDate" : "2024-01-23",
+                "mediaContent": [],
+                "boardLocation": location,
+                "boardAccess": accessRangeRef.current.value,
+                "boardDeleteYN" :"N",
+                "hashContent": hashContent,
+            }
+
             try {
-                await axios.put(`${process.env.REACT_APP_API_URL}/board/`)
+                await axios.put(`${process.env.REACT_APP_API_URL}/board/`,data,{
+                    headers: {
+                        token: localStorage.getItem('token'),
+                    }
+                })
                 .then((response) => {
                     if (response.status === 200){
                         setIsStarDetailOpen(preBoard.boardIndex);
