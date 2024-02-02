@@ -6,6 +6,7 @@ function StarFavorList() {
     const [memberIndex, setMemberIndex] = useState(
         localStorage.getItem('memberIndex')
     );
+    const [likeList, setLikeList] = useState([]);
 
     useEffect(() => {
         setMemberIndex(localStorage.getItem('memberIndex'));
@@ -22,7 +23,8 @@ function StarFavorList() {
                         },
                     }
                 );
-                console.log(response.data);
+                console.log(response.data.BoardListResponseDtoList);
+                setLikeList(response.data.BoardListResponseDtoList);
             } catch (error) {
                 console.log(error);
             }
@@ -30,6 +32,19 @@ function StarFavorList() {
 
         fetchData();
     }, [token, memberIndex]);
+
+    return (
+        <div>
+            {likeList.map((it) => (
+                <div>
+                    {it.boardInputDate}
+                    {it.boardRegTime}
+                    {it.boardContent}
+                    <div>좋아요 개수: {it.boardHeart}</div>
+                </div>
+            ))}
+        </div>
+    );
 }
 
 export default StarFavorList;
