@@ -28,7 +28,8 @@ function StarTagSearch() {
                 }/search?tag=${encodeURIComponent(tag)}`
             )
             .then((response) => {
-                setTagSearchData(response.data.BoardListResponseDtoList);
+                console.log(response.data);
+                setTagSearchData(response.data);
             })
             .catch((e) => console.log(e));
     };
