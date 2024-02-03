@@ -137,12 +137,11 @@ function Star(props) {
         console.log(starInfo);
         if (starInfo) {
             // 별 상세보기 모달 띄우기
-            setIsStarDetailOpen([starInfo.boardIndex, Number(params['user_id']),locationNum]);
-            console.log(params["user_id"], localStorage.getItem('memberIndex'));
+            setIsStarDetailOpen([starInfo.boardIndex, params['user_id']]);
         } else {
-            
             // 별 등록 모달 띄우기
-            if (Number(params["user_id"]) === Number(localStorage.getItem("memberIndex"))){
+            console.log(params['user_id'], localStorage.getItem('memberIndex'));
+            if (params['user_id'] === localStorage.getItem('memberIndex')) {
                 setIsStarRegistOpen(locationNum);
             }
         }
@@ -323,19 +322,15 @@ function SceneEnvironment() {
 function StarRegistArea() {
     const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
     const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-    
+
     return (
         <div>
-            {
-                isStarRegistOpen !== -1 && (
-                    <StarRegist type={'regist'} location={isStarRegistOpen} />
-                )
-            }
-            {
-                isStarModifyOpen !== -1 && (
-                    <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
-                )
-            }
+            {isStarRegistOpen !== -1 && (
+                <StarRegist type={'regist'} location={isStarRegistOpen} />
+            )}
+            {isStarModifyOpen !== -1 && (
+                <StarRegist type={'modify'} preBoard={isStarModifyOpen} />
+            )}
         </div>
     );
 }
