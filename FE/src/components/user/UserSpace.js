@@ -341,6 +341,41 @@ function SceneEnvironment() {
     );
 }
 
+function StarRegistArea() {
+    const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
+    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
+    
+    return (
+        <div>
+            {
+                isStarRegistOpen !== -1 && (
+                    <StarRegist type={'regist'} location={isStarRegistOpen} />
+                )
+            }
+            {
+                isStarModifyOpen !== -1 && (
+                    <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
+                )
+            }
+        </div>
+    );
+}
+
+function StarDetailArea() {
+    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
+
+    return (
+        <div>
+            {isStarDetailOpen.length !== 0 && (
+                <StarDetail
+                    starIndex={isStarDetailOpen[0]}
+                    userIndex={isStarDetailOpen[1]}
+                />
+            )}
+        </div>
+    );
+}
+
 function UserSpace() {
     const params = useParams();
     const userId = params.user_id;
