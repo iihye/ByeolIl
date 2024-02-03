@@ -44,14 +44,13 @@ function StarModifyArea(){
 
 function StarDetailArea(){
     const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
-    console.log(isStarDetailOpen);
+
     return (
         <>
             {isStarDetailOpen && (
                 <StarDetail
                     starIndex={isStarDetailOpen[0]}
                     userIndex={isStarDetailOpen[1]}
-                    location={isStarDetailOpen[2]}
                 />
             )}
         </>

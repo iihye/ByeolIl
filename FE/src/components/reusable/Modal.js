@@ -4,7 +4,6 @@ import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
 import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renderReplyState } from "components/atom";
 import "./Modal.css";
