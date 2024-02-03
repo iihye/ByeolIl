@@ -140,18 +140,6 @@ function Star(props) {
 
     const handleClick = (locationNum) => {
         console.log(locationNum);
-<<<<<<< HEAD
-        const starInfo = isAddedStar.get(locationNum);
-        console.log(starInfo);
-        if (starInfo) {
-            // 별 상세보기 모달 띄우기
-            setIsStarDetailOpen([starInfo.boardIndex, Number(params['user_id']),locationNum]);
-            console.log(params["user_id"], localStorage.getItem('memberIndex'));
-        } else {
-            
-            // 별 등록 모달 띄우기
-            if (Number(params["user_id"]) === Number(localStorage.getItem("memberIndex"))){
-=======
         const starIndex = isAddedStar.get(locationNum);
         if (starIndex) {
             // 별 상세보기 모달 띄우기
@@ -159,7 +147,6 @@ function Star(props) {
         } else {
             // 별 등록 모달 띄우기
             if (params['user_id'] === localStorage.getItem('memberIndex')) {
->>>>>>> feature-FE/star3D
                 setIsStarRegistOpen(locationNum);
             }
         }
@@ -354,40 +341,6 @@ function SceneEnvironment() {
     );
 }
 
-<<<<<<< HEAD
-=======
-function StarRegistArea() {
-    const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-
-    return (
-        <div>
-            {isStarRegistOpen !== -1 && (
-                <StarRegist type={'regist'} location={isStarRegistOpen} />
-            )}
-            {isStarModifyOpen !== -1 && (
-                <StarRegist type={'modify'} preBoard={isStarModifyOpen} />
-            )}
-        </div>
-    );
-}
-
-function StarDetailArea() {
-    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
-
-    return (
-        <div>
-            {isStarDetailOpen.length !== 0 && (
-                <StarDetail
-                    starIndex={isStarDetailOpen[0]}
-                    userIndex={isStarDetailOpen[1]}
-                />
-            )}
-        </div>
-    );
-}
-
->>>>>>> feature-FE/star3D
 function UserSpace() {
     const params = useParams();
     const userId = params.user_id;
