@@ -51,9 +51,19 @@ const starsState = atom({
 });
 
 // 공간 주인과 접속 유저의 친구 여부
-const isFollowingState = atom({
-    key: 'isFollowing',
-    default: false,
+const isFriendState = atom({
+    key: 'isFriend',
+    default: true,
+})
+
+const followingState = atom({
+    key: 'following',
+    default: [],
+})
+
+const followerState = atom({
+    key: 'follower',
+    default: [],
 })
 
 ///////////////////////////////// ↑ atoms
@@ -124,6 +134,7 @@ function Star(props) {
     const stars = useRecoilValue(starsState);
     
     const isStarModifyOpen = useRecoilState(isStarModifyOpenState);
+    const isFriend = useRecoilValue(isFriendState);
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
@@ -135,8 +146,8 @@ function Star(props) {
     }, [stars]);
 
     const colors = {
-        OPEN: 'yellow',
-        PARTOPEN: 'red',
+        true: 'yellow',
+        false: 'red',
     };
 
     const handleClick = (locationNum) => {
@@ -158,7 +169,7 @@ function Star(props) {
                 <sphereGeometry args={props.size} />
                 <meshStandardMaterial
                     color={
-                        curStarState ? colors[curStarState.boardAccess] : 'grey'
+                        curStarState ? colors[isFriend] : 'grey'
                     }
                 />
             </mesh>
@@ -236,14 +247,16 @@ function GroupStar(props) {
 }
 
 function SceneStars() {
-    const setStars = useSetRecoilState(starsState);
-    const setIsFollowing = useSetRecoilState(isFollowingState);
     const curPage = useRecoilValue(curPageState);
+    const setStars = useSetRecoilState(starsState);
+    const setIsFriend = useSetRecoilState(isFriendState);
+    const setFollowing = useSetRecoilState(followingState);
+    const setFollower = useSetRecoilState(followerState);
 
     const params = useParams();
     const writerIndex = Number(params.user_id);
     const loginUserId = Number(localStorage.getItem('memberIndex'));
-    const loginUserNikname = localStorage.getItem('nickname');
+    const loginUserNickname = localStorage.getItem('nickname');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -265,20 +278,34 @@ function SceneStars() {
                     setStars(response.data);
                 })
                 .then(async () => {
+                    let following = [];
+                    let follower = [];
                     // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
                     if (writerIndex !== loginUserId){
                         await axios.get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
                         .then((response) => {
-                            console.log(response.data);
-                            const result = response.data.result.some((it) => it === loginUserNikname);
-                            if (!result) {
-                                setIsFollowing(false);
-                            }
-                            console.log(result);
+                            setFollowing(response.data.result);
+                            following = response.data.result;
                         })
                         .catch((e) => {
                             console.log(e);
                         })
+
+                        await axios.get(`${process.env.REACT_APP_API_URL}/follow/follower/${writerIndex}`)
+                        .then((response) => {
+                            setFollower(response.data.result);
+                            follower = response.data.result;
+                        })
+                        .catch((e) => console.log(e));
+                        
+                        const followingCheck = following.some((it) => it['memberId'] === loginUserNickname.split('@')[0]);
+                        const followerCheck = follower.some((it) => it['memberId'] === loginUserNickname.split('@')[0])
+                        
+                        if (!followingCheck){
+                            if(!followerCheck){
+                                setIsFriend(false);
+                            } 
+                        }
                     }
                 })
                 .catch((e) => {
@@ -300,7 +327,6 @@ function SceneStars() {
 }
 
 function SceneLights() {
-    console.log('SCENE-LIGHTS MOUNTED');
     return (
         <>
             {/* 광원 */}
@@ -338,41 +364,6 @@ function SceneEnvironment() {
                 color={'orange'}
             />
         </>
-    );
-}
-
-function StarRegistArea() {
-    const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-    
-    return (
-        <div>
-            {
-                isStarRegistOpen !== -1 && (
-                    <StarRegist type={'regist'} location={isStarRegistOpen} />
-                )
-            }
-            {
-                isStarModifyOpen !== -1 && (
-                    <StarRegist type={'modify'} preBoard={isStarModifyOpen}/>
-                )
-            }
-        </div>
-    );
-}
-
-function StarDetailArea() {
-    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
-
-    return (
-        <div>
-            {isStarDetailOpen.length !== 0 && (
-                <StarDetail
-                    starIndex={isStarDetailOpen[0]}
-                    userIndex={isStarDetailOpen[1]}
-                />
-            )}
-        </div>
     );
 }
 

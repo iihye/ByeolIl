@@ -19,7 +19,6 @@ import axios from 'axios';
 
 //로그인 했을때 메인페이지로 온다.
 export default function MainPage() {
-    console.log("MAIN");
     return (
         <div className="MainPage">
             <div className="mainContainer" style={{ position: 'relative' }}>

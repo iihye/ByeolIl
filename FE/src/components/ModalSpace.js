@@ -30,7 +30,6 @@ function StarRegistArea(){
 
 function StarModifyArea(){
     const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-    console.log(isStarModifyOpen);
     return(
         <>
              {   
