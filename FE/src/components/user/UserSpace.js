@@ -138,13 +138,12 @@ function Star(props) {
 
     const handleClick = (locationNum) => {
         console.log(locationNum);
-        const starInfo = isAddedStar.get(locationNum);
-        if (starInfo) {
+        const starIndex = isAddedStar.get(locationNum);
+        if (starIndex) {
             // 별 상세보기 모달 띄우기
-            setIsStarDetailOpen([starInfo.boardIndex, params['user_id']]);
+            setIsStarDetailOpen(starIndex);
         } else {
             // 별 등록 모달 띄우기
-            console.log(params['user_id'], localStorage.getItem('memberIndex'));
             if (params['user_id'] === localStorage.getItem('memberIndex')) {
                 setIsStarRegistOpen(locationNum);
             }
@@ -236,8 +235,8 @@ function GroupStar(props) {
 
 function SceneStars() {
     const setStars = useSetRecoilState(starsState);
-    const curPage = useRecoilValue(curPageState);
     const setIsFollowing = useSetRecoilState(isFollowingState);
+    const curPage = useRecoilValue(curPageState);
 
     const params = useParams();
     const writerIndex = Number(params.user_id);
