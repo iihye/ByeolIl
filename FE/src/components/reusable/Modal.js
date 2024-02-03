@@ -4,7 +4,7 @@ import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
 import { isStarDetailOpenState, isStarRegistOpenState } from 'components/atom';
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renderReplyState } from "components/atom";
 import "./Modal.css";
@@ -22,7 +22,6 @@ function Modal(props) {
                         reportInfo={props.reportInfo}
                         starIndex={props.starIndex}
                         userIndex={props.userIndex}
-                        location={props.location}
                     />
                 )}
             </div>
@@ -30,12 +29,11 @@ function Modal(props) {
     );
 }
 
-function StarContent({ type,  reportInfo, starIndex, userIndex, location }) {
+function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
-
 
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
@@ -81,7 +79,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex, location }) {
     
 
   const handleModify = () => {
-    setIsStarModifyOpen([starIndex, {...data}, location]);
+    setIsStarModifyOpen([starIndex, {...data}]);
   };
 
     const handleLike = async () => {
