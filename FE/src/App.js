@@ -16,6 +16,7 @@ import Settings from 'components/user/Settings';
 // StarTagSearch, Settings 추가
 import { Link } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
+import Radio from 'components/radio/Radio';
 
 function App() {
     return (
@@ -39,12 +40,15 @@ function App() {
                     <Route path="Settings" element={<Settings />}></Route>
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
+                <Route path="/radio" element={<Radio/>}/>
             </Routes>   
 
             <div>
                 테스트 버튼들 ---------------------------------------------
             </div>
-
+            <Link to="/radio">
+                <button>뤠디오에서나오면~</button>
+            </Link>
             <Link to="/space/1">
                 <button>1번 유저의 메인 페이지로 이동</button>
             </Link>

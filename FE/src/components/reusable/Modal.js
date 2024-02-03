@@ -231,33 +231,30 @@ function RadioContent() {
 
     useEffect(() => {
       // 최초1회 데이터를 수신한다. 
-      // axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`,
-      // {
-      //   headers: {
-      //     token: localStorage.getItem('token') ?? "",
-      //   },
-      // })
-      // .then((response) => {
-      //   console.log(response.data);
-      //   setRdata(response.data);
-      // })
-
-      // TTS 음성수신 
-      axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=${test}`,{
+      axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`,
+      {
         headers: {
           token: localStorage.getItem('token') ?? "",
         },
       })
-      .then((response) => {console.log(response.data);
+      .then((response) => {
+        console.log(response.data);
+        setRdata(response.data);
       })
-    }, []);
 
-    // 라디오 송신 API는 memberIndex, boardIndex가 필요,
-    // 수신 API로는 memberIndex가 없다. -> db에서 memberIndex를 이용해서 찾는게아니라면
-    // 그냥 수신한 유저의 memberIndex 를 memberIndex에 담아서 보내도됨?? 
-    // function handleRepost() {
-    //   axios.post()
-    // }
+      // TTS 음성수신 
+      // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=${test}`,{
+      //   headers: {
+      //     token: localStorage.getItem('token') ?? "",
+      //   },
+      // })
+      // .then((response) => {console.log(response.data);
+      // })
+    }, [rdata]);
+
+    function handleRepost() {
+      axios.post()
+    }
 
     return (
         <div>
