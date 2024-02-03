@@ -120,8 +120,9 @@ function Star(props) {
     const params = useParams();
     const mesh = useRef(null);
     const writerIndex = Number(params["user_id"]);
-
+    
     const stars = useRecoilValue(starsState);
+    
     const isStarModifyOpen = useRecoilState(isStarModifyOpenState);
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
@@ -139,7 +140,7 @@ function Star(props) {
     };
 
     const handleClick = (locationNum) => {
-        const starIndex = isAddedStar.get(locationNum);
+        const starIndex = isAddedStar.get(locationNum) ? isAddedStar.get(locationNum).boardIndex : null ;
         if (starIndex) {
             // 별 상세보기 모달 띄우기
             setIsStarDetailOpen([starIndex, writerIndex]);
@@ -259,7 +260,7 @@ function SceneStars() {
                 .then((response) => {
                     isAddedStar.clear();
                     response.data.BoardListResponseDtoList.forEach((star) =>
-                        isAddedStar.set(star.boardLocation, star.boardIndex)
+                        isAddedStar.set(star.boardLocation, star)
                     );
                     setStars(response.data);
                 })
