@@ -36,7 +36,8 @@ const totalStarCount =
     position[position.length - 1][position[position.length - 1].length - 1][0] +
     1;
 
-///////////////////////////////// atoms
+///////////////////////////////// ↓ atoms
+
 // 현재 페이지
 const curPageState = atom({
     key: 'curPage',
@@ -49,7 +50,15 @@ const starsState = atom({
     default: [],
 });
 
-// isAddedStar : 등록된 별 체크를 위한 Map
+// 공간 주인과 접속 유저의 친구 여부
+const isFollowingState = atom({
+    key: 'isFollowing',
+    default: false,
+})
+
+///////////////////////////////// ↑ atoms
+
+// isAddedStar : starLocation : starIndex
 const isAddedStar = new Map();
 
 // 별자리 이어짐 체크
@@ -72,8 +81,6 @@ const constellationCheck = (starNum) => {
 };
 
 function Line(props) {
-    // console.log("LINE MOUNTED");
-
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
     return (
@@ -90,11 +97,6 @@ function Line(props) {
 }
 
 function Sphere(props) {
-    // console.log("SPHERE MOUNTED");
-
-    // const texture = useTexture("texture/bakedUniverse.png");
-    // console.log(texture);
-
     const mesh = useRef(null);
 
     return (
@@ -115,8 +117,6 @@ function Sphere(props) {
 }
 
 function Star(props) {
-    // console.log(`STAR ${props.location} MOUNTED`);
-
     const params = useParams();
     const mesh = useRef(null);
     const stars = useRecoilValue(starsState);
@@ -189,13 +189,12 @@ function StarSurround(props) {
 }
 
 function GroupStar(props) {
-    // console.log(`GROUP-STAR ${props.groupNum} MOUNTED`);
-
     const stars = useRecoilValue(starsState);
     const [lineState, setLineState] = useState([]);
     const [lineColor, setLineColor] = useState(true);
     const group = useRef(null);
 
+    // 작성한 별 목록 변경 시 별자리 체크
     useEffect(() => {
         const lastStarOfThisGroup =
             props.position[props.position.length - 1][0];
@@ -204,12 +203,14 @@ function GroupStar(props) {
         }
     }, [stars]);
 
+    // 별자리 긋는 선들의 꼭짓점 정의
     useEffect(() => {
         setLineState(
             props.position.map((val) => new THREE.Vector3(...val.slice(1, 4)))
         );
     }, []);
 
+    // 하늘 회전
     useFrame((state, delta) => {
         group.current.rotation.y += delta / 220;
     });
@@ -234,19 +235,20 @@ function GroupStar(props) {
 }
 
 function SceneStars() {
-    console.log('SCENE-STARS MOUNTED');
-
     const setStars = useSetRecoilState(starsState);
     const curPage = useRecoilValue(curPageState);
+    const setIsFollowing = useSetRecoilState(isFollowingState);
 
     const params = useParams();
-    const userId = params.user_id;
+    const writerIndex = Number(params.user_id);
+    const loginUserId = Number(localStorage.getItem('memberIndex'));
+    const loginUserNikname = localStorage.getItem('nickname');
 
-    // 페이지 내 별 정보 불러오기
     useEffect(() => {
         const fetchData = async () => {
+            // 게시글 리스트 불러오기
             await axios
-                .get(`${process.env.REACT_APP_API_URL}/board/star/${userId}`, {
+                .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
                     header: {
                         token: localStorage.getItem('token') ?? '',
                     },
@@ -255,13 +257,28 @@ function SceneStars() {
                     },
                 })
                 .then((response) => {
-                    console.log(response.data);
                     isAddedStar.clear();
                     response.data.BoardListResponseDtoList.forEach((star) =>
-                        isAddedStar.set(star.boardLocation, star)
+                        isAddedStar.set(star.boardLocation, star.boardIndex)
                     );
-                    console.log(response.data);
                     setStars(response.data);
+                })
+                .then(async () => {
+                    // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
+                    if (writerIndex !== loginUserId){
+                        await axios.get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
+                        .then((response) => {
+                            console.log(response.data);
+                            const result = response.data.result.some((it) => it === loginUserNikname);
+                            if (!result) {
+                                setIsFollowing(false);
+                            }
+                            console.log(result);
+                        })
+                        .catch((e) => {
+                            console.log(e);
+                        })
+                    }
                 })
                 .catch((e) => {
                     console.log(e);
@@ -433,6 +450,8 @@ function UserSpace() {
     // 우주 주인 닉네임과 나의 팔로우 목록을 비교하여 일치하면 팔로우 관계
     useEffect(() => {
         const fetchData = async () => {
+            
+            // 내 팔로잉 목록 불러오기
             try {
                 const response = await axios.get(
                     `${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`,
