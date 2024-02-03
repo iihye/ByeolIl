@@ -22,13 +22,10 @@ export default function MainPage() {
     console.log("MAIN");
     return (
         <div className="MainPage">
-            <div className="mainContainer" style={{position: 'relative'}}>
-                <UserSpace className="asdf"/>
+            <div className="mainContainer" style={{ position: 'relative' }}>
+                <UserSpace className="asdf" />
                 <Outlet />
             </div>
-            <nav className="sideContainer">
-                <Sidebar />
-            </nav>
         </div>
     );
 }

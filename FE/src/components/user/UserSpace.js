@@ -18,7 +18,11 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import StarRegist from 'components/star/StarRegist';
 import StarDetail from 'components/star/StarDetail';
-import { isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from 'components/atom';
+import {
+    isStarDetailOpenState,
+    isStarModifyOpenState,
+    isStarRegistOpenState,
+} from 'components/atom';
 import { position } from '../../data';
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
@@ -32,7 +36,8 @@ const totalStarCount =
     position[position.length - 1][position[position.length - 1].length - 1][0] +
     1;
 
-///////////////////////////////// atoms
+///////////////////////////////// ↓ atoms
+
 // 현재 페이지
 const curPageState = atom({
     key: 'curPage',
@@ -45,7 +50,15 @@ const starsState = atom({
     default: [],
 });
 
-// isAddedStar : 등록된 별 체크를 위한 Map
+// 공간 주인과 접속 유저의 친구 여부
+const isFollowingState = atom({
+    key: 'isFollowing',
+    default: false,
+})
+
+///////////////////////////////// ↑ atoms
+
+// isAddedStar : starLocation : starIndex
 const isAddedStar = new Map();
 
 // 별자리 이어짐 체크
@@ -68,8 +81,6 @@ const constellationCheck = (starNum) => {
 };
 
 function Line(props) {
-    // console.log("LINE MOUNTED");
-
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
     return (
@@ -117,7 +128,7 @@ function Star(props) {
 
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
-    
+
     useEffect(() => {
         setCurStarState(isAddedStar.get(props.location));
     }, [stars]);
@@ -129,6 +140,7 @@ function Star(props) {
 
     const handleClick = (locationNum) => {
         console.log(locationNum);
+<<<<<<< HEAD
         const starInfo = isAddedStar.get(locationNum);
         console.log(starInfo);
         if (starInfo) {
@@ -139,6 +151,15 @@ function Star(props) {
             
             // 별 등록 모달 띄우기
             if (Number(params["user_id"]) === Number(localStorage.getItem("memberIndex"))){
+=======
+        const starIndex = isAddedStar.get(locationNum);
+        if (starIndex) {
+            // 별 상세보기 모달 띄우기
+            setIsStarDetailOpen(starIndex);
+        } else {
+            // 별 등록 모달 띄우기
+            if (params['user_id'] === localStorage.getItem('memberIndex')) {
+>>>>>>> feature-FE/star3D
                 setIsStarRegistOpen(locationNum);
             }
         }
@@ -146,45 +167,48 @@ function Star(props) {
 
     return (
         <>
-            <mesh
-                ref={mesh}
-                position={props.position}
-            >
+            <mesh ref={mesh} position={props.position}>
                 <sphereGeometry args={props.size} />
                 <meshStandardMaterial
-                    color={curStarState ? colors[curStarState.boardAccess] : 'grey'}
+                    color={
+                        curStarState ? colors[curStarState.boardAccess] : 'grey'
+                    }
                 />
             </mesh>
-            <StarSurround position={props.position} location={props.location} handleClick={handleClick} />
+            <StarSurround
+                position={props.position}
+                location={props.location}
+                handleClick={handleClick}
+            />
         </>
     );
 }
 
-function StarSurround(props){
+function StarSurround(props) {
     const [opacity, setOpacity] = useState(0);
 
-    return(
-        <mesh position={props.position}
+    return (
+        <mesh
+            position={props.position}
             onClick={() => {
                 props.handleClick(props.location);
             }}
             onPointerEnter={() => setOpacity(0.14)}
             onPointerLeave={() => setOpacity(0)}
-            >
-            <sphereGeometry args={[0.8, 48, 48]}/>
-            <meshStandardMaterial transparent={true} opacity={opacity}/>
+        >
+            <sphereGeometry args={[0.8, 48, 48]} />
+            <meshStandardMaterial transparent={true} opacity={opacity} />
         </mesh>
-    )
+    );
 }
 
 function GroupStar(props) {
-    // console.log(`GROUP-STAR ${props.groupNum} MOUNTED`);
-
     const stars = useRecoilValue(starsState);
     const [lineState, setLineState] = useState([]);
     const [lineColor, setLineColor] = useState(true);
     const group = useRef(null);
 
+    // 작성한 별 목록 변경 시 별자리 체크
     useEffect(() => {
         const lastStarOfThisGroup =
             props.position[props.position.length - 1][0];
@@ -193,12 +217,14 @@ function GroupStar(props) {
         }
     }, [stars]);
 
+    // 별자리 긋는 선들의 꼭짓점 정의
     useEffect(() => {
         setLineState(
             props.position.map((val) => new THREE.Vector3(...val.slice(1, 4)))
         );
     }, []);
 
+    // 하늘 회전
     useFrame((state, delta) => {
         group.current.rotation.y += delta / 220;
     });
@@ -223,19 +249,20 @@ function GroupStar(props) {
 }
 
 function SceneStars() {
-    console.log('SCENE-STARS MOUNTED');
-
     const setStars = useSetRecoilState(starsState);
+    const setIsFollowing = useSetRecoilState(isFollowingState);
     const curPage = useRecoilValue(curPageState);
 
     const params = useParams();
-    const userId = params.user_id;
+    const writerIndex = Number(params.user_id);
+    const loginUserId = Number(localStorage.getItem('memberIndex'));
+    const loginUserNikname = localStorage.getItem('nickname');
 
-    // 페이지 내 별 정보 불러오기
     useEffect(() => {
         const fetchData = async () => {
+            // 게시글 리스트 불러오기
             await axios
-                .get(`${process.env.REACT_APP_API_URL}/board/star/${userId}`, {
+                .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
                     header: {
                         token: localStorage.getItem('token') ?? '',
                     },
@@ -244,13 +271,28 @@ function SceneStars() {
                     },
                 })
                 .then((response) => {
-                    console.log(response.data);
                     isAddedStar.clear();
                     response.data.BoardListResponseDtoList.forEach((star) =>
-                        isAddedStar.set(star.boardLocation, star)
+                        isAddedStar.set(star.boardLocation, star.boardIndex)
                     );
-                    console.log(response.data);
                     setStars(response.data);
+                })
+                .then(async () => {
+                    // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
+                    if (writerIndex !== loginUserId){
+                        await axios.get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
+                        .then((response) => {
+                            console.log(response.data);
+                            const result = response.data.result.some((it) => it === loginUserNikname);
+                            if (!result) {
+                                setIsFollowing(false);
+                            }
+                            console.log(result);
+                        })
+                        .catch((e) => {
+                            console.log(e);
+                        })
+                    }
                 })
                 .catch((e) => {
                     console.log(e);
@@ -312,6 +354,40 @@ function SceneEnvironment() {
     );
 }
 
+<<<<<<< HEAD
+=======
+function StarRegistArea() {
+    const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
+    const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
+
+    return (
+        <div>
+            {isStarRegistOpen !== -1 && (
+                <StarRegist type={'regist'} location={isStarRegistOpen} />
+            )}
+            {isStarModifyOpen !== -1 && (
+                <StarRegist type={'modify'} preBoard={isStarModifyOpen} />
+            )}
+        </div>
+    );
+}
+
+function StarDetailArea() {
+    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
+
+    return (
+        <div>
+            {isStarDetailOpen.length !== 0 && (
+                <StarDetail
+                    starIndex={isStarDetailOpen[0]}
+                    userIndex={isStarDetailOpen[1]}
+                />
+            )}
+        </div>
+    );
+}
+
+>>>>>>> feature-FE/star3D
 function UserSpace() {
     const params = useParams();
     const userId = params.user_id;
@@ -391,6 +467,8 @@ function UserSpace() {
     // 우주 주인 닉네임과 나의 팔로우 목록을 비교하여 일치하면 팔로우 관계
     useEffect(() => {
         const fetchData = async () => {
+            
+            // 내 팔로잉 목록 불러오기
             try {
                 const response = await axios.get(
                     `${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`,
@@ -416,7 +494,7 @@ function UserSpace() {
     }, [userName]);
 
     return (
-        <div className='user-space'>
+        <div className="user-space">
             <div
                 id="canvas-container"
                 style={{ height: '100vh', width: '100vw' }}

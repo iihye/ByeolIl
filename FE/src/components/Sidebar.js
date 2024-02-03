@@ -9,7 +9,8 @@ import axios from 'axios';
 // import Settings from './user/Settings';
 // // 환경설정 컴포넌트..?
 // import Alarm from './user/Alarm'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useVideoTexture } from '@react-three/drei';
 
 function SidebarList(props) {
     const [memberIndex, setMemberIndex] = useState(
@@ -17,6 +18,16 @@ function SidebarList(props) {
     );
     const [items, setItems] = useState([]);
     const isAdmin = localStorage.getItem('auth');
+
+    const navigate = useNavigate();
+
+    const handleLogOut = () => {
+        localStorage.removeItem('memberIndex');
+        localStorage.removeItem('nickname');
+        localStorage.removeItem('token');
+        localStorage.removeItem('auth');
+        navigate('');
+    };
 
     useEffect(() => {
         setMemberIndex(memberIndex);
@@ -58,7 +69,7 @@ function SidebarList(props) {
                     </div>
                 );
             })}
-            <button>로그아웃</button>
+            <button onClick={handleLogOut}>로그아웃</button>
         </div>
     );
 }
