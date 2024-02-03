@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
+import "./Alert.css";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
@@ -125,13 +126,15 @@ function Delete(props) {
   const handleDelete = async () => {
     const data = {
       boardIndex: props.boardIndex,
-      userIndex: props.userIndex,
+      memberIndex: props.userIndex,
     };
 
-    await axios.put(`${process.env.REACT_APP_API_URL}/board`, )
-    /* 게시글 삭제  요청 보내기 */
-    /* - 게시글 정상 삭제시) 해당 alert 닫기 -> 게시글 modal 닫기*/
-    /* - 게시글 삭제 실패시) 오류 모달 띄우기? */
+    await axios.put(`${process.env.REACT_APP_API_URL}/board/delete`, data, 
+    {
+      headers: {
+        token: localStorage.getItem('token'),
+      }
+    }).then((response) => console.log(response.data));
   };
 
   const handleClose = () => {

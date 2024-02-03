@@ -121,7 +121,7 @@ function StarRegist (props){
 
                         
                         setIsStarDetailOpen(preBoard.boardIndex);
-                        setIsStarModifyOpen(-1);
+                        handleClose();
                     }
                 })
             } catch (error) {
