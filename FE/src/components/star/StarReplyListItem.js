@@ -33,7 +33,7 @@ function StarReplyListItem(props) {
         header: {
           token: localStorage.getItem("token"),
         },
-        data: { ...data },
+        data: data,
       })
       .then((response) => {
         if (response.data.map.response === "success") {
