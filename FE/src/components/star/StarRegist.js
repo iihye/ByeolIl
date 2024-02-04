@@ -87,7 +87,6 @@ function StarRegist(props) {
 
           isAddedStar.clear();
           res.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
-          console.log(res.data);
           setStars(res.data);
           handleClose();
         } else {
@@ -156,7 +155,7 @@ function StarRegist(props) {
           {media.length > 0 && <div>사진 미리보기</div>}
           <textarea ref={contentRef} />
         </div>
-        <div>{<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} />}</div>
+        <div>{<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}</div>
         <div>
           <input type="file" onClick={handleMediaUpload} />
           <button onClick={handleRegist}>{buttonValue[type]}</button>
