@@ -50,7 +50,7 @@ function InputAlert(props) {
   const handleReport = async (inputData) => {
     const reportData = {
       boardIndex: props.boardIndex, // 게시글 번호
-      userIndex: props.userIndex, // 유저 번호
+      memberIndex: props.userIndex, // 유저 번호
       reportContent: inputData,
     };
     console.log(reportData);
@@ -63,9 +63,6 @@ function InputAlert(props) {
       })
       .then((response) => {
         console.log(response.data);
-        /* 1. 신고 완료 모달 띄우기 */
-        /* 2. 신고 완료 모달 자동으로 닫기
-        /* 3. 신고 내용 입력 자동으로 닫기 */
       })
       .catch((e) => console.log(e));
   };
