@@ -139,7 +139,10 @@ function StarContent(props) {
           {/* 이미지 영역 */}
           <div style={{ display: "flex" }}>{data && data.boardMedia.map((i, index) => <div key={index}>이미지 {index}</div>)}</div>
           {/* 게시글 내용 */}
-          <div>{data ? data.boardContent : "로딩중"}</div>
+          <div>
+            {data ? data.boardContent : "로딩중"}
+            <button>라디오 송신</button>
+          </div>
         </div>
         <div>
           {/* 해시태그 */}
@@ -202,7 +205,6 @@ function ReplyRegistArea(props) {
       alert("내용을 입력해주세요.");
       return;
     }
-    console.log(data);
     await axios
       .post(`${process.env.REACT_APP_API_URL}/comment/`, data, {
         header: {
@@ -211,7 +213,6 @@ function ReplyRegistArea(props) {
       })
       .then((response) => {
         if (response.data.map.response === "success") {
-          console.log(renewReply);
           setRenewReply(!renewReply);
         } else {
           console.log("댓글 등록 실패");
