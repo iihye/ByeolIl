@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +24,13 @@ public class S3Service {
 
     public String saveFile(MultipartFile multipartFile) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
-
+        UUID uuid = UUID.randomUUID();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
 
-        amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
-        return amazonS3.getUrl(bucket, originalFilename).toString();
+        amazonS3.putObject(bucket, uuid.toString(), multipartFile.getInputStream(), metadata);
+        return amazonS3.getUrl(bucket, uuid.toString()).toString();
     }
 
     public void deleteFile(String originalFilename)  {
