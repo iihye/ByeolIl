@@ -99,7 +99,6 @@ function Sphere(props) {
 function Star(props) {
   const params = useParams();
   const mesh = useRef(null);
-  const writerIndex = Number(params["user_id"]);
 
   const stars = useRecoilValue(starsState);
 
@@ -108,6 +107,8 @@ function Star(props) {
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
+  const writerIndex = Number(params["user_id"]);
+  const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
   const colors = {
     true: "yellow",
     false: "red",
@@ -126,7 +127,7 @@ function Star(props) {
       setIsStarDetailOpen([starIndex, writerIndex]);
     } else {
       // 별 등록 모달 띄우기
-      if (params["user_id"] === localStorage.getItem("memberIndex")) {
+      if (writerIndex === loginUserIndex) {
         setIsStarRegistOpen([locationNum, writerIndex]);
       }
     }
