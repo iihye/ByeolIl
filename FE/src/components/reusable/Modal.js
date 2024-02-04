@@ -65,7 +65,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
   };
 
   const handleModify = () => {
-    setIsStarModifyOpen([starIndex, { ...data }]);
+    setIsStarModifyOpen([data, starIndex, location, loginUserIndex]);
   };
 
   const handleLike = async () => {

@@ -17,12 +17,14 @@ function StarRegist(props) {
   const type = props.type;
   const location = props.location;
   const writerIndex = props.writerIndex;
+  const boardIndex = props.boardIndex;
+  const preBoard = props.preBoard;
   console.log(props);
 
-  let preBoard;
-  if (props.type === "modify") {
-    preBoard = isAddedStar.get(props.preBoard[2]);
-  }
+  //   let preBoard;
+  //   if (props.type === "modify") {
+  //     preBoard = isAddedStar.get(props.preBoard[2]);
+  //   }
 
   console.log(preBoard);
   const buttonValue = {
@@ -53,7 +55,7 @@ function StarRegist(props) {
     hashtagSet.forEach((it) => hashContent.push(it));
     if (type === "regist") {
       const data = {
-        memberIndex: Number(localStorage.getItem("memberIndex")),
+        memberIndex: writerIndex,
         boardContent: contentRef.current.value,
         boardInputDate: "2024-01-23",
         mediaContent: [],
@@ -95,10 +97,12 @@ function StarRegist(props) {
         console.log(error);
       }
     } else if (type === "modify") {
+      // 임시 데이터
+      const inputDate = "2024-02-02";
       const data = {
-        boardIndex: preBoard.boardIndex,
-        memberIndex: Number(localStorage.getItem("memberIndex")),
-        boardInputDate: ("20" + preBoard.boardInputDate).split(".").join("-"),
+        boardIndex: boardIndex,
+        memberIndex: writerIndex,
+        boardInputDate: inputDate,
         boardContent: contentRef.current.value,
         boardMedia: ["새 이미지 경로1", "새 이미지 경로2"],
         boardAccess: accessRangeRef.current.value,
@@ -113,7 +117,7 @@ function StarRegist(props) {
           })
           .then((response) => {
             if (response.status === 200) {
-              setIsStarDetailOpen(preBoard.boardIndex);
+              setIsStarDetailOpen(boardIndex, writerIndex);
               handleClose();
             }
           });
@@ -151,7 +155,7 @@ function StarRegist(props) {
           {media.length > 0 && <div>사진 미리보기</div>}
           <textarea ref={contentRef} />
         </div>
-        <div>{<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={props} />}</div>
+        <div>{<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} />}</div>
         <div>
           <input type="file" onClick={handleMediaUpload} />
           <button onClick={handleRegist}>{buttonValue[type]}</button>
@@ -187,7 +191,7 @@ const HashtagArea = (props) => {
 
   useEffect(() => {
     if (props.preBoard) {
-      setHashtagList(props.preBoard.hash);
+      setHashtagList(props.preBoard.hashContent);
     }
   }, []);
 

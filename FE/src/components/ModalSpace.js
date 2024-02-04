@@ -21,7 +21,7 @@ function StarRegistArea() {
 
 function StarModifyArea() {
   const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-  return <>{isStarModifyOpen !== false ? <StarRegist type={"modify"} preBoard={isStarModifyOpen} /> : null}</>;
+  return <>{isStarModifyOpen !== false ? <StarRegist type={"modify"} preBoard={isStarModifyOpen[0]} boardIndex={isStarModifyOpen[1]} location={isStarModifyOpen[2]} writerIndex={isStarModifyOpen[3]} /> : null}</>;
 }
 
 function StarDetailArea() {
