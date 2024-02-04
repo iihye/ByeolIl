@@ -2,9 +2,9 @@ import axios from "axios";
 import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
-import { isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
+import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } from "components/atom";
 import { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renderReplyState } from "components/atom";
 import "./Modal.css";
 
@@ -24,6 +24,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
+  const renewStarDetail = useRecoilValue(renewStarDetailState);
 
   const [data, setData] = useState(null);
   const [likeData, setLikeData] = useState([]);
@@ -52,7 +53,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
         });
     };
     fetchData(starIndex);
-  }, []);
+  }, [renewStarDetail]);
 
   const handleDelete = () => {
     /* 삭제하시겠습니까 alert 띄우기 */

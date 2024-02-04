@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
 import { isAddedStar, starsState, curPageState } from "components/user/UserSpace";
-import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState } from "components/atom";
+import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, renewStarDetailState } from "components/atom";
 import styled from "styled-components";
 import axios from "axios";
 import { useParams } from "react-router";
@@ -8,9 +8,10 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import "./star.css";
 
 function StarRegist(props) {
+  const [renewStarDetail, setRenewStarDetail] = useRecoilState(renewStarDetailState);
   const curPage = useRecoilValue(curPageState);
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setStars = useSetRecoilState(starsState);
-  const [isStarDetailOpen, setIsStarDetailOpen] = useRecoilState(isStarDetailOpenState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
 
@@ -117,7 +118,7 @@ function StarRegist(props) {
           })
           .then((response) => {
             if (response.status === 200) {
-              setIsStarDetailOpen(boardIndex, writerIndex);
+              setRenewStarDetail(!renewStarDetail);
               handleClose();
             }
           });
