@@ -54,7 +54,7 @@ export const reportModalState = atom({
 });
 
 // 댓글 리렌더링 atom
-export const renderReplyState = atom({
-  key: "renderReply",
+export const renewReplyState = atom({
+  key: "renewReply",
   default: false,
 });

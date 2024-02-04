@@ -5,7 +5,7 @@ import StarReportAlert from "components/star/StarReportAlert";
 import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } from "components/atom";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renderReplyState } from "components/atom";
+import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
 import "./Modal.css";
 
 // type: "radio", "star", "report"
@@ -100,7 +100,6 @@ function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
       memberIndex: loginUserIndex,
       commentContent: replyInputRef.current.value.trim(),
     };
-    console.log(data);
     if (data.commentContent === "") {
       alert("내용을 입력해주세요.");
       return;
@@ -176,12 +175,13 @@ function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
         {type === "star" ? (
           <div>
             {/* 댓글 작성 영역 */}
-            {isLogin() && (
+            {/* {isLogin() && (
               <>
                 <input ref={replyInputRef} />
                 <button onClick={handleRegistReply}>등록</button>
               </>
-            )}
+            )} */}
+            {isLogin() && <ReplyRegistArea starIndex={starIndex} loginUserIndex={loginUserIndex} />}
           </div>
         ) : null}
         <div>
@@ -216,12 +216,12 @@ function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
 function ReplyRegistArea(props) {
   const inputRef = useRef();
 
-  const [renderReply, setRenderReply] = useRecoilState(renderReplyState);
+  const [renewReply, setRenewReply] = useRecoilState(renewReplyState);
 
   const handleRegistReply = async () => {
     const data = {
       boardIndex: props.starIndex,
-      memberIndex: props.memberIndex,
+      memberIndex: props.loginUserIndex,
       commentContent: inputRef.current.value.trim(),
     };
 
@@ -238,7 +238,8 @@ function ReplyRegistArea(props) {
       })
       .then((response) => {
         if (response.data.map.response === "success") {
-          setRenderReply(!renderReply);
+          console.log(renewReply);
+          setRenewReply(!renewReply);
           console.log("댓글 등록 성공");
         } else {
           console.log("댓글 등록 실패");
