@@ -19,7 +19,7 @@ function Modal(props) {
   );
 }
 
-function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
+function StarContent(props) {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
@@ -29,9 +29,16 @@ function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
   const [data, setData] = useState(null);
   const [likeData, setLikeData] = useState([]);
 
-  const loginUserIndex = Number(localStorage.getItem("memberIndex"));
-
   const replyInputRef = useRef();
+
+  // properties
+  const loginUserIndex = Number(localStorage.getItem("memberIndex"));
+  const type = props.type;
+  const reportInfo = props.reportInfo;
+  const starIndex = props.starIndex;
+  const writerIndex = props.userindex;
+  const location = props.location;
+  console.log(props);
 
   useEffect(() => {
     const fetchData = async (starIndex) => {
@@ -136,7 +143,7 @@ function StarContent({ type, reportInfo, starIndex, userIndex, location }) {
 
   /* 게시글 작성자 체크*/
   const isWriter = () => {
-    return userIndex === Number(localStorage.getItem("memberIndex"));
+    return writerIndex === loginUserIndex;
   };
 
   /* 로그인 체크 */
