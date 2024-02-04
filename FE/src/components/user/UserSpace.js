@@ -127,7 +127,7 @@ function Star(props) {
     } else {
       // 별 등록 모달 띄우기
       if (params["user_id"] === localStorage.getItem("memberIndex")) {
-        setIsStarRegistOpen(locationNum);
+        setIsStarRegistOpen([locationNum, writerIndex]);
       }
     }
   };

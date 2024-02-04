@@ -16,7 +16,7 @@ function ModalSpace() {
 function StarRegistArea() {
   const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
 
-  return <>{isStarRegistOpen !== false ? <StarRegist type={"regist"} location={isStarRegistOpen} /> : null}</>;
+  return <>{isStarRegistOpen !== false ? <StarRegist type={"regist"} location={isStarRegistOpen[0]} writerIndex={isStarRegistOpen[1]} /> : null}</>;
 }
 
 function StarModifyArea() {
