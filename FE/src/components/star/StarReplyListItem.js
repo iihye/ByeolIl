@@ -17,7 +17,6 @@ function StarReplyListItem(props) {
   const boardIndex = props.boardIndex;
   const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
 
-  console.log(multiComments);
   const isWriter = () => {
     return writerIndex === loginUserIndex;
   };

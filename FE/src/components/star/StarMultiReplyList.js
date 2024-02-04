@@ -7,8 +7,8 @@ function StarMultiReplyList(props) {
 
   return (
     <div className="star-multi-reply-list">
-      {multiReplyList.map((it) => (
-        <StarMultiReplyListItem reply={it} />
+      {multiReplyList.map((it, index) => (
+        <StarMultiReplyListItem reply={it} key={index} />
       ))}
     </div>
   );

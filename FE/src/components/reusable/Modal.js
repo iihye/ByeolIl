@@ -156,12 +156,6 @@ function StarContent(props) {
         {type === "star" ? (
           <div>
             {/* 댓글 작성 영역 */}
-            {/* {isLogin() && (
-              <>
-                <input ref={replyInputRef} />
-                <button onClick={handleRegistReply}>등록</button>
-              </>
-            )} */}
             {isLogin() && <ReplyRegistArea starIndex={starIndex} loginUserIndex={loginUserIndex} />}
           </div>
         ) : null}
@@ -219,7 +213,6 @@ function ReplyRegistArea(props) {
         if (response.data.map.response === "success") {
           console.log(renewReply);
           setRenewReply(!renewReply);
-          console.log("댓글 등록 성공");
         } else {
           console.log("댓글 등록 실패");
         }

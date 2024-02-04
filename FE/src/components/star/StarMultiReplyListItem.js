@@ -7,7 +7,7 @@ function StarMultiReplyListItem(props) {
 
   const reply = props.reply;
   const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
-  console.log(reply);
+
   const isWriter = () => {
     return loginUserIndex === reply.memberIndex;
   };
