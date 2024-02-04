@@ -8,18 +8,17 @@ function StarReplyListItem(props) {
   const [renewReply, setRenewReply] = useRecoilState(renewReplyState);
 
   const [multiReply, setMultiReply] = useState(false);
-  const [multiReplyList, setMultiReplyList] = useState(props.reply.multiComments);
 
   const commentIndex = props.reply.commentIndex;
   const writerIndex = props.reply.memberIndex;
   const commentRegDate = props.reply.commentRegdate;
   const commentContent = props.reply.commentContent;
   const multiComments = props.reply.multiComments;
-  console.log(props);
+  const boardIndex = props.boardIndex;
   const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
 
+  console.log(multiComments);
   const isWriter = () => {
-    console.log(writerIndex, loginUserIndex);
     return writerIndex === loginUserIndex;
   };
 
@@ -62,23 +61,32 @@ function StarReplyListItem(props) {
           답글달기
         </div>
       )}
-      <StarMultiReplyList multiReplyList={multiReplyList} />
-      {multiReply && <MultiReplyInput setMultiReply={setMultiReply} />}
+      <StarMultiReplyList multiReplyList={multiComments} />
+      {multiReply && <MultiReplyInput setMultiReply={setMultiReply} loginUserIndex={loginUserIndex} {...props} />}
     </div>
   );
 }
 
 function MultiReplyInput(props) {
+  const [renewReply, setRenewReply] = useRecoilState(renewReplyState);
+
   const input = useRef(null);
+
+  const boardIndex = props.boardIndex;
+  const reply = props.reply;
+  const setMultiReply = props.setMultiReply;
+  const loginUserIndex = props.loginUserIndex;
+
   const handleMultiReplyQuit = () => {
-    props.setMultiReply(false);
+    setMultiReply(false);
   };
+
   const handleMultiReplySubmit = async () => {
     const data = {
-      commentIndex: 1, // 코멘트번호?
-      boardIndex: 1, // 글 번호
-      memberIndex: 1, // 작성자
-      commentContent: "답댓글입니다", // 대댓글 내용
+      commentIndex: reply.commentIndex, // 코멘트번호?
+      boardIndex: boardIndex, // 글 번호
+      memberIndex: loginUserIndex, // 작성자
+      commentContent: input.current.value, // 대댓글 내용
     };
 
     await axios
@@ -89,7 +97,9 @@ function MultiReplyInput(props) {
       })
       .then((response) => {
         if (response.data.map.response === "success") {
-          props.setMultiReply(false);
+          console.log(renewReply);
+          setMultiReply(false);
+          setRenewReply(!renewReply);
         }
       })
       .catch((error) => console.log(error));
