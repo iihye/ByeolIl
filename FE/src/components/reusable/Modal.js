@@ -30,6 +30,7 @@ function StarContent(props) {
 
   const [data, setData] = useState(null);
   const [likeData, setLikeData] = useState([]);
+  const [isLike, setIsLike] = useState(false);
 
   const replyInputRef = useRef();
 
@@ -40,8 +41,8 @@ function StarContent(props) {
   const starIndex = props.starIndex;
   const writerIndex = props.userindex;
   const location = props.location;
-  console.log(props);
 
+  // 글 조회 / 수정시 내용 갱신
   useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
@@ -64,6 +65,21 @@ function StarContent(props) {
     fetchData(starIndex);
   }, [renewStarDetail]);
 
+  // 좋아요 정보 가져오기
+  useEffect(() => {
+    const fetchData = async () => {
+      await axios
+        .get(`${process.env.REACT_APP_API_URL}/board/like/${loginUserIndex}`)
+        .then((response) => {
+          const res = response.data.some((it) => it.boardIndex === starIndex);
+          // setLikeData(response.data);
+          setIsLike(res);
+        })
+        .catch((error) => console.log(error));
+    };
+    fetchData();
+  }, []);
+
   const handleDelete = () => {
     /* 삭제하시겠습니까 alert 띄우기 */
     setIsDeleteAlertOpen(true);
@@ -82,7 +98,7 @@ function StarContent(props) {
     /* 게시글 좋아요 Req */
     const data = {
       boardIndex: starIndex,
-      memberIndex: Number(localStorage.getItem("memberIndex")),
+      memberIndex: loginUserIndex,
     };
 
     try {
@@ -93,6 +109,7 @@ function StarContent(props) {
       });
 
       if (response.request.status === 200) {
+        setIsLike(true);
         console.log("좋아요 성공");
       } else {
         console.log("좋아요 실패");
@@ -100,6 +117,26 @@ function StarContent(props) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleDislike = async () => {
+    const data = {
+      boardIndex: starIndex,
+      memberIndex: loginUserIndex,
+    };
+
+    await axios
+      .delete(`${process.env.REACT_APP_API_URL}/board/like`, {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+        data: data,
+      })
+      .then((response) => {
+        if (response.data.map.response === "success") {
+          setIsLike(false);
+        }
+      });
   };
 
   const handleBlock = () => {
@@ -166,7 +203,8 @@ function StarContent(props) {
           {/* 최하단 */}
           {type === "star" ? (
             <>
-              <button onClick={handleLike}>LIKE</button>
+              {!isLike ? <button onClick={handleLike}>LIKE</button> : <button onClick={handleDislike}>DISLIKE</button>}
+
               <button onClick={handleReport}>REPORT</button>
               {isWriter() && (
                 <>
