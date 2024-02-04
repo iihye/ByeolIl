@@ -9,7 +9,7 @@ import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { useNavigate, useParams } from "react-router-dom";
 import StarRegist from "components/star/StarRegist";
 import StarDetail from "components/star/StarDetail";
-import { isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from "components/atom";
+import { isDeleteAlertOpenState, isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from "components/atom";
 import { position } from "../../data";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
@@ -202,6 +202,7 @@ function SceneStars() {
   const setIsFriend = useSetRecoilState(isFriendState);
   const setFollowing = useSetRecoilState(followingState);
   const setFollower = useSetRecoilState(followerState);
+  const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
 
   const params = useParams();
   const writerIndex = Number(params.user_id);
@@ -211,60 +212,62 @@ function SceneStars() {
   useEffect(() => {
     const fetchData = async () => {
       // 게시글 리스트 불러오기
-      await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
-          header: {
-            token: localStorage.getItem("token") ?? "",
-          },
-          params: {
-            page: curPage ?? 0,
-          },
-        })
-        .then((response) => {
-          isAddedStar.clear();
-          response.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
-          setStars(response.data);
-        })
-        .then(async () => {
-          let following = [];
-          let follower = [];
-          // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
-          if (writerIndex !== loginUserId) {
-            await axios
-              .get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
-              .then((response) => {
-                setFollowing(response.data.result);
-                following = response.data.result;
-              })
-              .catch((e) => {
-                console.log(e);
-              });
+      if (!isDeleteAlertOpen) {
+        await axios
+          .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
+            header: {
+              token: localStorage.getItem("token") ?? "",
+            },
+            params: {
+              page: curPage ?? 0,
+            },
+          })
+          .then((response) => {
+            isAddedStar.clear();
+            response.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+            setStars(response.data);
+          })
+          .then(async () => {
+            let following = [];
+            let follower = [];
+            // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
+            if (writerIndex !== loginUserId) {
+              await axios
+                .get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
+                .then((response) => {
+                  setFollowing(response.data.result);
+                  following = response.data.result;
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
 
-            await axios
-              .get(`${process.env.REACT_APP_API_URL}/follow/follower/${writerIndex}`)
-              .then((response) => {
-                setFollower(response.data.result);
-                follower = response.data.result;
-              })
-              .catch((e) => console.log(e));
+              await axios
+                .get(`${process.env.REACT_APP_API_URL}/follow/follower/${writerIndex}`)
+                .then((response) => {
+                  setFollower(response.data.result);
+                  follower = response.data.result;
+                })
+                .catch((e) => console.log(e));
 
-            const followingCheck = following.some((it) => it["memberId"] === loginUserNickname.split("@")[0]);
-            const followerCheck = follower.some((it) => it["memberId"] === loginUserNickname.split("@")[0]);
+              const followingCheck = following.some((it) => it["memberId"] === loginUserNickname.split("@")[0]);
+              const followerCheck = follower.some((it) => it["memberId"] === loginUserNickname.split("@")[0]);
 
-            if (!followingCheck) {
-              if (!followerCheck) {
-                setIsFriend(false);
+              if (!followingCheck) {
+                if (!followerCheck) {
+                  setIsFriend(false);
+                }
               }
             }
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
     };
 
     fetchData();
-  }, [curPage]);
+  }, [curPage, isDeleteAlertOpen]);
 
   return (
     <>
