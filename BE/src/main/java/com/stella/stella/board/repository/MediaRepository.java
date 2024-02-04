@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public interface MediaRepository extends JpaRepository<Media, Long> {
     Optional<List<Media>> findByBoardBoardIndex(Long BoardIndex);
-
     @Modifying
     @Query("delete from Media m where m.board.boardIndex = :boardIndex")
     void deleteAllById(@Param("boardIndex") Long boardIndex);
