@@ -10,10 +10,12 @@ import "./Modal.css";
 
 // type: "radio", "star", "report"
 function Modal(props) {
+  const type = props.type;
+
   return (
     <div className="modal-container">
       <div className="modal" style={{ border: "1px solid black", margin: "5px" }}>
-        {props.type === "radio" ? <RadioContent /> : <StarContent type={props.type} reportInfo={props.reportInfo} starIndex={props.starIndex} userIndex={props.userIndex} />}
+        {type === "radio" ? <RadioContent /> : <StarContent {...props} />}
       </div>
     </div>
   );
@@ -98,34 +100,6 @@ function StarContent(props) {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleRegistReply = async () => {
-    /* 댓글 작성 Req */
-    const data = {
-      boardIndex: starIndex,
-      memberIndex: loginUserIndex,
-      commentContent: replyInputRef.current.value.trim(),
-    };
-    if (data.commentContent === "") {
-      alert("내용을 입력해주세요.");
-      return;
-    }
-
-    await axios
-      .post(`${process.env.REACT_APP_API_URL}/comment/`, data, {
-        header: {
-          token: localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        if (response.data.map.response === "success") {
-          console.log("댓글 등록 성공");
-        } else {
-          console.log("댓글 등록 실패");
-        }
-      })
-      .catch((error) => console.log(error));
   };
 
   const handleBlock = () => {
@@ -217,8 +191,6 @@ function StarContent(props) {
     </>
   );
 }
-
-// const ReplyRegistArea = forwardRef((props, ref) => {
 
 function ReplyRegistArea(props) {
   const inputRef = useRef();
