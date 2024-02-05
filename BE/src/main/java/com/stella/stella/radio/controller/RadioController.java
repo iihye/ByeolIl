@@ -19,7 +19,7 @@ public class RadioController {
 
     private final RadioService radioService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ResultResponseDto> radioAdd(@RequestBody  RadioCreateRequestDto radioCreateRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";

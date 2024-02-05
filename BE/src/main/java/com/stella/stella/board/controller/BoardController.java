@@ -30,7 +30,7 @@ public class BoardController {
     private final ReportService reportService;
 
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ResultResponseDto> boardAdd(@RequestBody BoardCreateRequestDto boardCreateRequestDto) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
@@ -62,7 +62,7 @@ public class BoardController {
 
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<ResultResponseDto> boardModify(@RequestBody BoardUpdateRequestDto boardUpdateRequestDto) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
