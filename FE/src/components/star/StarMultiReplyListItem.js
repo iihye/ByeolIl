@@ -17,7 +17,7 @@ function StarMultiReplyListItem(props) {
       multicommentIndex: reply.multiCommentIndex,
       memberIndex: loginUserIndex,
     };
-    console.log(data);
+
     await axios
       .delete(`${process.env.REACT_APP_API_URL}/multicomment/`, {
         headers: {

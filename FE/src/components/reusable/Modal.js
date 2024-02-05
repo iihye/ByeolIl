@@ -202,16 +202,16 @@ function ReplyRegistArea(props) {
       alert("내용을 입력해주세요.");
       return;
     }
-    console.log(data);
+
     await axios
-      .post(`${process.env.REACT_APP_API_URL}/comment/`, data, {
+      .post(`${process.env.REACT_APP_API_URL}/comment`, data, {
         header: {
           token: localStorage.getItem("token"),
         },
       })
       .then((response) => {
         if (response.data.map.response === "success") {
-          console.log(renewReply);
+          inputRef.current.value = "";
           setRenewReply(!renewReply);
         } else {
           console.log("댓글 등록 실패");
