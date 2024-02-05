@@ -67,7 +67,7 @@ function StarRegist(props) {
       };
 
       try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/`, data, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/board`, data, {
           header: {
             token: localStorage.getItem("token"),
           },
@@ -110,7 +110,7 @@ function StarRegist(props) {
 
       try {
         await axios
-          .put(`${process.env.REACT_APP_API_URL}/board/`, data, {
+          .put(`${process.env.REACT_APP_API_URL}/board`, data, {
             headers: {
               token: localStorage.getItem("token"),
             },
