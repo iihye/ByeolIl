@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 public class MemberUpdateRequestDto {
     private long memberIndex;
-    private String memberNickname, memberEmail;
+    private String memberNickname, memberEmail, memberPass;
     private MemberAlarmStatus memberAlarmStatus;
     private MemberRadioStatus memberRadioStatus;
     private MemberDeleteYN memberDeleteYN;

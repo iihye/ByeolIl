@@ -144,6 +144,7 @@ public class MemberController {
         }
         return ResponseEntity.status(status).body(resultMap);
     }
+
     @GetMapping("/join/naver")
     public ResponseEntity<Map<String, Object>> naverJoin(@RequestParam("code") String code) {
         HttpStatus status = HttpStatus.OK;
@@ -174,6 +175,7 @@ public class MemberController {
         }
         return ResponseEntity.status(status).body(new MyInfoResponseDto(result));
     }
+
     // 아이디 중복 체크: 홈페이지 로그인만 체크 요청이 들어온다고 가정
     @GetMapping("/dup-check/id")
     public ResponseEntity<Map<String, Object>> dupCheckId(@RequestParam("id") String id) {
@@ -240,6 +242,9 @@ public class MemberController {
                 status = HttpStatus.UNAUTHORIZED;
                 throw new IllegalAccessException("잘못된 접근입니다.");
             }
+            //암호화
+            if(memberUpdateRequestDto.getMemberPass()!=null)
+                memberUpdateRequestDto.setMemberPass(UUID.nameUUIDFromBytes(memberUpdateRequestDto.getMemberPass().getBytes()).toString());
             memberService.updateMember(memberUpdateRequestDto);
             resultMap.put("message", "success");
         } catch (Exception e) {
@@ -310,12 +315,12 @@ public class MemberController {
     @GetMapping("/search/list")
     public ResponseEntity<List<MemberSearchResponseDto>> searchMemmberList(HttpServletRequest request) {
         HttpStatus status = HttpStatus.OK;
-        List<MemberSearchResponseDto> responseDtoList=null;
+        List<MemberSearchResponseDto> responseDtoList = null;
         try {
             Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
             List<Member> memberList = memberRepository.findAllExcept(accessMemberIndex);
             responseDtoList = memberList.stream()
-                    .map(m->new MemberSearchResponseDto(m.getMemberIndex(),m.getMemberNickname())).collect(Collectors.toList());
+                    .map(m -> new MemberSearchResponseDto(m.getMemberIndex(), m.getMemberNickname())).collect(Collectors.toList());
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
         }
@@ -323,13 +328,13 @@ public class MemberController {
     }
 
     @PostMapping("/check/pass")
-    public ResponseEntity<Map<String,Object>> searchMemmberList(@RequestBody MemberCheckPassDto memberCheckPassDto, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> searchMemmberList(@RequestBody MemberCheckPassDto memberCheckPassDto, HttpServletRequest request) {
         HttpStatus status = HttpStatus.OK;
         Map<String, Object> resultMap = new HashMap<>();
         try {
             Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
             Member existMember = memberRepository.findByMemberIndexAndMemberPassAndMemberPlatform(accessMemberIndex
-                            ,UUID.nameUUIDFromBytes(memberCheckPassDto.getMemberPass().getBytes()).toString() ,"origin")
+                            , UUID.nameUUIDFromBytes(memberCheckPassDto.getMemberPass().getBytes()).toString(), "origin")
                     .orElseThrow(() -> new Exception("비밀번호가 다릅니다"));
             resultMap.put("message", "success");
         } catch (Exception e) {
