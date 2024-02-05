@@ -14,7 +14,7 @@ function Modal(props) {
 
   return (
     <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
-      <div className="modal ">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
+      <div className="modal bg-modal-bg text-white-sub">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
     </div>
   );
 }
@@ -174,7 +174,7 @@ function StarContent(props) {
           {/* 이미지 영역 */}
           <div style={{ display: "flex" }}>{data && data.boardMedia.map((i, index) => <div key={index}>이미지 {index}</div>)}</div>
           {/* 게시글 내용 */}
-          <div>
+          <div className="text-black-sub">
             {data ? data.boardContent : "로딩중"}
             <button>라디오 송신</button>
           </div>

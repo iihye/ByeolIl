@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+// 프리텐다드
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+// 반짝반짝별
+@font-face {
+  font-family: "Shining_star";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/naverfont_10@1.0/Shining_star.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
