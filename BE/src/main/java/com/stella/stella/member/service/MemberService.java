@@ -29,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -320,7 +321,8 @@ public class MemberService {
                                 , memberFindPassDto.getMemberEmail(), "origin")
                 .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다."));
         String tmpPass = sendEmail(accessMember.getMemberEmail(), "find_pass");
-        accessMember.setMemberPass(tmpPass);
+        //암호화
+        accessMember.setMemberPass(UUID.nameUUIDFromBytes(tmpPass.getBytes()).toString());
     }
 
     public void banMember(long memberIndex) {
