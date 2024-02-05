@@ -22,7 +22,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ResultResponseDto> commendAdd(@RequestBody CommentCreateRequestDto commentCreateRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";
