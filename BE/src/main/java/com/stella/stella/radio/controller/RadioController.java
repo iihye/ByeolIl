@@ -49,6 +49,7 @@ public class RadioController {
             status = HttpStatus.BAD_REQUEST;
             message = e.getMessage();
         }
+        System.out.println(message);
         return ResponseEntity.status(status).body(radioResponseDto);
     }
     @PostMapping("/toss")

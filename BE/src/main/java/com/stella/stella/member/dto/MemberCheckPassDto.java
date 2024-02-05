@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberCheckPassDto {
-    private String memberpass;
+    private String memberPass;
 }

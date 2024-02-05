@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MultcommentDeleteRequestDto {
-    private Long multcommentIndex;
+public class MulticommentDeleteRequestDto {
+    private Long multicommentIndex;
     private Long memberIndex;
 }
