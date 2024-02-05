@@ -13,10 +13,8 @@ function Modal(props) {
   const type = props.type;
 
   return (
-    <div className="modal-container">
-      <div className="modal" style={{ border: "1px solid black", margin: "5px" }}>
-        {type === "radio" ? <RadioContent /> : <StarContent {...props} />}
-      </div>
+    <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
+      <div className="modal ">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
     </div>
   );
 }
