@@ -105,9 +105,15 @@ function MultiReplyInput(props) {
       .catch((error) => console.log(error));
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleMultiReplySubmit();
+    }
+  };
+
   return (
     <div>
-      └ <input ref={input} />
+      └ <input ref={input} onKeyDown={handleKeyDown} />
       <button
         onClick={() => {
           handleMultiReplyQuit();
