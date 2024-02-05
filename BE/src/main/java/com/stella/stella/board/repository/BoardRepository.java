@@ -17,6 +17,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     int countByBoardLocation(Long BoardLocation);
     Page<Board> findByMemberMemberIndexAndBoardDeleteYN(Long MemberIndex, BoardDeleteYN boardDeleteYN, Pageable pageable);
 
-    Page<Board> findByBoardIndexInAndBoardDeleteYN(List<Long> list, BoardDeleteYN boardDeleteYN,Pageable pageable);
+    List<Board> findByMemberMemberIndexAndBoardDeleteYN(Long MemberIndex, BoardDeleteYN boardDeleteYN);
+
+    List<Board> findByBoardIndexInAndBoardDeleteYN(List<Long> list, BoardDeleteYN boardDeleteYN);
 
 }

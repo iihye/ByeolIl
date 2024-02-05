@@ -2,6 +2,8 @@ package com.stella.stella.radio.repository;
 
 import com.stella.stella.radio.entity.Radio;
 
+import java.util.Optional;
+
 public interface RadioCustomRepository {
-    Radio findRadio(Long memberIndex);
+    Optional<Radio> findRadio(Long memberIndex);
 }

@@ -23,31 +23,21 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class HashService {
 
     private final BoardRepository boardRepository;
     private final HashRepository hashRepository;
 
-    public Map<String, Object> searchBoardList(String hashContent, Pageable pageable){
-        Map<String, Object> responseBody = new HashMap<>();
-        List<BoardListResponseDto> list;
-        List<Hash> hashes= hashRepository.findByHashContentContaining(hashContent).orElseThrow(()->new CustomException(CustomExceptionStatus.NO_HASH_TAG));
+    @Transactional
+    public List<BoardListResponseDto> searchBoardList(String hashContent) {
+        List<Hash> hashes = hashRepository.findByHashContentContaining(hashContent).orElseThrow(() -> new CustomException(CustomExceptionStatus.NO_HASH_TAG));
 
-        Page<Board> boards = boardRepository
-                .findByBoardIndexInAndBoardDeleteYN(hashes.stream().map(h->h.getBoard().getBoardIndex()).toList(), BoardDeleteYN.N,pageable);
+        List<Board> boards = boardRepository
+                .findByBoardIndexInAndBoardDeleteYN(hashes.stream().map(h -> h.getBoard().getBoardIndex()).toList(), BoardDeleteYN.N);
 
 
-        responseBody.put("totalPage", boards.getTotalPages());
-        //총 페이지 넘버
-        responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
-        //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
-        responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
-        //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
-        list = BoardListResponseDto.getSearchList(boards.getContent());
-        responseBody.put("BoardListResponseDtoList", list);
-        return responseBody;
+        return BoardListResponseDto.getSearchList(boards);
 
     }
 }
