@@ -25,9 +25,6 @@ export default function MainPage() {
                     <UserSpace/>
                     <Outlet/>
                 </div>
-                <div>
-                    <Radio/>
-                </div>
                 <nav className="sideContainer">
                     <Sidebar/>  
                 </nav> 

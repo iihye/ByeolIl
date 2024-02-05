@@ -39,14 +39,14 @@ function App() {
                     {/* <Route path="tagSearch" element={<StarTagSearch />} /> */}
                     <Route path="Settings" element={<Settings />}></Route>
                     <Route path="*" element={<ErrorPage />} />
+                    <Route path="radio" element={<Radio/>}/>
                 </Route>
-                <Route path="/radio" element={<Radio/>}/>
             </Routes>   
 
             <div>
                 테스트 버튼들 ---------------------------------------------
             </div>
-            <Link to="/radio">
+            <Link to={`/space/${localStorage.getItem('memberIndex')}/radio`}>
                 <button>뤠디오에서나오면~</button>
             </Link>
             <Link to="/space/1">

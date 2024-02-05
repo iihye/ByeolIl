@@ -10,7 +10,8 @@ import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom"
 
 // type: "radio", "star", "report"
 function Modal(props) {
-  return <div style={{ border: "1px solid black", margin: "5px" }}>{props.type === "radio" ? <RadioContent /> : <StarContent type={props.type} reportInfo={props.reportInfo} starIndex={props.starIndex} userIndex={props.userIndex}/>}</div>;
+  return <div style={{ border: "1px solid black", margin: "5px" }}>{props.type === "radio" ? <RadioContent /> 
+  : <StarContent type={props.type} reportInfo={props.reportInfo} starIndex={props.starIndex} userIndex={props.userIndex}/>}</div>;
 }
 
 function StarContent({ type,  reportInfo, starIndex, userIndex }) {
@@ -19,7 +20,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   
   const [data, setData] = useState(null);
-  const [likeData, setLikeData] = useState([]);
+  const [likeData, setLikeData] = useState([]); 
 
   const memberIndex = Number(localStorage.getItem('memberIndex'));
 
@@ -227,49 +228,51 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
 function RadioContent() {
     const [rdata, setRdata] = useState(null);
 
-    const test = "테스트 텍스트 입니다.";
+    const testText = "테스트용 텍스트 입니다.허허허"
+    const navigate = useNavigate();
 
-    useEffect(() => {
-      // 최초1회 데이터를 수신한다. 
-      axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`,
-      {
+    const fetchData = async () => {
+      await axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`, {
         headers: {
           token: localStorage.getItem('token') ?? "",
         },
       })
-      .then((response) => {
-        console.log(response.data);
-        setRdata(response.data);
-      })
-
+        .then((response) => {
+          console.log(response.data);
+          setRdata(response.data);
+        }).catch((e) => { console.log(e) })
+    }
+    useEffect(() => {
+      // 최초1회 데이터를 수신한다. 
+      fetchData();
       // TTS 음성수신 
-      // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=${test}`,{
-      //   headers: {
-      //     token: localStorage.getItem('token') ?? "",
-      //   },
-      // })
-      // .then((response) => {console.log(response.data);
-      // })
+      // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=${testText}`,{
+      //       headers: {
+      //         token: localStorage.getItem('token') ?? "",
+      //       },
+      //     }).then((response) => {console.log(response.data);})
     }, [rdata]);
+    function PlayTTS() {
 
+    }
     function handleRepost() {
       axios.post()
     }
 
     return (
-        <div>
+          <div>
             <div>
                 {/*라디오 모달 상단 헤더 */}
-                {rdata ? <div>{rdata.boardInputDate.split('-')[0]}년 {rdata.boardInputDate.split('-')[1]}월 {rdata.boardInputDate.split('-')[2]}일</div> : '로딩중'}
+                {rdata ? <div>20{rdata.boardInputDate.split('.')[0]}년 {rdata.boardInputDate.split('.')[1]}월 {rdata.boardInputDate.split('.')[2]}일</div> : '로딩중'}
                 <button>REPORT</button>
-                <button>CLOSE</button>
+                <button onClick={()=>{navigate(-1);}}>CLOSE</button>
             </div>
             <div>
                 {/*라디오 내용 */}
                 <div>{rdata ? rdata.boardContent : '로딩중'}</div>
             </div>
             <div>
-                <button>PLAY</button>
+                <button onClick={() => {PlayTTS()}}>PLAY</button>
                 <button onClick={() => {handleRepost()}}>재송신하기</button>
             </div>
         </div>
