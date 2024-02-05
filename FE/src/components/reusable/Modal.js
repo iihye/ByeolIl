@@ -37,7 +37,7 @@ function StarContent(props) {
   const type = props.type;
   const reportInfo = props.reportInfo;
   const starIndex = props.starIndex;
-  const writerIndex = props.userindex;
+  const writerIndex = props.userIndex;
   const location = props.location;
 
   // 글 조회 / 수정시 내용 갱신
