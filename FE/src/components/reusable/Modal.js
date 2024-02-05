@@ -76,6 +76,12 @@ function StarContent(props) {
         .catch((error) => console.log(error));
     };
     fetchData();
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
   }, []);
 
   const handleDelete = () => {
@@ -149,6 +155,14 @@ function StarContent(props) {
     setIsStarDetailOpen(false);
     // setReportModal('');
   };
+
+  function handleClick(e) {
+    e.stopPropagation();
+    const check = [...e.target.classList].some((it) => it === "modal-container");
+    if (check) {
+      handleClose();
+    }
+  }
 
   /* 게시글 작성자 체크*/
   const isWriter = () => {
