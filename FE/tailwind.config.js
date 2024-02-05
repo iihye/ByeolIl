@@ -24,6 +24,8 @@ module.exports = {
                 'btn-bg-hover': 'rgba(122, 151, 194, 1)',
                 'white-sub': 'rgba(221, 221, 221, 1)',
                 'black-sub': 'rgba(51, 51, 51, 1)',
+                'kakao-label': 'rgba(0,0,0,0.85)',
+                kakao: 'rgba(254,229,0)',
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',
@@ -65,12 +67,37 @@ module.exports = {
             backgroundColor: {
                 'btn-bg': 'rgba(97, 121, 156, 1)',
                 'btn-bg-hover': 'rgba(122, 151, 194, 1)',
+                'modal-bg': 'rgba(28, 32, 42, 0.8)',
+                'alert-bg': 'rgba(28, 32, 42, 0.95)',
+                'modal-line': 'rgba(121,121,155,1)',
+                'btn-bg': 'rgba(97, 121, 156, 1)',
+                'btn-bg-hover': 'rgba(122, 151, 194, 1)',
+                'white-sub': 'rgba(221, 221, 221, 1)',
+                'black-sub': 'rgba(51, 51, 51, 1)',
             },
+            textColor: {
+                'white-sub': 'rgba(221, 221, 221, 1)',
+                'black-sub': 'rgba(51, 51, 51, 1)',
+            },
+            borderColor: {
+                'white-sub': 'rgba(221, 221, 221, 1)',
+            },
+            ringColor: {
+                'white-sub': 'rgba(221, 221, 221, 1)',
+            },
+
             borderRadius: {
                 lg: 'var(--radius)',
                 md: 'calc(var(--radius) - 2px)',
                 sm: 'calc(var(--radius) - 4px)',
-                custom: '0.6rem',
+                button: '0.75rem',
+                input: '0.6rem',
+                component: '1.25rem',
+            },
+            height: {
+                input: '1.875rem',
+                button: '2.375rem',
+                login: '31.625rem',
             },
             keyframes: {
                 'accordion-down': {

@@ -45,9 +45,6 @@ function App() {
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
             </Routes>
-            <Link to="/space/1">
-                <button>1번 유저의 페이지로 이동</button>
-            </Link>
         </div>
     );
 }
