@@ -47,7 +47,11 @@ function Settings() {
             <div>
                 {options.map((option) => {
                     return (
-                        <button onClick={handleOption} value={option.value}>
+                        <button
+                            className="rounded-custom"
+                            onClick={handleOption}
+                            value={option.value}
+                        >
                             {option.name}
                         </button>
                     );
