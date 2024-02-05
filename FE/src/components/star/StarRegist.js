@@ -46,11 +46,16 @@ function StarRegist(props) {
   }, []);
 
   const handleRegist = async () => {
+    if (contentRef.current.value.trim() === "") {
+      alert("공백 입력했어요");
+      return;
+    }
+
     const files = fileRef.current.files;
-    const filesArr = [...files];
 
     const formData = new FormData();
 
+    // 파일 담기
     for (let i = 0; i < files.length; i++) {
       formData.append("files", files[i]);
     }
