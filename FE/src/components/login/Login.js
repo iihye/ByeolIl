@@ -2,13 +2,19 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import base64 from 'base-64';
-import Sidebar from 'components/Sidebar';
-import FindID from './FindID';
-import FindPW from './FindPW';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-// + 회원가입 navigate
-
-const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_URI}&response_type=code&prompt=login`;
+const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_TEMP_URI}&response_type=code&prompt=login`;
 
 function Login() {
     const [idValue, setIdValue] = useState('');
@@ -128,7 +134,7 @@ function Login() {
         <div>
             <div className="Login">
                 <div className="inputForm">
-                    <input
+                    <Input
                         type="text"
                         name="ID"
                         ref={idRef}
@@ -139,7 +145,7 @@ function Login() {
                     {errorMessage && (
                         <p className="idErrorMessage">{errorMessage}</p>
                     )}
-                    <input
+                    <Input
                         type="password"
                         name="PW"
                         value={passwordValue}

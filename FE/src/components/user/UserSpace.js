@@ -9,7 +9,7 @@ import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { useNavigate, useParams } from "react-router-dom";
 import StarRegist from "components/star/StarRegist";
 import StarDetail from "components/star/StarDetail";
-import { isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from "components/atom";
+import { isDeleteAlertOpenState, isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from "components/atom";
 import { position } from "../../data";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
@@ -34,9 +34,19 @@ const starsState = atom({
 });
 
 // 공간 주인과 접속 유저의 친구 여부
-const isFollowingState = atom({
-  key: "isFollowing",
-  default: false,
+const isFriendState = atom({
+  key: "isFriend",
+  default: true,
+});
+
+const followingState = atom({
+  key: "following",
+  default: [],
+});
+
+const followerState = atom({
+  key: "follower",
+  default: [],
 });
 
 ///////////////////////////////// ↑ atoms
@@ -89,11 +99,20 @@ function Sphere(props) {
 function Star(props) {
   const params = useParams();
   const mesh = useRef(null);
+
   const stars = useRecoilValue(starsState);
 
+  const isStarModifyOpen = useRecoilState(isStarModifyOpenState);
+  const isFriend = useRecoilValue(isFriendState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
+  const writerIndex = Number(params["user_id"]);
+  const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
+  const colors = {
+    true: "yellow",
+    false: "red",
+  };
   // curStarState: 해당 별 객체 정보를 모두 담고 있다.
   const [curStarState, setCurStarState] = useState(null);
 
@@ -101,30 +120,29 @@ function Star(props) {
     setCurStarState(isAddedStar.get(props.location));
   }, [stars]);
 
-  const colors = {
-    OPEN: "yellow",
-    PARTOPEN: "red",
-  };
-
   const handleClick = (locationNum) => {
-    console.log(locationNum);
-    const starIndex = isAddedStar.get(locationNum);
+    const starIndex = isAddedStar.get(locationNum) ? isAddedStar.get(locationNum).boardIndex : null;
     if (starIndex) {
-      // 별 상세보기 모달 띄우기
-      setIsStarDetailOpen(starIndex);
+      // 별이 나에게 공개된 별일 때
+      if (isFriend) {
+        // 별 상세 정보 띄우기
+        setIsStarDetailOpen([starIndex, writerIndex]);
+      } else {
+        // 공개된 별이 아닐 때
+        alert("비공개 별입니다");
+      }
     } else {
       // 별 등록 모달 띄우기
-      if (params["user_id"] === localStorage.getItem("memberIndex")) {
-        setIsStarRegistOpen(locationNum);
+      if (writerIndex === loginUserIndex) {
+        setIsStarRegistOpen([locationNum, writerIndex]);
       }
     }
   };
-
   return (
     <>
       <mesh ref={mesh} position={props.position}>
         <sphereGeometry args={props.size} />
-        <meshStandardMaterial color={curStarState ? colors[curStarState.boardAccess] : "grey"} />
+        <meshStandardMaterial color={curStarState ? colors[isFriend] : "grey"} />
       </mesh>
       <StarSurround position={props.position} location={props.location} handleClick={handleClick} />
     </>
@@ -186,56 +204,79 @@ function GroupStar(props) {
 }
 
 function SceneStars() {
-  const setStars = useSetRecoilState(starsState);
-  const setIsFollowing = useSetRecoilState(isFollowingState);
   const curPage = useRecoilValue(curPageState);
+  const setStars = useSetRecoilState(starsState);
+  const setIsFriend = useSetRecoilState(isFriendState);
+  const setFollowing = useSetRecoilState(followingState);
+  const setFollower = useSetRecoilState(followerState);
+  const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
 
   const params = useParams();
   const writerIndex = Number(params.user_id);
   const loginUserId = Number(localStorage.getItem("memberIndex"));
-  const loginUserNikname = localStorage.getItem("nickname");
+  const loginUserNickname = localStorage.getItem("nickname");
 
   useEffect(() => {
     const fetchData = async () => {
       // 게시글 리스트 불러오기
-      await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
-          header: {
-            token: localStorage.getItem("token") ?? "",
-          },
-          params: {
-            page: curPage ?? 0,
-          },
-        })
-        .then((response) => {
-          isAddedStar.clear();
-          response.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star.boardIndex));
-          setStars(response.data);
-        })
-        .then(async () => {
-          // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
-          if (writerIndex !== loginUserId) {
-            await axios
-              .get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
-              .then((response) => {
-                console.log(response.data);
-                const result = response.data.result.some((it) => it === loginUserNikname);
-                if (!result) {
-                  setIsFollowing(false);
+      if (!isDeleteAlertOpen) {
+        await axios
+          .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
+            header: {
+              token: localStorage.getItem("token") ?? "",
+            },
+            params: {
+              page: curPage ?? 0,
+            },
+          })
+          .then((response) => {
+            isAddedStar.clear();
+            response.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+            setStars(response.data);
+          })
+          .then(async () => {
+            let following = [];
+            let follower = [];
+
+            // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
+            if (writerIndex !== loginUserId) {
+              console.log(writerIndex, loginUserId);
+              await axios
+                .get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
+                .then((response) => {
+                  setFollowing(response.data.result);
+                  following = response.data.result;
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
+
+              await axios
+                .get(`${process.env.REACT_APP_API_URL}/follow/follower/${writerIndex}`)
+                .then((response) => {
+                  setFollower(response.data.result);
+                  follower = response.data.result;
+                })
+                .catch((e) => console.log(e));
+
+              const followingCheck = following.some((it) => it["memberId"] === loginUserNickname.split("@")[0]);
+              const followerCheck = follower.some((it) => it["memberId"] === loginUserNickname.split("@")[0]);
+
+              if (!followingCheck) {
+                if (!followerCheck) {
+                  setIsFriend(false);
                 }
-                console.log(result);
-              })
-              .catch((e) => {
-                console.log(e);
-              });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+              }
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
     };
+
     fetchData();
-  }, [curPage]);
+  }, [curPage, isDeleteAlertOpen]);
 
   return (
     <>
@@ -247,7 +288,6 @@ function SceneStars() {
 }
 
 function SceneLights() {
-  console.log("SCENE-LIGHTS MOUNTED");
   return (
     <>
       {/* 광원 */}
@@ -261,8 +301,6 @@ function SceneLights() {
 }
 
 function SceneEnvironment() {
-  // const texture = useLoader(TextureLoader, "texture/bakedUniverse.png");
-
   return (
     <>
       {/* 우주 배경 */}
@@ -273,24 +311,6 @@ function SceneEnvironment() {
       <Sphere size={[2, 48, 48, 0, Math.PI * 2]} position={[0, -2.2, 0]} color={"orange"} />
     </>
   );
-}
-
-function StarRegistArea() {
-  const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
-  const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-
-  return (
-    <div>
-      {isStarRegistOpen !== -1 && <StarRegist type={"regist"} location={isStarRegistOpen} />}
-      {isStarModifyOpen !== -1 && <StarRegist type={"modify"} preBoard={isStarModifyOpen} />}
-    </div>
-  );
-}
-
-function StarDetailArea() {
-  const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
-
-  return <div>{isStarDetailOpen.length !== 0 && <StarDetail starIndex={isStarDetailOpen[0]} userIndex={isStarDetailOpen[1]} />}</div>;
 }
 
 function UserSpace() {
@@ -386,7 +406,7 @@ function UserSpace() {
           <SceneStars />
           <SceneLights />
           <SceneEnvironment />
-          <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
+          <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={false} />
           <PerspectiveCamera makeDefault position={[-0.01, 0, 0.1]} fov={60} zoom={1} aspect={window.innerWidth / window.innerHeight} />
         </Canvas>
       </div>
@@ -396,11 +416,9 @@ function UserSpace() {
           {userId !== loginIndex && <button onClick={() => handleFollow(followState)}>{followState}</button>}
         </>
       )}
-      <StarRegistArea />
-      <StarDetailArea />
     </div>
   );
 }
 
-export { isAddedStar, isStarRegistOpenState, isStarDetailOpenState, starsState, curPageState };
+export { isAddedStar, starsState, curPageState };
 export default UserSpace;
