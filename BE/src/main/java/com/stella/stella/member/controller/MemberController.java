@@ -15,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,6 +35,8 @@ public class MemberController {
         HttpStatus status = HttpStatus.OK;
         String accessToken = "";
         try {
+            //비밀번호 암호화
+            memberLoginRequestDto.setMemberPass(UUID.nameUUIDFromBytes(memberLoginRequestDto.getMemberPass().getBytes()).toString());
             accessToken = memberService.login(memberLoginRequestDto.getMemberId(),
                     memberLoginRequestDto.getMemberPass(), memberLoginRequestDto.getMemberPlatform());
             resultMap.put("message", "success");
@@ -106,6 +105,8 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.CREATED;
         try {
+            //비밀번호 대응을 위한 암호화
+            memberJoinDto.setMemberPass(UUID.nameUUIDFromBytes(memberJoinDto.getMemberPass().getBytes()).toString());
             memberService.join(memberJoinDto);
             resultMap.put("message", "success");
         } catch (Exception e) {
@@ -327,9 +328,11 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
-
+            Member existMember = memberRepository.findByMemberIndexAndMemberPassAndMemberPlatform(accessMemberIndex
+                            ,UUID.nameUUIDFromBytes(memberCheckPassDto.getMemberPass().getBytes()).toString() ,"origin")
+                    .orElseThrow(() -> new Exception("비밀번호가 다릅니다"));
+            resultMap.put("message", "success");
         } catch (Exception e) {
-
             status = HttpStatus.BAD_REQUEST;
         }
         return ResponseEntity.status(status).body(resultMap);
