@@ -28,7 +28,7 @@ function StarReplyListItem(props) {
     };
 
     await axios
-      .delete(`${process.env.REACT_APP_API_URL}/comment/`, {
+      .delete(`${process.env.REACT_APP_API_URL}/comment`, {
         header: {
           token: localStorage.getItem("token"),
         },
@@ -89,7 +89,7 @@ function MultiReplyInput(props) {
     };
 
     await axios
-      .post(`${process.env.REACT_APP_API_URL}/multicomment/`, data, {
+      .post(`${process.env.REACT_APP_API_URL}/multicomment`, data, {
         headers: {
           token: localStorage.getItem("token"),
         },
