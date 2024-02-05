@@ -1,5 +1,6 @@
 package com.stella.stella.radio.repository;
 
+import com.stella.stella.board.entity.BoardDeleteYN;
 import com.stella.stella.radio.entity.Radio;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -16,7 +17,7 @@ public class RadioCustomRepositoryImpl implements RadioCustomRepository{
             Radio radio = entityManager
                     .createQuery("select r from Radio r WHERE r.toMember.memberIndex=:memberIndex and r.board.boardDeleteYN = :boardDeleteYN ORDER BY r.board.boardInputDate", Radio.class)
                     .setParameter("memberIndex", memberIndex)
-                    .setParameter("boardDeleteYN", "N")
+                    .setParameter("boardDeleteYN", BoardDeleteYN.N)
                     .setMaxResults(1)
                     .getSingleResult();
             return Optional.ofNullable(radio);

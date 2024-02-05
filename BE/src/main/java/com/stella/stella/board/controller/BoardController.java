@@ -210,8 +210,5 @@ public class BoardController {
         return ResponseEntity.status(status).body(list);
     }
 
-    @Scheduled(fixedDelay = 1000)
-    public void run(){
-        System.out.println("테스트");
-    }
+
 }
