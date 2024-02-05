@@ -171,8 +171,7 @@ function StarContent(props) {
           <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div>
         </div>
         <div className="star-content-content">
-          {/* 이미지 영역 */}
-          <div style={{ display: "flex" }}>{data && data.boardMedia.map((i, index) => <div key={index}>이미지 {index}</div>)}</div>
+          <MediaArea data={data} />
           {/* 게시글 내용 */}
           <div>
             {data ? data.boardContent : "로딩중"}
@@ -223,6 +222,13 @@ function StarContent(props) {
       </div>
     </>
   );
+}
+
+{
+  /* <div style={{ display: "flex" }}>{data && data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div> */
+}
+function MediaArea(props) {
+  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
 }
 
 function ReplyRegistArea(props) {

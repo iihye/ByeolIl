@@ -42,9 +42,9 @@ function StarRegist(props) {
   useEffect(() => {
     if (type === "modify") {
       contentRef.current.value = preBoard.boardContent;
+      console.log(preBoard);
     }
   }, []);
-
   const handleRegist = async () => {
     const files = fileRef.current.files;
     const filesArr = [...files];
