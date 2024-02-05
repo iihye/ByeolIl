@@ -6,6 +6,7 @@ import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.board.repository.HashRepository;
 import com.stella.stella.board.repository.HeartRepository;
 import com.stella.stella.board.repository.MediaRepository;
+import com.stella.stella.common.S3.S3Service;
 import com.stella.stella.common.exception.CustomException;
 import com.stella.stella.common.exception.CustomExceptionStatus;
 import com.stella.stella.member.entity.Member;
@@ -16,7 +17,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -31,9 +34,10 @@ public class BoardService {
     private final MediaRepository mediaRepository;
     private final HeartRepository heartRepository;
     private final HashRepository hashRepository;
+    private final S3Service s3Service;
 
     @Transactional
-    public void addBoard(BoardCreateRequestDto dto) {
+    public void addBoard(BoardCreateRequestDto dto, MultipartFile[] files) throws IOException {
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
         Board board = Board.builder()
                 .boardInputDate(dto.getBoardInputDate())
@@ -44,9 +48,10 @@ public class BoardService {
         //dto에서 받은 memberid로 member를 찾아서 board를 만듦
 
         boardRepository.save(board);
+        log.info("보드 성공");
         List<String> hashes = dto.getHashContent();
-        if (hashes != null && !hashes.isEmpty()) {
-            for (String s : hashes) {
+        if(hashes != null && !hashes.isEmpty()){
+            for(String s: hashes){
                 Hash hash = Hash.builder()
                         .hashContent(s)
                         .board(board)
@@ -54,20 +59,17 @@ public class BoardService {
                 hashRepository.save(hash);
             }
         }
-
-
-        List<String> medias = dto.getMediaContent();
-        //dto에서 받은 media 경로 정보를 확인하고 media 테이블에 저장
-        if (medias != null && !medias.isEmpty()) {
-            for (String s : medias) {
+        log.info("해시 성공");
+        if (files != null)
+            for (MultipartFile file : files) {
+                String fileUrl = s3Service.saveFile(file);
                 Media media = Media.builder()
-                        .mediaLocation(s)
+                        .mediaLocation(fileUrl)
                         .board(board)
                         .build();
-
                 mediaRepository.save(media);
             }
-        }
+        log.info("파일 성공");
         //List<String> 형태로 미디어 파일의 경로를 받아서 저장
     }
 
