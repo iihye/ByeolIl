@@ -227,9 +227,8 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
 
 function RadioContent() {
     const [rdata, setRdata] = useState(null);
-
-    const testText = "테스트용 텍스트 입니다.허허허"
     const navigate = useNavigate();
+    //테스트용
 
     const fetchData = async () => {
       await axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`, {
@@ -242,22 +241,32 @@ function RadioContent() {
           setRdata(response.data);
         }).catch((e) => { console.log(e) })
     }
-    useEffect(() => {
-      // 최초1회 데이터를 수신한다. 
-      fetchData();
-      // TTS 음성수신 
-      // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=${testText}`,{
-      //       headers: {
-      //         token: localStorage.getItem('token') ?? "",
-      //       },
-      //     }).then((response) => {console.log(response.data);})
-    }, [rdata]);
+    // useEffect(() => {
+    //   // 최초1회 데이터를 수신한다. 
+    //   // fetchData();
+
+
+    //   // TTS 음성수신 
+    //   // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=${testText}`,{
+    //   //       headers: {
+    //   //         token: localStorage.getItem('token') ?? "",
+    //   //       },
+    //   //     }).then((response) => {console.log(response.data);})
+    // }, [rdata]);
     function handlePlay() {
 
     }
     function handleRepost() {
-      axios.post()
+      axios.post(`${process.env.REACT_APP_API_URL}/radio/toss`,{
+        "memberIndex": rdata.fromMemberIndex,
+        "boardIndex": rdata.boardIndex,
+      },{
+        headers: {
+          token: localStorage.getItem('token') ?? "",
+        },
+      })
     }
+
 
     return (
           <div>
