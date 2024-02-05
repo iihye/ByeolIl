@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { isDeleteAlertOpenState, isReportAlertOpenState } from "components/atom";
+import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState } from "components/atom";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
+import "./Alert.css";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
@@ -9,7 +10,7 @@ function Alert(props) {
     block: <Block />,
     delete: <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />,
     PWCheck: <InputAlert type={props.type} />,
-    report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex}/>,
+    report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex} />,
   };
 
   return (
@@ -21,11 +22,9 @@ function Alert(props) {
 
 // Input 요소를 가진 alert
 function InputAlert(props) {
-  
   const input = useRef(null);
-  
-  const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
 
+  const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
 
   useEffect(() => {
     // Enter 키 입력으로 input 내용 처리하기
@@ -57,11 +56,10 @@ function InputAlert(props) {
     console.log(reportData);
 
     await axios
-      .post(`${process.env.REACT_APP_API_URL}/board/report`, reportData, 
-      {
+      .post(`${process.env.REACT_APP_API_URL}/board/report`, reportData, {
         headers: {
-          token: localStorage.getItem('token'),
-        }
+          token: localStorage.getItem("token"),
+        },
       })
       .then((response) => {
         console.log(response.data);
@@ -74,13 +72,12 @@ function InputAlert(props) {
 
   const handlePWChange = (inputData) => {
     /* 1. 비밀번호 일치하는지 체크 */
-      /* 2. - 일치할 경우) 해당 모달 내리고 개인정보 수정 모달 띄우기 */
-      /* 3. - 일치하지 않을 경우) '비밀번호가 일치하지 않습니다.' 띄우기 */
-  }
+    /* 2. - 일치할 경우) 해당 모달 내리고 개인정보 수정 모달 띄우기 */
+    /* 3. - 일치하지 않을 경우) '비밀번호가 일치하지 않습니다.' 띄우기 */
+  };
 
   // 비밀번호 입력 / 신고 요청
   const handleSubmit = () => {
-
     // Input 공백 체크
     const emptyCheck = (input) => {
       return input.trim();
@@ -99,10 +96,10 @@ function InputAlert(props) {
       handlePWChange(inputData);
     }
   };
-  
+
   const handleClose = () => {
     setIsReportAlertOpen(false);
-  }
+  };
 
   return (
     <>
@@ -111,33 +108,53 @@ function InputAlert(props) {
         <input ref={input} />
       </div>
       <div>
-        <button onClick={() => {handleSubmit()}}>{buttonValue[props.type]}</button>
-        <button onClick={() => {handleClose()}}>취소</button>
+        <button
+          onClick={() => {
+            handleSubmit();
+          }}
+        >
+          {buttonValue[props.type]}
+        </button>
+        <button
+          onClick={() => {
+            handleClose();
+          }}
+        >
+          취소
+        </button>
       </div>
     </>
   );
 }
 
 function Delete(props) {
-
   const setIsDeleteAlertOpen = useSetRecoilState(isDeleteAlertOpenState);
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
 
   const handleDelete = async () => {
     const data = {
       boardIndex: props.boardIndex,
-      userIndex: props.userIndex,
+      memberIndex: props.userIndex,
     };
 
-    await axios.put(`${process.env.REACT_APP_API_URL}/board`, )
-    /* 게시글 삭제  요청 보내기 */
-    /* - 게시글 정상 삭제시) 해당 alert 닫기 -> 게시글 modal 닫기*/
-    /* - 게시글 삭제 실패시) 오류 모달 띄우기? */
+    await axios
+      .put(`${process.env.REACT_APP_API_URL}/board/delete`, data, {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        if (response.data.map.response === "success") {
+          setIsDeleteAlertOpen(false);
+          setIsStarDetailOpen(false);
+        }
+      });
   };
 
   const handleClose = () => {
     setIsDeleteAlertOpen(false);
-  }
-  
+  };
+
   return (
     <>
       <div>
@@ -146,15 +163,26 @@ function Delete(props) {
         정말로.. 삭제할까요?
       </div>
       <div>
-        <button onClick={() => {handleDelete()}}>삭제</button>
-        <button onClick={() => {handleClose()}}>취소</button>
+        <button
+          onClick={() => {
+            handleDelete();
+          }}
+        >
+          삭제
+        </button>
+        <button
+          onClick={() => {
+            handleClose();
+          }}
+        >
+          취소
+        </button>
       </div>
     </>
   );
 }
 
 function Block() {
-
   // userData -> 로그인 직후에 유저 정보 받아오기
   // memberRole -> Ban일 경우 차단된 사용자
   // memberBanDate -> 차단 일자
@@ -178,12 +206,18 @@ function Block() {
     setDueDate(new Date(date.setDate(date.getDate() + 7)));
   }, []);
 
-  const handleClose = () => {}
+  const handleClose = () => {};
 
   return (
     <>
       <div>
-        <button onClick={() => {handleClose()}}>CLOSE</button>
+        <button
+          onClick={() => {
+            handleClose();
+          }}
+        >
+          CLOSE
+        </button>
       </div>
       <div>
         차단된 사용자입니다.
