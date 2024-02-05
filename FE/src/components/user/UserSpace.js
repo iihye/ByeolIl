@@ -123,8 +123,14 @@ function Star(props) {
   const handleClick = (locationNum) => {
     const starIndex = isAddedStar.get(locationNum) ? isAddedStar.get(locationNum).boardIndex : null;
     if (starIndex) {
-      // 별 상세보기 모달 띄우기
-      setIsStarDetailOpen([starIndex, writerIndex]);
+      // 별이 나에게 공개된 별일 때
+      if (isFriend) {
+        // 별 상세 정보 띄우기
+        setIsStarDetailOpen([starIndex, writerIndex]);
+      } else {
+        // 공개된 별이 아닐 때
+        alert("비공개 별입니다");
+      }
     } else {
       // 별 등록 모달 띄우기
       if (writerIndex === loginUserIndex) {
@@ -231,8 +237,10 @@ function SceneStars() {
           .then(async () => {
             let following = [];
             let follower = [];
+
             // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
             if (writerIndex !== loginUserId) {
+              console.log(writerIndex, loginUserId);
               await axios
                 .get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
                 .then((response) => {
