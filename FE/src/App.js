@@ -20,9 +20,6 @@ import Regist from "components/login/Regist";
 // StarTagSearch, Settings 추가
 import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-import ModalSpace, { StarDetailArea, StarRegistArea } from "components/ModalSpace";
-import axios from "axios";
-import { useEffect, useRef } from "react";
 
 function App() {
   return (
@@ -30,7 +27,7 @@ function App() {
       <Header />
       <Routes>
         {/* url이 3000이 아니라서 클라이언트쪽에서 특정 페이지로 이동하게 만들지 못함 */}
-        <Route path="/member/join/kakao" element={<KakaoLogin />}></Route>
+        <Route path="/" element={<KakaoLogin />}></Route>
         <Route exact path="/landing/login" element={<Login />}></Route>
         <Route path="/findId" element={<FindID />} />
         <Route path="/findPw" element={<FindPW />} />
@@ -51,7 +48,6 @@ function App() {
       <Link to="/space/1">
         <button>1번 유저의 페이지로 이동</button>
       </Link>
-      <ModalSpace />
     </div>
   );
 }

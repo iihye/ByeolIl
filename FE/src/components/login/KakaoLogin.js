@@ -10,6 +10,7 @@ function KakaoLogin() {
     console.log(code);
 
     const getKakaoToken = () => {
+        console.log('들어왔따');
         // fetch(`https://kauth.kakao.com/oauth/token`, {
         //     method: 'POST',
         //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -26,7 +27,7 @@ function KakaoLogin() {
         //         }
         //     });
         axios
-            .get(`${process.env.REACT_APP_API_URL}/member/login/kakao/${code}`)
+            .get(`${process.env.REACT_APP_API_URL}/member/join/kakao/${code}`)
             .then((response) => console.log(response))
             .catch((error) => console.log(error));
     };
@@ -36,13 +37,6 @@ function KakaoLogin() {
 
         getKakaoToken();
     }, []);
-
-    return (
-        <div>
-            <p>웅냥냐</p>
-            {code}
-        </div>
-    );
 }
 
 export default KakaoLogin;
