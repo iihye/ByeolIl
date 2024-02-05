@@ -1,7 +1,7 @@
 package com.stella.stella.comment.controller;
 
 import com.stella.stella.board.dto.ResultResponseDto;
-import com.stella.stella.comment.dto.MultcommentDeleteRequestDto;
+import com.stella.stella.comment.dto.MulticommentDeleteRequestDto;
 import com.stella.stella.comment.dto.MulticommentCreateRequestDto;
 import com.stella.stella.comment.service.MulticommentService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class MulticommentController {
 
     private final MulticommentService multicommentService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ResultResponseDto> MultiCommentAdd(@RequestBody MulticommentCreateRequestDto multicommentCreateRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";
@@ -33,7 +33,7 @@ public class MulticommentController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<ResultResponseDto> MultiCommentRemove(@RequestBody MultcommentDeleteRequestDto multcommentDeleteRequestDto){
+    public ResponseEntity<ResultResponseDto> MultiCommentRemove(@RequestBody MulticommentDeleteRequestDto multcommentDeleteRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try{

@@ -35,7 +35,7 @@ public class CommentController {
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<ResultResponseDto> commentRemove(@RequestBody CommentDeleteRequestDto commentDeleteRequestDto){
         HttpStatus status = HttpStatus.OK;
         String message = "success";

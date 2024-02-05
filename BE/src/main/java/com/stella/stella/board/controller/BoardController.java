@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -205,5 +206,10 @@ public class BoardController {
         }
 
         return ResponseEntity.status(status).body(list);
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    public void run(){
+        System.out.println("테스트");
     }
 }
