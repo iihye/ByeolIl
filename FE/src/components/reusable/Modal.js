@@ -252,7 +252,7 @@ function RadioContent() {
       //       },
       //     }).then((response) => {console.log(response.data);})
     }, [rdata]);
-    function PlayTTS() {
+    function handlePlay() {
 
     }
     function handleRepost() {
@@ -272,7 +272,7 @@ function RadioContent() {
                 <div>{rdata ? rdata.boardContent : '로딩중'}</div>
             </div>
             <div>
-                <button onClick={() => {PlayTTS()}}>PLAY</button>
+                <button onClick={() => {handlePlay()}}>PLAY</button>
                 <button onClick={() => {handleRepost()}}>재송신하기</button>
             </div>
         </div>
