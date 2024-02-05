@@ -30,7 +30,6 @@ public class BoardController {
     private final HeartService heartService;
     private final ReportService reportService;
 
-
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ResultResponseDto> boardAdd(@RequestPart(value = "requestDto") BoardCreateRequestDto boardCreateRequestDto,
                                                       @RequestPart(value = "files",required = false) MultipartFile[] files) {
