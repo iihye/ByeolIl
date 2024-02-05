@@ -47,12 +47,12 @@ public class BoardController {
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
 
-    @GetMapping("/{boardIndex}")
-    public ResponseEntity<BoardStarResponseDto> boardDetails (@PathVariable Long boardIndex) {
+    @GetMapping("/{boardIndex}/{memberIndex}")
+    public ResponseEntity<BoardStarResponseDto> boardDetails (@PathVariable Long boardIndex, @PathVariable Long memberIndex) {
         HttpStatus status = HttpStatus.OK;
         BoardStarResponseDto dto = null;
         try {
-            dto = boardService.findBoard(boardIndex);
+            dto = boardService.findBoard(boardIndex,memberIndex);
 
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
@@ -208,8 +208,6 @@ public class BoardController {
         return ResponseEntity.status(status).body(list);
     }
 
-    @Scheduled(fixedDelay = 1000)
-    public void run(){
-        System.out.println("테스트");
-    }
+//    @Scheduled(cron = "")
+
 }

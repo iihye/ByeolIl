@@ -76,18 +76,21 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardStarResponseDto findBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+    public BoardStarResponseDto findBoard(Long boardIndex, Long memberIndex) {
+        Board board = boardRepository.findById(boardIndex).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
         if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
 
-        List<Media> medias = mediaRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
+        Heart heart = heartRepository.findByBoardBoardIndexAndMemberMemberIndex(boardIndex,memberIndex).orElse(null);
+        boolean alreadyHeartedTF = true;
+        if(heart!=null) alreadyHeartedTF = false; //모든게 true로 나옴 고치기
+        List<Media> medias = mediaRepository.findByBoardBoardIndex(boardIndex).orElse(Collections.emptyList());
         List<String> mediaLocations = medias.stream()
                 .map(Media::getMediaLocation)
                 .toList();
 
-        List<Hash> hashes = hashRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
+        List<Hash> hashes = hashRepository.findByBoardBoardIndex(boardIndex).orElse(Collections.emptyList());
         List<String> hashContent = hashes.stream()
                 .map(Hash::getHashContent)
                 .toList();
@@ -98,8 +101,9 @@ public class BoardService {
                 .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
                 .boardContent(board.getBoardContent())
                 .boardMedia(mediaLocations)
+                .alreadyHeartedTF(alreadyHeartedTF)
                 .boardAccess(board.getBoardAccess())
-                .boardLike(heartRepository.countByBoardBoardIndex(boardId))
+                .boardLike(heartRepository.countByBoardBoardIndex(boardIndex))
                 .hashContent(hashContent).build();
 
         return dto;

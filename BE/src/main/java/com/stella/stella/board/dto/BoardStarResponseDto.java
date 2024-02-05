@@ -17,6 +17,7 @@ public class BoardStarResponseDto {
     private List<String> boardMedia;
     private BoardAccessStatus boardAccess;
     private int boardLike;
+    private boolean alreadyHeartedTF;
     private List<String> hashContent;
 
 
