@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import javax.mail.*;
 import javax.mail.internet.*;
+import java.security.SecureRandom;
 import java.util.Properties;
 
 @Component
@@ -44,8 +45,9 @@ public class EmailSender {
 
     public String generateCode() {
         StringBuilder sb = new StringBuilder();
+        SecureRandom random = new SecureRandom();
         for (int i = 0; i < 10; i++) {
-            sb.append((char) ((int) (Math.random() * 57) + 65));
+            sb.append((char) ((int) (random.nextDouble() * 57) + 65));
         }
         return sb.toString();
     }

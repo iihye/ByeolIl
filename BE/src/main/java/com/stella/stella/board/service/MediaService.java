@@ -1,5 +1,6 @@
 package com.stella.stella.board.service;
 
+import com.stella.stella.board.entity.Media;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.board.repository.HashRepository;
 import com.stella.stella.board.repository.HeartRepository;
@@ -22,4 +23,8 @@ public class MediaService {
     private final HeartRepository heartRepository;
     private final HashRepository hashRepository;
 
+    @Transactional
+    public void addMedia(long boardIndex, String fileUrl){
+
+    }
 }

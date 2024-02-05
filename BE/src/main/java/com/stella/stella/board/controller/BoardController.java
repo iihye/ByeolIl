@@ -13,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,18 +31,19 @@ public class BoardController {
     private final ReportService reportService;
 
 
-    @PostMapping
-    public ResponseEntity<ResultResponseDto> boardAdd(@RequestBody BoardCreateRequestDto boardCreateRequestDto) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<ResultResponseDto> boardAdd(@RequestPart(value = "requestDto") BoardCreateRequestDto boardCreateRequestDto,
+                                                      @RequestPart(value = "files",required = false) MultipartFile[] files) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
-            boardService.addBoard(boardCreateRequestDto);
+            boardService.addBoard(boardCreateRequestDto, files);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
-            message =e.getMessage();
+            message = e.getMessage();
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            message =e.getMessage();
+            message = e.getMessage();
         }
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
