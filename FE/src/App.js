@@ -16,7 +16,6 @@ import FindPW from "components/login/FindPW";
 import Regist from "components/login/Regist";
 import StarTagSearch from "components/star/StarTagSearch";
 import Radio from "components/radio/Radio";
-import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -26,6 +25,7 @@ function App() {
       <Routes>
         <Route path="/" element={<KakaoLogin />}></Route>
         <Route exact path="/landing/login" element={<Login />}></Route>
+        <Route path="/regist" element={<Regist/>}></Route>
         <Route path="/findId" element={<FindID />} />
         <Route path="/findPw" element={<FindPW />} />
         <Route path="/regist" element={<Regist />} />
