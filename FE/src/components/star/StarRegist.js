@@ -42,9 +42,14 @@ function StarRegist(props) {
   useEffect(() => {
     if (type === "modify") {
       contentRef.current.value = preBoard.boardContent;
-      console.log(preBoard);
     }
+
+    window.addEventListener("click", handleClick);
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
   }, []);
+
   const handleRegist = async () => {
     if (contentRef.current.value.trim() === "") {
       alert("공백 입력했어요");
@@ -162,13 +167,21 @@ function StarRegist(props) {
     // 용량 제한
   };
 
-  const handleClose = () => {
+  function handleClose() {
     if (type === "regist") {
       setIsStarRegistOpen(false);
     } else if (type === "modify") {
       setIsStarModifyOpen(false);
     }
-  };
+  }
+
+  function handleClick(e) {
+    e.stopPropagation();
+    const check = [...e.target.classList].some((it) => it === "star-regist-container");
+    if (check) {
+      handleClose();
+    }
+  }
 
   return (
     <div className="star-regist-container">
