@@ -285,7 +285,7 @@ public class MemberService {
         Member member = memberRepository.findByMemberIndex(memberUpdateRequestDto.getMemberIndex())
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
         Optional.ofNullable(memberUpdateRequestDto.getMemberNickname()).ifPresent(member::setMemberNickname);
-        Optional.ofNullable(memberUpdateRequestDto.getMemberNickname()).ifPresent(member::setMemberNickname);
+        Optional.ofNullable(memberUpdateRequestDto.getMemberPass()).ifPresent(member::setMemberPass);
         Optional.ofNullable(memberUpdateRequestDto.getMemberEmail()).ifPresent(member::setMemberEmail);
         Optional.ofNullable(memberUpdateRequestDto.getMemberAlarmStatus()).ifPresent(member::setMemberAlarmStatus);
         Optional.ofNullable(memberUpdateRequestDto.getMemberRadioStatus()).ifPresent(member::setMemberRadioStatus);

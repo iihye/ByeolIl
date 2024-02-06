@@ -49,12 +49,12 @@ public class BoardController {
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
 
-    @GetMapping("/{boardIndex}")
-    public ResponseEntity<BoardStarResponseDto> boardDetails (@PathVariable Long boardIndex) {
+    @GetMapping("/{boardIndex}/{memberIndex}")
+    public ResponseEntity<BoardStarResponseDto> boardDetails (@PathVariable Long boardIndex, @PathVariable Long memberIndex) {
         HttpStatus status = HttpStatus.OK;
         BoardStarResponseDto dto = null;
         try {
-            dto = boardService.findBoard(boardIndex);
+            dto = boardService.findBoard(boardIndex,memberIndex);
 
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
@@ -65,12 +65,13 @@ public class BoardController {
 
     }
 
-    @PutMapping
-    public ResponseEntity<ResultResponseDto> boardModify(@RequestBody BoardUpdateRequestDto boardUpdateRequestDto) {
+    @PutMapping(consumes = "multipart/form-data")
+    public ResponseEntity<ResultResponseDto> boardModify(@RequestPart(value = "requestDto") BoardUpdateRequestDto boardUpdateRequestDto
+    ,@RequestPart(value = "files",required = false) MultipartFile[] files) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
-            boardService.modifyBoard(boardUpdateRequestDto);
+            boardService.modifyBoard(boardUpdateRequestDto,files);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
             message = e.getMessage();
@@ -209,6 +210,4 @@ public class BoardController {
 
         return ResponseEntity.status(status).body(list);
     }
-
-
 }

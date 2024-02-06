@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -39,16 +40,25 @@ public class BoardService {
     @Transactional
     public void addBoard(BoardCreateRequestDto dto, MultipartFile[] files) throws IOException {
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
+        //location이 중복 안되게 유니크를 줘서 등록은 안되는데 entity가 만들어졌다가 등록이 안되는 거라
+        //index값은 증가해버려서 방지하기 위해 넣음
+        BoardAccessStatus boardAccessStatus = BoardAccessStatus.OPEN;
+        if(dto.getBoardAccess().equals("PARTOPEN")){
+            boardAccessStatus = BoardAccessStatus.PARTOPEN;
+        }else if(dto.getBoardAccess().equals("NOOPEN")){
+            boardAccessStatus = BoardAccessStatus.NOOPEN;
+        }
+
         Board board = Board.builder()
                 .boardInputDate(dto.getBoardInputDate())
                 .boardContent(dto.getBoardContent())
+                .boardAccess(boardAccessStatus)
                 .boardLocation(dto.getBoardLocation())
                 .member(member)
                 .build();
         //dto에서 받은 memberid로 member를 찾아서 board를 만듦
 
         boardRepository.save(board);
-        log.info("보드 성공");
         List<String> hashes = dto.getHashContent();
         if(hashes != null && !hashes.isEmpty()){
             for(String s: hashes){
@@ -59,7 +69,6 @@ public class BoardService {
                 hashRepository.save(hash);
             }
         }
-        log.info("해시 성공");
         if (files != null)
             for (MultipartFile file : files) {
                 String fileUrl = s3Service.saveFile(file);
@@ -67,25 +76,28 @@ public class BoardService {
                         .mediaLocation(fileUrl)
                         .board(board)
                         .build();
+
                 mediaRepository.save(media);
             }
-        log.info("파일 성공");
         //List<String> 형태로 미디어 파일의 경로를 받아서 저장
     }
 
     @Transactional
-    public BoardStarResponseDto findBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+    public BoardStarResponseDto findBoard(Long boardIndex, Long memberIndex) {
+        Board board = boardRepository.findById(boardIndex).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
         if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
 
-        List<Media> medias = mediaRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
+        Heart heart = heartRepository.findByBoardBoardIndexAndMemberMemberIndex(boardIndex,memberIndex).orElse(null);
+        boolean alreadyHeartedTF = true;
+        if(heart!=null) alreadyHeartedTF = false; //모든게 true로 나옴 고치기
+        List<Media> medias = mediaRepository.findByBoardBoardIndex(boardIndex).orElse(Collections.emptyList());
         List<String> mediaLocations = medias.stream()
                 .map(Media::getMediaLocation)
                 .toList();
 
-        List<Hash> hashes = hashRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
+        List<Hash> hashes = hashRepository.findByBoardBoardIndex(boardIndex).orElse(Collections.emptyList());
         List<String> hashContent = hashes.stream()
                 .map(Hash::getHashContent)
                 .toList();
@@ -96,29 +108,60 @@ public class BoardService {
                 .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
                 .boardContent(board.getBoardContent())
                 .boardMedia(mediaLocations)
+                .alreadyHeartedTF(alreadyHeartedTF)
                 .boardAccess(board.getBoardAccess())
-                .boardLike(heartRepository.countByBoardBoardIndex(boardId))
+                .boardLike(heartRepository.countByBoardBoardIndex(boardIndex))
                 .hashContent(hashContent).build();
 
         return dto;
     }
 
     @Transactional
-    public void modifyBoard(BoardUpdateRequestDto dto) {
+    public void modifyBoard(BoardUpdateRequestDto dto,MultipartFile[] files) throws IOException  {
         Board board = boardRepository.findById(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+        Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
         if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
 
         if (board.getMember().getMemberIndex() == dto.getMemberIndex()) {
+            BoardAccessStatus boardAccessStatus = BoardAccessStatus.OPEN;
+            if(dto.getBoardAccess().equals("PARTOPEN")){
+                boardAccessStatus = BoardAccessStatus.PARTOPEN;
+            }else if(dto.getBoardAccess().equals("NOOPEN")){
+                boardAccessStatus = BoardAccessStatus.NOOPEN;
+            }
 
             board.setBoardContent(dto.getBoardContent());
-            board.setBoardAccess(dto.getBoardAccess());
+            board.setBoardAccess(boardAccessStatus);
             board.setBoardInputDate(dto.getBoardInputDate());
             //DateTimeFormatter 이용해서 String에서 LocalDateTime으로 형변환 시켜줘야할지도
-
+            //기존 해쉬 모두 삭제
+            hashRepository.deleteAllByBoardIndex(dto.getBoardIndex());
+            //해쉬 재등록
+            List<String> hashes = dto.getBoardHash();
+            if(hashes != null && !hashes.isEmpty()){
+                for(String s: hashes){
+                    Hash hash = Hash.builder()
+                            .hashContent(s)
+                            .board(board)
+                            .member(member).build();
+                    hashRepository.save(hash);
+                }
+            }
+            List<Media> mediaList = mediaRepository.findByBoardBoardIndex(dto.getBoardIndex()).get();
+            //기존 미디어 모두 삭제
             mediaRepository.deleteAllById(dto.getBoardIndex());
-
+            //s3에서 존재여부 비교하면서 삭제
+            if(mediaList!=null) {
+                List<String> mediaUrlList = mediaList.stream().map(Media::getMediaLocation).collect(Collectors.toList());
+                for (String mediaUrl : dto.getBoardMedia()) {
+                    mediaUrlList.remove(mediaUrl);
+                }
+                for(String mediaUrl: mediaUrlList)
+                    s3Service.deleteFile(mediaUrl.substring(60));
+            }
+            //수정 이후 남아있는 미디어 다시 저장
             List<String> mediaLocation = dto.getBoardMedia();
             if (mediaLocation != null) {
                 for (String s : mediaLocation) {
@@ -129,6 +172,16 @@ public class BoardService {
                     mediaRepository.save(media);
                 }
             }
+            //새로 추가된 파일 저장
+            if (files != null)
+                for (MultipartFile file : files) {
+                    String fileUrl = s3Service.saveFile(file);
+                    Media media = Media.builder()
+                            .mediaLocation(fileUrl)
+                            .board(board)
+                            .build();
+                    mediaRepository.save(media);
+                }
         } else {
             throw new CustomException(CustomExceptionStatus.MEMBERID_INVALID);
         }
