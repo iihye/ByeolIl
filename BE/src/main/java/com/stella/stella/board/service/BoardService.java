@@ -39,9 +39,21 @@ public class BoardService {
     @Transactional
     public void addBoard(BoardCreateRequestDto dto, MultipartFile[] files) throws IOException {
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
+        if (boardRepository.countByBoardLocation(dto.getBoardLocation()) != 0)
+            throw new CustomException(CustomExceptionStatus.ALREADY_LOCATED);
+        //location이 중복 안되게 유니크를 줘서 등록은 안되는데 entity가 만들어졌다가 등록이 안되는 거라
+        //index값은 증가해버려서 방지하기 위해 넣음
+        BoardAccessStatus boardAccessStatus = BoardAccessStatus.OPEN;
+        if(dto.getBoardAccess().equals("PARTOPEN")){
+            boardAccessStatus = BoardAccessStatus.PARTOPEN;
+        }else if(dto.getBoardAccess().equals("NOOPEN")){
+            boardAccessStatus = BoardAccessStatus.NOOPEN;
+        }
+
         Board board = Board.builder()
                 .boardInputDate(dto.getBoardInputDate())
                 .boardContent(dto.getBoardContent())
+                .boardAccess(boardAccessStatus)
                 .boardLocation(dto.getBoardLocation())
                 .member(member)
                 .build();
@@ -67,6 +79,7 @@ public class BoardService {
                         .mediaLocation(fileUrl)
                         .board(board)
                         .build();
+
                 mediaRepository.save(media);
             }
         log.info("파일 성공");
@@ -74,18 +87,21 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardStarResponseDto findBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+    public BoardStarResponseDto findBoard(Long boardIndex, Long memberIndex) {
+        Board board = boardRepository.findById(boardIndex).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
         if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
 
-        List<Media> medias = mediaRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
+        Heart heart = heartRepository.findByBoardBoardIndexAndMemberMemberIndex(boardIndex,memberIndex).orElse(null);
+        boolean alreadyHeartedTF = true;
+        if(heart!=null) alreadyHeartedTF = false; //모든게 true로 나옴 고치기
+        List<Media> medias = mediaRepository.findByBoardBoardIndex(boardIndex).orElse(Collections.emptyList());
         List<String> mediaLocations = medias.stream()
                 .map(Media::getMediaLocation)
                 .toList();
 
-        List<Hash> hashes = hashRepository.findByBoardBoardIndex(boardId).orElse(Collections.emptyList());
+        List<Hash> hashes = hashRepository.findByBoardBoardIndex(boardIndex).orElse(Collections.emptyList());
         List<String> hashContent = hashes.stream()
                 .map(Hash::getHashContent)
                 .toList();
@@ -96,8 +112,9 @@ public class BoardService {
                 .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
                 .boardContent(board.getBoardContent())
                 .boardMedia(mediaLocations)
+                .alreadyHeartedTF(alreadyHeartedTF)
                 .boardAccess(board.getBoardAccess())
-                .boardLike(heartRepository.countByBoardBoardIndex(boardId))
+                .boardLike(heartRepository.countByBoardBoardIndex(boardIndex))
                 .hashContent(hashContent).build();
 
         return dto;
@@ -111,9 +128,15 @@ public class BoardService {
         }
 
         if (board.getMember().getMemberIndex() == dto.getMemberIndex()) {
+            BoardAccessStatus boardAccessStatus = BoardAccessStatus.OPEN;
+            if(dto.getBoardAccess().equals("PARTOPEN")){
+                boardAccessStatus = BoardAccessStatus.PARTOPEN;
+            }else if(dto.getBoardAccess().equals("NOOPEN")){
+                boardAccessStatus = BoardAccessStatus.NOOPEN;
+            }
 
             board.setBoardContent(dto.getBoardContent());
-            board.setBoardAccess(dto.getBoardAccess());
+            board.setBoardAccess(boardAccessStatus);
             board.setBoardInputDate(dto.getBoardInputDate());
             //DateTimeFormatter 이용해서 String에서 LocalDateTime으로 형변환 시켜줘야할지도
 
