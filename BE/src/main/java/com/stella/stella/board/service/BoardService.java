@@ -39,9 +39,17 @@ public class BoardService {
             throw new CustomException(CustomExceptionStatus.ALREADY_LOCATED);
         //location이 중복 안되게 유니크를 줘서 등록은 안되는데 entity가 만들어졌다가 등록이 안되는 거라
         //index값은 증가해버려서 방지하기 위해 넣음
+        BoardAccessStatus boardAccessStatus = BoardAccessStatus.OPEN;
+        if(dto.getBoardAccess().equals("PARTOPEN")){
+            boardAccessStatus = BoardAccessStatus.PARTOPEN;
+        }else if(dto.getBoardAccess().equals("NOOPEN")){
+            boardAccessStatus = BoardAccessStatus.NOOPEN;
+        }
+
         Board board = Board.builder()
                 .boardInputDate(dto.getBoardInputDate())
                 .boardContent(dto.getBoardContent())
+                .boardAccess(boardAccessStatus)
                 .boardLocation(dto.getBoardLocation())
                 .member(member)
                 .build();
@@ -117,9 +125,15 @@ public class BoardService {
         }
 
         if (board.getMember().getMemberIndex() == dto.getMemberIndex()) {
+            BoardAccessStatus boardAccessStatus = BoardAccessStatus.OPEN;
+            if(dto.getBoardAccess().equals("PARTOPEN")){
+                boardAccessStatus = BoardAccessStatus.PARTOPEN;
+            }else if(dto.getBoardAccess().equals("NOOPEN")){
+                boardAccessStatus = BoardAccessStatus.NOOPEN;
+            }
 
             board.setBoardContent(dto.getBoardContent());
-            board.setBoardAccess(dto.getBoardAccess());
+            board.setBoardAccess(boardAccessStatus);
             board.setBoardInputDate(dto.getBoardInputDate());
             //DateTimeFormatter 이용해서 String에서 LocalDateTime으로 형변환 시켜줘야할지도
 
