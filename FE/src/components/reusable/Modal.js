@@ -44,7 +44,7 @@ function StarContent(props) {
   useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`, {
+        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
           headers: {
             token: localStorage.getItem("token") ?? "",
           },
@@ -53,6 +53,13 @@ function StarContent(props) {
           const data = response.data;
           data.boardInputDate = data.boardInputDate.split(".");
           data.boardUpdateDate = data.boardUpdateDate.split(" ")[0].split(".");
+
+          const likeState = response.data.boardLike;
+          if (likeState) {
+            setIsLike(true);
+          } else {
+            setIsLike(false);
+          }
 
           setData(response.data);
         })

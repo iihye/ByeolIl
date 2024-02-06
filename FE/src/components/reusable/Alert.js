@@ -13,7 +13,7 @@ function Alert(props) {
   };
 
   return (
-    <div className="bg-modal-bg w-full h-full absolute top-0 left-0 flex justify-center items-center">
+    <div className="alert-container bg-modal-bg w-full h-full absolute top-0 left-0 flex justify-center items-center">
       <div className="alert w-auto h-auto p-4 bg-alert-bg rounded-xl text-white-sub shadow-xl font-['Pretendard']">{alertTypes[props.type]}</div>
     </div>
   );
@@ -25,16 +25,22 @@ function InputAlert(props) {
 
   const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
 
-  // useEffect(() => {
-  //   // Enter 키 입력으로 input 내용 처리하기
-  //   const handleEnter = (e) => {
-  //     if (e.key === "Enter") {
-  //       handleSubmit();
-  //     }
-  //   };
+  useEffect(() => {
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "alert-container");
 
-  //   input.current.addEventListener("keydown", handleEnter);
-  // }, []);
+      if (check) {
+        handleClose();
+      }
+    }
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const toEnter = {
     PWCheck: "비밀번호를",
@@ -100,7 +106,7 @@ function InputAlert(props) {
   return (
     <>
       <div className="flex-row">
-        {props.type === "report" ? <h1 className="text-center text-3xl mb-2">신고하기</h1> : null}
+        {props.type === "report" ? <h1 className="text-center text-3xl mb-2 font-['Pre-bold']">신고하기</h1> : null}
         <div className="text-lg text-center mb-3">{toEnter[props.type]} 입력해주세요.</div>
         <div className="flex justify-center mb-3">
           <textarea className="bg-transparent rounded-lg border border-white-sub p-2 h-28 resize-none" ref={input} />
@@ -131,6 +137,23 @@ function InputAlert(props) {
 function Delete(props) {
   const setIsDeleteAlertOpen = useSetRecoilState(isDeleteAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+
+  useEffect(() => {
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "alert-container");
+
+      if (check) {
+        handleClose();
+      }
+    }
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const handleDelete = async () => {
     const data = {
