@@ -6,7 +6,7 @@ import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } fr
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
-import "./Modal.css";
+import { GoRocket } from "react-icons/go";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -14,7 +14,7 @@ function Modal(props) {
 
   return (
     <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
-      <div className="modal ">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
+      <div className="modal bg-modal-bg">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
     </div>
   );
 }
@@ -185,18 +185,20 @@ function StarContent(props) {
     <>
       <div className="star-content">
         {/* 최상단 */}
-        <div className="star-content-top">
+        <div className="star-content-top text-white-sub">
           {/* 지정일 */}
-          <div>{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</div>
+          <div className="text-xl">{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</div>
           {/* 작성일(수정일) */}
           <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div>
         </div>
-        <div className="star-content-content">
+        <div className="star-content-content relative bg-white-sub h-32">
           <MediaArea data={data} />
           {/* 게시글 내용 */}
           <div>
             {data ? data.boardContent : "로딩중"}
-            <button>라디오 송신</button>
+            <div className="absolute right-0 bottom-0 mr-2 mb-2 text-2xl">
+              <GoRocket />
+            </div>
           </div>
         </div>
         <div>
@@ -246,7 +248,7 @@ function StarContent(props) {
 }
 
 function MediaArea(props) {
-  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} key={index} style={{ width: "50px" }}></img>)}</div>;
+  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
 }
 
 function ReplyRegistArea(props) {
