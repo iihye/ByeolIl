@@ -70,24 +70,27 @@ function StarContent(props) {
     fetchData(starIndex);
   }, [renewStarDetail]);
 
-  // 좋아요 정보 가져오기
   useEffect(() => {
-    const fetchData = async () => {
-      await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/like/${loginUserIndex}`)
-        .then((response) => {
-          const res = response.data.some((it) => it.boardIndex === starIndex);
-          // setLikeData(response.data);
-          setIsLike(res);
-        })
-        .catch((error) => console.log(error));
-    };
-    fetchData();
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "modal-container");
+      if (check) {
+        handleClose();
+      }
+    }
+
+    function handleKeydown(e) {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    }
 
     window.addEventListener("click", handleClick);
+    window.addEventListener("keydown", handleKeydown);
 
     return () => {
       window.removeEventListener("click", handleClick);
+      window.removeEventListener("keydown", handleKeydown);
     };
   }, []);
 
@@ -121,7 +124,6 @@ function StarContent(props) {
 
       if (response.request.status === 200) {
         setIsLike(true);
-        console.log("좋아요 성공");
       } else {
         console.log("좋아요 실패");
       }
@@ -162,14 +164,6 @@ function StarContent(props) {
     setIsStarDetailOpen(false);
     // setReportModal('');
   };
-
-  function handleClick(e) {
-    e.stopPropagation();
-    const check = [...e.target.classList].some((it) => it === "modal-container");
-    if (check) {
-      handleClose();
-    }
-  }
 
   /* 게시글 작성자 체크*/
   const isWriter = () => {
