@@ -207,24 +207,34 @@ const FileUploadArea = forwardRef((props, ref) => {
   }, []);
 
   function handleFileChange(e) {
-    // 이미지 개수 제한 - 5
-    const maxFileCnt = 5;
-    const uploadFileList = ref.current.files;
-    const attachedFileCnt = uploadFileList.length;
-    const remainFileCnt = maxFileCnt - attachedFileCnt;
-    const imgUrlList = [...fileList];
-    console.log([...uploadFileList]);
+    // 파일 개수 제한 체크
+    const [maxImageCnt, maxVideoCnt] = [5, 1];
 
-    for (let i = 0; i < uploadFileList.length; i++) {
-      const imgURL = URL.createObjectURL(uploadFileList[i]);
-      imgUrlList.push(imgURL);
+    const uploadFileList = ref.current.files;
+
+    const imageFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image").length;
+    const videoFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video").length;
+
+    const [remainImageFileCnt, remainVideoFileCnt] = [maxImageCnt - imageFileCnt, maxVideoCnt - videoFileCnt];
+
+    let msg = "";
+    if (remainImageFileCnt < 0) {
+      msg += "이미지 파일은 최대 5개 까지 첨부 가능합니다.\n";
     }
-    if (remainFileCnt < 0) {
-      alert(`이미지 파일은 ${maxFileCnt}개를 넘길 수 없습니다.`);
-      imgUrlList.slice(0, maxFileCnt);
+
+    if (remainVideoFileCnt < 0) {
+      msg += "비디오 파일은 최대 1개 까지 첨부 가능합니다.";
     }
-    console.log("파일첨부완료");
-    setFileList(imgUrlList);
+
+    if (msg !== "") {
+      alert(msg);
+      // IE에서 호환성 문제 있음
+      ref.current.value = "";
+      return;
+    }
+
+    const fileList = [...uploadFileList].map((it) => URL.createObjectURL(it));
+    setFileList(fileList);
   }
 
   return (
@@ -239,12 +249,15 @@ const FileUploadArea = forwardRef((props, ref) => {
       <div className="h-40 p-1 mt-2">
         <div className="items-center border border-dashed border-white-sub text-white-sub text-center h-full hover:text-white ">
           {fileList.length === 0 ? (
-            <div className="ml-auto mr-auto flex justify-center items-center text-white-sub text-center h-full hover:text-white">
-              <div>
-                <FaFileImage className="w-full text-5xl" />
-                <div className="text-lg mt-2">드래그하여 파일을 업로드해주세요.</div>
-              </div>
-            </div>
+            <>
+              <label for="file" className="ml-auto mr-auto flex justify-center items-center text-white-sub text-center h-full hover:text-white">
+                <div>
+                  <FaFileImage className="w-full text-5xl" />
+                  <div className="text-lg mt-2">드래그하여 파일을 업로드해주세요.</div>
+                </div>
+              </label>
+              <input className="h-0 w-0 overflow-hidden" type="file" id="file" />
+            </>
           ) : (
             <FileList files={ref.current.files} />
           )}
@@ -255,7 +268,6 @@ const FileUploadArea = forwardRef((props, ref) => {
 });
 
 function FileList(props) {
-  // const fileList = useRecoilValue(fileListState);
   const fileList = [...props.files];
 
   return (
