@@ -5,22 +5,19 @@ import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import "./star.css";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { FaFileImage, FaRegFileImage } from "react-icons/fa";
 
-const imageListState = atom({
-  key: "imageList",
+const fileListState = atom({
+  key: "fileList",
   default: [],
 });
 
 function StarRegist(props) {
   const [renewStarDetail, setRenewStarDetail] = useRecoilState(renewStarDetailState);
   const curPage = useRecoilValue(curPageState);
-  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setStars = useSetRecoilState(starsState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
-  const [imageList, setImageList] = useRecoilState(imageListState);
-  const [media, setMedia] = useState([]);
-  const [inputDate, setInputDate] = useState();
 
   const accessRangeRef = useRef();
   const dateRef = useRef();
@@ -174,9 +171,7 @@ function StarRegist(props) {
 
   return (
     <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard']">
-      <div>
-        <ImagePreviewArea />
-      </div>
+      <div>{/* <ImagePreviewArea /> */}</div>
       <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3 w-96">
         <div className="star-regist-middle">
           <div className="flex justify-between items-center mb-2">
@@ -186,9 +181,9 @@ function StarRegist(props) {
           <textarea className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub" ref={contentRef} placeholder="일기 내용을 입력해주세요." />
         </div>
         {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
-        <div className="flex justify-between">
+        <div className="relative">
           <FileUploadArea ref={fileRef} />
-          <div className="flex">
+          <div className="flex absolute right-0 top-0">
             <button className="h-8 w-14 px-2 shadow-md" onClick={handleRegist}>
               {buttonValue[type]}
             </button>
@@ -203,34 +198,79 @@ function StarRegist(props) {
 }
 
 const FileUploadArea = forwardRef((props, ref) => {
-  const handleFileChange = (e) => {
-    // // 개수 제한
-    // const maxFileCnt = 5;
-    // const uploadFileList = fileRef.current.files;
-    // const attachedFileCnt = uploadFileList.length;
-    // const remainFileCnt = maxFileCnt - attachedFileCnt;
-    // const imgUrlList = [...imageList];
-    // console.log(uploadFileList);
-    // for (let i = 0; i < uploadFileList.length; i++) {
-    //   const imgURL = URL.createObjectURL(uploadFileList[i]);
-    //   imgUrlList.push(imgURL);
-    // }
-    // if (remainFileCnt < 0) {
-    //   alert(`첨부파일은 ${maxFileCnt}개를 넘길 수 없습니다.`);
-    //   imgUrlList.slice(0, maxFileCnt);
-    // }
-    // console.log("파일첨부완료");
-    // setImageList(imgUrlList);
-    // 용량 제한
-  };
+  const [fileList, setFileList] = useRecoilState(fileListState);
 
-  return <input className="w-20" type="file" multiple onChange={handleFileChange} ref={ref} />;
+  useEffect(() => {
+    return () => {
+      setFileList([]);
+    };
+  }, []);
+
+  function handleFileChange(e) {
+    // 이미지 개수 제한 - 5
+    const maxFileCnt = 5;
+    const uploadFileList = ref.current.files;
+    const attachedFileCnt = uploadFileList.length;
+    const remainFileCnt = maxFileCnt - attachedFileCnt;
+    const imgUrlList = [...fileList];
+    console.log([...uploadFileList]);
+
+    for (let i = 0; i < uploadFileList.length; i++) {
+      const imgURL = URL.createObjectURL(uploadFileList[i]);
+      imgUrlList.push(imgURL);
+    }
+    if (remainFileCnt < 0) {
+      alert(`이미지 파일은 ${maxFileCnt}개를 넘길 수 없습니다.`);
+      imgUrlList.slice(0, maxFileCnt);
+    }
+    console.log("파일첨부완료");
+    setFileList(imgUrlList);
+  }
+
+  return (
+    <>
+      <div className="flex h-8">
+        <input className="absolute w-0 h-0 p-0 border-0 overflow-hidden" type="file" id="file" multiple onChange={handleFileChange} ref={ref} />
+        <label className="text-white-sub flex items-center hover:text-white hover:cursor-pointer" for="file">
+          <FaRegFileImage />
+          <div className="ml-1">파일 첨부</div>
+        </label>
+      </div>
+      <div className="h-40 p-1 mt-2">
+        <div className="items-center border border-dashed border-white-sub text-white-sub text-center h-full hover:text-white ">
+          {fileList.length === 0 ? (
+            <div className="ml-auto mr-auto flex justify-center items-center text-white-sub text-center h-full hover:text-white">
+              <div>
+                <FaFileImage className="w-full text-5xl" />
+                <div className="text-lg mt-2">드래그하여 파일을 업로드해주세요.</div>
+              </div>
+            </div>
+          ) : (
+            <FileList files={ref.current.files} />
+          )}
+        </div>
+      </div>
+    </>
+  );
 });
 
+function FileList(props) {
+  // const fileList = useRecoilValue(fileListState);
+  const fileList = [...props.files];
+
+  return (
+    <div className="text-left p-2">
+      {fileList.map((it, index) => (
+        <div key={index}>{it.name}</div>
+      ))}
+    </div>
+  );
+}
+
 function ImagePreviewArea() {
-  const imageList = useRecoilValue(imageListState);
-  console.log(imageList);
-  return <div>{imageList.length > 0 ? imageList.map((it, index) => <div>{it}</div>) : null}</div>;
+  const fileList = useRecoilValue(fileListState);
+  console.log(fileList);
+  return <div>{fileList.length > 0 ? fileList.map((it, index) => <div>{it}</div>) : null}</div>;
 }
 
 const DateArea = forwardRef((props, ref) => {
