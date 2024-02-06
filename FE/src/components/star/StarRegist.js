@@ -3,7 +3,6 @@ import { isAddedStar, starsState, curPageState } from "components/user/UserSpace
 import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, renewStarDetailState } from "components/atom";
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import "./star.css";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaFileImage, FaRegFileImage } from "react-icons/fa";
 
