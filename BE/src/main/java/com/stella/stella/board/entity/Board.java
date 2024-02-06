@@ -19,7 +19,7 @@ import java.util.Set;
 
 @EntityListeners(AuditingEntityListener.class)
 //Auditing을 사용하면 자동으로 시간을 매핑해서 넣어줌
-@Entity
+@Entity(name = "board")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -59,6 +59,10 @@ public class Board {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'N'")
     private BoardDeleteYN boardDeleteYN;
+
+    @Column(name = "board_like")
+    @ColumnDefault("0L")
+    private Long boardLike;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_index", referencedColumnName = "member_index")
@@ -114,4 +118,6 @@ public class Board {
     public void setBoardInputDate(LocalDate boardInputDate) {
         this.boardInputDate = boardInputDate;
     }
+
+    public void setBoardLike(Long boardLike) { this.boardLike = boardLike; }
 }

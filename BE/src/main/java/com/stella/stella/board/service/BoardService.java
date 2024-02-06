@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,13 +30,13 @@ import java.util.*;
 @RequiredArgsConstructor
 public class BoardService {
 
-
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final MediaRepository mediaRepository;
     private final HeartRepository heartRepository;
     private final HashRepository hashRepository;
     private final S3Service s3Service;
+    private final RedisTemplate redisTemplate;
 
     @Transactional
     public void addBoard(BoardCreateRequestDto dto, MultipartFile[] files) throws IOException {
@@ -71,6 +73,11 @@ public class BoardService {
             }
         log.info("파일 성공");
         //List<String> 형태로 미디어 파일의 경로를 받아서 저장
+
+        // Set a key in Redis
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        String key = "board:" + board.getBoardIndex().toString();
+        values.set(key, String.valueOf(0)); // 게시글 만들 때 추가
     }
 
     @Transactional
@@ -90,6 +97,11 @@ public class BoardService {
                 .map(Hash::getHashContent)
                 .toList();
 
+        // Find a key in Redis
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        String key = "board:" + board.getBoardIndex().toString();
+        String value = values.get(key);
+
         BoardStarResponseDto dto = BoardStarResponseDto.builder()
                 .boardRegtime(board.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
                 .boardUpdateDate(board.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
@@ -97,7 +109,8 @@ public class BoardService {
                 .boardContent(board.getBoardContent())
                 .boardMedia(mediaLocations)
                 .boardAccess(board.getBoardAccess())
-                .boardLike(heartRepository.countByBoardBoardIndex(boardId))
+//                .boardLike(heartRepository.countByBoardBoardIndex(boardId))
+                .boardLike(Integer.parseInt(value))
                 .hashContent(hashContent).build();
 
         return dto;
@@ -145,6 +158,11 @@ public class BoardService {
                 }
 
                 board.setBoardDeleteYN(BoardDeleteYN.Y);
+
+                // Delete a key in Redis
+                ValueOperations<String, String> values = redisTemplate.opsForValue();
+                String key = "board:" + board.getBoardIndex().toString();
+                values.getAndDelete(key);
             } else {
                 throw new CustomException(CustomExceptionStatus.MEMBER_INVALID);
             }

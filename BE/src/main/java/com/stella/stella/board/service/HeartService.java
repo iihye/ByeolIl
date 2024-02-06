@@ -50,9 +50,9 @@ public class HeartService {
 
         heartRepository.save(heart);
 
+        // Increment heart count in Redis
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         String key = "board:" + board.getBoardIndex().toString();
-//        values.set(key, String.valueOf(0)); // 게시글 만들 때 추가
         String value = values.get(key);
 
         if (value == null || value.isEmpty())
@@ -72,6 +72,7 @@ public class HeartService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.HEART_INVALID));
         heartRepository.deleteByBoardBoardIndexAndMemberMemberIndex(board.getBoardIndex(), member.getMemberIndex());
 
+        // Decrement heart count in Redis
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         String key = "board:" + board.getBoardIndex().toString();
         String value = values.get(key);
@@ -85,18 +86,19 @@ public class HeartService {
     public void transferRedisToMySQL() {
         Set<String> keySet = redisTemplate.keys("board:" + "*");
         if (keySet != null && !keySet.isEmpty()) {
-            List<Object> values = redisTemplate.opsForValue().multiGet(keySet);
+            List<String> values = redisTemplate.opsForValue().multiGet(keySet);
 
             for (int i = 0; i < keySet.size(); i++) {
                 String key = keySet.toArray(new String[0])[i].substring(6);
-                System.out.println(key);
-                Object value = values.get(i);
+                String value = values.get(i);
 
                 Board board = boardRepository.findById(Long.parseLong(key))
                         .orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
 
-                // heart column에 cnt 업데이트
+                // update board_like in MySQL
+                board.setBoardLike(Long.parseLong(value));
 
+                System.out.println("key: " + key + ", value: " + value);
             }
         } else {
             log.info("저장된 key 값이 없어 업데이트 할 수 없습니다");
@@ -106,10 +108,14 @@ public class HeartService {
 
     // Mysql -> Redis로 하트 정보 보내기
     public void transferMySQLToRedis() {
-        // board index 별 heart count 불러오기
+        List<Board> boardList = boardRepository.findAllByBoardDeleteYN(BoardDeleteYN.N);
+        for (Board board : boardList){
+            ValueOperations<String, String> values = redisTemplate.opsForValue();
+            String key = "board:" + board.getBoardIndex().toString();
+            Long heartCount = heartRepository.countByBoardBoardIndex(board.getBoardIndex());
+            values.set(key, heartCount.toString());
 
-        // set 형태로 바꾸기
-
-        // redis에 저장하기
+            System.out.println("key: " + key + ", value: " + heartCount.toString());
+        }
     }
 }

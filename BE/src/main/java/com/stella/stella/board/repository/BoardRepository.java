@@ -5,6 +5,7 @@ import com.stella.stella.board.entity.BoardDeleteYN;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,5 +21,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByMemberMemberIndexAndBoardDeleteYN(Long MemberIndex, BoardDeleteYN boardDeleteYN);
 
     List<Board> findByBoardIndexInAndBoardDeleteYN(List<Long> list, BoardDeleteYN boardDeleteYN);
+
+    @Query("select b from board b where b.boardDeleteYN =:boardDeleteYN")
+    List<Board> findAllByBoardDeleteYN(BoardDeleteYN boardDeleteYN);
 
 }
