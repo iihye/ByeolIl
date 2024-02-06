@@ -54,6 +54,13 @@ function StarContent(props) {
           data.boardInputDate = data.boardInputDate.split(".");
           data.boardUpdateDate = data.boardUpdateDate.split(" ")[0].split(".");
 
+          const likeState = response.data.boardLike;
+          if (likeState) {
+            setIsLike(true);
+          } else {
+            setIsLike(false);
+          }
+
           setData(response.data);
         })
         .catch((err) => {
@@ -62,21 +69,6 @@ function StarContent(props) {
     };
     fetchData(starIndex);
   }, [renewStarDetail]);
-
-  // 좋아요 정보 가져오기
-  useEffect(() => {
-    const fetchData = async () => {
-      await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/like/${loginUserIndex}`)
-        .then((response) => {
-          const res = response.data.some((it) => it.boardIndex === starIndex);
-          // setLikeData(response.data);
-          setIsLike(res);
-        })
-        .catch((error) => console.log(error));
-    };
-    fetchData();
-  }, []);
 
   const handleDelete = () => {
     /* 삭제하시겠습니까 alert 띄우기 */
