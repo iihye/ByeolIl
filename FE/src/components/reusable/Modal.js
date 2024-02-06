@@ -44,7 +44,7 @@ function StarContent(props) {
   useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`, {
+        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
           headers: {
             token: localStorage.getItem("token") ?? "",
           },
