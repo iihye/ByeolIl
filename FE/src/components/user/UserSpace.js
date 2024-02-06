@@ -121,6 +121,7 @@ function Star(props) {
   }, [stars]);
 
   const handleClick = (locationNum) => {
+    console.log(locationNum);
     const starIndex = isAddedStar.get(locationNum) ? isAddedStar.get(locationNum).boardIndex : null;
     if (starIndex) {
       // 별이 나에게 공개된 별일 때

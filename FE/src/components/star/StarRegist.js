@@ -4,7 +4,7 @@ import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, re
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import "./star.css";
-import Find from "components/reusable/Find";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
 
 const imageListState = atom({
   key: "imageList",
@@ -249,9 +249,11 @@ const DateArea = forwardRef((props, ref) => {
   const handleCalander = () => {};
 
   return (
-    <div onClick={handleCalander} className="text-white-sub text-2xl mb-1">
-      <span className="hover:text-white hover:cursor-pointer">{`${year}년 ${month}월 ${day}일`}</span>
-      <span className="text-lg">의 기록</span>
+    <div onClick={handleCalander} className="text-white-sub text-2xl mb-1 hover:text-white hover:cursor-pointer flex items-center">
+      <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
+      <div>
+        <HiOutlinePencilSquare />
+      </div>
     </div>
   );
 });
