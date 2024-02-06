@@ -139,7 +139,7 @@ function Login() {
 
     return (
         <div>
-            <Card className="w-1/5 bg-modal-bg text-white-sub px-6 h-login rounded-component">
+            <Card className="w-1/5 px-6 h-login card-style">
                 <CardHeader>
                     <CardTitle className="text-6xl text-center font-['Star'] py-4">
                         별 일

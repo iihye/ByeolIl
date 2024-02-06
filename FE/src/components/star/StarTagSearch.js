@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { isTagSearchOpenState } from 'components/atom';
 import axios from 'axios';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 // 추후 카드 형식으로 나오게 css 변경
 // 추후 input 창 위에 tag가 올라가게 css 변경
@@ -68,19 +76,19 @@ function StarTagSearch() {
     }, [replaceTag]);
 
     return (
-        <div className="tagSearch">
-            <div className="searchArea">
+        <Card className=" w-cardContainer card-style opacity-50">
+            <div className="searchArea flex justify-center py-5">
                 <input
                     name="tagSearch"
                     value={tag}
                     onChange={handleTag}
                     onKeyDown={(e) => activeSearch(e)}
+                    className="search-input text-black-sub"
                 />
+
                 {replaceTag && (
                     <span
                         style={{
-                            margin: '4px',
-                            padding: '4px',
                             border: '1px solid #ccc',
                         }}
                         onClick={handleList}
@@ -92,16 +100,24 @@ function StarTagSearch() {
                     찾기
                 </button>
             </div>
-            <div className="resultArea">
-                {tagSearchData &&
-                    tagSearchData.map((it) => (
-                        <li key={it.boardIndex}>
-                            {it.boardInputDate}&nbsp;{it.boardContent}&nbsp;
-                            {it.hash}
-                        </li>
-                    ))}
-            </div>
-        </div>
+            <ScrollArea className=" h-96 overflow-auto ">
+                <div className="grid grid-cols-3 justify-items-center gap-4">
+                    {tagSearchData &&
+                        tagSearchData.map((it) => (
+                            <Card
+                                key={it.boardIndex}
+                                className="card-style h-80 w-64 opacity-15  "
+                            >
+                                {it.boardInputDate}&nbsp;{it.boardContent}
+                                &nbsp;
+                                {it.hash}
+                            </Card>
+                        ))}
+                </div>
+
+                <ScrollBar />
+            </ScrollArea>
+        </Card>
     );
 }
 

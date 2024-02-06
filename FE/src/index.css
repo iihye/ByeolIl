@@ -88,6 +88,13 @@
             @apply bg-kakao;
         }
     }
+    .card-style {
+        @apply bg-modal-bg text-white-sub rounded-component;
+    }
+
+    .search-input {
+        @apply rounded-input bg-white-sub outline-none w-searchBar h-searchBar;
+    }
 }
 
 @font-face {

@@ -58,9 +58,3 @@ export const renewReplyState = atom({
     key: 'renewReply',
     default: false,
 });
-
-// 해시태그 검색 모달
-export const isTagSearchOpenState = atom({
-    key: 'tagSearchState',
-    default: '',
-});

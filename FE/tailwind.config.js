@@ -98,6 +98,11 @@ module.exports = {
                 input: '1.875rem',
                 button: '2.375rem',
                 login: '31.625rem',
+                searchBar: '3rem',
+            },
+            width: {
+                cardContainer: '59.188rem',
+                searchBar: '25rem',
             },
             keyframes: {
                 'accordion-down': {
