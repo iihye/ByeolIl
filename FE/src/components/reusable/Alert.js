@@ -60,7 +60,7 @@ function InputAlert(props) {
       .then((response) => {
         console.log(response.data);
         /* 1. 신고 완료 모달 띄우기 */
-        /* 2. 신고 완료 모달 자동으로 닫기
+        /* 2. 신고 완료 모달 자동으로 닫기 */
         /* 3. 신고 내용 입력 자동으로 닫기 */
       })
       .catch((e) => console.log(e));
@@ -94,7 +94,9 @@ function InputAlert(props) {
     }
   };
   
-  const handleClose = () => {/* alert 닫기 */}
+  const handleClose = () => {
+  
+  }
 
   return (
     <>
