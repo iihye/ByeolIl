@@ -9,7 +9,7 @@ function Alert(props) {
   const alertTypes = {
     block: <Block />,
     delete: <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />,
-    PWCheck: <InputAlert type={props.type} />,
+    PWCheck: <InputAlert type={props.type} setIsModalOpen={setIsModalOpen}/>,
     report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex} />,
   };
 
@@ -20,8 +20,7 @@ function Alert(props) {
   );
 }
 
-// Input 요소를 가진 alert
-function InputAlert(props) {
+function InputAlert({ type, setIsModalOpen }) {
   const input = useRef(null);
 
   const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
