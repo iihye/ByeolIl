@@ -6,7 +6,7 @@ import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } fr
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
-import "./Modal.css";
+import styled from "styled-components";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -14,7 +14,7 @@ function Modal(props) {
 
   return (
     <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
-      <div className="modal ">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
+      <div className="modal shadow-xl bg-modal-bg p-5 rounded-lg font-['Pretendard'] ">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
     </div>
   );
 }
@@ -152,23 +152,35 @@ function StarContent(props) {
     return localStorage.getItem("token") ? true : false;
   };
 
+  const DateDiv = styled.div`
+    background-color: rgba(221, 221, 221, 1);
+    padding: 3px;
+    border-radius: 10px;
+  `;
+
+  const ContentArea = styled.div`
+    padding: 3px;
+    border: 1px solid rgba(221, 221, 221, 1);
+    border-radius: 10px;
+    height: 200px;
+  `;
+
   return (
     <>
       <div className="star-content">
         {/* 최상단 */}
-        <div className="star-content-top">
+        <div className="star-content-top flex justify-between">
           {/* 지정일 */}
-          <div>{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</div>
+          <DateDiv>{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</DateDiv>
           {/* 작성일(수정일) */}
-          <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div>
+          <DateDiv>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</DateDiv>
         </div>
         <div className="star-content-content">
           <MediaArea data={data} />
-          {/* 게시글 내용 */}
-          <div>
+          <ContentArea>
             {data ? data.boardContent : "로딩중"}
             <button>라디오 송신</button>
-          </div>
+          </ContentArea>
         </div>
         <div>
           {/* 해시태그 */}
