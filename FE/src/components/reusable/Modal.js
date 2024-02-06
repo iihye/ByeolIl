@@ -264,9 +264,15 @@ function ReplyRegistArea(props) {
       .catch((error) => console.log(error));
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleRegistReply();
+    }
+  };
+
   return (
     <>
-      <input ref={inputRef} />
+      <input ref={inputRef} onKeyDown={handleKeyDown} />
       <button onClick={handleRegistReply}>등록</button>
     </>
   );
