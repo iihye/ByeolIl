@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState } from "components/atom";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
-import "./Alert.css";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
@@ -14,8 +13,8 @@ function Alert(props) {
   };
 
   return (
-    <div className="alert" style={{ border: "1px solid black" }}>
-      {alertTypes[props.type]}
+    <div className="bg-modal-bg w-full h-full absolute top-0 left-0 flex justify-center items-center">
+      <div className="alert w-auto h-auto p-4 bg-alert-bg rounded-xl text-white-sub shadow-xl font-['Pretendard']">{alertTypes[props.type]}</div>
     </div>
   );
 }
@@ -100,12 +99,13 @@ function InputAlert(props) {
 
   return (
     <>
-      <div>{toEnter[props.type]} 입력해주세요.</div>
+      <div className="text-lg">{toEnter[props.type]} 입력해주세요.</div>
       <div>
         <input ref={input} />
       </div>
-      <div>
+      <div className="flex justify-center gap-5">
         <button
+          className="h-8 px-2"
           onClick={() => {
             handleSubmit();
           }}
@@ -113,6 +113,7 @@ function InputAlert(props) {
           {buttonValue[props.type]}
         </button>
         <button
+          className="h-8 px-2"
           onClick={() => {
             handleClose();
           }}
@@ -154,13 +155,13 @@ function Delete(props) {
 
   return (
     <>
-      <div>
-        별이 빛을 잃고 말거에요.
-        <br />
-        정말로.. 삭제할까요?
+      <div className="text-center mb-3 px-20 text-lg">
+        <div>별이 빛을 잃고 말거에요.</div>
+        <div>정말로.. 삭제할까요?</div>
       </div>
-      <div>
+      <div className="flex justify-center gap-5">
         <button
+          className="h-8 px-2"
           onClick={() => {
             handleDelete();
           }}
@@ -168,6 +169,7 @@ function Delete(props) {
           삭제
         </button>
         <button
+          className="h-8 px-2"
           onClick={() => {
             handleClose();
           }}
