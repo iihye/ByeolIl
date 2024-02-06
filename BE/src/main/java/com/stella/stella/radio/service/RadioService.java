@@ -6,6 +6,7 @@ import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.common.exception.CustomException;
 import com.stella.stella.common.exception.CustomExceptionStatus;
 import com.stella.stella.member.entity.Member;
+import com.stella.stella.member.entity.MemberRadioStatus;
 import com.stella.stella.member.repository.MemberRepository;
 import com.stella.stella.radio.dto.RadioCreateRequestDto;
 import com.stella.stella.radio.dto.RadioResponseDto;
@@ -13,10 +14,14 @@ import com.stella.stella.radio.entity.Radio;
 import com.stella.stella.radio.repository.RadioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -80,6 +85,36 @@ public class RadioService {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
         saveRadio(board,dto);
+    }
+    @Transactional//초 분 시 일 월 요일 ( 0-7 이런 식으로 범위 설정, 7,16 이런 식으로 설정도 가능)
+    @Scheduled(cron = "0 0 0 * * *")//매일 정각
+    public void setOldBoardToRadio() {
+        //board
+        List<Board> boards = boardRepository.findByBoardDeleteYN(BoardDeleteYN.N);
+        for(Board b : boards){
+            MemberRadioStatus radioStatus = b.getMember().getMemberRadioStatus();
+            LocalDateTime st = LocalDateTime.now();
+            LocalDateTime ed = LocalDateTime.now();
+            switch (radioStatus){
+                case OLD :
+                    st= st.minusMonths(3);
+                    ed= ed.minusMonths(6);
+                    break;
+                case OLDER:
+                    st= st.minusMonths(6);
+                    ed= ed.minusMonths(12);
+                    break;
+                case OLDEST:
+                    st= st.minusYears(1);
+                    ed= ed.minusYears(2);
+                    break;
+            }
+            if(b.getBoardRegtime().isAfter(ed) && b.getBoardRegtime().isBefore(st)){
+                radioRepository.save(b.toRadio());
+            }
+        }
+
+
     }
 
 }

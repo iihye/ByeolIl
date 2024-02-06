@@ -21,4 +21,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<Board> findByBoardIndexInAndBoardDeleteYN(List<Long> list, BoardDeleteYN boardDeleteYN);
 
+    List<Board> findByBoardDeleteYN(BoardDeleteYN boardDeleteYN);
 }

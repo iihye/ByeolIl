@@ -339,6 +339,7 @@ public class MemberController {
             resultMap.put("message", "success");
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
+            resultMap.put("message", e.getMessage());
         }
         return ResponseEntity.status(status).body(resultMap);
     }

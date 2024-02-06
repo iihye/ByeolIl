@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RadioRepository extends JpaRepository<Radio, Long>, RadioCustomRepository {
     void deleteByRadioIndex(Long RadioIndex);
+
 }
