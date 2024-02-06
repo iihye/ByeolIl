@@ -44,7 +44,7 @@ function StarContent(props) {
   useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`, {
+        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
           headers: {
             token: localStorage.getItem("token") ?? "",
           },
@@ -53,6 +53,13 @@ function StarContent(props) {
           const data = response.data;
           data.boardInputDate = data.boardInputDate.split(".");
           data.boardUpdateDate = data.boardUpdateDate.split(" ")[0].split(".");
+
+          const likeState = response.data.boardLike;
+          if (likeState) {
+            setIsLike(true);
+          } else {
+            setIsLike(false);
+          }
 
           setData(response.data);
         })
@@ -76,6 +83,12 @@ function StarContent(props) {
         .catch((error) => console.log(error));
     };
     fetchData();
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
   }, []);
 
   const handleDelete = () => {
@@ -149,6 +162,14 @@ function StarContent(props) {
     setIsStarDetailOpen(false);
     // setReportModal('');
   };
+
+  function handleClick(e) {
+    e.stopPropagation();
+    const check = [...e.target.classList].some((it) => it === "modal-container");
+    if (check) {
+      handleClose();
+    }
+  }
 
   /* 게시글 작성자 체크*/
   const isWriter = () => {
@@ -228,7 +249,7 @@ function StarContent(props) {
   /* <div style={{ display: "flex" }}>{data && data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div> */
 }
 function MediaArea(props) {
-  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
+  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} key={index} style={{ width: "50px" }}></img>)}</div>;
 }
 
 function ReplyRegistArea(props) {
