@@ -26,7 +26,6 @@ function App() {
         <div className="App">
             <Header />
             <Routes>
-                {/* url이 3000이 아니라서 클라이언트쪽에서 특정 페이지로 이동하게 만들지 못함 */}
                 <Route path="/" element={<KakaoLogin />}></Route>
                 <Route exact path="/landing/login" element={<Login />}></Route>
                 <Route path="/findId" element={<FindID />} />
