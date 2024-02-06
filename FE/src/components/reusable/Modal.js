@@ -117,7 +117,6 @@ function StarContent(props) {
 
       if (response.request.status === 200) {
         setIsLike(true);
-        console.log("좋아요 성공");
       } else {
         console.log("좋아요 실패");
       }
