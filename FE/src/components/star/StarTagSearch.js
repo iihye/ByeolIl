@@ -76,7 +76,7 @@ function StarTagSearch() {
     }, [replaceTag]);
 
     return (
-        <Card className=" w-cardContainer card-style opacity-50">
+        <Card className=" w-cardContainer card-container-style ">
             <div className="searchArea flex justify-center py-5">
                 <input
                     name="tagSearch"
@@ -106,7 +106,7 @@ function StarTagSearch() {
                         tagSearchData.map((it) => (
                             <Card
                                 key={it.boardIndex}
-                                className="card-style h-80 w-64 opacity-15  "
+                                className="card-style h-80 w-64   "
                             >
                                 {it.boardInputDate}&nbsp;{it.boardContent}
                                 &nbsp;

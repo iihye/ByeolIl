@@ -139,7 +139,7 @@ function Login() {
 
     return (
         <div>
-            <Card className="w-1/5 px-6 h-login card-style">
+            <Card className="w-1/5 px-6 h-login card-container-style">
                 <CardHeader>
                     <CardTitle className="text-6xl text-center font-['Star'] py-4">
                         별 일

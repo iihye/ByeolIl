@@ -88,8 +88,11 @@
             @apply bg-kakao;
         }
     }
-    .card-style {
+    .card-container-style {
         @apply bg-modal-bg text-white-sub rounded-component;
+    }
+
+    .card-style {
     }
 
     .search-input {
