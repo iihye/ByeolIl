@@ -65,12 +65,13 @@ public class BoardController {
 
     }
 
-    @PutMapping
-    public ResponseEntity<ResultResponseDto> boardModify(@RequestBody BoardUpdateRequestDto boardUpdateRequestDto) {
+    @PutMapping(consumes = "multipart/form-data")
+    public ResponseEntity<ResultResponseDto> boardModify(@RequestPart(value = "requestDto") BoardUpdateRequestDto boardUpdateRequestDto
+    ,@RequestPart(value = "files",required = false) MultipartFile[] files) {
         HttpStatus status = HttpStatus.OK;
         String message = "success";
         try {
-            boardService.modifyBoard(boardUpdateRequestDto);
+            boardService.modifyBoard(boardUpdateRequestDto,files);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
             message = e.getMessage();
@@ -209,6 +210,4 @@ public class BoardController {
 
         return ResponseEntity.status(status).body(list);
     }
-
-
 }

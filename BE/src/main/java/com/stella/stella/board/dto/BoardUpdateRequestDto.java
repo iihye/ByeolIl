@@ -18,6 +18,5 @@ public class BoardUpdateRequestDto {
     private String boardContent;
     private List<String> boardMedia;
     private String boardAccess;
-
-
+    private List<String> boardHash;
 }
