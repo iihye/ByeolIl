@@ -4,6 +4,7 @@ import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, re
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import "./star.css";
+import Find from "components/reusable/Find";
 
 const imageListState = atom({
   key: "imageList",
@@ -146,6 +147,47 @@ function StarRegist(props) {
     }
   };
 
+  function handleClose() {
+    if (type === "regist") {
+      setIsStarRegistOpen(false);
+    } else if (type === "modify") {
+      setIsStarModifyOpen(false);
+    }
+  }
+
+  function handleClick(e) {
+    e.stopPropagation();
+    const check = [...e.target.classList].some((it) => it === "star-regist-container");
+    if (check) {
+      handleClose();
+    }
+  }
+
+  return (
+    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center">
+      <div>
+        <ImagePreviewArea />
+      </div>
+      <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3">
+        <div className="star-regist-top flex justify-between">
+          <DateArea ref={dateRef} type={type} />
+          <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
+        </div>
+        <div className="star-regist-middle">
+          <textarea className="bg-white-sub rounded w-full h-44 resize-none" ref={contentRef} />
+        </div>
+        {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
+        <div>
+          <FileUploadArea />
+          <button onClick={handleRegist}>{buttonValue[type]}</button>
+          <button onClick={handleClose}>취소</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const FileUploadArea = forwardRef((props, ref) => {
   const handleFileChange = (e) => {
     // // 개수 제한
     // const maxFileCnt = 5;
@@ -167,45 +209,8 @@ function StarRegist(props) {
     // 용량 제한
   };
 
-  function handleClose() {
-    if (type === "regist") {
-      setIsStarRegistOpen(false);
-    } else if (type === "modify") {
-      setIsStarModifyOpen(false);
-    }
-  }
-
-  function handleClick(e) {
-    e.stopPropagation();
-    const check = [...e.target.classList].some((it) => it === "star-regist-container");
-    if (check) {
-      handleClose();
-    }
-  }
-
-  return (
-    <div className="star-regist-container">
-      <div className="star-regist" style={{ border: "1px solid black" }}>
-        <div className="star-regist-top">
-          {/* 최상단 */}
-          <DateArea ref={dateRef} type={type} />
-          <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
-        </div>
-        <div className="star-regist-middle">
-          {/* 글 작성 영역 */}
-          <ImagePreviewArea />
-          <textarea ref={contentRef} />
-        </div>
-        <div>{<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}</div>
-        <div>
-          <input type="file" multiple onChange={handleFileChange} ref={fileRef} />
-          <button onClick={handleRegist}>{buttonValue[type]}</button>
-          <button onClick={handleClose}>취소</button>
-        </div>
-      </div>
-    </div>
-  );
-}
+  return <input type="file" multiple onChange={handleFileChange} ref={ref} />;
+});
 
 function ImagePreviewArea() {
   const imageList = useRecoilValue(imageListState);
@@ -216,7 +221,11 @@ function ImagePreviewArea() {
 const DateArea = forwardRef((props, ref) => {
   const handleCalander = () => {};
 
-  return <div onClick={handleCalander}>날짜</div>;
+  return (
+    <div className="bg-white-sub rounded p-1" onClick={handleCalander}>
+      날짜
+    </div>
+  );
 });
 
 const AccessRangeArea = forwardRef((props, ref) => {
@@ -279,13 +288,13 @@ const HashtagArea = (props) => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="flex">
       {hashtagList.map((it, index) => (
-        <div key={index} style={{ border: "1px solid black", margin: "0 3px" }} onClick={() => handleRemoveHashtag(it, index)}>
+        <div className={`bg-white-sub rounded p-1 mr-3 my-1`} key={index} onClick={() => handleRemoveHashtag(it, index)}>
           {it}
         </div>
       ))}
-      {props.type === "regist" && hashtagList.length < 10 && <input ref={input} type="text" style={{ width: "70px" }} onKeyDown={handleKeyDown}></input>}
+      {props.type === "regist" && hashtagList.length < 10 && <input className="bg-white-sub rounded p-1 mr-3 my-1" ref={input} type="text" style={{ width: "70px" }} onKeyDown={handleKeyDown}></input>}
     </div>
   );
 };

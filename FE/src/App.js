@@ -20,6 +20,7 @@ import Regist from "components/login/Regist";
 // StarTagSearch, Settings 추가
 import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
+import { Calendar } from "@/components/ui/calendar";
 
 function App() {
   return (
