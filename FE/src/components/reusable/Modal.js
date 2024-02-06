@@ -72,10 +72,18 @@ function StarContent(props) {
       }
     }
 
+    function handleKeydown(e) {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    }
+
     window.addEventListener("click", handleClick);
+    window.addEventListener("keydown", handleKeydown);
 
     return () => {
       window.removeEventListener("click", handleClick);
+      window.removeEventListener("keydown", handleKeydown);
     };
   }, []);
 
