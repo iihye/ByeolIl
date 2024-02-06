@@ -6,7 +6,7 @@ import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } fr
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
-import styled from "styled-components";
+import { GoRocket } from "react-icons/go";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -14,7 +14,7 @@ function Modal(props) {
 
   return (
     <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
-      <div className="modal shadow-xl bg-modal-bg p-5 rounded-lg font-['Pretendard'] ">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
+      <div className="modal bg-modal-bg">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
     </div>
   );
 }
@@ -44,7 +44,7 @@ function StarContent(props) {
   useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
+        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`, {
           headers: {
             token: localStorage.getItem("token") ?? "",
           },
@@ -54,13 +54,6 @@ function StarContent(props) {
           data.boardInputDate = data.boardInputDate.split(".");
           data.boardUpdateDate = data.boardUpdateDate.split(" ")[0].split(".");
 
-          const likeState = response.data.boardLike;
-          if (likeState) {
-            setIsLike(true);
-          } else {
-            setIsLike(false);
-          }
-
           setData(response.data);
         })
         .catch((err) => {
@@ -69,6 +62,27 @@ function StarContent(props) {
     };
     fetchData(starIndex);
   }, [renewStarDetail]);
+
+  // 좋아요 정보 가져오기
+  useEffect(() => {
+    const fetchData = async () => {
+      await axios
+        .get(`${process.env.REACT_APP_API_URL}/board/like/${loginUserIndex}`)
+        .then((response) => {
+          const res = response.data.some((it) => it.boardIndex === starIndex);
+          // setLikeData(response.data);
+          setIsLike(res);
+        })
+        .catch((error) => console.log(error));
+    };
+    fetchData();
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const handleDelete = () => {
     /* 삭제하시겠습니까 alert 띄우기 */
@@ -142,6 +156,14 @@ function StarContent(props) {
     // setReportModal('');
   };
 
+  function handleClick(e) {
+    e.stopPropagation();
+    const check = [...e.target.classList].some((it) => it === "modal-container");
+    if (check) {
+      handleClose();
+    }
+  }
+
   /* 게시글 작성자 체크*/
   const isWriter = () => {
     return writerIndex === loginUserIndex;
@@ -152,35 +174,25 @@ function StarContent(props) {
     return localStorage.getItem("token") ? true : false;
   };
 
-  const DateDiv = styled.div`
-    background-color: rgba(221, 221, 221, 1);
-    padding: 3px;
-    border-radius: 10px;
-  `;
-
-  const ContentArea = styled.div`
-    padding: 3px;
-    border: 1px solid rgba(221, 221, 221, 1);
-    border-radius: 10px;
-    height: 200px;
-  `;
-
   return (
     <>
       <div className="star-content">
         {/* 최상단 */}
-        <div className="star-content-top flex justify-between">
+        <div className="star-content-top text-white-sub">
           {/* 지정일 */}
-          <DateDiv>{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</DateDiv>
+          <div className="text-xl">{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</div>
           {/* 작성일(수정일) */}
-          <DateDiv>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</DateDiv>
+          <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div>
         </div>
-        <div className="star-content-content">
+        <div className="star-content-content relative bg-white-sub h-32">
           <MediaArea data={data} />
-          <ContentArea>
+          {/* 게시글 내용 */}
+          <div>
             {data ? data.boardContent : "로딩중"}
-            <button>라디오 송신</button>
-          </ContentArea>
+            <div className="absolute right-0 bottom-0 mr-2 mb-2 text-2xl">
+              <GoRocket />
+            </div>
+          </div>
         </div>
         <div>
           {/* 해시태그 */}
@@ -232,7 +244,7 @@ function StarContent(props) {
   /* <div style={{ display: "flex" }}>{data && data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div> */
 }
 function MediaArea(props) {
-  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} key={index} style={{ width: "50px" }}></img>)}</div>;
+  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
 }
 
 function ReplyRegistArea(props) {
