@@ -77,25 +77,23 @@ function StarTagSearch() {
 
     return (
         <Card className=" w-cardContainer card-container-style ">
-            <div className="searchArea flex justify-center py-5">
-                <input
-                    name="tagSearch"
-                    value={tag}
-                    onChange={handleTag}
-                    onKeyDown={(e) => activeSearch(e)}
-                    className="search-input text-black-sub"
-                />
-
+            <div className="searchArea flex justify-center search-input border-solid">
                 {replaceTag && (
                     <span
-                        style={{
-                            border: '1px solid #ccc',
-                        }}
+                        className="text-black-sub align-items-center"
                         onClick={handleList}
                     >
                         #{replaceTag}
                     </span>
                 )}
+                <input
+                    name="tagSearch"
+                    value={tag}
+                    onChange={handleTag}
+                    onKeyDown={(e) => activeSearch(e)}
+                    className=" text-black-sub "
+                />
+
                 <button name="searchButton" onClick={() => activeButton()}>
                     찾기
                 </button>

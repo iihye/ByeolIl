@@ -93,6 +93,7 @@
     }
 
     .card-style {
+        @apply bg-black-sub text-white-sub rounded-component opacity-90;
     }
 
     .search-input {
