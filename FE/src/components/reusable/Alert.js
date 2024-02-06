@@ -25,16 +25,16 @@ function InputAlert(props) {
 
   const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
 
-  useEffect(() => {
-    // Enter 키 입력으로 input 내용 처리하기
-    const handleEnter = (e) => {
-      if (e.key === "Enter") {
-        handleSubmit();
-      }
-    };
+  // useEffect(() => {
+  //   // Enter 키 입력으로 input 내용 처리하기
+  //   const handleEnter = (e) => {
+  //     if (e.key === "Enter") {
+  //       handleSubmit();
+  //     }
+  //   };
 
-    input.current.addEventListener("keydown", handleEnter);
-  }, []);
+  //   input.current.addEventListener("keydown", handleEnter);
+  // }, []);
 
   const toEnter = {
     PWCheck: "비밀번호를",
@@ -96,30 +96,33 @@ function InputAlert(props) {
   const handleClose = () => {
     setIsReportAlertOpen(false);
   };
-
+  // className="rounded-input bg-transparent border-white-sub outline-none"
   return (
     <>
-      <div className="text-lg">{toEnter[props.type]} 입력해주세요.</div>
-      <div>
-        <input ref={input} />
-      </div>
-      <div className="flex justify-center gap-5">
-        <button
-          className="h-8 px-2"
-          onClick={() => {
-            handleSubmit();
-          }}
-        >
-          {buttonValue[props.type]}
-        </button>
-        <button
-          className="h-8 px-2"
-          onClick={() => {
-            handleClose();
-          }}
-        >
-          취소
-        </button>
+      <div className="flex-row">
+        {props.type === "report" ? <h1 className="text-center text-3xl mb-2">신고하기</h1> : null}
+        <div className="text-lg text-center mb-3">{toEnter[props.type]} 입력해주세요.</div>
+        <div className="flex justify-center mb-3">
+          <textarea className="bg-transparent rounded-lg border border-white-sub p-2 h-28 resize-none" ref={input} />
+        </div>
+        <div className="flex justify-center gap-5 px-28">
+          <button
+            className="h-8 px-2"
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            {buttonValue[props.type]}
+          </button>
+          <button
+            className="h-8 px-2"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            취소
+          </button>
+        </div>
       </div>
     </>
   );
