@@ -231,7 +231,7 @@ function RadioContent() {
       "boardIndex": 3,
       "boardContent": "테스트용 글입니다.",
       "boardInputDate": "24.01.23",
-      "fromMemberIndex" : 1
+      "fromMemberIndex" : 1 
     });
     const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
 
@@ -250,7 +250,7 @@ function RadioContent() {
     }
     useEffect(() => {
       // 최초1회 데이터를 수신한다. 
-      fetchData();
+      // fetchData();
       // TTS 음성수신 미해결
       axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
     }, [rdata]);
