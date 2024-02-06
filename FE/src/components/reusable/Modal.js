@@ -37,7 +37,7 @@ function StarContent(props) {
   const type = props.type;
   const reportInfo = props.reportInfo;
   const starIndex = props.starIndex;
-  const writerIndex = props.userindex;
+  const writerIndex = props.userIndex;
   const location = props.location;
 
   // 글 조회 / 수정시 내용 갱신
@@ -171,8 +171,7 @@ function StarContent(props) {
           <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div>
         </div>
         <div className="star-content-content">
-          {/* 이미지 영역 */}
-          <div style={{ display: "flex" }}>{data && data.boardMedia.map((i, index) => <div key={index}>이미지 {index}</div>)}</div>
+          <MediaArea data={data} />
           {/* 게시글 내용 */}
           <div>
             {data ? data.boardContent : "로딩중"}
@@ -225,6 +224,13 @@ function StarContent(props) {
   );
 }
 
+{
+  /* <div style={{ display: "flex" }}>{data && data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div> */
+}
+function MediaArea(props) {
+  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
+}
+
 function ReplyRegistArea(props) {
   const inputRef = useRef();
 
@@ -242,13 +248,14 @@ function ReplyRegistArea(props) {
       return;
     }
     await axios
-      .post(`${process.env.REACT_APP_API_URL}/comment/`, data, {
+      .post(`${process.env.REACT_APP_API_URL}/comment`, data, {
         header: {
           token: localStorage.getItem("token"),
         },
       })
       .then((response) => {
         if (response.data.map.response === "success") {
+          inputRef.current.value = "";
           setRenewReply(!renewReply);
         } else {
           console.log("댓글 등록 실패");
@@ -257,9 +264,15 @@ function ReplyRegistArea(props) {
       .catch((error) => console.log(error));
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleRegistReply();
+    }
+  };
+
   return (
     <>
-      <input ref={inputRef} />
+      <input ref={inputRef} onKeyDown={handleKeyDown} />
       <button onClick={handleRegistReply}>등록</button>
     </>
   );

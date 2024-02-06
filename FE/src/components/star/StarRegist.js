@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
 import { isAddedStar, starsState, curPageState } from "components/user/UserSpace";
 import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, renewStarDetailState } from "components/atom";
-import styled from "styled-components";
 import axios from "axios";
-import { useParams } from "react-router";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import "./star.css";
+
+const imageListState = atom({
+  key: "imageList",
+  default: [],
+});
 
 function StarRegist(props) {
   const [renewStarDetail, setRenewStarDetail] = useRecoilState(renewStarDetailState);
@@ -14,43 +17,49 @@ function StarRegist(props) {
   const setStars = useSetRecoilState(starsState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
-
-  const type = props.type;
-  const location = props.location;
-  const writerIndex = props.writerIndex;
-  const boardIndex = props.boardIndex;
-  const preBoard = props.preBoard;
-  console.log(props);
-
-  //   let preBoard;
-  //   if (props.type === "modify") {
-  //     preBoard = isAddedStar.get(props.preBoard[2]);
-  //   }
-
-  console.log(preBoard);
-  const buttonValue = {
-    regist: "등록",
-    modify: "수정",
-  };
-
+  const [imageList, setImageList] = useRecoilState(imageListState);
   const [media, setMedia] = useState([]);
   const [inputDate, setInputDate] = useState();
 
   const accessRangeRef = useRef();
   const dateRef = useRef();
   const contentRef = useRef();
+  const fileRef = useRef();
+
+  const type = props.type;
+  const location = props.location;
+  const writerIndex = props.writerIndex;
+  const boardIndex = props.boardIndex;
+  const preBoard = props.preBoard;
+
+  const buttonValue = {
+    regist: "등록",
+    modify: "수정",
+  };
 
   const hashtagSet = new Set();
 
   useEffect(() => {
     if (type === "modify") {
       contentRef.current.value = preBoard.boardContent;
+      console.log(preBoard);
     }
   }, []);
-
-  const handleMediaUpload = () => {};
-
   const handleRegist = async () => {
+    if (contentRef.current.value.trim() === "") {
+      alert("공백 입력했어요");
+      return;
+    }
+
+    const files = fileRef.current.files;
+
+    const formData = new FormData();
+
+    // 파일 담기
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
+    }
+
     // 해쉬태그 데이터 Set -> Array
     const hashContent = [];
     hashtagSet.forEach((it) => hashContent.push(it));
@@ -66,10 +75,16 @@ function StarRegist(props) {
         hashContent: hashContent,
       };
 
+      const dataDto = JSON.stringify(data);
+      let requestDtoBlob = new Blob([dataDto], { type: "application/json" });
+
+      formData.append("requestDto", requestDtoBlob);
+      console.log(formData);
       try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/`, data, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/board`, formData, {
           header: {
             token: localStorage.getItem("token"),
+            "Content-Type": "multipart/form-data",
           },
         });
 
@@ -97,7 +112,6 @@ function StarRegist(props) {
         console.log(error);
       }
     } else if (type === "modify") {
-      // 임시 데이터
       const inputDate = "2024-02-02";
       const data = {
         boardIndex: boardIndex,
@@ -110,7 +124,7 @@ function StarRegist(props) {
 
       try {
         await axios
-          .put(`${process.env.REACT_APP_API_URL}/board/`, data, {
+          .put(`${process.env.REACT_APP_API_URL}/board`, data, {
             headers: {
               token: localStorage.getItem("token"),
             },
@@ -127,6 +141,27 @@ function StarRegist(props) {
     }
   };
 
+  const handleFileChange = (e) => {
+    // // 개수 제한
+    // const maxFileCnt = 5;
+    // const uploadFileList = fileRef.current.files;
+    // const attachedFileCnt = uploadFileList.length;
+    // const remainFileCnt = maxFileCnt - attachedFileCnt;
+    // const imgUrlList = [...imageList];
+    // console.log(uploadFileList);
+    // for (let i = 0; i < uploadFileList.length; i++) {
+    //   const imgURL = URL.createObjectURL(uploadFileList[i]);
+    //   imgUrlList.push(imgURL);
+    // }
+    // if (remainFileCnt < 0) {
+    //   alert(`첨부파일은 ${maxFileCnt}개를 넘길 수 없습니다.`);
+    //   imgUrlList.slice(0, maxFileCnt);
+    // }
+    // console.log("파일첨부완료");
+    // setImageList(imgUrlList);
+    // 용량 제한
+  };
+
   const handleClose = () => {
     if (type === "regist") {
       setIsStarRegistOpen(false);
@@ -134,13 +169,6 @@ function StarRegist(props) {
       setIsStarModifyOpen(false);
     }
   };
-
-  let Container = styled.div`
-        background-color: black;
-        position: absolute;
-        top: 0,
-        left: 0,
-    `;
 
   return (
     <div className="star-regist-container">
@@ -152,18 +180,24 @@ function StarRegist(props) {
         </div>
         <div className="star-regist-middle">
           {/* 글 작성 영역 */}
-          {media.length > 0 && <div>사진 미리보기</div>}
+          <ImagePreviewArea />
           <textarea ref={contentRef} />
         </div>
         <div>{<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}</div>
         <div>
-          <input type="file" onClick={handleMediaUpload} />
+          <input type="file" multiple onChange={handleFileChange} ref={fileRef} />
           <button onClick={handleRegist}>{buttonValue[type]}</button>
           <button onClick={handleClose}>취소</button>
         </div>
       </div>
     </div>
   );
+}
+
+function ImagePreviewArea() {
+  const imageList = useRecoilValue(imageListState);
+  console.log(imageList);
+  return <div>{imageList.length > 0 ? imageList.map((it, index) => <div>{it}</div>) : null}</div>;
 }
 
 const DateArea = forwardRef((props, ref) => {

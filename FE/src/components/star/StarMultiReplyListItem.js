@@ -14,12 +14,12 @@ function StarMultiReplyListItem(props) {
 
   const handleDelete = async () => {
     const data = {
-      multicommentIndex: reply.multiCommentIndex,
       memberIndex: loginUserIndex,
+      multcommentIndex: reply.multiCommentIndex,
     };
-    console.log(data);
+
     await axios
-      .delete(`${process.env.REACT_APP_API_URL}/multicomment/`, {
+      .delete(`${process.env.REACT_APP_API_URL}/multicomment`, {
         headers: {
           token: localStorage.getItem("token"),
         },

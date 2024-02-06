@@ -28,10 +28,11 @@ function StarReplyListItem(props) {
     };
 
     await axios
-      .delete(`${process.env.REACT_APP_API_URL}/comment/`, {
+      .delete(`${process.env.REACT_APP_API_URL}/comment`, {
         header: {
           token: localStorage.getItem("token"),
         },
+
         data: data,
       })
       .then((response) => {
@@ -89,7 +90,7 @@ function MultiReplyInput(props) {
     };
 
     await axios
-      .post(`${process.env.REACT_APP_API_URL}/multicomment/`, data, {
+      .post(`${process.env.REACT_APP_API_URL}/multicomment`, data, {
         headers: {
           token: localStorage.getItem("token"),
         },
@@ -104,9 +105,15 @@ function MultiReplyInput(props) {
       .catch((error) => console.log(error));
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleMultiReplySubmit();
+    }
+  };
+
   return (
     <div>
-      └ <input ref={input} />
+      └ <input ref={input} onKeyDown={handleKeyDown} />
       <button
         onClick={() => {
           handleMultiReplyQuit();
