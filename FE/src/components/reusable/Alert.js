@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState, isPwCheckOpenState } from "components/atom";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
-import axios from "axios";
 
 
 // type: 'report', 'PWCheck', 'delete', 'block'
