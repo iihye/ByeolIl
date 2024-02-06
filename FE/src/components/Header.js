@@ -14,8 +14,6 @@ function Header() {
 
     return (
         <div className="Header">
-            <div>고정된 헤더입니다!!</div>
-
             {token ? (
                 <>
                     <nav className="sideContainer">

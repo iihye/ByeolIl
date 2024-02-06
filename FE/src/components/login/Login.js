@@ -129,7 +129,13 @@ function Login() {
     const onKakaoLogin = () => {
         window.location.href = kakaoLoginLink;
     };
-    // 아이디 찾기, 비밀번호 찾기, 회원가입  navigate 함수
+
+    // 로그인 엔터 이벤트
+    const onEnterLogin = (e) => {
+        if (e.key === 'Enter' && !isDisable) {
+            onLogin();
+        }
+    };
 
     return (
         <div>
@@ -167,6 +173,7 @@ function Login() {
                             name="PW"
                             value={passwordValue}
                             onChange={handlePwValue}
+                            onKeyPress={onEnterLogin}
                             className="border border-white-sub focus:ring-1 focus:ring-white-sub h-input"
                         />
                     </div>
