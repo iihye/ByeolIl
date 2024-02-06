@@ -253,7 +253,7 @@ function RadioContent() {
       fetchData();
       
       // TTS 음성수신 미해결
-      axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
+      axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=테스트123`);
     }, [rdata]);
     function handlePlay() {
             // 음성파일 재생시켜야됨. => 오디오 플레이어 요소도 추가 필요 
