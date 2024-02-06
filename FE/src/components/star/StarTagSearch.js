@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { isTagSearchOpenState } from 'components/atom';
 import axios from 'axios';
 
 // 추후 카드 형식으로 나오게 css 변경
@@ -14,7 +15,7 @@ function StarTagSearch() {
         setTag(e.target.value);
     };
 
-    const handleList = (e) => {
+    const handleList = () => {
         setTag(' ');
         setTagSearchData([]);
         setReplaceTag('');
