@@ -242,7 +242,7 @@ function StarContent(props) {
   /* <div style={{ display: "flex" }}>{data && data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div> */
 }
 function MediaArea(props) {
-  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
+  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} key={index} style={{ width: "50px" }}></img>)}</div>;
 }
 
 function ReplyRegistArea(props) {
