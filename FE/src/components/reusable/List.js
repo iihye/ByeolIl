@@ -60,7 +60,6 @@ function List() {
                     `${process.env.REACT_APP_API_URL}/board/list/${memberIndex}`
                 )
                 .then((response) => {
-                    console.log(response);
                     setListData(response.data);
                 })
                 .catch((e) => console.log(e));
