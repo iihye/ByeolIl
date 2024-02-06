@@ -14,7 +14,7 @@ import {
     FaUserPlus,
     FaComment,
     FaComments,
-    FaBell
+    FaRegBell
 } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 
@@ -72,10 +72,11 @@ function Alarm() {
     // 알림 타입마다 다른 창이 떠야함
     // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
     return (
-        <Card className="Alarm w-3/12 bg-modal-bg text-white-sub px-6 py-6 h-login rounded-component">
+        <Card className="Alarm w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
             <CardHeader>
-                <CardTitle className="flex justify-start font-['Pre-Bold'] text-2xl pb-2">
-                    알림창
+                <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+                    <FaRegBell className="mr-1"/>
+                    알림
                 </CardTitle>
             </CardHeader>
             <div></div>
