@@ -98,7 +98,7 @@ module.exports = {
                 input: '1.875rem',
                 button: '2.375rem',
                 login: '31.625rem',
-                searchBar: '3rem',
+                searchBar: '2.5rem',
             },
             width: {
                 cardContainer: '59.188rem',
