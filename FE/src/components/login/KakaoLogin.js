@@ -27,7 +27,9 @@ function KakaoLogin() {
         //         }
         //     });
         axios
-            .get(`${process.env.REACT_APP_API_URL}/member/join/kakao/${code}`)
+            .get(
+                `${process.env.REACT_APP_API_URL}/member/join/kakao?code=${code}`
+            )
             .then((response) => console.log(response))
             .catch((error) => console.log(error));
     };
