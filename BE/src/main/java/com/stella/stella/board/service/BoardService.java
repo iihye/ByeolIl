@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -48,7 +49,6 @@ public class BoardService {
         //dto에서 받은 memberid로 member를 찾아서 board를 만듦
 
         boardRepository.save(board);
-        log.info("보드 성공");
         List<String> hashes = dto.getHashContent();
         if(hashes != null && !hashes.isEmpty()){
             for(String s: hashes){
@@ -59,7 +59,6 @@ public class BoardService {
                 hashRepository.save(hash);
             }
         }
-        log.info("해시 성공");
         if (files != null)
             for (MultipartFile file : files) {
                 String fileUrl = s3Service.saveFile(file);
@@ -69,7 +68,6 @@ public class BoardService {
                         .build();
                 mediaRepository.save(media);
             }
-        log.info("파일 성공");
         //List<String> 형태로 미디어 파일의 경로를 받아서 저장
     }
 
@@ -104,8 +102,9 @@ public class BoardService {
     }
 
     @Transactional
-    public void modifyBoard(BoardUpdateRequestDto dto) {
+    public void modifyBoard(BoardUpdateRequestDto dto,MultipartFile[] files) throws IOException  {
         Board board = boardRepository.findById(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+        Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
         if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
@@ -116,9 +115,32 @@ public class BoardService {
             board.setBoardAccess(dto.getBoardAccess());
             board.setBoardInputDate(dto.getBoardInputDate());
             //DateTimeFormatter 이용해서 String에서 LocalDateTime으로 형변환 시켜줘야할지도
-
+            //기존 해쉬 모두 삭제
+            hashRepository.deleteAllByBoardIndex(dto.getBoardIndex());
+            //해쉬 재등록
+            List<String> hashes = dto.getBoardHash();
+            if(hashes != null && !hashes.isEmpty()){
+                for(String s: hashes){
+                    Hash hash = Hash.builder()
+                            .hashContent(s)
+                            .board(board)
+                            .member(member).build();
+                    hashRepository.save(hash);
+                }
+            }
+            List<Media> mediaList = mediaRepository.findByBoardBoardIndex(dto.getBoardIndex()).get();
+            //기존 미디어 모두 삭제
             mediaRepository.deleteAllById(dto.getBoardIndex());
-
+            //s3에서 존재여부 비교하면서 삭제
+            if(mediaList!=null) {
+                List<String> mediaUrlList = mediaList.stream().map(Media::getMediaLocation).collect(Collectors.toList());
+                for (String mediaUrl : dto.getBoardMedia()) {
+                    mediaUrlList.remove(mediaUrl);
+                }
+                for(String mediaUrl: mediaUrlList)
+                    s3Service.deleteFile(mediaUrl.substring(60));
+            }
+            //수정 이후 남아있는 미디어 다시 저장
             List<String> mediaLocation = dto.getBoardMedia();
             if (mediaLocation != null) {
                 for (String s : mediaLocation) {
@@ -129,6 +151,16 @@ public class BoardService {
                     mediaRepository.save(media);
                 }
             }
+            //새로 추가된 파일 저장
+            if (files != null)
+                for (MultipartFile file : files) {
+                    String fileUrl = s3Service.saveFile(file);
+                    Media media = Media.builder()
+                            .mediaLocation(fileUrl)
+                            .board(board)
+                            .build();
+                    mediaRepository.save(media);
+                }
         } else {
             throw new CustomException(CustomExceptionStatus.MEMBERID_INVALID);
         }

@@ -17,6 +17,7 @@ public class BoardUpdateRequestDto {
     private LocalDate boardInputDate;
     private String boardContent;
     private List<String> boardMedia;
+    private List<String> boardHash;
     private BoardAccessStatus boardAccess;
 
 
