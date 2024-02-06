@@ -3,12 +3,12 @@ import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
 import Alert from "./Alert";
-import { isStarDetailOpenState } from 'components/atom';
 import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } from "components/atom";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
 import { GoRocket } from "react-icons/go";
+import { useNavigate } from "react-router";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -321,7 +321,8 @@ function RadioContent() {
       fetchData();
       
       // TTS 음성수신 미해결
-      axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
+      // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
+
     }, [rdata]);
     function handlePlay() {
             // 음성파일 재생시켜야됨. => 오디오 플레이어 요소도 추가 필요 
