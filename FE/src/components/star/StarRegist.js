@@ -5,6 +5,7 @@ import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import "./star.css";
 import Find from "components/reusable/Find";
+import { IoIosCloseCircle, IoMdCloseCircle } from "react-icons/io";
 
 const imageListState = atom({
   key: "imageList",
@@ -164,23 +165,29 @@ function StarRegist(props) {
   }
 
   return (
-    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center">
+    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard']">
       <div>
         <ImagePreviewArea />
       </div>
-      <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3">
-        <div className="star-regist-top flex justify-between">
+      <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3 w-96">
+        <div className="star-regist-top flex justify-between mb-2">
           <DateArea ref={dateRef} type={type} />
           <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
         </div>
         <div className="star-regist-middle">
-          <textarea className="bg-white-sub rounded w-full h-44 resize-none" ref={contentRef} />
+          <textarea className="bg-transparent rounded-lg w-full h-44 resize-none p-2 border" ref={contentRef} />
         </div>
         {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
-        <div>
+        <div className="flex justify-between">
           <FileUploadArea />
-          <button onClick={handleRegist}>{buttonValue[type]}</button>
-          <button onClick={handleClose}>취소</button>
+          <div className="flex">
+            <button className="h-8 w-14 px-2 shadow-md" onClick={handleRegist}>
+              {buttonValue[type]}
+            </button>
+            <button className="h-8 w-14 ml-2 shadow-md" onClick={handleClose}>
+              닫기
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -209,7 +216,7 @@ const FileUploadArea = forwardRef((props, ref) => {
     // 용량 제한
   };
 
-  return <input type="file" multiple onChange={handleFileChange} ref={ref} />;
+  return <input className="w-20" type="file" multiple onChange={handleFileChange} ref={ref} />;
 });
 
 function ImagePreviewArea() {
@@ -288,14 +295,22 @@ const HashtagArea = (props) => {
   };
 
   return (
-    <div className="flex">
-      {hashtagList.map((it, index) => (
-        <div className={`bg-white-sub rounded p-1 mr-3 my-1`} key={index} onClick={() => handleRemoveHashtag(it, index)}>
-          {it}
-        </div>
-      ))}
-      {props.type === "regist" && hashtagList.length < 10 && <input className="bg-white-sub rounded p-1 mr-3 my-1" ref={input} type="text" style={{ width: "70px" }} onKeyDown={handleKeyDown}></input>}
-    </div>
+    <>
+      <div className="flex items-center flex-wrap">
+        {hashtagList.map((it, index) => (
+          <div className={`bg-btn-bg rounded-xl text-white-sub p-2 mr-3 my-1`} key={index} onClick={() => handleRemoveHashtag(it, index)}>
+            <span className="text-white-sub mr-1">#</span>
+            {it}
+          </div>
+        ))}
+        {props.type === "regist" && hashtagList.length < 10 && (
+          <div className="flex items-center">
+            <span className="text-white-sub mr-1 text-2xl">#</span>
+            <input className="border-b-2 border-white-sub rounded-none p-1 mr-3 my-1" ref={input} type="text" style={{ width: "70px" }} onKeyDown={handleKeyDown}></input>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

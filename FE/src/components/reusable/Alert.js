@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState } from "components/atom";
-import axios from "axios";
 import { useSetRecoilState } from "recoil";
-import "./Alert.css";
+import axios from "axios";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
@@ -14,8 +13,8 @@ function Alert(props) {
   };
 
   return (
-    <div className="alert" style={{ border: "1px solid black" }}>
-      {alertTypes[props.type]}
+    <div className="alert-container bg-modal-bg w-full h-full absolute top-0 left-0 flex justify-center items-center">
+      <div className="alert w-auto h-auto p-4 bg-alert-bg rounded-xl text-white-sub shadow-xl font-['Pretendard']">{alertTypes[props.type]}</div>
     </div>
   );
 }
@@ -27,14 +26,20 @@ function InputAlert(props) {
   const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
 
   useEffect(() => {
-    // Enter 키 입력으로 input 내용 처리하기
-    const handleEnter = (e) => {
-      if (e.key === "Enter") {
-        handleSubmit();
-      }
-    };
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "alert-container");
 
-    input.current.addEventListener("keydown", handleEnter);
+      if (check) {
+        handleClose();
+      }
+    }
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
   }, []);
 
   const toEnter = {
@@ -97,28 +102,33 @@ function InputAlert(props) {
   const handleClose = () => {
     setIsReportAlertOpen(false);
   };
-
+  // className="rounded-input bg-transparent border-white-sub outline-none"
   return (
     <>
-      <div>{toEnter[props.type]} 입력해주세요.</div>
-      <div>
-        <input ref={input} />
-      </div>
-      <div>
-        <button
-          onClick={() => {
-            handleSubmit();
-          }}
-        >
-          {buttonValue[props.type]}
-        </button>
-        <button
-          onClick={() => {
-            handleClose();
-          }}
-        >
-          취소
-        </button>
+      <div className="flex-row">
+        {props.type === "report" ? <h1 className="text-center text-3xl mb-2 font-['Pre-bold']">신고하기</h1> : null}
+        <div className="text-lg text-center mb-3">{toEnter[props.type]} 입력해주세요.</div>
+        <div className="flex justify-center mb-3">
+          <textarea className="bg-transparent rounded-lg  p-2 h-28 resize-none" ref={input} />
+        </div>
+        <div className="flex justify-center gap-5 px-28">
+          <button
+            className="h-8 px-2"
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            {buttonValue[props.type]}
+          </button>
+          <button
+            className="h-8 px-2"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            취소
+          </button>
+        </div>
       </div>
     </>
   );
@@ -127,6 +137,23 @@ function InputAlert(props) {
 function Delete(props) {
   const setIsDeleteAlertOpen = useSetRecoilState(isDeleteAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+
+  useEffect(() => {
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "alert-container");
+
+      if (check) {
+        handleClose();
+      }
+    }
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const handleDelete = async () => {
     const data = {
@@ -154,13 +181,13 @@ function Delete(props) {
 
   return (
     <>
-      <div>
-        별이 빛을 잃고 말거에요.
-        <br />
-        정말로.. 삭제할까요?
+      <div className="text-center mb-3 px-20 text-lg">
+        <div>별이 빛을 잃고 말거에요.</div>
+        <div>정말로.. 삭제할까요?</div>
       </div>
-      <div>
+      <div className="flex justify-center gap-5">
         <button
+          className="h-8 px-2"
           onClick={() => {
             handleDelete();
           }}
@@ -168,6 +195,7 @@ function Delete(props) {
           삭제
         </button>
         <button
+          className="h-8 px-2"
           onClick={() => {
             handleClose();
           }}
