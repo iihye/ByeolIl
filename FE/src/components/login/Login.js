@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import base64 from 'base-64';
 import { Button } from '@/components/ui/button';
+import { ReactComponent as KakaoLogo } from 'img/kakao-logo.svg';
 import {
     Card,
     CardContent,
@@ -132,7 +133,7 @@ function Login() {
 
     return (
         <div>
-            <Card className="w-1/5 bg-modal-bg text-white-sub px-6 h-login">
+            <Card className="w-1/5 bg-modal-bg text-white-sub px-6 h-login rounded-component">
                 <CardHeader>
                     <CardTitle className="text-6xl text-center font-['Star'] py-4">
                         별 일
@@ -194,12 +195,13 @@ function Login() {
                             로그인
                         </Button>
                     </div>
-                    <div className="kakaoLoginButton">
+                    <div className="kakaoLoginButton align-middle">
                         <Button
                             onClick={onKakaoLogin}
-                            className="w-full h-button my-1 no-hover-effect text-kakao-label"
+                            className="w-full h-button my-1 no-hover-effect text-kakao-label flex justify-center items-center gap-2"
                         >
-                            카카오 로그인
+                            <KakaoLogo className="w-6 h-6 p-0.5 " />
+                            <div>카카오 로그인</div>
                         </Button>
                     </div>
                 </CardFooter>
