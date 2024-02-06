@@ -1,12 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import base64 from 'base-64';
-import Sidebar from 'components/Sidebar';
+import { Button } from '@/components/ui/button';
+import { ReactComponent as KakaoLogo } from 'img/kakao-logo.svg';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-// + 아이디 찾기, 비밀번호 찾기, 회원가입 navigate
-
-const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_URI}&response_type=code`;
+const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_TEMP_URI}&response_type=code&prompt=login`;
 
 function Login() {
     const [idValue, setIdValue] = useState('');
@@ -25,17 +34,9 @@ function Login() {
         setPasswordValue(e.target.value);
     };
 
-    const onLogOut = () => {
-        localStorage.removeItem('memberIndex');
-        localStorage.removeItem('nickname');
-        localStorage.removeItem('token');
-        localStorage.removeItem('auth');
-        window.location.reload();
-    };
-
     // 맨 처음 마운트 될 때 autofocus
     useEffect(() => {
-        if (localStorage.getItem('isLogin') === 'false' && idRef.current) {
+        if (idRef.current) {
             idRef.current.focus();
         }
     }, []);
@@ -66,7 +67,7 @@ function Login() {
     const onLogin = () => {
         const loginInfo = {
             memberId: idValue,
-            memberPass: idRef.current.value,
+            memberPass: passwordValue,
             memberPlatform: 'origin',
         };
 
@@ -129,43 +130,89 @@ function Login() {
         window.location.href = kakaoLoginLink;
     };
 
+    // 로그인 엔터 이벤트
+    const onEnterLogin = (e) => {
+        if (e.key === 'Enter' && !isDisable) {
+            onLogin();
+        }
+    };
+
     return (
         <div>
-            <div className="Login">
-                <div className="inputForm">
-                    <input
-                        type="text"
-                        name="ID"
-                        ref={idRef}
-                        value={idValue}
-                        onChange={handleIdValue}
-                        maxLength="20"
-                    />
-                    {errorMessage && (
-                        <p className="idErrorMessage">{errorMessage}</p>
-                    )}
-                    <input
-                        type="password"
-                        name="PW"
-                        value={passwordValue}
-                        onChange={handlePwValue}
-                    />
-                </div>
-
-                <div className="loginOption">
-                    <p>아이디 찾기</p>
-                    <p>비밀번호 찾기</p>
-                    <p>회원가입</p>
-                </div>
-                <div className="loginButton">
-                    <button onClick={onLogin} disabled={isDisable}>
+            <Card className="w-1/5 bg-modal-bg text-white-sub px-6 h-login rounded-component">
+                <CardHeader>
+                    <CardTitle className="text-6xl text-center font-['Star'] py-4">
+                        별 일
+                    </CardTitle>
+                    <CardDescription className="font-['Pre-Bold'] text-2xl">
                         로그인
-                    </button>
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-4 font-['Pre-Bold']">
+                    <div className="grid gap-1 mt-2 ">
+                        <Label htmlFor="email">아이디</Label>
+                        <Input
+                            type="text"
+                            name="ID"
+                            ref={idRef}
+                            value={idValue}
+                            onChange={handleIdValue}
+                            maxLength="20"
+                            className="border border-white-sub focus:ring-1 focus:ring-white-sub h-input "
+                        />
+                        <p
+                            className={`text-xs h-5 ${
+                                errorMessage ? 'text-red-500' : ''
+                            }`}
+                        >
+                            {errorMessage || ''}
+                        </p>
+                        <Label htmlFor="password">비밀번호</Label>
+                        <Input
+                            type="password"
+                            name="PW"
+                            value={passwordValue}
+                            onChange={handlePwValue}
+                            onKeyPress={onEnterLogin}
+                            className="border border-white-sub focus:ring-1 focus:ring-white-sub h-input"
+                        />
+                    </div>
+                </CardContent>
+
+                <div className="relative flex place-content-evenly text-xs my-3">
+                    <div>
+                        <Link to={'/findId'}>아이디 찾기</Link>
+                    </div>
+                    <div>
+                        <Link to={'/findPw'}>비밀번호 찾기</Link>
+                    </div>
+                    <div>
+                        <Link to={'/regist'}>회원가입</Link>
+                    </div>
                 </div>
-                <div className="kakaoLoginButton">
-                    <button onClick={onKakaoLogin}>카카오로 로그인하기</button>
-                </div>
-            </div>
+                <CardFooter className="font-['Pre-Bold'] ">
+                    <div className="loginButton">
+                        <Button
+                            onClick={onLogin}
+                            disabled={isDisable}
+                            className={`w-full h-button my-1 ${
+                                isDisable ? 'opacity-50' : ''
+                            }`}
+                        >
+                            로그인
+                        </Button>
+                    </div>
+                    <div className="kakaoLoginButton align-middle">
+                        <Button
+                            onClick={onKakaoLogin}
+                            className="w-full h-button my-1 no-hover-effect text-kakao-label flex justify-center items-center gap-2"
+                        >
+                            <KakaoLogo className="w-6 h-6 p-0.5 " />
+                            <div>카카오 로그인</div>
+                        </Button>
+                    </div>
+                </CardFooter>
+            </Card>
         </div>
     );
 }
