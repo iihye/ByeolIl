@@ -38,6 +38,7 @@ function App() {
           <Route path="tagSearch" element={<StarTagSearch />} />
           <Route path="settings" element={<Settings />}></Route>
           <Route path="report" element={<Report />}></Route>
+          <Route path="radio" element={<Radio/>}/>
           <Route path="*" element={<ErrorPage />} />
         </Route>
       </Routes>

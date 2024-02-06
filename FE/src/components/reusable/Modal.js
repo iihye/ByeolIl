@@ -2,6 +2,8 @@ import axios from "axios";
 import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
+import Alert from "./Alert";
+import { isStarDetailOpenState } from 'components/atom';
 import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } from "components/atom";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -293,30 +295,74 @@ function ReplyRegistArea(props) {
 }
 
 function RadioContent() {
-  const [data, setData] = useState(null);
+    const [rdata, setRdata] = useState({  // 테스트용 임시값
+      "boardIndex": 3,
+      "boardContent": "테스트용 글입니다.",
+      "boardInputDate": "24.01.23",
+      "fromMemberIndex" : 1 
+    });
+    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
 
-  // useEffect(() => {
+    const [repostActive, setRepostActive] = useState(false);
+    const navigate = useNavigate();
+    const fetchData = async () => {
+      await axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`, {
+        headers: {
+          token: localStorage.getItem('token') ?? "",
+        },
+      })
+        .then((response) => {
+          console.log(response.data);
+          setRdata(response.data);
+        }).catch((e) => { console.log(e) })
+    }
+    useEffect(() => {
+      // 최초1회 데이터를 수신한다. 
+      fetchData();
+      
+      // TTS 음성수신 미해결
+      axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
+    }, [rdata]);
+    function handlePlay() {
+            // 음성파일 재생시켜야됨. => 오디오 플레이어 요소도 추가 필요 
+    }
+    function handleRepost() {
+      axios.post(`${process.env.REACT_APP_API_URL}/radio/toss`,{
+        "memberIndex": rdata.fromMemberIndex,
+        "boardIndex": rdata.boardIndex,
+      },{
+        headers: {
+          token: localStorage.getItem('token') ?? "",
+        },
+      }).then((response)=>{console.log(response.data)});
+      alert("재송신 성공!");
+      setRepostActive(true);
+    }
 
-  // }, []);
 
-  return (
-    <div>
-      <div>
-        {/*라디오 모달 상단 헤더 */}
-        <div>n년 n월 n일</div>
-        <button>REPORT</button>
-        <button>CLOSE</button>
-      </div>
-      <div>
-        {/*라디오 내용 */}
-        <div>{data ? data.boardContent : "로딩중"}</div>
-      </div>
-      <div>
-        <button>PLAY</button>
-        <button>재송신하기</button>
-      </div>
-    </div>
-  );
+    return (
+          <div>
+            <div>
+                {/*라디오 모달 상단 헤더 */}
+                {rdata ? <div>20{rdata.boardInputDate.split('.')[0]}년 {rdata.boardInputDate.split('.')[1]}월 {rdata.boardInputDate.split('.')[2]}일</div> : '로딩중'}
+                <button onClick={() => {setIsReportAlertOpen(true)}}>REPORT</button>
+                <button onClick={()=>{navigate(-1);}}>CLOSE</button>
+            </div>
+            <div>
+                {/*라디오 내용 */}
+                <div>{rdata ? rdata.boardContent : '로딩중'}</div>
+            </div>
+            <div>
+                <button onClick={() => {handlePlay()}}>PLAY</button>
+                <button disabled={repostActive} onClick={() => {handleRepost()}}>재송신하기</button>
+            </div>
+            <div className="reportAlert">
+              {
+                isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex}/>
+              }
+            </div>
+        </div>
+    );
 }
 
 export default Modal;
