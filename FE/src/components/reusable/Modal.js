@@ -44,7 +44,7 @@ function StarContent(props) {
   useEffect(() => {
     const fetchData = async (starIndex) => {
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}`, {
+        .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
           headers: {
             token: localStorage.getItem("token") ?? "",
           },
@@ -63,19 +63,14 @@ function StarContent(props) {
     fetchData(starIndex);
   }, [renewStarDetail]);
 
-  // 좋아요 정보 가져오기
   useEffect(() => {
-    const fetchData = async () => {
-      await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/like/${loginUserIndex}`)
-        .then((response) => {
-          const res = response.data.some((it) => it.boardIndex === starIndex);
-          // setLikeData(response.data);
-          setIsLike(res);
-        })
-        .catch((error) => console.log(error));
-    };
-    fetchData();
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "modal-container");
+      if (check) {
+        handleClose();
+      }
+    }
 
     window.addEventListener("click", handleClick);
 
@@ -155,14 +150,6 @@ function StarContent(props) {
     setIsStarDetailOpen(false);
     // setReportModal('');
   };
-
-  function handleClick(e) {
-    e.stopPropagation();
-    const check = [...e.target.classList].some((it) => it === "modal-container");
-    if (check) {
-      handleClose();
-    }
-  }
 
   /* 게시글 작성자 체크*/
   const isWriter = () => {
