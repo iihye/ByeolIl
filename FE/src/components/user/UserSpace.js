@@ -6,7 +6,7 @@ import { TextureLoader } from "three/src/loaders/TextureLoader";
 import * as THREE from "three";
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import StarRegist from "components/star/StarRegist";
 import StarDetail from "components/star/StarDetail";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from "components/atom";
@@ -419,6 +419,9 @@ function UserSpace() {
         </>
       )}
       <ModalSpace />
+      <Link to={`/space/${localStorage.getItem('memberIndex')}/radio`}>
+                <button>라디오</button>
+      </Link>
     </div>
   );
 }

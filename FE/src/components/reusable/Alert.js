@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState } from "components/atom";
-import { useSetRecoilState } from "recoil";
+import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState, isPwCheckOpenState } from "components/atom";
 import axios from "axios";
+import { useSetRecoilState } from "recoil";
+
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
@@ -22,9 +23,10 @@ function Alert(props) {
 // Input 요소를 가진 alert
 function InputAlert(props) {
   const input = useRef(null);
-
+ 
   const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
-
+  const setIsPwCheckOpenState = useSetRecoilState(isPwCheckOpenState);
+ 
   useEffect(() => {
     function handleClick(e) {
       e.stopPropagation();
@@ -74,8 +76,19 @@ function InputAlert(props) {
 
   const handlePWChange = (inputData) => {
     /* 1. 비밀번호 일치하는지 체크 */
-    /* 2. - 일치할 경우) 해당 모달 내리고 개인정보 수정 모달 띄우기 */
-    /* 3. - 일치하지 않을 경우) '비밀번호가 일치하지 않습니다.' 띄우기 */
+    const PWData = {
+      memberPass: inputData
+    }
+    axios.post(`${process.env.REACT_APP_API_URL}/member/check/pass`, PWData,{
+      headers: {
+        token: localStorage.getItem("token"),
+      },
+    }).then((response) => {
+      console.log(response.data);
+      if(response.data.message === "success") setIsPwCheckOpenState(false);
+      else alert("비밀번호가 틀렸습니다!")
+    })
+
   };
 
   // 비밀번호 입력 / 신고 요청
