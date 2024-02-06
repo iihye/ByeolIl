@@ -35,10 +35,7 @@ public class BoardService {
     @Transactional
     public void addBoard(BoardCreateRequestDto dto) {
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
-        if (boardRepository.countByBoardLocation(dto.getBoardLocation()) != 0)
-            throw new CustomException(CustomExceptionStatus.ALREADY_LOCATED);
-        //location이 중복 안되게 유니크를 줘서 등록은 안되는데 entity가 만들어졌다가 등록이 안되는 거라
-        //index값은 증가해버려서 방지하기 위해 넣음
+
         BoardAccessStatus boardAccessStatus = BoardAccessStatus.OPEN;
         if(dto.getBoardAccess().equals("PARTOPEN")){
             boardAccessStatus = BoardAccessStatus.PARTOPEN;
