@@ -4,6 +4,7 @@ import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, re
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import "./star.css";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
 
 const imageListState = atom({
   key: "imageList",
@@ -42,9 +43,31 @@ function StarRegist(props) {
   useEffect(() => {
     if (type === "modify") {
       contentRef.current.value = preBoard.boardContent;
-      console.log(preBoard);
     }
+
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "star-regist-container");
+      if (check) {
+        handleClose();
+      }
+    }
+
+    function handleKeydown(e) {
+      if (e.key === "Escape") {
+        setIsStarRegistOpen(false);
+      }
+    }
+
+    window.addEventListener("click", handleClick);
+    window.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+      window.removeEventListener("keydown", handleKeydown);
+    };
   }, []);
+
   const handleRegist = async () => {
     if (contentRef.current.value.trim() === "") {
       alert("공백 입력했어요");
@@ -141,6 +164,45 @@ function StarRegist(props) {
     }
   };
 
+  function handleClose() {
+    if (type === "regist") {
+      setIsStarRegistOpen(false);
+    } else if (type === "modify") {
+      setIsStarModifyOpen(false);
+    }
+  }
+
+  return (
+    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard']">
+      <div>
+        <ImagePreviewArea />
+      </div>
+      <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3 w-96">
+        <div className="star-regist-middle">
+          <div className="flex justify-between items-center mb-2">
+            <DateArea ref={dateRef} type={type} />
+            <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
+          </div>
+          <textarea className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub" ref={contentRef} placeholder="일기 내용을 입력해주세요." />
+        </div>
+        {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
+        <div className="flex justify-between">
+          <FileUploadArea ref={fileRef} />
+          <div className="flex">
+            <button className="h-8 w-14 px-2 shadow-md" onClick={handleRegist}>
+              {buttonValue[type]}
+            </button>
+            <button className="h-8 w-14 ml-2 shadow-md" onClick={handleClose}>
+              닫기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const FileUploadArea = forwardRef((props, ref) => {
   const handleFileChange = (e) => {
     // // 개수 제한
     // const maxFileCnt = 5;
@@ -162,37 +224,8 @@ function StarRegist(props) {
     // 용량 제한
   };
 
-  const handleClose = () => {
-    if (type === "regist") {
-      setIsStarRegistOpen(false);
-    } else if (type === "modify") {
-      setIsStarModifyOpen(false);
-    }
-  };
-
-  return (
-    <div className="star-regist-container">
-      <div className="star-regist" style={{ border: "1px solid black" }}>
-        <div className="star-regist-top">
-          {/* 최상단 */}
-          <DateArea ref={dateRef} type={type} />
-          <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
-        </div>
-        <div className="star-regist-middle">
-          {/* 글 작성 영역 */}
-          <ImagePreviewArea />
-          <textarea ref={contentRef} />
-        </div>
-        <div>{<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}</div>
-        <div>
-          <input type="file" multiple onChange={handleFileChange} ref={fileRef} />
-          <button onClick={handleRegist}>{buttonValue[type]}</button>
-          <button onClick={handleClose}>취소</button>
-        </div>
-      </div>
-    </div>
-  );
-}
+  return <input className="w-20" type="file" multiple onChange={handleFileChange} ref={ref} />;
+});
 
 function ImagePreviewArea() {
   const imageList = useRecoilValue(imageListState);
@@ -201,15 +234,33 @@ function ImagePreviewArea() {
 }
 
 const DateArea = forwardRef((props, ref) => {
+  const [date, setDate] = useState(new Date());
+  let year = date.getFullYear();
+  let month = date.getMonth();
+  let day = date.getDate();
+
+  useEffect(() => {
+    year = date.getFullYear();
+    month = date.getMonth();
+    day = date.getDate();
+    console.log(year);
+  }, [date]);
+
   const handleCalander = () => {};
 
-  return <div onClick={handleCalander}>날짜</div>;
+  return (
+    <div onClick={handleCalander} className="text-white-sub text-2xl mb-1 hover:text-white hover:cursor-pointer flex items-center">
+      <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
+      <div>
+        <HiOutlinePencilSquare />
+      </div>
+    </div>
+  );
 });
 
 const AccessRangeArea = forwardRef((props, ref) => {
   return (
-    <div style={{ display: "flex" }}>
-      <div>공개 범위</div>
+    <div>
       <select name="access" ref={ref} defaultValue={props.preBoard && props.preBoard.boardAccess}>
         <option value="OPEN">전체 공개</option>
         <option value="PARTOPEN">친구 공개</option>
@@ -266,14 +317,22 @@ const HashtagArea = (props) => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      {hashtagList.map((it, index) => (
-        <div key={index} style={{ border: "1px solid black", margin: "0 3px" }} onClick={() => handleRemoveHashtag(it, index)}>
-          {it}
-        </div>
-      ))}
-      {props.type === "regist" && hashtagList.length < 10 && <input ref={input} type="text" style={{ width: "70px" }} onKeyDown={handleKeyDown}></input>}
-    </div>
+    <>
+      <div className="flex items-center flex-wrap mb-2">
+        {hashtagList.map((it, index) => (
+          <div className="text-white-sub mr-3 hover:text-white hover:cursor-pointer flex items-center h-6" key={index} onClick={() => handleRemoveHashtag(it, index)}>
+            <span className="mr-1">#</span>
+            <span>{it}</span>
+          </div>
+        ))}
+        {props.type === "regist" && hashtagList.length < 10 && (
+          <div className="flex items-center h-6 text-white-sub">
+            <span className="text-white-sub mr-1 text-xl">#</span>
+            <input className="rounded-none mr-3 my-1 w-20" ref={input} type="text" onKeyDown={handleKeyDown} placeholder="해시태그"></input>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

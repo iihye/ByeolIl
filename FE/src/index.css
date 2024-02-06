@@ -65,7 +65,7 @@
         --ring: 212.7 26.8% 83.9%;
     }
     button {
-        @apply bg-btn-bg rounded-button;
+        @apply bg-btn-bg rounded-button text-white-sub;
         &:hover {
             @apply bg-btn-bg-hover;
         }
@@ -88,6 +88,17 @@
             @apply bg-kakao;
         }
     }
+    .card-contain-style {
+        @apply bg-modal-bg text-white-sub rounded-component;
+    }
+
+    .card-style {
+        @apply bg-black-sub text-white-sub rounded-component opacity-90;
+    }
+
+    .search-input {
+        @apply rounded-input bg-white-sub outline-none w-searchBar h-searchBar;
+    }
 }
 
 @font-face {
@@ -101,4 +112,8 @@
 @font-face {
     font-family: 'Pre-Thin';
     src: url('./fonts/Pretendard-Thin.woff');
+}
+@font-face {
+    font-family: 'Pre-Light';
+    src: url('./fonts/Pretendard-Light.woff');
 }

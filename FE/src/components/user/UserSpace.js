@@ -11,6 +11,7 @@ import StarRegist from "components/star/StarRegist";
 import StarDetail from "components/star/StarDetail";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from "components/atom";
 import { position } from "../../data";
+import ModalSpace from "components/ModalSpace";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
 const starRange = [];
@@ -121,6 +122,7 @@ function Star(props) {
   }, [stars]);
 
   const handleClick = (locationNum) => {
+    console.log(locationNum);
     const starIndex = isAddedStar.get(locationNum) ? isAddedStar.get(locationNum).boardIndex : null;
     if (starIndex) {
       // 별이 나에게 공개된 별일 때
@@ -400,7 +402,7 @@ function UserSpace() {
   }, [userName]);
 
   return (
-    <div className="user-space">
+    <div className="user-space relative">
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
         <Canvas>
           <SceneStars />
@@ -416,6 +418,7 @@ function UserSpace() {
           {userId !== loginIndex && <button onClick={() => handleFollow(followState)}>{followState}</button>}
         </>
       )}
+      <ModalSpace />
     </div>
   );
 }
