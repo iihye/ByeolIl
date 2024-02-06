@@ -2,21 +2,22 @@ import React, { useRef, useState } from "react";
 import PWCheck from "./PWCheckAlert";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-
+import { isPwCheckOpenState } from "components/atom";
+import { useRecoilValue } from "recoil";
 
 // Sidebar에서 회원정보 수정 버튼 누름 -> PWCheckAlert를 먼저 가서 비밀번호 검사
 // -> 검사 통과시에 ChangeInfo에 연결. -> 소셜로그인 회원은 비밀번호 수정이 없고 닉네임 수정만 있다.
 // -> 소셜로그인 회원은 비밀번호 수정이 없고 닉네임 수정만 있다.
 // + 닉네임수정은 메인화면에서 "OO님의 우주" 옆에 수정 아이콘을 눌러서 바로 수정이 되는 기능도
 
+
 export default function ChangeInfo() {
- // 모달창을 열기위해서 모달창을 여닫는 boolean 변수는 디폴트값 true
- const [isModalOpen, setIsModalOpen] = useState(true);
+  
+ const isPwCheckOpen = useRecoilValue(isPwCheckOpenState);
 
  // 패스워드, 패스워드확인 
  const password = useRef("");
  const passwordConfirm = useRef("");
-
 
  // 오류메세지 상태 저장
  const [passwordMessage, setPasswordMessage] = useState("");
@@ -67,8 +68,7 @@ export default function ChangeInfo() {
 
  return (
    <>
-     {isModalOpen && (<PWCheck setIsModalOpen={setIsModalOpen}/>)}
-     {!isModalOpen && 
+     {isPwCheckOpen ? <PWCheck/> : 
      (<div className="changePW">
         <h3>비밀번호 수정</h3>
         <div className="form">

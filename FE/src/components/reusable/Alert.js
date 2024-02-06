@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState } from "components/atom";
+import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState, isPwCheckOpenState } from "components/atom";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
 import "./Alert.css";
+
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
   const alertTypes = {
     block: <Block />,
     delete: <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />,
-    PWCheck: <InputAlert type={props.type} setIsModalOpen={setIsModalOpen}/>,
+    PWCheck: <InputAlert type={props.type} />,
     report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex} />,
   };
 
@@ -20,11 +21,13 @@ function Alert(props) {
   );
 }
 
-function InputAlert({ type, setIsModalOpen }) {
+// Input 요소를 가진 alert
+function InputAlert(props) {
   const input = useRef(null);
-
+ 
   const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
-
+  const setIsPwCheckOpenState = useSetRecoilState(isPwCheckOpenState);
+ 
   useEffect(() => {
     // Enter 키 입력으로 input 내용 처리하기
     const handleEnter = (e) => {
@@ -32,7 +35,7 @@ function InputAlert({ type, setIsModalOpen }) {
         handleSubmit();
       }
     };
-
+ 
     input.current.addEventListener("keydown", handleEnter);
   }, []);
 
@@ -68,8 +71,19 @@ function InputAlert({ type, setIsModalOpen }) {
 
   const handlePWChange = (inputData) => {
     /* 1. 비밀번호 일치하는지 체크 */
-    /* 2. - 일치할 경우) 해당 모달 내리고 개인정보 수정 모달 띄우기 */
-    /* 3. - 일치하지 않을 경우) '비밀번호가 일치하지 않습니다.' 띄우기 */
+    const PWData = {
+      memberPass: inputData
+    }
+    axios.post(`${process.env.REACT_APP_API_URL}/member/check/pass`, PWData,{
+      headers: {
+        token: localStorage.getItem("token"),
+      },
+    }).then((response) => {
+      console.log(response.data);
+      if(response.data.message === "success") setIsPwCheckOpenState(false);
+      else alert("비밀번호가 틀렸습니다!")
+    })
+
   };
 
   // 비밀번호 입력 / 신고 요청
