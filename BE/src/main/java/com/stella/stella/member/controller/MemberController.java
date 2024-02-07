@@ -54,7 +54,7 @@ public class MemberController {
         HttpStatus status = HttpStatus.OK;
         String accessToken = "";
         try {
-            String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/login/kakao");
+            String kakaoAcessToken = memberService.getKakaoAccessToken(code);
             Map<String, Object> kakaoMemberInfo = memberService.getKakaoMemberInfo(kakaoAcessToken);
             accessToken = memberService.login(kakaoMemberInfo.get("id").toString(), "", "kakao");
             resultMap.put("message", "success");
@@ -122,7 +122,7 @@ public class MemberController {
         HttpStatus status = HttpStatus.OK;
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            String kakaoAcessToken = memberService.getKakaoAccessToken(code, "api/member/join/kakao");
+            String kakaoAcessToken = memberService.getKakaoAccessToken(code);
             resultMap = memberService.getKakaoMemberInfo(kakaoAcessToken);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
@@ -254,6 +254,22 @@ public class MemberController {
         return ResponseEntity.status(status).body(resultMap);
     }
 
+    @PutMapping("/delete")
+    public ResponseEntity<Map<String, Object>> deleteMember(HttpServletRequest request) {
+        HttpStatus status = HttpStatus.OK;
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            Long memberIndex = (Long) request.getAttribute("accessMemberIndex");
+            //암호화
+            memberService.deleteMember(memberIndex);
+            resultMap.put("message", "success");
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(resultMap);
+    }
+
     @GetMapping("/check/email")
     public ResponseEntity<Map<String, Object>> sendEmail(@RequestParam("email") String email) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -339,6 +355,7 @@ public class MemberController {
             resultMap.put("message", "success");
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
+            resultMap.put("message", e.getMessage());
         }
         return ResponseEntity.status(status).body(resultMap);
     }

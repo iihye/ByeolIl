@@ -2,6 +2,7 @@ package com.stella.stella.board.entity;
 
 import com.stella.stella.comment.entity.Comment;
 import com.stella.stella.member.entity.Member;
+import com.stella.stella.radio.entity.Radio;
 import com.stella.stella.report.entity.Report;
 import jakarta.persistence.*;
 import lombok.*;
@@ -113,5 +114,13 @@ public class Board {
 
     public void setBoardInputDate(LocalDate boardInputDate) {
         this.boardInputDate = boardInputDate;
+    }
+
+    public Radio toRadio(){
+        return Radio.builder()
+                .fromMember(this.getMember())
+                .toMember(this.getMember())
+                .board(this)
+        .build();
     }
 }
