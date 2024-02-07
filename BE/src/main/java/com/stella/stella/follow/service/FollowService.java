@@ -11,6 +11,7 @@ import com.stella.stella.follow.dto.FollowRequestDto;
 import com.stella.stella.follow.entity.Follow;
 import com.stella.stella.follow.repository.FollowRepository;
 import com.stella.stella.member.entity.Member;
+import com.stella.stella.member.entity.MemberDeleteYN;
 import com.stella.stella.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,7 @@ public class FollowService {
         Member member = memberRepository.findByMemberIndex(memberIndex)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
 
-        List<Follow> follows = followRepository.findAllByFromMemberIndex(memberIndex);
+        List<Follow> follows = followRepository.findAllByFromMemberIndex(memberIndex, MemberDeleteYN.N);
         List<FollowListResponseDto> followListResponseDtos = new ArrayList<>();
 
         for(Follow follow : follows){
@@ -85,7 +86,7 @@ public class FollowService {
         Member member = memberRepository.findByMemberIndex(memberIndex)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
 
-        List<Follow> follows = followRepository.findAllByToMemberIndex(memberIndex);
+        List<Follow> follows = followRepository.findAllByToMemberIndex(memberIndex, MemberDeleteYN.N);
         List<FollowListResponseDto> followListResponseDtos = new ArrayList<>();
 
         for(Follow follow : follows){
