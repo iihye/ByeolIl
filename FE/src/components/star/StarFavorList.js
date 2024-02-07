@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { listState, filterState } from 'components/atom';
+import { listState, filterState, isStarDetailOpenState } from 'components/atom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import SearchBar from '../reusable/SearchBar';
 import { FaHeart } from 'react-icons/fa';
@@ -14,6 +14,9 @@ function StarFavorList() {
     );
 
     const [listData, setListData] = useRecoilState(listState);
+    const [starDetailState, setStarDetailState] = useRecoilState(
+        isStarDetailOpenState
+    );
     const filterData = useRecoilValue(filterState);
 
     useEffect(() => {
@@ -31,7 +34,10 @@ function StarFavorList() {
                         },
                     }
                 );
-                setListData(response.data);
+
+                setListData(
+                    response.data.filter((item) => item.boardAccess === 'OPEN')
+                );
             } catch (error) {
                 console.log(error);
             }
@@ -57,6 +63,12 @@ function StarFavorList() {
                                 <Card
                                     key={it.boardIndex}
                                     className="card-style h-80 w-64 relative"
+                                    onClick={() =>
+                                        setStarDetailState([
+                                            it.boardIndex,
+                                            it.memberIndex,
+                                        ])
+                                    }
                                 >
                                     <div className="cards w-4/5 mx-auto ">
                                         <div className="cardInfo text-xs py-2 pl-1.5">
