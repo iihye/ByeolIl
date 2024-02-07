@@ -34,7 +34,7 @@ function Report() {
                 const responses = await Promise.all(
                     reportData.map((it) =>
                         axios.get(
-                            `${process.env.REACT_APP_API_URL}/board/${it.boardIndex}`
+                            `${process.env.REACT_APP_API_URL}/board/${it.boardIndex}/${it.memberIndex}`
                         )
                     )
                 );
@@ -72,10 +72,10 @@ function Report() {
                             key={it.reportIndex}
                             onClick={() => setReportModal(it.boardIndex)}
                         >
-                            {boardContent[index]}
-                            {it.reportRegdate}
-                            {it.memberNickname}
-                            {it.reportContent}
+                            {boardContent[index]}&nbsp;
+                            {it.reportRegdate}&nbsp;
+                            {it.memberNickname}&nbsp;
+                            {it.reportContent}&nbsp;
                         </li>
                     </>
                 ))
