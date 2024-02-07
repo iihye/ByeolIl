@@ -419,8 +419,8 @@ function UserSpace() {
         </>
       )}
       <ModalSpace />
-      <Link to={`/space/${localStorage.getItem('memberIndex')}/radio`}>
-                <button>라디오</button>
+      <Link to={`/space/${localStorage.getItem("memberIndex")}/radio`}>
+        <button>라디오</button>
       </Link>
     </div>
   );
