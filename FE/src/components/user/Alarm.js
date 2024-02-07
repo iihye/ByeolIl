@@ -72,7 +72,7 @@ function Alarm() {
     // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
     return (
         <Card className="Alarm w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
-            <CardHeader>
+            <CardHeader className="flex">
                 <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                     <FaRegBell className="mr-1" />
                     알림
