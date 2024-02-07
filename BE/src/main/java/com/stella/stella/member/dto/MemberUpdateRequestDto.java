@@ -19,6 +19,5 @@ public class MemberUpdateRequestDto {
     private String memberNickname, memberEmail, memberPass;
     private MemberAlarmStatus memberAlarmStatus;
     private MemberRadioStatus memberRadioStatus;
-    private MemberDeleteYN memberDeleteYN;
     private LocalDate memberBirth, memberDeleteDate;
 }
