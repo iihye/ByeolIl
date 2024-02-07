@@ -100,7 +100,7 @@ function StarTagSearch() {
                         onClick={() => activeButton()}
                     />
                 </div>
-                <ScrollArea className=" h-96 overflow-auto ">
+                <ScrollArea className=" h-96 overflow-auto">
                     <div className="grid grid-cols-3 justify-items-center gap-4">
                         {tagSearchData ? (
                             tagSearchData.length > 0 ? (
@@ -136,8 +136,6 @@ function StarTagSearch() {
                             )
                         ) : null}
                     </div>
-
-                    <ScrollBar />
                 </ScrollArea>
             </Card>
         </div>
