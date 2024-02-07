@@ -108,30 +108,35 @@ function StarTagSearch() {
             </div>
             <ScrollArea className=" h-96 overflow-auto ">
                 <div className="grid grid-cols-3 justify-items-center gap-4">
-                    {tagSearchData &&
-                        tagSearchData.map((it) => (
-                            <Card
-                                key={it.boardIndex}
-                                className="card-style h-80 w-64"
-                            >
-                                <div className="cards w-4/5 mx-auto ">
-                                    <div className="cardInfo text-xs py-2 pl-1.5">
-                                        작성일&nbsp;
-                                        <strong>{it.boardInputDate}</strong>
-                                        &nbsp; | 작성자&nbsp;
-                                        <strong>{it.memberNickname}</strong>
+                    {tagSearchData ? (
+                        tagSearchData.length > 0 ? (
+                            tagSearchData.map((it) => (
+                                <Card
+                                    key={it.boardIndex}
+                                    className="card-style h-80 w-64"
+                                >
+                                    <div className="cards w-4/5 mx-auto ">
+                                        <div className="cardInfo text-xs py-2 pl-1.5">
+                                            작성일&nbsp;
+                                            <strong>{it.boardInputDate}</strong>
+                                            &nbsp; | 작성자&nbsp;
+                                            <strong>{it.memberNickname}</strong>
+                                        </div>
+                                        <div className="cardContent py-2">
+                                            {it.boardContent}
+                                        </div>
+                                        <div className="cardTag flex py-2">
+                                            {it.hash.map((tag) => (
+                                                <div>#{tag}&nbsp;</div>
+                                            ))}
+                                        </div>
                                     </div>
-                                    <div className="cardContent py-2">
-                                        {it.boardContent}
-                                    </div>
-                                    <div className="cardTag flex py-2">
-                                        {it.hash.map((tag) => (
-                                            <div>#{tag}&nbsp;</div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </Card>
-                        ))}
+                                </Card>
+                            ))
+                        ) : (
+                            <div>검색 결과가 없습니다</div>
+                        )
+                    ) : null}
                 </div>
 
                 <ScrollBar />
