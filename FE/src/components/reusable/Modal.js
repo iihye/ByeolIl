@@ -9,6 +9,11 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
 import { GoRocket } from "react-icons/go";
 import { useNavigate } from "react-router";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { PiSiren } from "react-icons/pi";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { TiSpannerOutline } from "react-icons/ti";
+import { CgCloseR } from "react-icons/cg";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -16,7 +21,7 @@ function Modal(props) {
 
   return (
     <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
-      <div className="modal bg-modal-bg">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
+      <div className="modal bg-modal-bg rounded-lg p-3 w-96 font-['Pre-bold']">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
     </div>
   );
 }
@@ -62,7 +67,6 @@ function StarContent(props) {
           } else {
             setIsLike(false);
           }
-
           setData(response.data);
         })
         .catch((err) => {
@@ -183,18 +187,24 @@ function StarContent(props) {
         {/* 최상단 */}
         <div className="star-content-top text-white-sub">
           {/* 지정일 */}
-          <div className="text-xl">{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</div>
+          <div className="text-2xl mb-2 font-['Pre-bold']">
+            {data ? (
+              <>
+                {data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일<span className="text-lg">의 기록</span>
+              </>
+            ) : (
+              "로딩중"
+            )}
+          </div>
           {/* 작성일(수정일) */}
-          <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div>
+          {/* <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div> */}
         </div>
-        <div className="star-content-content relative bg-white-sub h-32">
+        <div className="star-content-content relative border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
           <MediaArea data={data} />
           {/* 게시글 내용 */}
-          <div>
-            {data ? data.boardContent : "로딩중"}
-            <div className="absolute right-0 bottom-0 mr-2 mb-2 text-2xl">
-              <GoRocket />
-            </div>
+          {data ? data.boardContent : "로딩중"}
+          <div className="absolute right-0 bottom-0 mr-2 mb-2 text-2xl duration-200 hover:text-4xl hover:text-whiteh hover:cursor-pointer">
+            <GoRocket />
           </div>
         </div>
         <div>
@@ -210,35 +220,90 @@ function StarContent(props) {
       <div>
         {/* 최하단 */}
         {type === "star" ? (
-          <div>
+          <>
             {/* 댓글 작성 영역 */}
             {isLogin() && <ReplyRegistArea starIndex={starIndex} loginUserIndex={loginUserIndex} />}
-          </div>
+          </>
         ) : null}
-        <div>
-          {/* 최하단 */}
-          {type === "star" ? (
-            <>
-              {!isLike ? <button onClick={handleLike}>LIKE</button> : <button onClick={handleDislike}>DISLIKE</button>}
-
-              <button onClick={handleReport}>REPORT</button>
-              {isWriter() && (
-                <>
-                  <button onClick={handleDelete}>DELETE</button>
-                  <button onClick={handleModify}>MODIFY</button>
-                </>
-              )}
-            </>
-          ) : (
-            <button onClick={handleBlock}>차단</button>
-          )}
-          <button onClick={handleClose}>CLOSE</button>
+        <div className="flex justify-between items-center text-2xl">
+          <div className="flex gap-1 items-center">
+            {type === "star" ? (
+              <>
+                <LikeButtons isLike={isLike} handleLike={handleLike} handleDislike={handleDislike} />
+                <ReportButton handleReport={handleReport} />
+                {isWriter() && (
+                  <>
+                    <DeleteButton handleDelete={handleDelete} />
+                    <ModifyButton handleModify={handleModify} />
+                  </>
+                )}
+              </>
+            ) : (
+              <button onClick={handleBlock}>차단</button>
+            )}
+          </div>
+          <CloseButton handleClose={handleClose} />
         </div>
       </div>
       <div className="alert">
         {isDeleteAlertOpen && <StarDeleteAlert boardIndex={starIndex} userIndex={loginUserIndex} />}
         {isReportAlertOpen && <StarReportAlert boardIndex={starIndex} userIndex={loginUserIndex} />}
       </div>
+    </>
+  );
+}
+
+function CloseButton(props) {
+  const handleClose = props.handleClose;
+  return (
+    <div className="text-white-sub hover:cursor-pointer text-3xl" onClick={handleClose}>
+      <CgCloseR />
+    </div>
+  );
+}
+function ModifyButton(props) {
+  const handleModify = props.handleModify;
+  return (
+    <div className="text-white-sub hover:cursor-pointer text-3xl" onClick={handleModify}>
+      <TiSpannerOutline />
+    </div>
+  );
+}
+
+function DeleteButton(props) {
+  const handleDelete = props.handleDelete;
+
+  return (
+    <div className="text-white-sub hover:cursor-pointer" onClick={handleDelete}>
+      <FaRegTrashCan />
+    </div>
+  );
+}
+function ReportButton(props) {
+  const handleReport = props.handleReport;
+
+  return (
+    <div className="text-white-sub text-3xl hover:cursor-pointer" onClick={handleReport}>
+      <PiSiren />
+    </div>
+  );
+}
+function LikeButtons(props) {
+  const isLike = props.isLike;
+  const handleLike = props.handleLike;
+  const handleDislike = props.handleDislike;
+
+  return (
+    <>
+      {!isLike ? (
+        <div className="hover:cursor-pointer text-white-sub " onClick={handleLike}>
+          <FaRegHeart />
+        </div>
+      ) : (
+        <div className="hover:cursor-pointer text-white-sub " onClick={handleDislike}>
+          <FaHeart />
+        </div>
+      )}
     </>
   );
 }
@@ -287,78 +352,115 @@ function ReplyRegistArea(props) {
   };
 
   return (
-    <>
+    <div>
       <input ref={inputRef} onKeyDown={handleKeyDown} />
       <button onClick={handleRegistReply}>등록</button>
-    </>
+    </div>
   );
 }
 
 function RadioContent() {
-    const [rdata, setRdata] = useState();
-    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
+  const [rdata, setRdata] = useState();
+  const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
 
-    const [repostActive, setRepostActive] = useState(false);
-    const navigate = useNavigate();
-    const fetchData = async () => {
-      await axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`, {
+  const [repostActive, setRepostActive] = useState(false);
+  const navigate = useNavigate();
+  const fetchData = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem("memberIndex")}`, {
         headers: {
-          token: localStorage.getItem('token') ?? "",
+          token: localStorage.getItem("token") ?? "",
         },
       })
-        .then((response) => {
-          console.log(response.data);
-          setRdata(response.data);
-        }).catch((e) => { console.log(e) })
-    }
-    useEffect(() => {
-      // 최초1회 데이터를 수신한다. 
-      fetchData();
-      
-      // TTS 음성수신 미해결
-      // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
+      .then((response) => {
+        console.log(response.data);
+        setRdata(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  useEffect(() => {
+    // 최초1회 데이터를 수신한다.
+    fetchData();
 
-    }, [rdata]);
-    function handlePlay() {
-            // 음성파일 재생시켜야됨. => 오디오 플레이어 요소도 추가 필요 
-    }
-    function handleRepost() {
-      axios.post(`${process.env.REACT_APP_API_URL}/radio/toss`,{
-        "memberIndex": rdata.fromMemberIndex,
-        "boardIndex": rdata.boardIndex,
-      },{
-        headers: {
-          token: localStorage.getItem('token') ?? "",
+    // TTS 음성수신 미해결
+    // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
+  }, [rdata]);
+  function handlePlay() {
+    // 음성파일 재생시켜야됨. => 오디오 플레이어 요소도 추가 필요
+  }
+  function handleRepost() {
+    axios
+      .post(
+        `${process.env.REACT_APP_API_URL}/radio/toss`,
+        {
+          memberIndex: rdata.fromMemberIndex,
+          boardIndex: rdata.boardIndex,
         },
-      }).then((response)=>{console.log(response.data)});
-      alert("재송신 성공!");
-      setRepostActive(true);
-    }
+        {
+          headers: {
+            token: localStorage.getItem("token") ?? "",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+      });
+    alert("재송신 성공!");
+    setRepostActive(true);
+  }
 
-
-    return (
+  return (
+    <div>
+      <div>
+        {/*라디오 모달 상단 헤더 */}
+        {rdata ? (
           <div>
-            <div>
-                {/*라디오 모달 상단 헤더 */}
-                {rdata ? <div>20{rdata.boardInputDate.split('.')[0]}년 {rdata.boardInputDate.split('.')[1]}월 {rdata.boardInputDate.split('.')[2]}일</div> : '로딩중'}
-                <button onClick={() => {setIsReportAlertOpen(true)}}>REPORT</button>
-                <button onClick={()=>{navigate(-1);}}>CLOSE</button>
-            </div>
-            <div>
-                {/*라디오 내용 */}
-                <div>{rdata ? rdata.boardContent : '로딩중'}</div>
-            </div>
-            <div>
-                <button onClick={() => {handlePlay()}}>PLAY</button>
-                <button disabled={repostActive} onClick={() => {handleRepost()}}>재송신하기</button>
-            </div>
-            <div className="reportAlert">
-              {
-                isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex}/>
-              }
-            </div>
-        </div>
-    );
+            20{rdata.boardInputDate.split(".")[0]}년 {rdata.boardInputDate.split(".")[1]}월 {rdata.boardInputDate.split(".")[2]}일
+          </div>
+        ) : (
+          "로딩중"
+        )}
+        <button
+          onClick={() => {
+            setIsReportAlertOpen(true);
+          }}
+        >
+          REPORT
+        </button>
+        <button
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          CLOSE
+        </button>
+      </div>
+      <div>
+        {/*라디오 내용 */}
+        <div>{rdata ? rdata.boardContent : "로딩중"}</div>
+      </div>
+      <div>
+        <button
+          onClick={() => {
+            handlePlay();
+          }}
+        >
+          PLAY
+        </button>
+        <button
+          disabled={repostActive}
+          onClick={() => {
+            handleRepost();
+          }}
+        >
+          재송신하기
+        </button>
+      </div>
+      <div className="reportAlert">{isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />}</div>
+    </div>
+  );
 }
 
 export default Modal;
