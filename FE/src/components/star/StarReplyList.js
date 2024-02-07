@@ -23,7 +23,7 @@ function StarReplyList(props) {
             top: 0,
             left: 0,
           });
-          console.dir(replyListRef.current);
+          console.log(res.data);
           setData(res.data.reverse());
         })
         .catch((error) => console.log(error));

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarMultiReplyList from "./StarMultiReplyList";
 import axios from "axios";
 import { useRecoilState } from "recoil";
@@ -16,6 +16,24 @@ function StarReplyListItem(props) {
   const multiComments = props.reply.multiComments;
   const boardIndex = props.boardIndex;
   const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
+
+  useEffect(() => {
+    function timeCheck() {
+      const now = new Date();
+      console.log(commentRegDate);
+      const ymd = commentRegDate.splice(0, 3).join(",");
+      const hm = commentRegDate.splice(0, 2).join(":");
+      console.log(now);
+      const regTime = new Date(ymd + " " + hm);
+      console.log(regTime);
+
+      const timeDiff = now - regTime;
+      const diff = 1000 * 60;
+      console.log(timeDiff);
+    }
+
+    timeCheck();
+  }, []);
 
   const isWriter = () => {
     return writerIndex === loginUserIndex;
