@@ -47,7 +47,11 @@ function SearchBar({ filterKey }) {
 
     return (
         <div className="searchBar">
-            <input value={searchValue} onChange={handleSearchValue} />
+            <input
+                value={searchValue}
+                onChange={handleSearchValue}
+                className=" text-black-sub my-3"
+            />
         </div>
     );
 }
