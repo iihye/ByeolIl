@@ -22,10 +22,9 @@ import ModalSpace from "components/ModalSpace";
 export default function MainPage() {
   return (
     <div className="MainPage">
-      <div className="mainContainer" style={{ position: "relative" }}>
-        <UserSpace className="asdf" />
+      <div className="mainContainer">
+        <UserSpace />
         <Outlet />
-        <ModalSpace />
       </div>
     </div>
   );

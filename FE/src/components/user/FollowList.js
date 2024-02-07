@@ -1,5 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AiOutlineUserAdd } from "react-icons/ai";
+import { FaUserCircle } from "react-icons/fa";
 
 function FollowList() {
     const [currentTab, setCurrentTab] = useState(0);
@@ -60,27 +71,68 @@ function FollowList() {
     }, []);
 
     return (
-        <div className="FollowList">
-            {menuArr.map((data, index) => (
-                <div key={index}>
-                    <button
-                        onClick={() => setCurrentTab(index)}
-                        className={
-                            currentTab === index ? 'currentFocusedTab' : 'Tab'
-                        }
-                    >
-                        {data.name}
-                    </button>
-                </div>
-            ))}
-            <ul>
-                {menuArr[currentTab].content.map((user, index) => (
-                    <li key={index}>
-                        <p>{user.memberName}</p>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <Card className="FollowList w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+            <CardHeader className="flex">
+                <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">  
+                    <AiOutlineUserAdd className="mr-1"/>
+                    팔로우/팔로워 목록
+                </CardTitle>
+            </CardHeader>
+            <div></div>
+            <CardContent>
+                <Tabs defaultValue={menuArr[0].name}>
+                    <TabsList className="w-full bg-black-sub">
+                        <TabsTrigger value={menuArr[0].name} className="w-full font-['Pre-Bold'] data-[state=active]:bg-background">{menuArr[0].name}</TabsTrigger>
+                        <TabsTrigger value={menuArr[1].name} className="w-full font-['Pre-Bold'] data-[state=active]:bg-background">{menuArr[1].name}</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value={menuArr[0].name}>
+                        <ul className="font-['Pre-Light'] text-m py-1 mb-2">
+                            {menuArr[0].content.map((user, index) => (
+                                <li key={index} className="flex justify-start p-1">
+                                    <FaUserCircle size="24" className="pr-2 text-btn-bg-hover"/>
+                                    <p>{user.memberName}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </TabsContent>
+
+                    <TabsContent value={menuArr[1].name}>
+                        <ul className="font-['Pre-Light'] text-m py-1 mb-2">
+                            {menuArr[1].content.map((user, index) => (
+                                <li key={index} className="flex justify-start p-1">
+                                    <FaUserCircle size="24" className="pr-2 text-btn-bg-hover"/>
+                                    <p>{user.memberName}</p>
+                                </li>
+                            ))}
+                            
+                        </ul>
+                    </TabsContent>
+                </Tabs>
+
+                {/* <div className="FollowList">
+                    {menuArr.map((data, index) => (
+                        <div key={index}>
+                            <button
+                                onClick={() => setCurrentTab(index)}
+                                className={
+                                    currentTab === index ? 'currentFocusedTab' : 'Tab'
+                                }
+                            >
+                                {data.name}
+                            </button>
+                        </div>
+                    ))}
+                    <ul>
+                        {menuArr[currentTab].content.map((user, index) => (
+                            <li key={index}>
+                                <p>{user.memberName}</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div> */}
+            </CardContent>
+        </Card>
     );
 }
 

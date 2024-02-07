@@ -209,9 +209,10 @@ position.forEach((it, index) => {
     it[2] = Math.round((cal1 - 18) * 10) / 10;
     // it[2] = Math.sqrt(20 ** 2 - it[1] ** 2 + it[3] ** 2);
     it[0] = idx++;
-    console.log(it[2]);
   });
 });
+
+console.log(position);
 
 // position.forEach((element) => {
 //   element.forEach((element2) => {

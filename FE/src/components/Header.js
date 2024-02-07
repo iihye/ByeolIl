@@ -25,10 +25,14 @@ function Header() {
                         </Link>
                     </nav>
                 </>
-            ) : (
-                <Link to="/landing/login">
-                    <button>로그인</button>
-                </Link>
+            ) : (<div>
+                    <Link to="/landing/login">
+                        <button>로그인</button>
+                    </Link>
+                    <Link to="/regist">
+                        <button>회원가입</button>
+                    </Link>
+                </div>
             )}
         </div>
     );

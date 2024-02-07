@@ -3,23 +3,20 @@ import { isAddedStar, starsState, curPageState } from "components/user/UserSpace
 import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, renewStarDetailState } from "components/atom";
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import "./star.css";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { FaFileImage, FaRegFileImage } from "react-icons/fa";
 
-const imageListState = atom({
-  key: "imageList",
+const fileListState = atom({
+  key: "fileList",
   default: [],
 });
 
 function StarRegist(props) {
   const [renewStarDetail, setRenewStarDetail] = useRecoilState(renewStarDetailState);
   const curPage = useRecoilValue(curPageState);
-  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setStars = useSetRecoilState(starsState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
-  const [imageList, setImageList] = useRecoilState(imageListState);
-  const [media, setMedia] = useState([]);
-  const [inputDate, setInputDate] = useState();
 
   const accessRangeRef = useRef();
   const dateRef = useRef();
@@ -44,19 +41,36 @@ function StarRegist(props) {
       contentRef.current.value = preBoard.boardContent;
     }
 
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "star-regist-container");
+      if (check) {
+        handleClose();
+      }
+    }
+
+    function handleKeydown(e) {
+      if (e.key === "Escape") {
+        setIsStarRegistOpen(false);
+      }
+    }
+
     window.addEventListener("click", handleClick);
+    window.addEventListener("keydown", handleKeydown);
+
     return () => {
       window.removeEventListener("click", handleClick);
+      window.removeEventListener("keydown", handleKeydown);
     };
   }, []);
 
-  const handleRegist = async () => {
+  const handleRegist = async (fileList) => {
     if (contentRef.current.value.trim() === "") {
       alert("공백 입력했어요");
       return;
     }
 
-    const files = fileRef.current.files;
+    const files = [...fileList];
 
     const formData = new FormData();
 
@@ -146,27 +160,6 @@ function StarRegist(props) {
     }
   };
 
-  const handleFileChange = (e) => {
-    // // 개수 제한
-    // const maxFileCnt = 5;
-    // const uploadFileList = fileRef.current.files;
-    // const attachedFileCnt = uploadFileList.length;
-    // const remainFileCnt = maxFileCnt - attachedFileCnt;
-    // const imgUrlList = [...imageList];
-    // console.log(uploadFileList);
-    // for (let i = 0; i < uploadFileList.length; i++) {
-    //   const imgURL = URL.createObjectURL(uploadFileList[i]);
-    //   imgUrlList.push(imgURL);
-    // }
-    // if (remainFileCnt < 0) {
-    //   alert(`첨부파일은 ${maxFileCnt}개를 넘길 수 없습니다.`);
-    //   imgUrlList.slice(0, maxFileCnt);
-    // }
-    // console.log("파일첨부완료");
-    // setImageList(imgUrlList);
-    // 용량 제한
-  };
-
   function handleClose() {
     if (type === "regist") {
       setIsStarRegistOpen(false);
@@ -175,54 +168,189 @@ function StarRegist(props) {
     }
   }
 
-  function handleClick(e) {
-    e.stopPropagation();
-    const check = [...e.target.classList].some((it) => it === "star-regist-container");
-    if (check) {
-      handleClose();
-    }
-  }
-
   return (
-    <div className="star-regist-container">
-      <div className="star-regist" style={{ border: "1px solid black" }}>
-        <div className="star-regist-top">
-          {/* 최상단 */}
-          <DateArea ref={dateRef} type={type} />
-          <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
-        </div>
+    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard']">
+      <div>{/* <ImagePreviewArea /> */}</div>
+      <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3 w-96">
         <div className="star-regist-middle">
-          {/* 글 작성 영역 */}
-          <ImagePreviewArea />
-          <textarea ref={contentRef} />
+          <div className="flex justify-between items-center mb-2">
+            <DateArea ref={dateRef} type={type} />
+            <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
+          </div>
+          <textarea className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub" ref={contentRef} placeholder="일기 내용을 입력해주세요." />
         </div>
-        <div>{<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}</div>
-        <div>
-          <input type="file" multiple onChange={handleFileChange} ref={fileRef} />
-          <button onClick={handleRegist}>{buttonValue[type]}</button>
-          <button onClick={handleClose}>취소</button>
+        {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
+        <div className="relative">
+          <FileUploadArea ref={fileRef} />
+          <Buttons buttonValue={buttonValue} type={type} handleRegist={handleRegist} handleClose={handleClose} />
         </div>
       </div>
     </div>
   );
 }
 
+function Buttons(props) {
+  const fileList = useRecoilValue(fileListState);
+
+  const buttonValue = props.buttonValue;
+  const type = props.type;
+  const handleRegist = props.handleRegist;
+  const handleClose = props.handleClose;
+
+  return (
+    <div className="flex absolute right-0 top-0">
+      <button
+        className="h-8 w-14 px-2 shadow-md"
+        onClick={() => {
+          handleRegist(fileList);
+        }}
+      >
+        {buttonValue[type]}
+      </button>
+      <button className="h-8 w-14 ml-2 shadow-md" onClick={handleClose}>
+        닫기
+      </button>
+    </div>
+  );
+}
+
+const FileUploadArea = forwardRef((props, ref) => {
+  const [fileList, setFileList] = useRecoilState(fileListState);
+
+  useEffect(() => {
+    return () => {
+      setFileList([]);
+    };
+  }, []);
+
+  function handleFileChange(e) {
+    // 파일 개수 제한 체크
+    // Map -> 중복 파일 거르기
+
+    const fileMap = new Map();
+    [...fileList].forEach((it) => fileMap.set(it.name, it));
+    [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
+    if (e.dataTransfer) {
+      [...e.dataTransfer.files].forEach((it) => fileMap.set(it.name, it));
+    }
+
+    const [maxImageCnt, maxVideoCnt] = [5, 1];
+    const uploadFileList = [...fileMap.values()];
+
+    const imageFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image").length;
+    const videoFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video").length;
+
+    const [remainImageFileCnt, remainVideoFileCnt] = [maxImageCnt - imageFileCnt, maxVideoCnt - videoFileCnt];
+
+    let msg = "";
+    if (remainImageFileCnt < 0) {
+      msg += "이미지 파일은 최대 5개 까지 첨부 가능합니다.\n";
+    }
+
+    if (remainVideoFileCnt < 0) {
+      msg += "비디오 파일은 최대 1개 까지 첨부 가능합니다.";
+    }
+
+    if (msg !== "") {
+      alert(msg);
+      // IE에서 호환성 문제 있음
+      ref.current.value = "";
+      return;
+    }
+
+    // const urlList = [...uploadFileList].map((it) => URL.createObjectURL(it));
+    setFileList([...uploadFileList]);
+    ref.current.value = "";
+  }
+
+  function handleDragEnter() {}
+
+  function handleDragOver(e) {
+    e.preventDefault();
+  }
+
+  function handleDragLeave() {}
+
+  function handleDrop(e) {
+    e.preventDefault();
+
+    handleFileChange(e);
+  }
+
+  return (
+    <>
+      <div className="flex h-8">
+        <input className="absolute w-0 h-0 p-0 border-0 overflow-hidden" type="file" id="file" multiple onChange={handleFileChange} ref={ref} />
+        <label className="text-white-sub flex items-center  hover:text-white hover:cursor-pointer" for="file">
+          <FaRegFileImage />
+          <div className="ml-1">파일 첨부</div>
+        </label>
+      </div>
+      <label for="file" className="bg-white inline cursor-pointer " onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+        <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center">
+          {fileList.length === 0 ? (
+            <div className="hover:text-white">
+              <FaFileImage className="w-full text-5xl" />
+              <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
+              <div>이미지 파일 5개 / 영상 파일 1개</div>
+            </div>
+          ) : (
+            <FileList files={fileList} classList="w-full h-full" />
+          )}
+        </div>
+      </label>
+    </>
+  );
+});
+
+function FileList(props) {
+  const fileList = [...props.files];
+
+  return (
+    <>
+      <div for="file" className="text-left w-full ml-3 hover:text-white">
+        {fileList.map((it, index) => (
+          <div key={index}>- {it.name}</div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function ImagePreviewArea() {
-  const imageList = useRecoilValue(imageListState);
-  console.log(imageList);
-  return <div>{imageList.length > 0 ? imageList.map((it, index) => <div>{it}</div>) : null}</div>;
+  const fileList = useRecoilValue(fileListState);
+  console.log(fileList);
+  return <div>{fileList.length > 0 ? fileList.map((it, index) => <div>{it}</div>) : null}</div>;
 }
 
 const DateArea = forwardRef((props, ref) => {
+  const [date, setDate] = useState(new Date());
+  let year = date.getFullYear();
+  let month = date.getMonth();
+  let day = date.getDate();
+
+  useEffect(() => {
+    year = date.getFullYear();
+    month = date.getMonth();
+    day = date.getDate();
+    console.log(year);
+  }, [date]);
+
   const handleCalander = () => {};
 
-  return <div onClick={handleCalander}>날짜</div>;
+  return (
+    <div onClick={handleCalander} className="text-white-sub text-2xl mb-1 hover:text-white hover:cursor-pointer flex items-center">
+      <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
+      <div>
+        <HiOutlinePencilSquare />
+      </div>
+    </div>
+  );
 });
 
 const AccessRangeArea = forwardRef((props, ref) => {
   return (
-    <div style={{ display: "flex" }}>
-      <div>공개 범위</div>
+    <div>
       <select name="access" ref={ref} defaultValue={props.preBoard && props.preBoard.boardAccess}>
         <option value="OPEN">전체 공개</option>
         <option value="PARTOPEN">친구 공개</option>
@@ -279,14 +407,22 @@ const HashtagArea = (props) => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      {hashtagList.map((it, index) => (
-        <div key={index} style={{ border: "1px solid black", margin: "0 3px" }} onClick={() => handleRemoveHashtag(it, index)}>
-          {it}
-        </div>
-      ))}
-      {props.type === "regist" && hashtagList.length < 10 && <input ref={input} type="text" style={{ width: "70px" }} onKeyDown={handleKeyDown}></input>}
-    </div>
+    <>
+      <div className="flex items-center flex-wrap mb-2">
+        {hashtagList.map((it, index) => (
+          <div className="text-white-sub mr-3 hover:text-white hover:cursor-pointer flex items-center h-6" key={index} onClick={() => handleRemoveHashtag(it, index)}>
+            <span className="mr-1">#</span>
+            <span>{it}</span>
+          </div>
+        ))}
+        {props.type === "regist" && hashtagList.length < 10 && (
+          <div className="flex items-center h-6 text-white-sub">
+            <span className="text-white-sub mr-1 text-xl">#</span>
+            <input className="rounded-none mr-3 my-1 w-20" ref={input} type="text" onKeyDown={handleKeyDown} placeholder="해시태그"></input>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

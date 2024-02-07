@@ -10,13 +10,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import {
-    FaUserPlus,
-    FaComment,
-    FaComments,
-    FaRegBell
-} from "react-icons/fa";
-import { IoCloseSharp } from "react-icons/io5";
+import { FaUserPlus, FaComment, FaComments, FaRegBell } from 'react-icons/fa';
+import { IoCloseSharp } from 'react-icons/io5';
 
 // 추후 에러핸들링 필요
 // onClose, get에서 유저 인덱스로 변경
@@ -34,7 +29,11 @@ function Alarm() {
 
     const CloseButton = ({ onClose, alarmIndex }) => (
         <div className="alarmClose">
-            <IoCloseSharp size="24" className="pl-2 text-btn-bg-hover" onClick={() => onClose(alarmIndex)}/>
+            <IoCloseSharp
+                size="24"
+                className="pl-2 text-btn-bg-hover"
+                onClick={() => onClose(alarmIndex)}
+            />
             {/* <button className="size-6" onClick={() => onClose(alarmIndex)}>X</button>  */}
         </div>
     );
@@ -73,9 +72,9 @@ function Alarm() {
     // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
     return (
         <Card className="Alarm w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
-            <CardHeader>
+            <CardHeader className="flex">
                 <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
-                    <FaRegBell className="mr-1"/>
+                    <FaRegBell className="mr-1" />
                     알림
                 </CardTitle>
             </CardHeader>
@@ -85,16 +84,19 @@ function Alarm() {
                     switch (it.alarmType) {
                         case 'FOLLOW':
                             return (
-                                <div 
-                                    key={it.alarmIndex} 
+                                <div
+                                    key={it.alarmIndex}
                                     className="flex justify-between font-['Pre-Light'] text-m py-1"
                                 >
                                     <div className="flex">
-                                        <FaUserPlus size="24" className="pr-2 text-btn-bg-hover"/>
+                                        <FaUserPlus
+                                            size="24"
+                                            className="pr-2 text-btn-bg-hover"
+                                        />
                                         {it.fromMemberNickName}님이 나를
                                         팔로우했습니다
                                     </div>
-                                    <CloseButton 
+                                    <CloseButton
                                         onClose={onClose}
                                         alarmIndex={it.alarmIndex}
                                     />
@@ -109,7 +111,10 @@ function Alarm() {
                                     className="flex justify-between font-['Pre-Light'] text-m py-1"
                                 >
                                     <div className="flex">
-                                        <FaComment size="24" className="pr-2 text-btn-bg-hover "/>
+                                        <FaComment
+                                            size="24"
+                                            className="pr-2 text-btn-bg-hover "
+                                        />
                                         {it.fromMemberNickName}님이 내 게시글에
                                         댓글을 남겼습니다
                                     </div>
@@ -139,7 +144,10 @@ function Alarm() {
                                     className="flex justify-between font-['Pre-Light'] text-m py-1"
                                 >
                                     <div className="flex">
-                                        <FaComments size="24" className="pr-2 text-btn-bg-hover"/>
+                                        <FaComments
+                                            size="24"
+                                            className="pr-2 text-btn-bg-hover"
+                                        />
                                         {it.fromMemberNickName}님이 내 댓글에
                                         답댓글을 남겼습니다
                                     </div>
