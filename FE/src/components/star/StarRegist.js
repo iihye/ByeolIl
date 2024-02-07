@@ -13,11 +13,11 @@ const fileListState = atom({
 });
 
 function StarRegist(props) {
-  const [renewStarDetail, setRenewStarDetail] = useRecoilState(renewStarDetailState);
   const curPage = useRecoilValue(curPageState);
   const setStars = useSetRecoilState(starsState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
 
   const accessRangeRef = useRef();
   const dateRef = useRef();
@@ -151,7 +151,7 @@ function StarRegist(props) {
           })
           .then((response) => {
             if (response.status === 200) {
-              setRenewStarDetail(!renewStarDetail);
+              setIsStarDetailOpen([boardIndex, writerIndex]);
               handleClose();
             }
           });
@@ -224,22 +224,8 @@ const FileUploadArea = forwardRef((props, ref) => {
     };
   }, []);
 
-  function handleFileChange(e) {
-    // 파일 개수 제한 체크
-    // Map -> 중복 파일 거르기
-
-    const fileMap = new Map();
-    [...fileList].forEach((it) => fileMap.set(it.name, it));
-    [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
-    if (e.dataTransfer) {
-      [...e.dataTransfer.files].forEach((it) => fileMap.set(it.name, it));
-    }
-
+  function limitFileCnt(e, imageFileCnt, videoFileCnt) {
     const [maxImageCnt, maxVideoCnt] = [5, 1];
-    const uploadFileList = [...fileMap.values()];
-
-    const imageFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image").length;
-    const videoFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video").length;
 
     const [remainImageFileCnt, remainVideoFileCnt] = [maxImageCnt - imageFileCnt, maxVideoCnt - videoFileCnt];
 
@@ -255,12 +241,44 @@ const FileUploadArea = forwardRef((props, ref) => {
     if (msg !== "") {
       alert(msg);
       // IE에서 호환성 문제 있음
-      ref.current.value = "";
-      return;
+      return false;
+    }
+    return true;
+  }
+
+  function limitFileVolume(e, imageFileList, videoFileList) {
+    const imageLimit = 1024 ** 2 * 5; // 5MB
+    const videoLimit = 1024 ** 2 * 100; // 100MB
+    console.log(imageFileList, videoFileList);
+
+    const imageSizeCheck = [...imageFileList].some((it) => it.size > imageLimit);
+    const videoSizeCheck = [...videoFileList].some((it) => it.size > videoLimit);
+
+    if (imageSizeCheck || videoSizeCheck) {
+      return false;
+    }
+    return true;
+  }
+
+  function handleFileChange(e) {
+    const fileMap = new Map();
+    [...fileList].forEach((it) => fileMap.set(it.name, it));
+    [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
+    if (e.dataTransfer) {
+      [...e.dataTransfer.files].forEach((it) => fileMap.set(it.name, it));
     }
 
-    // const urlList = [...uploadFileList].map((it) => URL.createObjectURL(it));
-    setFileList([...uploadFileList]);
+    const uploadFileList = [...fileMap.values()];
+
+    const imageFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image");
+    const videoFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video");
+
+    // 파일 개수 제한 체크
+    const fileCntCheckRes = limitFileCnt(e, imageFileList.length, videoFileList.length);
+    const fileVolumeCheckRes = limitFileVolume(e, imageFileList, videoFileList);
+    if (fileCntCheckRes && fileVolumeCheckRes) {
+      setFileList([...uploadFileList]);
+    }
     ref.current.value = "";
   }
 
@@ -286,9 +304,9 @@ const FileUploadArea = forwardRef((props, ref) => {
           <div className="ml-1">파일 첨부</div>
         </label>
       </div>
-      <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center" onDragOver={handleDragOver} onDrop={handleDrop} onClick={handleClick}>
+      <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center hover:cursor-pointer" onDragOver={handleDragOver} onDrop={handleDrop} onClick={handleClick}>
         {fileList.length === 0 ? (
-          <div className="hover:text-white hover:cursor-pointer">
+          <div className="hover:text-white">
             <FaFileImage className="w-full text-5xl" />
             <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
             <div>이미지 파일 5개 / 영상 파일 1개</div>
