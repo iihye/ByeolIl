@@ -181,13 +181,13 @@ function Login() {
 
                 <div className="relative flex place-content-evenly text-xs my-3">
                     <div>
-                        <Link to={'/findId'}>아이디 찾기</Link>
+                        <Link to={'/landing/findId'}>아이디 찾기</Link>
                     </div>
                     <div>
-                        <Link to={'/findPw'}>비밀번호 찾기</Link>
+                        <Link to={'/landing/findPw'}>비밀번호 찾기</Link>
                     </div>
                     <div>
-                        <Link to={'/regist'}>회원가입</Link>
+                        <Link to={'/landing/regist'}>회원가입</Link>
                     </div>
                 </div>
                 <CardFooter className="font-['Pre-Bold'] ">

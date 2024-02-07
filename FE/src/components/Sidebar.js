@@ -17,7 +17,7 @@ function SidebarList(props) {
         localStorage.removeItem('nickname');
         localStorage.removeItem('token');
         localStorage.removeItem('auth');
-        navigate('');
+        navigate('/landing');
     };
 
     useEffect(() => {
