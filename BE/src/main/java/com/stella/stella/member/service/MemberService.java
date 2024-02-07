@@ -87,7 +87,7 @@ public class MemberService {
         return tokenInfo.getAccessToken();
     }
 
-    public String getKakaoAccessToken(String code, String url) {
+    public String getKakaoAccessToken(String code) {
         String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
         RestTemplate restTemplate = new RestTemplate();
 
@@ -289,9 +289,14 @@ public class MemberService {
         Optional.ofNullable(memberUpdateRequestDto.getMemberEmail()).ifPresent(member::setMemberEmail);
         Optional.ofNullable(memberUpdateRequestDto.getMemberAlarmStatus()).ifPresent(member::setMemberAlarmStatus);
         Optional.ofNullable(memberUpdateRequestDto.getMemberRadioStatus()).ifPresent(member::setMemberRadioStatus);
-        Optional.ofNullable(memberUpdateRequestDto.getMemberDeleteYN()).ifPresent(member::setMemberDeleteYN);
         Optional.ofNullable(memberUpdateRequestDto.getMemberBirth()).ifPresent(member::setMemberBirth);
         Optional.ofNullable(memberUpdateRequestDto.getMemberDeleteDate()).ifPresent(member::setMemberDeleteDate);
+    }
+
+    public void deleteMember(long memberIndex){
+        Member member = memberRepository.findByMemberIndex(memberIndex)
+                .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
+        member.setMemberDeleteYN(MemberDeleteYN.Y);
     }
 
     public String sendEmail(String email, String order) {
@@ -331,5 +336,4 @@ public class MemberService {
         targetMember.setMemberRole(MemberRole.BAN);
         targetMember.setMemberBanDate(LocalDate.now());
     }
-
 }
