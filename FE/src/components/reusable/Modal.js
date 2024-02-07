@@ -347,12 +347,14 @@ function ReplyRegistArea(props) {
   };
 
   return (
-    <div className="w-full flex items-center justify-between">
-      <input className="border my-2 p-1 px-2 mr-2 w-full" placeholder="댓글 내용을 입력해주세요." ref={inputRef} onKeyDown={handleKeyDown} />
-      <div className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
-        <IoMdSend />
+    <>
+      <div className="w-full flex items-center justify-between">
+        <input className="border my-2 p-1 px-2 mr-2 w-full" placeholder="댓글 내용을 입력해주세요." ref={inputRef} onKeyDown={handleKeyDown} />
+        <div className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
+          <IoMdSend />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
