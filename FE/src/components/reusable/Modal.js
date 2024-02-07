@@ -14,6 +14,7 @@ import { PiSiren } from "react-icons/pi";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { TiSpannerOutline } from "react-icons/ti";
 import { CgCloseR } from "react-icons/cg";
+import { IoMdSend } from "react-icons/io";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -158,10 +159,6 @@ function StarContent(props) {
       });
   };
 
-  const handleBlock = () => {
-    /* 정말 차단할까요 alert 띄우기 */
-  };
-
   const handleClose = () => {
     /* 모달 닫기 */
     setIsDeleteAlertOpen(false);
@@ -187,14 +184,15 @@ function StarContent(props) {
         {/* 최상단 */}
         <div className="star-content-top text-white-sub">
           {/* 지정일 */}
-          <div className="text-2xl mb-2 font-['Pre-bold']">
+          <div className="text-2xl mb-2 font-['Pre-bold'] flex justify-between">
             {data ? (
-              <>
+              <div>
                 20{data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일<span className="text-lg">의 기록</span>
-              </>
+              </div>
             ) : (
               "로딩중"
             )}
+            <CloseButton handleClose={handleClose} />
           </div>
           {/* 작성일(수정일) */}
           {/* <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div> */}
@@ -238,11 +236,8 @@ function StarContent(props) {
                   </>
                 )}
               </>
-            ) : (
-              <button onClick={handleBlock}>차단</button>
-            )}
+            ) : null}
           </div>
-          <CloseButton handleClose={handleClose} />
         </div>
       </div>
       <div className="alert">
@@ -352,9 +347,11 @@ function ReplyRegistArea(props) {
   };
 
   return (
-    <div>
-      <input ref={inputRef} onKeyDown={handleKeyDown} />
-      <button onClick={handleRegistReply}>등록</button>
+    <div className="w-full flex items-center justify-between">
+      <input className="border my-2 p-1 px-2 mr-2 w-full" placeholder="댓글 내용을 입력해주세요." ref={inputRef} onKeyDown={handleKeyDown} />
+      <div className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
+        <IoMdSend />
+      </div>
     </div>
   );
 }
