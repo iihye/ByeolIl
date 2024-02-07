@@ -1,146 +1,216 @@
 import { useEffect, useRef, useState } from "react";
+import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState, isPwCheckOpenState } from "components/atom";
 import axios from "axios";
+import { useSetRecoilState } from "recoil";
 
-/*
-1. 모달 컴포넌트 html 작성
-2. 신고 내용, 비밀번호 입력 내용 공백 검사
 
-*/
-
-function Alert({ type, boardIndex }) {
+// type: 'report', 'PWCheck', 'delete', 'block'
+function Alert(props) {
   const alertTypes = {
     block: <Block />,
-    delete: <Delete boardIndex={boardIndex} />,
-    PWCheck: <InputAlert type={type} />,
-    report: <InputAlert type={type} />,
+    delete: <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />,
+    PWCheck: <InputAlert type={props.type} />,
+    report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex} />,
   };
 
   return (
-    <div className="alert" style={{ border: "1px solid black" }}>
-      {alertTypes[type]}
+    <div className="alert-container bg-modal-bg w-full h-full absolute top-0 left-0 flex justify-center items-center">
+      <div className="alert w-auto h-auto p-4 bg-alert-bg rounded-xl text-white-sub shadow-xl font-['Pretendard']">{alertTypes[props.type]}</div>
     </div>
   );
 }
 
-function InputAlert({ type }) {
+// Input 요소를 가진 alert
+function InputAlert(props) {
   const input = useRef(null);
+ 
+  const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
+  const setIsPwCheckOpenState = useSetRecoilState(isPwCheckOpenState);
+ 
+  useEffect(() => {
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "alert-container");
+
+      if (check) {
+        handleClose();
+      }
+    }
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const toEnter = {
     PWCheck: "비밀번호를",
     report: "신고 내용을",
   };
+
   const buttonValue = {
     PWCheck: "입력",
     report: "신고",
   };
 
-  const URL = ""; // axios 요청 URL
-  const reqReport = (inputData) => {
-    const data = {
-      boardIndex: "", // 게시글 번호
-      userindex: "", // 유저 번호
+  const handleReport = async (inputData) => {
+    const reportData = {
+      boardIndex: props.boardIndex, // 게시글 번호
+      memberIndex: props.userIndex, // 유저 번호
       reportContent: inputData,
     };
+    console.log(reportData);
 
-    axios
-      .post(`${URL}/board/report`, {}, { params: data })
-      .then((res) => {
-        /* 1. 신고 완료 모달 띄우기 */
-        /* 2. 신고 완료 모달 닫기 */
-        /* 3. 신고 내용 입력 모달 닫기 */
+    await axios
+      .post(`${process.env.REACT_APP_API_URL}/board/report`, reportData, {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
       })
-      .catch((err) => console.log(err));
+      .then((response) => {
+        console.log(response.data.message);
+      })
+      .catch((e) => console.log(e));
   };
 
-  // 빈 내용 체크
-  const emptyCheck = (input) => {
-    return input.trim();
+  const handlePWChange = (inputData) => {
+    /* 1. 비밀번호 일치하는지 체크 */
+    const PWData = {
+      memberPass: inputData
+    }
+    axios.post(`${process.env.REACT_APP_API_URL}/member/check/pass`, PWData,{
+      headers: {
+        token: localStorage.getItem("token"),
+      },
+    }).then((response) => {
+      console.log(response.data);
+      if(response.data.message === "success") setIsPwCheckOpenState(false);
+      else alert("비밀번호가 틀렸습니다!")
+    })
+
   };
 
   // 비밀번호 입력 / 신고 요청
   const handleSubmit = () => {
+    // Input 공백 체크
+    const emptyCheck = (input) => {
+      return input.trim();
+    };
+
     const inputData = input.current.value;
 
     if (!emptyCheck(inputData)) {
-      alert(`${toEnter[type]} 입력해주세요!`);
+      alert(`${toEnter[props.type]} 입력해주세요!`);
       return;
     }
 
-    if (buttonValue[type] === "신고") {
-      reqReport(inputData);
-    } else if (buttonValue[type] === "입력") {
-      /* 1. 비밀번호 일치하는지 체크 */
-      /* 2. - 일치할 경우) 해당 모달 내리고 개인정보 수정 모달 띄우기 */
-      /* 3. - 일치하지 않을 경우) '비밀번호가 일치하지 않습니다.' 띄우기 */
+    if (buttonValue[props.type] === "신고") {
+      handleReport(inputData);
+    } else if (buttonValue[props.type] === "입력") {
+      handlePWChange(inputData);
     }
   };
 
-  useEffect(() => {
-    // Enter 키 입력으로 input 내용 처리하기
-    const handleEnter = (e) => {
-      if (e.key === "Enter") {
-        handleSubmit();
-      }
-    };
-    input.current.addEventListener("keydown", handleEnter);
-
-    return () => {
-      input.current.removeEventListener("keydown", handleEnter);
-    };
-  }, []);
-
+  const handleClose = () => {
+    setIsReportAlertOpen(false);
+  };
+  // className="rounded-input bg-transparent border-white-sub outline-none"
   return (
     <>
-      <div>{toEnter[type]} 입력해주세요.</div>
-      <div>
-        <input ref={input} />
-      </div>
-      <div>
-        <button onClick={handleSubmit}>{buttonValue[type]}</button>
-        <button
-          onClick={() => {
-            /* 모달 닫기 */
-          }}
-        >
-          취소
-        </button>
+      <div className="flex-row">
+        {props.type === "report" ? <h1 className="text-center text-3xl mb-2 font-['Pre-bold']">신고하기</h1> : null}
+        <div className="text-lg text-center mb-3">{toEnter[props.type]} 입력해주세요.</div>
+        <div className="flex justify-center mb-3">
+          <textarea className="bg-transparent rounded-lg  p-2 h-28 resize-none" ref={input} />
+        </div>
+        <div className="flex justify-center gap-5 px-28">
+          <button
+            className="h-8 px-2"
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            {buttonValue[props.type]}
+          </button>
+          <button
+            className="h-8 px-2"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            취소
+          </button>
+        </div>
       </div>
     </>
   );
 }
 
-function Delete({ boardIndex }) {
-  const reqStarDelete = () => {
+function Delete(props) {
+  const setIsDeleteAlertOpen = useSetRecoilState(isDeleteAlertOpenState);
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+
+  useEffect(() => {
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "alert-container");
+
+      if (check) {
+        handleClose();
+      }
+    }
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+  }, []);
+
+  const handleDelete = async () => {
     const data = {
-      boardIndex: boardIndex,
-      userIndex: "",
+      boardIndex: props.boardIndex,
+      memberIndex: props.userIndex,
     };
 
-    const URL = "";
+    await axios
+      .put(`${process.env.REACT_APP_API_URL}/board/delete`, data, {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        if (response.data.map.response === "success") {
+          setIsDeleteAlertOpen(false);
+          setIsStarDetailOpen(false);
+        }
+      });
+  };
 
-    /* 게시글 삭제  요청 보내기 */
-    /* - 게시글 정상 삭제시) 해당 alert 닫기 -> 게시글 modal 닫기*/
-    /* - 게시글 삭제 실패시) 오류 모달 띄우기? */
+  const handleClose = () => {
+    setIsDeleteAlertOpen(false);
   };
 
   return (
     <>
-      <div>
-        별이 빛을 잃고 말거에요.
-        <br />
-        정말로.. 삭제할까요?
+      <div className="text-center mb-3 px-20 text-lg">
+        <div>별이 빛을 잃고 말거에요.</div>
+        <div>정말로.. 삭제할까요?</div>
       </div>
-      <div>
+      <div className="flex justify-center gap-5">
         <button
+          className="h-8 px-2"
           onClick={() => {
-            /* 삭제 요청 */
+            handleDelete();
           }}
         >
           삭제
         </button>
         <button
+          className="h-8 px-2"
           onClick={() => {
-            /* 모달 닫기 */
+            handleClose();
           }}
         >
           취소
@@ -151,41 +221,37 @@ function Delete({ boardIndex }) {
 }
 
 function Block() {
-  /* 1. axios로 해당 사용자 차단 해제일 받아오기 */
-  /* 2. 받아온 해제일 아래 alert에 채우기*/
-
-  // 테스트 데이터
+  // userData -> 로그인 직후에 유저 정보 받아오기
+  // memberRole -> Ban일 경우 차단된 사용자
+  // memberBanDate -> 차단 일자
   const [userData, setUserData] = useState({
     memberRole: "Ban",
     memberBanDate: "2024-01-26",
   });
   const [dueDate, setDueDate] = useState("");
 
-  // userData -> 로그인 직후에 유저 정보 받아오기
-  // memberRole -> Ban일 경우 차단된 사용자
-  // memberBanDate -> 차단 일자
-
   useEffect(() => {
-    const date = new Date(userData.memberBanDate);
-    setDueDate(new Date(date.setDate(date.getDate() + 7)));
-    // api 개발 후 주석 해제할 예정
     // const fetchData = async () => {
     //   await axios
-    //     .get(URL) // URL : API 요청 주소
+    //     .get(`${process.env.REACT_APP_API_URL}/`)
     //     .then((response) => {
     //       setUserData(response.data);
     //     })
     //     .catch((e) => console.log(e));
     // };
     //   fetchData();
+    const date = new Date(userData.memberBanDate);
+    setDueDate(new Date(date.setDate(date.getDate() + 7)));
   }, []);
+
+  const handleClose = () => {};
 
   return (
     <>
       <div>
         <button
           onClick={() => {
-            /* 모달 닫기 */
+            handleClose();
           }}
         >
           CLOSE
