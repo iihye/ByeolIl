@@ -260,7 +260,9 @@ const FileUploadArea = forwardRef((props, ref) => {
 
     // const urlList = [...uploadFileList].map((it) => URL.createObjectURL(it));
     setFileList([...uploadFileList]);
+    ref.current.value = "";
   }
+
   function handleDragEnter() {}
 
   function handleDragOver(e) {
@@ -284,12 +286,13 @@ const FileUploadArea = forwardRef((props, ref) => {
           <div className="ml-1">파일 첨부</div>
         </label>
       </div>
-      <label for="file" className="bg-white inline cursor-pointer hover:text-white " onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-        <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center">
+      <label for="file" className="bg-white inline cursor-pointer " onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+        <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center">
           {fileList.length === 0 ? (
-            <div>
+            <div className="hover:text-white">
               <FaFileImage className="w-full text-5xl" />
               <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
+              <div>이미지 파일 5개 / 영상 파일 1개</div>
             </div>
           ) : (
             <FileList files={fileList} classList="w-full h-full" />
@@ -305,7 +308,7 @@ function FileList(props) {
 
   return (
     <>
-      <div for="file" className="text-left  w-full ml-3">
+      <div for="file" className="text-left w-full ml-3 hover:text-white">
         {fileList.map((it, index) => (
           <div key={index}>- {it.name}</div>
         ))}
