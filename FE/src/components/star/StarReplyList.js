@@ -36,7 +36,7 @@ function StarReplyList(props) {
       await axios
         .get(`${process.env.REACT_APP_API_URL}/comment/${boardIndex}`)
         .then((res) => {
-          setData(res.data);
+          setData(res.data.reverse());
         })
         .catch((error) => console.log(error));
     };
