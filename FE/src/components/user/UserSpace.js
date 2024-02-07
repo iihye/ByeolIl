@@ -476,34 +476,6 @@ function UserSpace() {
         fetchData();
     }, [userId]);
 
-    // 우주 주인 닉네임과 나의 팔로우 목록을 비교하여 일치하면 팔로우 관계
-    useEffect(() => {
-        const fetchData = async () => {
-            // 내 팔로잉 목록 불러오기
-            try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`,
-                    {
-                        headers: {
-                            token: loginToken,
-                        },
-                    }
-                );
-                const isFollow = response.data.result.some(
-                    (it) => it.memberName === userName
-                );
-
-                isFollow
-                    ? setFollowState('언팔로우')
-                    : setFollowState('팔로우');
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        fetchData();
-    }, [userName]);
-
     return (
         <div className="user-space relative">
             <div
@@ -539,6 +511,7 @@ function UserSpace() {
                     )}
                 </>
             )}
+            <ModalSpace />
             <Link to={`/space/${localStorage.getItem('memberIndex')}/radio`}>
                 <button>라디오</button>
             </Link>

@@ -88,6 +88,7 @@ function StarReplyListItem(props) {
       </div>
       {!multiReply && (
         <div
+          className="text-sm"
           onClick={() => {
             setMultiReply(true);
           }}
