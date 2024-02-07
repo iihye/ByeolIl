@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRecoilValue } from 'recoil';
 import StarDetail from 'components/star/StarDetail';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { FaUserPlus, FaComment, FaComments, FaRegBell } from 'react-icons/fa';
 import { IoCloseSharp } from 'react-icons/io5';
 
@@ -71,98 +64,112 @@ function Alarm() {
     // 알림 타입마다 다른 창이 떠야함
     // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
     return (
-        <Card className="Alarm w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
-            <CardHeader className="flex">
-                <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
-                    <FaRegBell className="mr-1" />
-                    알림
-                </CardTitle>
-            </CardHeader>
-            <div></div>
-            <CardContent>
-                {alarmData.map((it) => {
-                    switch (it.alarmType) {
-                        case 'FOLLOW':
-                            return (
-                                <div
-                                    key={it.alarmIndex}
-                                    className="flex justify-between font-['Pre-Light'] text-m py-1"
-                                >
-                                    <div className="flex">
-                                        <FaUserPlus
-                                            size="24"
-                                            className="pr-2 text-btn-bg-hover"
-                                        />
-                                        {it.fromMemberNickName}님이 나를
-                                        팔로우했습니다
-                                    </div>
-                                    <CloseButton
-                                        onClose={onClose}
-                                        alarmIndex={it.alarmIndex}
-                                    />
-                                </div>
-                            );
-
-                        case 'CMT':
-                            return (
-                                <div
-                                    onClick={() => ModalOpen(it.boardIndex)}
-                                    key={it.alarmIndex}
-                                    className="flex justify-between font-['Pre-Light'] text-m py-1"
-                                >
-                                    <div className="flex">
-                                        <FaComment
-                                            size="24"
-                                            className="pr-2 text-btn-bg-hover "
-                                        />
-                                        {it.fromMemberNickName}님이 내 게시글에
-                                        댓글을 남겼습니다
-                                    </div>
-                                    <CloseButton
-                                        onClose={onClose}
-                                        alarmIndex={it.alarmIndex}
-                                    />
-                                    {detailModal &&
-                                        boardState === it.boardIndex && (
-                                            <div>
-                                                {
-                                                    <StarDetail
-                                                        starIndex={
-                                                            it.boardIndex
-                                                        }
-                                                    />
-                                                }
+        <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center">
+            <Card className="Alarm w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+                <CardHeader className="flex">
+                    <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+                        <FaRegBell className="mr-1" />
+                        알림
+                    </CardTitle>
+                </CardHeader>
+                <div></div>
+                <CardContent>
+                    <ScrollArea className="h-52 font-['Pre-Light'] text-m py-1 px-1.5">
+                        {alarmData.map((it) => {
+                            switch (it.alarmType) {
+                                case 'FOLLOW':
+                                    return (
+                                        <div
+                                            key={it.alarmIndex}
+                                            className="flex justify-between text-m py-1"
+                                        >
+                                            <div className="flex">
+                                                <FaUserPlus
+                                                    size="24"
+                                                    className="pr-2 text-btn-bg-hover"
+                                                />
+                                                {it.fromMemberNickName}님이 나를
+                                                팔로우했습니다
                                             </div>
-                                        )}
-                                </div>
-                            );
-                        case 'MULTCMT':
-                            return (
-                                <div
-                                    key={it.alarmIndex}
-                                    onClick={() => ModalOpen(it.boardIndex)}
-                                    className="flex justify-between font-['Pre-Light'] text-m py-1"
-                                >
-                                    <div className="flex">
-                                        <FaComments
-                                            size="24"
-                                            className="pr-2 text-btn-bg-hover"
-                                        />
-                                        {it.fromMemberNickName}님이 내 댓글에
-                                        답댓글을 남겼습니다
-                                    </div>
-                                    <CloseButton
-                                        onClose={onClose}
-                                        alarmIndex={it.alarmIndex}
-                                    />
-                                </div>
-                            );
-                        default:
-                            return null;
-                    }
-                })}
-            </CardContent>
-        </Card>
+                                            <CloseButton
+                                                onClose={onClose}
+                                                alarmIndex={it.alarmIndex}
+                                            />
+                                        </div>
+                                    );
+
+                                case 'CMT':
+                                    return (
+                                        <div
+                                            key={it.alarmIndex}
+                                            className="flex justify-between text-m py-1"
+                                        >
+                                            <div
+                                                className="flex"
+                                                onClick={() =>
+                                                    ModalOpen(it.boardIndex)
+                                                }
+                                            >
+                                                <FaComment
+                                                    size="24"
+                                                    className="pr-2 text-btn-bg-hover "
+                                                />
+                                                {it.fromMemberNickName}님이 내
+                                                게시글에 댓글을 남겼습니다
+                                            </div>
+                                            <CloseButton
+                                                onClose={onClose}
+                                                alarmIndex={it.alarmIndex}
+                                                className="mr-1"
+                                            />
+                                            {detailModal &&
+                                                boardState ===
+                                                    it.boardIndex && (
+                                                    <div>
+                                                        {
+                                                            <StarDetail
+                                                                starIndex={
+                                                                    it.boardIndex
+                                                                }
+                                                            />
+                                                        }
+                                                    </div>
+                                                )}
+                                        </div>
+                                    );
+                                case 'MULTCMT':
+                                    return (
+                                        <div
+                                            key={it.alarmIndex}
+                                            className="flex justify-between text-m py-1"
+                                        >
+                                            <div
+                                                className="flex"
+                                                onClick={() =>
+                                                    ModalOpen(it.boardIndex)
+                                                }
+                                            >
+                                                <FaComments
+                                                    size="24"
+                                                    className="pr-2 text-btn-bg-hover"
+                                                />
+                                                {it.fromMemberNickName}님이 내
+                                                댓글에 답댓글을 남겼습니다
+                                            </div>
+                                            <CloseButton
+                                                onClose={onClose}
+                                                alarmIndex={it.alarmIndex}
+                                            />
+                                        </div>
+                                    );
+                                default:
+                                    return null;
+                            }
+                        })}
+                    </ScrollArea>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
 
