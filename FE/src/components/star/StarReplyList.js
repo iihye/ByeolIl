@@ -3,6 +3,7 @@ import { renewReplyState } from "components/atom";
 import { useRecoilValue } from "recoil";
 import StarReplyListItem from "./StarReplyListItem";
 import axios from "axios";
+import { IoMdRefresh } from "react-icons/io";
 
 function StarReplyList(props) {
   const renewReply = useRecoilValue(renewReplyState);
@@ -44,11 +45,11 @@ function StarReplyList(props) {
 
   return (
     <>
-      <div style={{ display: "flex" }}>
-        <div>댓글 ----</div>
-        <button onClick={handleRefresh}>새로고침</button>
+      <div className="flex items-center text-white-sub text-xl gap-2 mt-2 mb-1 ml-1">
+        <div>댓글 목록</div>
+        <IoMdRefresh className="my-1 hover:cursor-pointer flex" onClick={handleRefresh} />
       </div>
-      <div className="star-reply-list" style={{ border: "1px solid black", margin: "5px", overflowY: "scroll", height: "200px" }} ref={replyListRef}>
+      <div className="star-reply-list min-h-20  max-h-72 border border-white-sub rounded-xl overflow-y-scroll bg-alert-bg text-white-sub" ref={replyListRef}>
         {data.map((reply, index) => (
           <StarReplyListItem reply={reply} key={index} boardIndex={boardIndex} />
         ))}
