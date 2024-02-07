@@ -295,12 +295,7 @@ function ReplyRegistArea(props) {
 }
 
 function RadioContent() {
-    const [rdata, setRdata] = useState({  // 테스트용 임시값
-      "boardIndex": 3,
-      "boardContent": "테스트용 글입니다.",
-      "boardInputDate": "24.01.23",
-      "fromMemberIndex" : 1 
-    });
+    const [rdata, setRdata] = useState();
     const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
 
     const [repostActive, setRepostActive] = useState(false);
