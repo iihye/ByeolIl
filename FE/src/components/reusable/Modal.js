@@ -2,11 +2,13 @@ import axios from "axios";
 import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
+import Alert from "./Alert";
 import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } from "components/atom";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
-import "./Modal.css";
+import { GoRocket } from "react-icons/go";
+import { useNavigate } from "react-router";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -14,7 +16,7 @@ function Modal(props) {
 
   return (
     <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
-      <div className="modal ">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
+      <div className="modal bg-modal-bg">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
     </div>
   );
 }
@@ -70,24 +72,27 @@ function StarContent(props) {
     fetchData(starIndex);
   }, [renewStarDetail]);
 
-  // 좋아요 정보 가져오기
   useEffect(() => {
-    const fetchData = async () => {
-      await axios
-        .get(`${process.env.REACT_APP_API_URL}/board/like/${loginUserIndex}`)
-        .then((response) => {
-          const res = response.data.some((it) => it.boardIndex === starIndex);
-          // setLikeData(response.data);
-          setIsLike(res);
-        })
-        .catch((error) => console.log(error));
-    };
-    fetchData();
+    function handleClick(e) {
+      e.stopPropagation();
+      const check = [...e.target.classList].some((it) => it === "modal-container");
+      if (check) {
+        handleClose();
+      }
+    }
+
+    function handleKeydown(e) {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    }
 
     window.addEventListener("click", handleClick);
+    window.addEventListener("keydown", handleKeydown);
 
     return () => {
       window.removeEventListener("click", handleClick);
+      window.removeEventListener("keydown", handleKeydown);
     };
   }, []);
 
@@ -121,7 +126,6 @@ function StarContent(props) {
 
       if (response.request.status === 200) {
         setIsLike(true);
-        console.log("좋아요 성공");
       } else {
         console.log("좋아요 실패");
       }
@@ -163,14 +167,6 @@ function StarContent(props) {
     // setReportModal('');
   };
 
-  function handleClick(e) {
-    e.stopPropagation();
-    const check = [...e.target.classList].some((it) => it === "modal-container");
-    if (check) {
-      handleClose();
-    }
-  }
-
   /* 게시글 작성자 체크*/
   const isWriter = () => {
     return writerIndex === loginUserIndex;
@@ -185,18 +181,20 @@ function StarContent(props) {
     <>
       <div className="star-content">
         {/* 최상단 */}
-        <div className="star-content-top">
+        <div className="star-content-top text-white-sub">
           {/* 지정일 */}
-          <div>{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</div>
+          <div className="text-xl">{data ? `${data.boardInputDate[0]}년 ${data.boardInputDate[1]}월 ${data.boardInputDate[2]}일` : "로딩중"}</div>
           {/* 작성일(수정일) */}
           <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div>
         </div>
-        <div className="star-content-content">
+        <div className="star-content-content relative bg-white-sub h-32">
           <MediaArea data={data} />
           {/* 게시글 내용 */}
           <div>
             {data ? data.boardContent : "로딩중"}
-            <button>라디오 송신</button>
+            <div className="absolute right-0 bottom-0 mr-2 mb-2 text-2xl">
+              <GoRocket />
+            </div>
           </div>
         </div>
         <div>
@@ -245,11 +243,8 @@ function StarContent(props) {
   );
 }
 
-{
-  /* <div style={{ display: "flex" }}>{data && data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div> */
-}
 function MediaArea(props) {
-  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} key={index} style={{ width: "50px" }}></img>)}</div>;
+  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
 }
 
 function ReplyRegistArea(props) {
@@ -300,30 +295,70 @@ function ReplyRegistArea(props) {
 }
 
 function RadioContent() {
-  const [data, setData] = useState(null);
+    const [rdata, setRdata] = useState();
+    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
 
-  // useEffect(() => {
+    const [repostActive, setRepostActive] = useState(false);
+    const navigate = useNavigate();
+    const fetchData = async () => {
+      await axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`, {
+        headers: {
+          token: localStorage.getItem('token') ?? "",
+        },
+      })
+        .then((response) => {
+          console.log(response.data);
+          setRdata(response.data);
+        }).catch((e) => { console.log(e) })
+    }
+    useEffect(() => {
+      // 최초1회 데이터를 수신한다. 
+      fetchData();
+      
+      // TTS 음성수신 미해결
+      // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
 
-  // }, []);
+    }, [rdata]);
+    function handlePlay() {
+            // 음성파일 재생시켜야됨. => 오디오 플레이어 요소도 추가 필요 
+    }
+    function handleRepost() {
+      axios.post(`${process.env.REACT_APP_API_URL}/radio/toss`,{
+        "memberIndex": rdata.fromMemberIndex,
+        "boardIndex": rdata.boardIndex,
+      },{
+        headers: {
+          token: localStorage.getItem('token') ?? "",
+        },
+      }).then((response)=>{console.log(response.data)});
+      alert("재송신 성공!");
+      setRepostActive(true);
+    }
 
-  return (
-    <div>
-      <div>
-        {/*라디오 모달 상단 헤더 */}
-        <div>n년 n월 n일</div>
-        <button>REPORT</button>
-        <button>CLOSE</button>
-      </div>
-      <div>
-        {/*라디오 내용 */}
-        <div>{data ? data.boardContent : "로딩중"}</div>
-      </div>
-      <div>
-        <button>PLAY</button>
-        <button>재송신하기</button>
-      </div>
-    </div>
-  );
+
+    return (
+          <div>
+            <div>
+                {/*라디오 모달 상단 헤더 */}
+                {rdata ? <div>20{rdata.boardInputDate.split('.')[0]}년 {rdata.boardInputDate.split('.')[1]}월 {rdata.boardInputDate.split('.')[2]}일</div> : '로딩중'}
+                <button onClick={() => {setIsReportAlertOpen(true)}}>REPORT</button>
+                <button onClick={()=>{navigate(-1);}}>CLOSE</button>
+            </div>
+            <div>
+                {/*라디오 내용 */}
+                <div>{rdata ? rdata.boardContent : '로딩중'}</div>
+            </div>
+            <div>
+                <button onClick={() => {handlePlay()}}>PLAY</button>
+                <button disabled={repostActive} onClick={() => {handleRepost()}}>재송신하기</button>
+            </div>
+            <div className="reportAlert">
+              {
+                isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex}/>
+              }
+            </div>
+        </div>
+    );
 }
 
 export default Modal;
