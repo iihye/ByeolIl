@@ -16,19 +16,30 @@ import FindPW from "components/login/FindPW";
 import Regist from "components/login/Regist";
 import StarTagSearch from "components/star/StarTagSearch";
 import Radio from "components/radio/Radio";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import LandingPage from "pages/LandingPage";
+import { useEffect } from "react";
 
-function App() {
+
+function App() {     // 로그인 ? mainpage : landingpage 
+  const navigate = useNavigate();
+  const rendering = () => {
+    localStorage.getItem('token') ? navigate(`/space/${localStorage.getItem('memberIndex')}`) : navigate('/landing')
+  }
+  useEffect(() => {
+    rendering();
+  },[])
   return (
     <div className="App">
-      <Header />
+      <Header/>
       <Routes>
-        <Route path="/" element={<KakaoLogin />}></Route>
-        <Route exact path="/landing/login" element={<Login />}></Route>
-        <Route path="/regist" element={<Regist/>}></Route>
-        <Route path="/findId" element={<FindID />} />
-        <Route path="/findPw" element={<FindPW />} />
-        <Route path="/regist" element={<Regist />} />
+        <Route path="/landing" element={<LandingPage/>}>
+          {/* <Route path="/" element={<KakaoLogin />}></Route> */}
+          <Route exact path="login" element={<Login/>}></Route>
+          <Route path="regist" element={<Regist/>}></Route>
+          <Route path="findId" element={<FindID />} />
+          <Route path="findPw" element={<FindPW />} />
+        </Route>
         <Route path="/space/:user_id" element={<MainPage />}>
           <Route path="editInfo" element={<ChangeInfo />} />
           <Route path="starMine" element={<List />} />

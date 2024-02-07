@@ -23,7 +23,7 @@ function StarReplyList(props) {
             top: 0,
             left: 0,
           });
-          console.dir(replyListRef.current);
+          console.log(res.data);
           setData(res.data.reverse());
         })
         .catch((error) => console.log(error));
@@ -36,7 +36,7 @@ function StarReplyList(props) {
       await axios
         .get(`${process.env.REACT_APP_API_URL}/comment/${boardIndex}`)
         .then((res) => {
-          setData(res.data);
+          setData(res.data.reverse());
         })
         .catch((error) => console.log(error));
     };
