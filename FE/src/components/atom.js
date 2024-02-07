@@ -55,9 +55,9 @@ export const reportModalState = atom({
 
 // 현재 PW 확인 알럿
 export const isPwCheckOpenState = atom({
-  key: "isPwCheckOpenState",
-  default: true,
-})
+    key: 'isPwCheckOpenState',
+    default: true,
+});
 
 // 댓글 리렌더링 atom
 export const renewReplyState = atom({
