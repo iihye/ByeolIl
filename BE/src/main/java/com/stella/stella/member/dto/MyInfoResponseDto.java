@@ -21,7 +21,7 @@ public class MyInfoResponseDto {
 		memberId = member.getMemberId();
 		memberPlatform = member.getMemberPlatform();
 		memberName = member.getMemberName();
-		memberNickname = member.getMemberEmail();
+		memberNickname = member.getMemberNickname();
 		memberEmail = member.getMemberEmail();
 		memberAlarmStatus = member.getMemberAlarmStatus().toString();
 		memberRadioStatus = member.getMemberRadioStatus().toString();
