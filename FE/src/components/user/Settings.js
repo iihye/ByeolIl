@@ -8,9 +8,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { IoSettingsOutline } from "react-icons/io5";
-import { PiRadioFill } from "react-icons/pi";
-import { Slider } from "@/components/ui/slider"
+import { IoSettingsOutline } from 'react-icons/io5';
+import { PiRadioFill } from 'react-icons/pi';
+import { Slider } from '@/components/ui/slider';
 import { SliderRange, SliderThumb } from '@radix-ui/react-slider';
 
 function Settings() {
@@ -56,30 +56,29 @@ function Settings() {
     return (
         <Card className="Settings w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
             <CardHeader className="flex">
-                <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">  
-                    <IoSettingsOutline className="mr-1"/>
+                <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+                    <IoSettingsOutline className="mr-1" />
                     환경설정
                 </CardTitle>
             </CardHeader>
             <div></div>
             <CardContent>
                 <div className="flex font-['Pre-bold'] mb-2">
-                    <PiRadioFill size="24" className="pr-2 text-btn-bg-hover"/>
+                    <PiRadioFill size="24" className="pr-2 text-btn-bg-hover" />
                     라디오 수신 범위 설정
                 </div>
                 <div className="flex justify-between pl-2 pr-2 mb-2">
                     <div className="w-1/6 mr-2 font-['Pre-bold']">최근</div>
                     <Slider
                         className="Settings-Slider flex-grow"
-                        defaultValue={[1]} 
-                        max={2} 
-                        step={1} 
+                        defaultValue={[1]}
+                        max={2}
+                        step={1}
                     />
-                    <div className="w-1/6 ml-2 font-['Pre-bold'] ml-2">과거</div>
+                    <div className="w-1/6 ml-2 font-['Pre-bold'] ">과거</div>
                 </div>
-                
+
                 <div className="flex justify-between px-16">
-                    
                     {/* {options.map((option) => {
                         return (
                             <button

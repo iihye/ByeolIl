@@ -19,8 +19,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/components/ui/table"
-import { PiSiren } from "react-icons/pi";
+} from '@/components/ui/table';
+import { PiSiren } from 'react-icons/pi';
 
 function Report() {
     const [reportData, setReportData] = useState([]);
@@ -78,62 +78,83 @@ function Report() {
     return (
         <Card className="Report w-8/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
             <CardHeader className="flex">
-                <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">  
-                    <PiSiren className="mr-1"/>
+                <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+                    <PiSiren className="mr-1" />
                     신고관리
                 </CardTitle>
             </CardHeader>
             <div></div>
             <CardContent>
-            <Table className="Report-Table">
-                <TableHeader>
-                    <TableRow className="font-['Pre-Bold'] bg-white text-m ">
-                        <TableHead className="text-center w-2/12">닉네임</TableHead>
-                        <TableHead className="text-center">신고내용</TableHead>
-                        <TableHead className="text-center w-2/12">신고일</TableHead>
-                        <TableHead className="text-center w-2/12">사용자 차단</TableHead>
-                        <TableHead className="text-center w-2/12">게시글 확인</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {reportData.length > 0 && boardContent.length > 0 ? (
-                        reportData.map((it, index) => (
-                            <>
-                                {reportModal === it.boardIndex && (
-                                    <ReportDetail
-                                        boardIndex={it.boardIndex}
-                                        reportContent={it.reportContent}
-                                    />
-                                )}
-                                <TableRow 
-                                    className="font-['Pre-Light']"
-                                    key={it.reportIndex}
-                                >
-                                    <TableCell className="text-center">{it.memberNickname}</TableCell>
-                                    {/* <TableCell>{boardContent[index]}</TableCell> */}
-                                    <TableCell>{it.reportContent}</TableCell>
-                                    <TableCell className="text-center">{it.reportRegdate}</TableCell>
-                                    <TableCell className="text-center">
-                                        <button 
-                                            className="bg-modal-bg w-3/5"
-                                        >차단하기</button>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <button 
-                                            className="bg-modal-bg w-6/12"
-                                            onClick={() => setReportModal(it.boardIndex)}
-                                        >글보기</button>
-                                    </TableCell>
-                                </TableRow>
-                            </>
-                        ))
-                    ) : (
-                        <div>Loading...</div>
-                    )}
-                    <TableRow></TableRow>
-                </TableBody>
-            </Table>
-                
+                <Table className="Report-Table">
+                    <TableHeader>
+                        <TableRow className="font-['Pre-Bold'] bg-white text-m ">
+                            <TableHead className="text-center w-2/12">
+                                닉네임
+                            </TableHead>
+                            <TableHead className="text-center">
+                                신고내용
+                            </TableHead>
+                            <TableHead className="text-center w-2/12">
+                                신고일
+                            </TableHead>
+                            <TableHead className="text-center w-2/12">
+                                사용자 차단
+                            </TableHead>
+                            <TableHead className="text-center w-2/12">
+                                게시글 확인
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {reportData.length > 0 && boardContent.length > 0 ? (
+                            reportData.map((it, index) => (
+                                <>
+                                    {reportModal === it.boardIndex && (
+                                        <ReportDetail
+                                            boardIndex={it.boardIndex}
+                                            reportContent={it.reportContent}
+                                        />
+                                    )}
+                                    <TableRow
+                                        className="font-['Pre-Light']"
+                                        key={it.reportIndex}
+                                    >
+                                        <TableCell className="text-center">
+                                            {it.memberNickname}
+                                        </TableCell>
+                                        {/* <TableCell>{boardContent[index]}</TableCell> */}
+                                        <TableCell>
+                                            {it.reportContent}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            {it.reportRegdate}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <button className="bg-modal-bg w-3/5">
+                                                차단하기
+                                            </button>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <button
+                                                className="bg-modal-bg w-6/12"
+                                                onClick={() =>
+                                                    setReportModal(
+                                                        it.boardIndex
+                                                    )
+                                                }
+                                            >
+                                                글보기
+                                            </button>
+                                        </TableCell>
+                                    </TableRow>
+                                </>
+                            ))
+                        ) : (
+                            <div>Loading...</div>
+                        )}
+                        <TableRow></TableRow>
+                    </TableBody>
+                </Table>
             </CardContent>
         </Card>
         // <div className="Report">
