@@ -229,7 +229,7 @@ function StarContent({ type,  reportInfo, starIndex, userIndex }) {
 function RadioContent() {
     const [rdata, setRdata] = useState({  // 테스트용 임시값
       "boardIndex": 3,
-      "boardContent": "테스트용 글입니다.",
+      "boardContent": "테스트용글입니다.",
       "boardInputDate": "24.01.23",
       "fromMemberIndex" : 1 
     });
@@ -237,6 +237,7 @@ function RadioContent() {
 
     const [repostActive, setRepostActive] = useState(false);
     const navigate = useNavigate();
+
     const fetchData = async () => {
       await axios.get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem('memberIndex')}`, {
         headers: {
@@ -248,12 +249,51 @@ function RadioContent() {
           setRdata(response.data);
         }).catch((e) => { console.log(e) })
     }
+
+    const fetchDataWav = async () => {
+      await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`)
+      .then((response) => {
+        console.log('axios 성공');
+        // setRdata(response.data);
+      }).catch((e) => { console.log(e) })
+    }
+
+    // try-catch 버전으로 성공 -> 나중에 삭제
+    // const fetchWav = async () => {
+    //   try {
+    //     const response = await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`);
+    //     console.log(response);
+    //     // const wavData = response.data; 
+    //     // console.log("---------wavData...");
+    //     // console.log(wavData);
+    //     // const audioPlayer = document.getElementById('audioPlayer');
+    //     // audioPlayer.src = `data:audio/wav;base64,${wavData}`;
+    //     // audioPlayer.play();
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+
+    // 안되었던 버전 -> 나중에 삭제
+    // const fetchWav = async () => {
+    //   console.log(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}}`)
+    //   await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}}`)
+    //     .then((response) => {
+    //       console.log(response.data);
+    //       setRdata(response.data);
+    //     }).catch((e) => { console.log(e) })
+    // }
     useEffect(() => {
       // 최초1회 데이터를 수신한다. 
       fetchData();
+      fetchDataWav();
       
       // TTS 음성수신 미해결
-      axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=테스트123`);
+      // console.log('axios get...');
+      // axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}}`);
+      // console.log(rdata);
+      // console.log('[after]axios get...');
+      
     }, [rdata]);
     function handlePlay() {
             // 음성파일 재생시켜야됨. => 오디오 플레이어 요소도 추가 필요 
@@ -275,13 +315,17 @@ function RadioContent() {
     return (
           <div>
             <div>
-                {/*라디오 모달 상단 헤더 */}
+              <button onClick={fetchDataWav}>---TTS테스트---</button>
+            </div>
+
+            {/* <div>
+                라디오 모달 상단 헤더
                 {rdata ? <div>20{rdata.boardInputDate.split('.')[0]}년 {rdata.boardInputDate.split('.')[1]}월 {rdata.boardInputDate.split('.')[2]}일</div> : '로딩중'}
                 <button onClick={() => {setIsReportAlertOpen(true)}}>REPORT</button>
                 <button onClick={()=>{navigate(-1);}}>CLOSE</button>
             </div>
             <div>
-                {/*라디오 내용 */}
+                라디오 내용
                 <div>{rdata ? rdata.boardContent : '로딩중'}</div>
             </div>
             <div>
@@ -292,7 +336,7 @@ function RadioContent() {
               {
                 isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex}/>
               }
-            </div>
+            </div> */}
         </div>
     );
 }
