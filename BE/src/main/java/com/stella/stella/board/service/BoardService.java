@@ -11,6 +11,7 @@ import com.stella.stella.common.exception.CustomException;
 import com.stella.stella.common.exception.CustomExceptionStatus;
 import com.stella.stella.member.entity.Member;
 import com.stella.stella.member.repository.MemberRepository;
+import com.stella.stella.radio.repository.RadioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,7 @@ public class BoardService {
     private final MediaRepository mediaRepository;
     private final HeartRepository heartRepository;
     private final HashRepository hashRepository;
+    private final RadioRepository radioRepository;
     private final S3Service s3Service;
 
     @Transactional
@@ -83,7 +85,7 @@ public class BoardService {
         //List<String> 형태로 미디어 파일의 경로를 받아서 저장
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public BoardStarResponseDto findBoard(Long boardIndex, Long memberIndex) {
         Board board = boardRepository.findById(boardIndex).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
         if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
@@ -199,6 +201,8 @@ public class BoardService {
                 }
 
                 board.setBoardDeleteYN(BoardDeleteYN.Y);
+                //board 삭제시 로직 작성중
+//                radioRepository.deleteAllInBatch(radioRepository.findByBoardBoardIndex(dto.getBoardIndex()));
             } else {
                 throw new CustomException(CustomExceptionStatus.MEMBER_INVALID);
             }
@@ -208,7 +212,7 @@ public class BoardService {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Map<String, Object> findBoardListToPage(Long memberIndex, Pageable pageable) {
         Map<String, Object> responseBody = new HashMap<>();
         Page<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex, BoardDeleteYN.N, pageable);
@@ -225,7 +229,7 @@ public class BoardService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardListResponseDto> findBoardListToList(Long memberIndex) {
         List<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex, BoardDeleteYN.N);
 
@@ -233,7 +237,7 @@ public class BoardService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardListResponseDto> findHeartedBoardList(Long memberIndex) {
         List<Heart> Hearts = heartRepository.findAllByMemberMemberIndex(memberIndex);
 

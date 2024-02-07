@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class ReportResponseDto {
     private Long reportIndex;
     private Long boardIndex;
+    private Long memberIndex;
     private String memberNickname;
     private String reportContent;
     private String reportRegdate;

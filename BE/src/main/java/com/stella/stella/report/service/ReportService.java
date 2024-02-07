@@ -26,31 +26,33 @@ public class ReportService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
 
-    public void addReport(BoardReportRequestDto dto){
-       if(reportRepository.countByBoardBoardIndexAndMemberMemberIndex(dto.getBoardIndex(), dto.getMemberIndex()) !=0) throw new CustomException(CustomExceptionStatus.ALREADY_REPORTED);
-        Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()-> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
-        if(board.getBoardDeleteYN()== BoardDeleteYN.Y){
+    public void addReport(BoardReportRequestDto dto) {
+        if (reportRepository.countByBoardBoardIndexAndMemberMemberIndex(dto.getBoardIndex(), dto.getMemberIndex()) != 0)
+            throw new CustomException(CustomExceptionStatus.ALREADY_REPORTED);
+        Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+        if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
         Member member = memberRepository.findByMemberIndex((dto.getMemberIndex())).orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
 
-       Report report = Report.builder()
-               .reportContent(dto.getReportContent())
-               .board(board)
-               .member(member)
-               .build();
+        Report report = Report.builder()
+                .reportContent(dto.getReportContent())
+                .board(board)
+                .member(member)
+                .build();
 
-       reportRepository.save(report);
+        reportRepository.save(report);
     }
 
-    public List<ReportResponseDto> findReportList(){
+    public List<ReportResponseDto> findReportList() {
         List<ReportResponseDto> list = new ArrayList<>();
-        for(Report r : reportRepository.findAll()){
+        for (Report r : reportRepository.findAll()) {
             list.add(ReportResponseDto.builder()
                     .reportRegdate(r.getReportRegdate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
                     .reportIndex(r.getReportIndex())
                     .reportContent(r.getReportContent())
                     .boardIndex(r.getBoard().getBoardIndex())
+                    .memberIndex(r.getMember().getMemberIndex())
                     .memberNickname(r.getMember().getMemberNickname())
                     .build());
         }
