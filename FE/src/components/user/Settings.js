@@ -75,9 +75,7 @@ function Settings() {
                         max={2}
                         step={1}
                     />
-                    <div className="w-1/6 ml-2 font-['Pre-bold'] ml-2">
-                        과거
-                    </div>
+                    <div className="w-1/6 ml-2 font-['Pre-bold'] ">과거</div>
                 </div>
 
                 <div className="flex justify-between px-16">

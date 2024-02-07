@@ -5,6 +5,24 @@ import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
 import { isStarDetailOpenState } from 'components/atom';
 import axios from 'axios';
 import StarDetail from 'components/star/StarDetail';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { WiStars } from 'react-icons/wi';
 
 function List() {
     const [listData, setListData] = useRecoilState(listState);
@@ -69,31 +87,74 @@ function List() {
 
     // 검색 결과와 일치하는 값을 렌더링
     return (
-        <div className="reusableList" style={{ border: '1px solid blue' }}>
-            <SearchBar filterKey="boardContent" />
-            <div className="searchList">
-                {filterData.map((it) => (
-                    <>
-                        <li
-                            key={it.boardIndex}
-                            style={{ border: '1px solid' }}
-                            onClick={() =>
-                                onDetail(it.boardIndex, it.memberIndex)
-                            }
-                        >
-                            {it.boardRegTime}&nbsp;{it.boardInputDate}&nbsp;
-                            {it.boardContent}
-                        </li>
-                        <button
-                            onClick={() =>
-                                deleteStar(it.boardIndex, it.memberIndex)
-                            }
-                        >
-                            X
-                        </button>
-                    </>
-                ))}
-            </div>
+        <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center">
+            <Card className="Report w-8/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+                <CardHeader className="flex">
+                    <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+                        <WiStars className="mr-1" />
+                        나의 별 목록
+                    </CardTitle>
+                </CardHeader>
+                <div></div>
+                <CardContent>
+                    <Table className="Star-List">
+                        <TableHeader>
+                            <TableRow className="font-['Pre-Bold'] bg-white text-m ">
+                                <TableHead className="text-center w-3/12">
+                                    일기 등록일
+                                </TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    지정일
+                                </TableHead>
+                                <TableHead className="text-center">
+                                    일기 내용
+                                </TableHead>
+                                <TableHead></TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {filterData.map((it) => (
+                                <>
+                                    <TableRow
+                                        className="font-['Pre-Light'] text-center"
+                                        key={it.boardIndex}
+                                    >
+                                        <TableCell>{it.boardRegTime}</TableCell>
+                                        <TableCell>
+                                            {it.boardInputDate}
+                                        </TableCell>
+                                        <TableCell
+                                            onClick={() =>
+                                                onDetail(
+                                                    it.boardIndex,
+                                                    it.memberIndex
+                                                )
+                                            }
+                                        >
+                                            {it.boardContent}
+                                        </TableCell>
+                                        <TableCell>
+                                            <button
+                                                onClick={() =>
+                                                    deleteStar(
+                                                        it.boardIndex,
+                                                        it.memberIndex
+                                                    )
+                                                }
+                                                className="bg-modal-bg w-6/12"
+                                            >
+                                                X
+                                            </button>
+                                        </TableCell>
+                                    </TableRow>
+                                </>
+                            ))}
+                            <TableRow></TableRow>
+                        </TableBody>
+                    </Table>
+                </CardContent>
+                <SearchBar filterKey="boardContent" />
+            </Card>
         </div>
     );
 }
