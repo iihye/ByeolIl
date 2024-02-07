@@ -22,7 +22,7 @@ import ModalSpace from "components/ModalSpace";
 export default function MainPage() {
   return (
     <div className="MainPage">
-      <div className="mainContainer">
+      <div className="mainContainer relative">
         <UserSpace />
         <Outlet />
       </div>
