@@ -16,10 +16,19 @@ import FindPW from "components/login/FindPW";
 import Regist from "components/login/Regist";
 import StarTagSearch from "components/star/StarTagSearch";
 import Radio from "components/radio/Radio";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import LandingPage from "pages/LandingPage";
+import { useEffect } from "react";
 
-function App() {
+
+function App() {     // 로그인 ? mainpage : landingpage 
+  const navigate = useNavigate();
+  const rendering = () => {
+    localStorage.getItem('token') ? navigate(`/space/${localStorage.getItem('memberIndex')}`) : navigate('/landing')
+  }
+  useEffect(() => {
+    rendering();
+  },[])
   return (
     <div className="App">
       <Header/>
