@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarMultiReplyList from "./StarMultiReplyList";
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { renewReplyState } from "components/atom";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 function StarReplyListItem(props) {
   const [renewReply, setRenewReply] = useRecoilState(renewReplyState);
@@ -11,11 +12,38 @@ function StarReplyListItem(props) {
 
   const commentIndex = props.reply.commentIndex;
   const writerIndex = props.reply.memberIndex;
-  const commentRegDate = props.reply.commentRegdate;
+  const [commentRegDate, setCommentRegDate] = useState(props.reply.commentRegdate);
   const commentContent = props.reply.commentContent;
   const multiComments = props.reply.multiComments;
   const boardIndex = props.boardIndex;
   const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
+
+  function timeCheck() {
+    const now = new Date();
+
+    const ymd = commentRegDate.splice(0, 3).join(",");
+    const hm = commentRegDate.splice(0, 2).join(":");
+
+    const regTime = new Date(ymd + " " + hm);
+
+    const diff = 1000 * 60;
+    const timeDiff = Math.round((now - regTime) / diff);
+
+    console.log(timeDiff);
+
+    let returnDate = `${regTime.getFullYear()}년 ${regTime.getMonth()}월 ${regTime.getDate()}일`;
+
+    if (timeDiff < 60) {
+      returnDate = `${timeDiff}분 전`;
+    } else if (timeDiff < 1440) {
+      returnDate = `${Math.round(timeDiff / 60)}시간 전`;
+    }
+    setCommentRegDate(returnDate);
+  }
+
+  useEffect(() => {
+    timeCheck();
+  }, []);
 
   const isWriter = () => {
     return writerIndex === loginUserIndex;
@@ -44,13 +72,19 @@ function StarReplyListItem(props) {
 
   return (
     <div className="star-reply-list-item" style={{ border: "1px solid black", margin: "5px" }}>
-      <div style={{ display: "flex" }}>
-        <div>{commentIndex}번 유저</div>
-        <div>{commentRegDate}</div>
+      <div className="flex items-end">
+        <div className="text-xl">{commentIndex}번 유저</div>
+        <div className="ml-2">{commentRegDate}</div>
       </div>
       <div style={{ display: "flex" }}>
         <div>{commentContent}</div>
-        <div>{isWriter() ? <button onClick={handleDelete}>댓글 삭제</button> : null}</div>
+        <div className="flex items-center">
+          {isWriter() ? (
+            <div className="ml-2 text-lg hover:cursor-pointer text-red-300" onClick={handleDelete}>
+              <FaDeleteLeft />
+            </div>
+          ) : null}
+        </div>
       </div>
       {!multiReply && (
         <div

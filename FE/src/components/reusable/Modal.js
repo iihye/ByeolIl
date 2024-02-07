@@ -190,7 +190,7 @@ function StarContent(props) {
           <div className="text-2xl mb-2 font-['Pre-bold']">
             {data ? (
               <>
-                {data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일<span className="text-lg">의 기록</span>
+                20{data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일<span className="text-lg">의 기록</span>
               </>
             ) : (
               "로딩중"
