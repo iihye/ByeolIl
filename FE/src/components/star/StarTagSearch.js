@@ -136,8 +136,6 @@ function StarTagSearch() {
                             )
                         ) : null}
                     </div>
-
-                    <ScrollBar />
                 </ScrollArea>
             </Card>
         </div>
