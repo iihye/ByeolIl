@@ -1,96 +1,143 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { FaSearch } from 'react-icons/fa';
+import { IoCloseSharp } from 'react-icons/io5';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 // 추후 카드 형식으로 나오게 css 변경
 // 추후 input 창 위에 tag가 올라가게 css 변경
 // 유효성 검사 다시 꼼꼼하게
 
 function StarTagSearch() {
-  const [tag, setTag] = useState("");
-  const [tagSearchData, setTagSearchData] = useState([]);
-  const [replaceTag, setReplaceTag] = useState("");
+    const [tag, setTag] = useState('');
+    const [tagSearchData, setTagSearchData] = useState([]);
+    const [replaceTag, setReplaceTag] = useState('');
 
-  const handleTag = (e) => {
-    setTag(e.target.value);
-  };
+    const handleTag = (e) => {
+        setTag(e.target.value);
+    };
 
-  const handleList = (e) => {
-    setTag(" ");
-    setTagSearchData([]);
-    setReplaceTag("");
-  };
+    const handleList = () => {
+        setTag(' ');
+        setTagSearchData([]);
+        setReplaceTag('');
+    };
 
-  const fetchData = async (tag) => {
-    await axios
-      .get(`${process.env.REACT_APP_API_URL}/search?tag=${encodeURIComponent(tag)}`)
-      .then((response) => {
-        console.log(response.data);
-        setTagSearchData(response.data);
-      })
-      .catch((e) => console.log(e));
-  };
+    const fetchData = async (tag) => {
+        await axios
+            .get(
+                `${
+                    process.env.REACT_APP_API_URL
+                }/search?tag=${encodeURIComponent(tag)}`
+            )
+            .then((response) => {
+                console.log(response.data);
+                setTagSearchData(response.data);
+            })
+            .catch((e) => console.log(e));
+    };
 
-  const activeSearch = (e) => {
-    if (e.key !== "Enter") {
-      return;
-    }
-    e.preventDefault();
-    activeButton();
-  };
+    const activeSearch = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            activeButton();
+        } else if (e.key === 'Backspace') {
+            handleList();
+        }
+    };
 
-  const activeButton = () => {
-    if (tag === "") return;
+    const activeButton = () => {
+        if (tag === '') return;
 
-    const specialRegExp = /[\{\}\[\]\/?.;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
+        const specialRegExp = /[\{\}\[\]\/?.;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
 
-    const testedTag = specialRegExp.test(tag) ? tag.replace(specialRegExp, "") : tag;
+        const testedTag = specialRegExp.test(tag)
+            ? tag.replace(specialRegExp, '')
+            : tag;
 
-    setReplaceTag(testedTag.replace(/\s/g, ""));
+        setReplaceTag(testedTag.replace(/\s/g, ''));
 
-    // 해시태그 모양 만들어주기
-    setTag(" ");
-  };
+        // 해시태그 모양 만들어주기
+        setTag(' ');
+    };
 
-  useEffect(() => {
-    if (replaceTag !== "") {
-      fetchData(replaceTag);
+    useEffect(() => {
+        if (replaceTag !== '') {
+            fetchData(replaceTag);
 
-      const reverseData = [...tagSearchData].reverse();
-      setTagSearchData(reverseData);
-    }
-  }, [replaceTag]);
+            const reverseData = [...tagSearchData].reverse();
+            setTagSearchData(reverseData);
+        }
+    }, [replaceTag]);
 
-  return (
-    <div className="tagSearch" style={{ zIndex: 5 }}>
-      <div className="searchArea">
-        <input name="tagSearch" value={tag} onChange={handleTag} onKeyDown={(e) => activeSearch(e)} />
-        {replaceTag && (
-          <span
-            style={{
-              margin: "4px",
-              padding: "4px",
-              border: "1px solid #ccc",
-            }}
-            onClick={handleList}
-          >
-            #{replaceTag}
-          </span>
-        )}
-        <button name="searchButton" onClick={() => activeButton()}>
-          찾기
-        </button>
-      </div>
-      <div className="resultArea">
-        {tagSearchData &&
-          tagSearchData.map((it) => (
-            <li key={it.boardIndex}>
-              {it.boardInputDate}&nbsp;{it.boardContent}&nbsp;
-              {it.hash}
-            </li>
-          ))}
-      </div>
-    </div>
-  );
+    return (
+        <Card className=" w-cardContainer card-contain-style py-3">
+            <div className="searchArea flex justify-between items-center search-input mx-auto my-3">
+                <div className="flex px-2">
+                    {replaceTag && (
+                        <span
+                            className="text-black-sub flex items-center p-2"
+                            onClick={handleList}
+                        >
+                            #{replaceTag}
+                            <IoCloseSharp />
+                        </span>
+                    )}
+                    <input
+                        name="tagSearch"
+                        value={tag}
+                        onChange={handleTag}
+                        onKeyDown={(e) => activeSearch(e)}
+                        className=" text-black-sub my-3"
+                    />
+                </div>
+
+                <FaSearch
+                    size="20"
+                    className="text-black-sub mx-3"
+                    onClick={() => activeButton()}
+                />
+            </div>
+            <ScrollArea className=" h-96 overflow-auto ">
+                <div className="grid grid-cols-3 justify-items-center gap-4">
+                    {tagSearchData &&
+                        tagSearchData.map((it) => (
+                            <Card
+                                key={it.boardIndex}
+                                className="card-style h-80 w-64"
+                            >
+                                <div className="cards w-4/5 mx-auto ">
+                                    <div className="cardInfo text-xs py-2 pl-1.5">
+                                        작성일&nbsp;
+                                        <strong>{it.boardInputDate}</strong>
+                                        &nbsp; | 작성자&nbsp;
+                                        <strong>{it.memberNickname}</strong>
+                                    </div>
+                                    <div className="cardContent py-2">
+                                        {it.boardContent}
+                                    </div>
+                                    <div className="cardTag flex py-2">
+                                        {it.hash.map((tag) => (
+                                            <div>#{tag}&nbsp;</div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </Card>
+                        ))}
+                </div>
+
+                <ScrollBar />
+            </ScrollArea>
+        </Card>
+    );
 }
 
 export default StarTagSearch;

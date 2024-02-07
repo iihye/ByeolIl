@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ChangeInfo from './user/ChangeInfo';
-import StarList from './star/StarList';
-import StarFavorList from './star/StarFavorList';
-import FollowList from './user/FollowList';
-import FindUser from './user/FindUser';
 import axios from 'axios';
-// import StarTagSearch from './star/StarTagSearch';
-// import Settings from './user/Settings';
-// // 환경설정 컴포넌트..?
-// import Alarm from './user/Alarm'
 import { Link, useNavigate } from 'react-router-dom';
 import { useVideoTexture } from '@react-three/drei';
 
