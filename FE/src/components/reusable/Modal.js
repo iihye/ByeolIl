@@ -14,6 +14,7 @@ import { PiSiren } from "react-icons/pi";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { TiSpannerOutline } from "react-icons/ti";
 import { CgCloseR } from "react-icons/cg";
+import { IoMdSend } from "react-icons/io";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -85,6 +86,14 @@ function StarContent(props) {
       }
     }
 
+    const handleClose = () => {
+      /* 모달 닫기 */
+      setIsDeleteAlertOpen(false);
+      setIsReportAlertOpen(false);
+      setIsStarModifyOpen(false);
+      setIsStarDetailOpen(false);
+      // setReportModal('');
+    };
     function handleKeydown(e) {
       if (e.key === "Escape") {
         handleClose();
@@ -189,9 +198,9 @@ function StarContent(props) {
           {/* 지정일 */}
           <div className="text-2xl mb-2 font-['Pre-bold']">
             {data ? (
-              <>
+              <div>
                 20{data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일<span className="text-lg">의 기록</span>
-              </>
+              </div>
             ) : (
               "로딩중"
             )}
@@ -352,10 +361,14 @@ function ReplyRegistArea(props) {
   };
 
   return (
-    <div>
-      <input ref={inputRef} onKeyDown={handleKeyDown} />
-      <button onClick={handleRegistReply}>등록</button>
-    </div>
+    <>
+      <div className="w-full flex items-center justify-between">
+        <input className="border my-2 p-1 px-2 mr-2 w-full" placeholder="댓글 내용을 입력해주세요." ref={inputRef} onKeyDown={handleKeyDown} />
+        <div className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
+          <IoMdSend />
+        </div>
+      </div>
+    </>
   );
 }
 
