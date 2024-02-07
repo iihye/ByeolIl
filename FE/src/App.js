@@ -17,18 +17,20 @@ import Regist from "components/login/Regist";
 import StarTagSearch from "components/star/StarTagSearch";
 import Radio from "components/radio/Radio";
 import { Routes, Route } from "react-router-dom";
+import LandingPage from "pages/LandingPage";
 
 function App() {
   return (
     <div className="App">
-      <Header />
+      <Header/>
       <Routes>
-        <Route path="/" element={<KakaoLogin />}></Route>
-        <Route exact path="/landing/login" element={<Login />}></Route>
-        <Route path="/regist" element={<Regist/>}></Route>
-        <Route path="/findId" element={<FindID />} />
-        <Route path="/findPw" element={<FindPW />} />
-        <Route path="/regist" element={<Regist />} />
+        <Route path="/landing" element={<LandingPage/>}>
+          {/* <Route path="/" element={<KakaoLogin />}></Route> */}
+          <Route exact path="login" element={<Login/>}></Route>
+          <Route path="regist" element={<Regist/>}></Route>
+          <Route path="findId" element={<FindID />} />
+          <Route path="findPw" element={<FindPW />} />
+        </Route>
         <Route path="/space/:user_id" element={<MainPage />}>
           <Route path="editInfo" element={<ChangeInfo />} />
           <Route path="starMine" element={<List />} />
