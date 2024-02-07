@@ -3,24 +3,20 @@ import { isAddedStar, starsState, curPageState } from "components/user/UserSpace
 import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, renewStarDetailState } from "components/atom";
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import "./star.css";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { FaFileImage, FaRegFileImage } from "react-icons/fa";
 
-const imageListState = atom({
-  key: "imageList",
+const fileListState = atom({
+  key: "fileList",
   default: [],
 });
 
 function StarRegist(props) {
   const [renewStarDetail, setRenewStarDetail] = useRecoilState(renewStarDetailState);
   const curPage = useRecoilValue(curPageState);
-  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setStars = useSetRecoilState(starsState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
-  const [imageList, setImageList] = useRecoilState(imageListState);
-  const [media, setMedia] = useState([]);
-  const [inputDate, setInputDate] = useState();
 
   const accessRangeRef = useRef();
   const dateRef = useRef();
@@ -68,13 +64,13 @@ function StarRegist(props) {
     };
   }, []);
 
-  const handleRegist = async () => {
+  const handleRegist = async (fileList) => {
     if (contentRef.current.value.trim() === "") {
       alert("공백 입력했어요");
       return;
     }
 
-    const files = fileRef.current.files;
+    const files = [...fileList];
 
     const formData = new FormData();
 
@@ -174,9 +170,7 @@ function StarRegist(props) {
 
   return (
     <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard']">
-      <div>
-        <ImagePreviewArea />
-      </div>
+      <div>{/* <ImagePreviewArea /> */}</div>
       <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3 w-96">
         <div className="star-regist-middle">
           <div className="flex justify-between items-center mb-2">
@@ -186,51 +180,147 @@ function StarRegist(props) {
           <textarea className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub" ref={contentRef} placeholder="일기 내용을 입력해주세요." />
         </div>
         {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
-        <div className="flex justify-between">
+        <div className="relative">
           <FileUploadArea ref={fileRef} />
-          <div className="flex">
-            <button className="h-8 w-14 px-2 shadow-md" onClick={handleRegist}>
-              {buttonValue[type]}
-            </button>
-            <button className="h-8 w-14 ml-2 shadow-md" onClick={handleClose}>
-              닫기
-            </button>
-          </div>
+          <Buttons buttonValue={buttonValue} type={type} handleRegist={handleRegist} handleClose={handleClose} />
         </div>
       </div>
     </div>
   );
 }
 
-const FileUploadArea = forwardRef((props, ref) => {
-  const handleFileChange = (e) => {
-    // // 개수 제한
-    // const maxFileCnt = 5;
-    // const uploadFileList = fileRef.current.files;
-    // const attachedFileCnt = uploadFileList.length;
-    // const remainFileCnt = maxFileCnt - attachedFileCnt;
-    // const imgUrlList = [...imageList];
-    // console.log(uploadFileList);
-    // for (let i = 0; i < uploadFileList.length; i++) {
-    //   const imgURL = URL.createObjectURL(uploadFileList[i]);
-    //   imgUrlList.push(imgURL);
-    // }
-    // if (remainFileCnt < 0) {
-    //   alert(`첨부파일은 ${maxFileCnt}개를 넘길 수 없습니다.`);
-    //   imgUrlList.slice(0, maxFileCnt);
-    // }
-    // console.log("파일첨부완료");
-    // setImageList(imgUrlList);
-    // 용량 제한
-  };
+function Buttons(props) {
+  const fileList = useRecoilValue(fileListState);
 
-  return <input className="w-20" type="file" multiple onChange={handleFileChange} ref={ref} />;
+  const buttonValue = props.buttonValue;
+  const type = props.type;
+  const handleRegist = props.handleRegist;
+  const handleClose = props.handleClose;
+
+  return (
+    <div className="flex absolute right-0 top-0">
+      <button
+        className="h-8 w-14 px-2 shadow-md"
+        onClick={() => {
+          handleRegist(fileList);
+        }}
+      >
+        {buttonValue[type]}
+      </button>
+      <button className="h-8 w-14 ml-2 shadow-md" onClick={handleClose}>
+        닫기
+      </button>
+    </div>
+  );
+}
+
+const FileUploadArea = forwardRef((props, ref) => {
+  const [fileList, setFileList] = useRecoilState(fileListState);
+
+  useEffect(() => {
+    return () => {
+      setFileList([]);
+    };
+  }, []);
+
+  function handleFileChange(e) {
+    // 파일 개수 제한 체크
+    // Map -> 중복 파일 거르기
+
+    const fileMap = new Map();
+    [...fileList].forEach((it) => fileMap.set(it.name, it));
+    [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
+    if (e.dataTransfer) {
+      [...e.dataTransfer.files].forEach((it) => fileMap.set(it.name, it));
+    }
+
+    const [maxImageCnt, maxVideoCnt] = [5, 1];
+    const uploadFileList = [...fileMap.values()];
+
+    const imageFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image").length;
+    const videoFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video").length;
+
+    const [remainImageFileCnt, remainVideoFileCnt] = [maxImageCnt - imageFileCnt, maxVideoCnt - videoFileCnt];
+
+    let msg = "";
+    if (remainImageFileCnt < 0) {
+      msg += "이미지 파일은 최대 5개 까지 첨부 가능합니다.\n";
+    }
+
+    if (remainVideoFileCnt < 0) {
+      msg += "비디오 파일은 최대 1개 까지 첨부 가능합니다.";
+    }
+
+    if (msg !== "") {
+      alert(msg);
+      // IE에서 호환성 문제 있음
+      ref.current.value = "";
+      return;
+    }
+
+    // const urlList = [...uploadFileList].map((it) => URL.createObjectURL(it));
+    setFileList([...uploadFileList]);
+    ref.current.value = "";
+  }
+
+  function handleDragEnter() {}
+
+  function handleDragOver(e) {
+    e.preventDefault();
+  }
+
+  function handleDragLeave() {}
+
+  function handleDrop(e) {
+    e.preventDefault();
+
+    handleFileChange(e);
+  }
+
+  return (
+    <>
+      <div className="flex h-8">
+        <input className="absolute w-0 h-0 p-0 border-0 overflow-hidden" type="file" id="file" multiple onChange={handleFileChange} ref={ref} />
+        <label className="text-white-sub flex items-center  hover:text-white hover:cursor-pointer" for="file">
+          <FaRegFileImage />
+          <div className="ml-1">파일 첨부</div>
+        </label>
+      </div>
+      <label for="file" className="bg-white inline cursor-pointer " onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+        <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center">
+          {fileList.length === 0 ? (
+            <div className="hover:text-white">
+              <FaFileImage className="w-full text-5xl" />
+              <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
+              <div>이미지 파일 5개 / 영상 파일 1개</div>
+            </div>
+          ) : (
+            <FileList files={fileList} classList="w-full h-full" />
+          )}
+        </div>
+      </label>
+    </>
+  );
 });
 
+function FileList(props) {
+  const fileList = [...props.files];
+
+  return (
+    <>
+      <div for="file" className="text-left w-full ml-3 hover:text-white">
+        {fileList.map((it, index) => (
+          <div key={index}>- {it.name}</div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function ImagePreviewArea() {
-  const imageList = useRecoilValue(imageListState);
-  console.log(imageList);
-  return <div>{imageList.length > 0 ? imageList.map((it, index) => <div>{it}</div>) : null}</div>;
+  const fileList = useRecoilValue(fileListState);
+  console.log(fileList);
+  return <div>{fileList.length > 0 ? fileList.map((it, index) => <div>{it}</div>) : null}</div>;
 }
 
 const DateArea = forwardRef((props, ref) => {
