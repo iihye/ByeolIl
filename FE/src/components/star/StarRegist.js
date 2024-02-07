@@ -5,6 +5,7 @@ import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaFileImage, FaRegFileImage } from "react-icons/fa";
+import { MdOutlineCancel } from "react-icons/md";
 
 const fileListState = atom({
   key: "fileList",
@@ -263,18 +264,17 @@ const FileUploadArea = forwardRef((props, ref) => {
     ref.current.value = "";
   }
 
-  function handleDragEnter() {}
-
   function handleDragOver(e) {
     e.preventDefault();
   }
 
-  function handleDragLeave() {}
-
   function handleDrop(e) {
     e.preventDefault();
-
     handleFileChange(e);
+  }
+
+  function handleClick() {
+    ref.current.click();
   }
 
   return (
@@ -286,34 +286,42 @@ const FileUploadArea = forwardRef((props, ref) => {
           <div className="ml-1">파일 첨부</div>
         </label>
       </div>
-      <label for="file" className="bg-white inline cursor-pointer " onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-        <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center">
-          {fileList.length === 0 ? (
-            <div className="hover:text-white">
-              <FaFileImage className="w-full text-5xl" />
-              <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
-              <div>이미지 파일 5개 / 영상 파일 1개</div>
-            </div>
-          ) : (
-            <FileList files={fileList} classList="w-full h-full" />
-          )}
-        </div>
-      </label>
+      <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center" onDragOver={handleDragOver} onDrop={handleDrop} onClick={handleClick}>
+        {fileList.length === 0 ? (
+          <div className="hover:text-white hover:cursor-pointer">
+            <FaFileImage className="w-full text-5xl" />
+            <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
+            <div>이미지 파일 5개 / 영상 파일 1개</div>
+          </div>
+        ) : (
+          <FileList classList="w-full h-full" />
+        )}
+      </div>
     </>
   );
 });
 
-function FileList(props) {
-  const fileList = [...props.files];
+function FileList() {
+  const [fileList, setFileList] = useRecoilState(fileListState);
 
+  function handleClick(e, index) {
+    e.stopPropagation();
+
+    const tmp = [...fileList];
+    tmp.splice(index, 1);
+    setFileList(tmp);
+  }
   return (
-    <>
-      <div for="file" className="text-left w-full ml-3 hover:text-white">
-        {fileList.map((it, index) => (
-          <div key={index}>- {it.name}</div>
-        ))}
-      </div>
-    </>
+    <div className="text-left w-full h-full ml-3">
+      {fileList.map((it, index) => (
+        <div className="flex items-center" key={index}>
+          <div>- {it.name}</div>
+          <div className="ml-1 mt-1 hover:cursor-pointer text-red-500 hover:text-red-400" onClick={(e) => handleClick(e, index)}>
+            <MdOutlineCancel />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
