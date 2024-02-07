@@ -64,13 +64,13 @@ function StarRegist(props) {
     };
   }, []);
 
-  const handleRegist = async () => {
+  const handleRegist = async (fileList) => {
     if (contentRef.current.value.trim() === "") {
       alert("공백 입력했어요");
       return;
     }
 
-    const files = fileRef.current.files;
+    const files = [...fileList];
 
     const formData = new FormData();
 
@@ -182,16 +182,34 @@ function StarRegist(props) {
         {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
         <div className="relative">
           <FileUploadArea ref={fileRef} />
-          <div className="flex absolute right-0 top-0">
-            <button className="h-8 w-14 px-2 shadow-md" onClick={handleRegist}>
-              {buttonValue[type]}
-            </button>
-            <button className="h-8 w-14 ml-2 shadow-md" onClick={handleClose}>
-              닫기
-            </button>
-          </div>
+          <Buttons buttonValue={buttonValue} type={type} handleRegist={handleRegist} handleClose={handleClose} />
         </div>
       </div>
+    </div>
+  );
+}
+
+function Buttons(props) {
+  const fileList = useRecoilValue(fileListState);
+
+  const buttonValue = props.buttonValue;
+  const type = props.type;
+  const handleRegist = props.handleRegist;
+  const handleClose = props.handleClose;
+
+  return (
+    <div className="flex absolute right-0 top-0">
+      <button
+        className="h-8 w-14 px-2 shadow-md"
+        onClick={() => {
+          handleRegist(fileList);
+        }}
+      >
+        {buttonValue[type]}
+      </button>
+      <button className="h-8 w-14 ml-2 shadow-md" onClick={handleClose}>
+        닫기
+      </button>
     </div>
   );
 }
@@ -207,9 +225,17 @@ const FileUploadArea = forwardRef((props, ref) => {
 
   function handleFileChange(e) {
     // 파일 개수 제한 체크
-    const [maxImageCnt, maxVideoCnt] = [5, 1];
+    // Map -> 중복 파일 거르기
 
-    const uploadFileList = ref.current.files;
+    const fileMap = new Map();
+    [...fileList].forEach((it) => fileMap.set(it.name, it));
+    [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
+    if (e.dataTransfer) {
+      [...e.dataTransfer.files].forEach((it) => fileMap.set(it.name, it));
+    }
+
+    const [maxImageCnt, maxVideoCnt] = [5, 1];
+    const uploadFileList = [...fileMap.values()];
 
     const imageFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image").length;
     const videoFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video").length;
@@ -232,36 +258,44 @@ const FileUploadArea = forwardRef((props, ref) => {
       return;
     }
 
-    const fileList = [...uploadFileList].map((it) => URL.createObjectURL(it));
-    setFileList(fileList);
+    // const urlList = [...uploadFileList].map((it) => URL.createObjectURL(it));
+    setFileList([...uploadFileList]);
+  }
+  function handleDragEnter() {}
+
+  function handleDragOver(e) {
+    e.preventDefault();
+  }
+
+  function handleDragLeave() {}
+
+  function handleDrop(e) {
+    e.preventDefault();
+
+    handleFileChange(e);
   }
 
   return (
     <>
       <div className="flex h-8">
         <input className="absolute w-0 h-0 p-0 border-0 overflow-hidden" type="file" id="file" multiple onChange={handleFileChange} ref={ref} />
-        <label className="text-white-sub flex items-center hover:text-white hover:cursor-pointer" for="file">
+        <label className="text-white-sub flex items-center  hover:text-white hover:cursor-pointer" for="file">
           <FaRegFileImage />
           <div className="ml-1">파일 첨부</div>
         </label>
       </div>
-      <div className="h-40 p-1 mt-2">
-        <div className="items-center border border-dashed border-white-sub text-white-sub text-center h-full hover:text-white ">
+      <label for="file" className="bg-white inline cursor-pointer hover:text-white " onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+        <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center">
           {fileList.length === 0 ? (
-            <>
-              <label for="file" className="ml-auto mr-auto flex justify-center items-center text-white-sub text-center h-full hover:text-white">
-                <div>
-                  <FaFileImage className="w-full text-5xl" />
-                  <div className="text-lg mt-2">드래그하여 파일을 업로드해주세요.</div>
-                </div>
-              </label>
-              <input className="h-0 w-0 overflow-hidden" type="file" id="file" />
-            </>
+            <div>
+              <FaFileImage className="w-full text-5xl" />
+              <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
+            </div>
           ) : (
-            <FileList files={ref.current.files} />
+            <FileList files={fileList} classList="w-full h-full" />
           )}
         </div>
-      </div>
+      </label>
     </>
   );
 });
@@ -270,11 +304,13 @@ function FileList(props) {
   const fileList = [...props.files];
 
   return (
-    <div className="text-left p-2">
-      {fileList.map((it, index) => (
-        <div key={index}>{it.name}</div>
-      ))}
-    </div>
+    <>
+      <div for="file" className="text-left  w-full ml-3">
+        {fileList.map((it, index) => (
+          <div key={index}>- {it.name}</div>
+        ))}
+      </div>
+    </>
   );
 }
 
