@@ -8,9 +8,10 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AiOutlineUserAdd } from "react-icons/ai";
-import { FaUserCircle } from "react-icons/fa";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { AiOutlineUserAdd } from 'react-icons/ai';
+import { FaUserCircle } from 'react-icons/fa';
 
 function FollowList() {
     const [currentTab, setCurrentTab] = useState(0);
@@ -71,68 +72,51 @@ function FollowList() {
     }, []);
 
     return (
-        <Card className="FollowList w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
-            <CardHeader className="flex">
-                <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">  
-                    <AiOutlineUserAdd className="mr-1"/>
-                    팔로우/팔로워 목록
-                </CardTitle>
-            </CardHeader>
-            <div></div>
-            <CardContent>
-                <Tabs defaultValue={menuArr[0].name}>
-                    <TabsList className="w-full bg-black-sub">
-                        <TabsTrigger value={menuArr[0].name} className="w-full font-['Pre-Bold'] data-[state=active]:bg-background">{menuArr[0].name}</TabsTrigger>
-                        <TabsTrigger value={menuArr[1].name} className="w-full font-['Pre-Bold'] data-[state=active]:bg-background">{menuArr[1].name}</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value={menuArr[0].name}>
-                        <ul className="font-['Pre-Light'] text-m py-1 mb-2">
-                            {menuArr[0].content.map((user, index) => (
-                                <li key={index} className="flex justify-start p-1">
-                                    <FaUserCircle size="24" className="pr-2 text-btn-bg-hover"/>
-                                    <p>{user.memberName}</p>
-                                </li>
+        <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center">
+            <Card className="FollowList w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+                <CardHeader className="flex">
+                    <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+                        <AiOutlineUserAdd className="mr-1" />
+                        팔로우/팔로워 목록
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Tabs defaultValue={menuArr[currentTab].name}>
+                        <TabsList className="w-full bg-black-sub">
+                            {menuArr.map((menu, index) => (
+                                <TabsTrigger
+                                    key={index}
+                                    value={menu.name}
+                                    className="w-full font-['Pre-Bold'] data-[state=active]:bg-background"
+                                    onClick={() => setCurrentTab(index)}
+                                >
+                                    {menu.name}
+                                </TabsTrigger>
                             ))}
-                        </ul>
-                    </TabsContent>
+                        </TabsList>
 
-                    <TabsContent value={menuArr[1].name}>
-                        <ul className="font-['Pre-Light'] text-m py-1 mb-2">
-                            {menuArr[1].content.map((user, index) => (
-                                <li key={index} className="flex justify-start p-1">
-                                    <FaUserCircle size="24" className="pr-2 text-btn-bg-hover"/>
-                                    <p>{user.memberName}</p>
-                                </li>
-                            ))}
-                            
-                        </ul>
-                    </TabsContent>
-                </Tabs>
-
-                {/* <div className="FollowList">
-                    {menuArr.map((data, index) => (
-                        <div key={index}>
-                            <button
-                                onClick={() => setCurrentTab(index)}
-                                className={
-                                    currentTab === index ? 'currentFocusedTab' : 'Tab'
-                                }
-                            >
-                                {data.name}
-                            </button>
-                        </div>
-                    ))}
-                    <ul>
-                        {menuArr[currentTab].content.map((user, index) => (
-                            <li key={index}>
-                                <p>{user.memberName}</p>
-                            </li>
+                        {menuArr.map((menu, index) => (
+                            <TabsContent key={index} value={menu.name}>
+                                <ScrollArea className="font-['Pre-Light'] text-m py-1 mb-2 h-52">
+                                    {menu.content.map((user, userIndex) => (
+                                        <li
+                                            key={userIndex}
+                                            className="flex justify-start p-1"
+                                        >
+                                            <FaUserCircle
+                                                size="24"
+                                                className="pr-2 text-btn-bg-hover"
+                                            />
+                                            <p>{user.memberName}</p>
+                                        </li>
+                                    ))}
+                                </ScrollArea>
+                            </TabsContent>
                         ))}
-                    </ul>
-                </div> */}
-            </CardContent>
-        </Card>
+                    </Tabs>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
 
