@@ -14,17 +14,30 @@ export default function Regist() {
   },[data])
 
   return (
-    <div className="Regist">
-      {!formOpen &&
-        <div className="modal">
-          <button onClick={() => setFormOpen(true)}>일반회원가입</button>
-          <button onClick={() => {window.location.assign(kakao_join_uri)}}>카카오</button>
-          <a>네이버</a>
-          <a>구글</a> 
-          <a>깃헙</a>
-        </div>
-      }
-      {formOpen && <RegistForm/>} 
+    <div>
+    <Card className="Regist w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+        <CardHeader className="flex">
+          <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+            회원가입
+          </CardTitle>
+        </CardHeader>
+        <div></div>
+        <CardContent>
+
+        </CardContent>
+    </Card>
+      <div className="Regist">
+        {!formOpen &&
+          <div className="modal">
+            <button onClick={() => setFormOpen(true)}>일반회원가입</button>
+            <button onClick={() => {window.location.assign(kakao_join_uri)}}>카카오</button>
+            <a>네이버</a>
+            <a>구글</a> 
+            <a>깃헙</a>
+          </div>
+        }
+        {formOpen && <RegistForm/>} 
+      </div>
     </div>
   )
 }

@@ -144,7 +144,7 @@ function Login() {
                     <CardTitle className="text-6xl text-center font-['Star'] py-4">
                         별 일
                     </CardTitle>
-                    <CardDescription className="font-['Pre-Bold'] text-2xl">
+                    <CardDescription className="font-['Pre-Bold'] text-2xl mb-8">
                         로그인
                     </CardDescription>
                 </CardHeader>
@@ -158,7 +158,7 @@ function Login() {
                             value={idValue}
                             onChange={handleIdValue}
                             maxLength="20"
-                            className="border border-white-sub focus:ring-1 focus:ring-white-sub h-input "
+                            className="regist-input border border-white-sub focus:ring-1 focus:ring-white-sub h-input "
                         />
                         <p
                             className={`text-xs h-5 ${
@@ -174,12 +174,12 @@ function Login() {
                             value={passwordValue}
                             onChange={handlePwValue}
                             onKeyPress={onEnterLogin}
-                            className="border border-white-sub focus:ring-1 focus:ring-white-sub h-input"
+                            className="regist-input border border-white-sub focus:ring-1 focus:ring-white-sub h-input"
                         />
                     </div>
                 </CardContent>
 
-                <div className="relative flex place-content-evenly text-xs my-3">
+                <div className="font-['Pre-Bold'] relative flex place-content-evenly text-s my-3">
                     <div>
                         <Link to={'/landing/findId'}>아이디 찾기</Link>
                     </div>
