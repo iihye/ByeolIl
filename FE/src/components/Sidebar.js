@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useVideoTexture } from "@react-three/drei";
+import { IoMdMenu } from "react-icons/io";
 
 function SidebarList(props) {
   const [memberIndex, setMemberIndex] = useState(localStorage.getItem("memberIndex"));
@@ -42,14 +43,14 @@ function SidebarList(props) {
   }, []);
 
   return (
-    <div className="sidebarList bg-white-sub animation-spin">
+    <div className="sidebarList bg-modal-bg text-white-sub p-2 rounded-xl">
       <h2>{props.name}님의 우주</h2>
       {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
       {items.map((item, index) => {
         return (
           <div className="sidebarItem" key={index}>
             <Link to={item.path}>
-              <p>{item.name}</p>
+              <p className="mb-3">{item.name}</p>
             </Link>
           </div>
         );
@@ -72,16 +73,13 @@ export default function Sidebar() {
         console.log(error);
       }
     };
-
     fetchData();
   });
 
   return (
     <div className="Sidebar">
       <button onClick={() => (viewSideBar ? setViewSideBar(false) : setViewSideBar(true))}>=</button>
-      <div className="absolute top-10 right-0" style={{ left: "-100" }}>
-        {viewSideBar ? <SidebarList name={name} /> : <div />}
-      </div>
+      <div className="absolute top-10 right-0">{viewSideBar ? <SidebarList name={name} /> : <div />}</div>
     </div>
   );
 }
