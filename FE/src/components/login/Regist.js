@@ -74,14 +74,14 @@ export default function Regist() {
  const onChangeId = () => {
    const idRegExp = /^[a-z0-9]{4,20}$/;
    if (!idRegExp.test(id.current.value)) {
-     setIdMessage("4-15사이 대소문자 또는 숫자만 입력해 주세요!");
+     setIdMessage("4~15자 사이의 영문, 숫자만 입력해주세요");
      setIsId(false);
     } else {
       // 아이디 중복체크
       axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/id?id=${id.current.value}`)
       .then((response) => {
         setIdMessage(response.data.message);
-        if(response.data.message === "사용 가능한 아이디입니다.")setIsId(true)
+        if(response.data.message === "사용 가능한 아이디예요")setIsId(true)
         else setIsId(false);
     })
     }
@@ -90,10 +90,10 @@ export default function Regist() {
  const onChangeName = () => {
   const nameRegExp = /^[가-힣a-zA-Z]{2,20}$/;
    if (!nameRegExp.test(name.current.value)) {
-     setNameMessage("이름을 확인해 주세요.");
+     setNameMessage("이름을 확인해주세요");
      setIsName(false);
    } else {
-     setNameMessage("사용가능한 이름입니다.");
+     setNameMessage("사용 가능한 이름이에요");
      setIsName(true);
    }
  };
@@ -101,14 +101,14 @@ export default function Regist() {
  const onChangeNickName = () => {
   const nickNameRegExp = /^[가-힣a-zA-Z0-9_]{2,10}$/;
    if (!nickNameRegExp.test(nickName.current.value)) {
-     setNickNameMessage("2-10사이 한글, 영문, 숫자, '_' 만 입력가능!");
+     setNickNameMessage("2~10자 사이 한글, 영문, 숫자, '_' 만 입력해주세요");
      setIsNickName(false);
    } else {
     // 닉네임 중복체크 
     axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/nickname?nickname=${nickName.current.value}`)
     .then((response) => {
       setNickNameMessage(response.data.message);
-      if(response.data.message === '사용 가능한 닉네임입니다.') setIsNickName(true);
+      if(response.data.message === '사용 가능한 닉네임이에요') setIsNickName(true);
       else setIsNickName(false);
   })
   }
@@ -120,20 +120,20 @@ export default function Regist() {
      /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*+=-])(?=.*[0-9]).{8,25}$/;
    if (!passwordRegExp.test(password.current.value)) {
      setPasswordMessage(
-       "숫자+영문자+특수문자 조합으로 8자리 이상 25자 이하로 입력해주세요!"
+       "8~25자 영문 대,소문자, 숫자, 특수문자를 사용해주세요"
      );
      setIsPassword(false);
    } else {
-     setPasswordMessage("안전한 비밀번호 입니다.");
+     setPasswordMessage("안전한 비밀번호예요");
      setIsPassword(true);
    }
  };
  const onChangePasswordConfirm = () => {
    if (password.current.value !== passwordConfirm.current.value) {
-     setPasswordConfirmMessage("비밀번호가 똑같지 않아요!");
+     setPasswordConfirmMessage("비밀번호가 달라요");
      setIsPasswordConfirm(false);
    } else {
-     setPasswordConfirmMessage("똑같은 비밀번호를 입력했습니다.");
+     setPasswordConfirmMessage("비밀번호가 확인되었어요");
      setIsPasswordConfirm(true);
    }
  };
@@ -142,14 +142,14 @@ export default function Regist() {
      /^[A-Za-z0-9_]+[A-Za-z0-9]*[@]{1}[A-Za-z0-9]+[A-Za-z0-9]*[.]{1}[A-Za-z]{1,3}$/;
 
    if (!emailRegExp.test(email.current.value)) {
-     setEmailMessage("이메일의 형식이 올바르지 않습니다!");
+     setEmailMessage("이메일의 형식이 올바르지 않아요");
      setIsEmail(false);
     } else { 
     // 이메일 중복체크 
     axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/email?email=${email.current.value}`)
     .then((response) => {
       setEmailMessage(response.data.message);
-      if(response.data.message ===  "사용 가능한 이메일입니다.") setIsEmail(true);
+      if(response.data.message ===  "사용 가능한 이메일이에요") setIsEmail(true);
       else setIsEmail(false);
     });
   }
@@ -157,10 +157,10 @@ export default function Regist() {
  // 인증번호 일치 검사
   const onChangeAuthCode = () => {
     if (authCode.current.value !== AUTH_CODE) {
-      setAuthMessage("인증번호 불일치!");
+      setAuthMessage("인증번호를 다시 입력해주세요");
       setIsAuthCode(false);
     } else {
-      setAuthMessage("인증번호일치");
+      setAuthMessage("인증되었어요");
       setIsAuthCode(true);
     }
   }
@@ -171,15 +171,15 @@ export default function Regist() {
   
   if (dateRegex1.test(birth.current.value)) {
     if (dateRegex2.test(birth.current.value)) {
-      setBirthMessage("유효한 생년월일입니다.")
+      setBirthMessage("올바르게 입력했어요")
       setIsBirth(true);
     } else {
-      setBirthMessage("유효하지 않은 생년월일입니다.")
+      setBirthMessage("유효하지 않은 생년월일이에요")
       setIsBirth(false);
     }
   } else {
     {
-      setBirthMessage("유효하지 않은 생년월일입니다.")
+      setBirthMessage("유효하지 않은 생년월일이에요")
       setIsBirth(false);
     }
   }
@@ -215,7 +215,7 @@ const form = useForm();
 
  return (
   <div>
-    <Card className="Regist w-96 px-6 py-6 card-contain-style">
+    <Card className="Regist w-102 px-6 py-6 card-contain-style">
       <CardHeader className="flex">
         <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
           <FaUser className="mr-1" />
@@ -259,13 +259,15 @@ const form = useForm();
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="password">비밀번호</label> <br />
               <div>
+                <div className="flex justify-end">
                 <input
                   className="regist-input"
                   id="password"
                   name="password"
                   ref={password}
                   onBlur={onChangePassword}
-                />
+                  />
+                </div>
                 <p className="message regist-message">{passwordMessage}</p>
               </div>
             </div>
@@ -289,22 +291,19 @@ const form = useForm();
 
           <div className="form-el">
             <div className="flex justify-between">
-              <label className="regist-label" htmlFor="email">이메일</label> <br />
-              <div>
-                <div className="flex justify-end">
+              <label className="regist-label w-1/3" htmlFor="email">이메일</label> <br />
+                <div>
                   <input
-                    className="regist-input w-6/12"
+                    className="regist-input"
                     id="email"
                     name="email"
                     ref={email}
                     onBlur={onChangeEmail}
                   />
-                  <button className="regist-button h-1/2" disabled={!isEmail} onClick={doAuth}>인증하기</button>
+                  <p className="message regist-message">{emailMessage}</p>
                 </div>
-                <p className="message regist-message">{emailMessage}</p>
               </div>
-
-            </div>
+            <button className="regist-button w-full h-button px-2 mb-2" disabled={!isEmail} onClick={doAuth}>인증하기</button>
           </div>
 
           {openAuthFoam && 
@@ -344,7 +343,12 @@ const form = useForm();
             
           </div> 
 
-          <button className="regist-button w-full h-button my-1" onClick={doRegist} disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>가입하기</button>
+          <button 
+            className="regist-button w-full h-button my-1" 
+            onClick={doRegist} 
+            disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>
+            가입하기
+          </button>
         </div>
       </CardContent>
     </Card>

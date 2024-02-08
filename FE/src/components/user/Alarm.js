@@ -58,6 +58,7 @@ function Alarm() {
 
   useEffect(() => {
     function handleClick(e) {
+      e.stopPropagation();
       const check = [...e.target.classList].some((it) => it === "outside");
       if (check) {
         navigate(-1);
