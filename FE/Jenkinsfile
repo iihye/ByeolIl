@@ -19,38 +19,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Dockerimage build'){
-            steps{
-                dir('FE'){
-                    script {
-                        def containerExists = sh(script: "docker ps -a --format '{{.Names}}' | grep ${params.NAME}", returnStatus: true) == 0
-
-                        if (containerExists) {
-                            sh "docker stop ${params.NAME}"
-                            sh "docker rm ${params.NAME}"
-                        }
-
-                        sh '''
-                        echo 'Dockerimage build...'
-                        docker rmi docker-react:0.0.1
-                        docker build -t docker-react:0.0.1 .
-                        '''
-                    }
-                }
-            }
-        }
-
-        stage('Deploy'){
-            steps{
-                dir('BE'){
-                    sh '''
-                    echo 'Deploy FE...'
-                    docker run -d -p 3000:3000 --name react docker-react:0.0.1
-                    '''
-                }
-            }
-        }
     }
 
     post {
