@@ -54,11 +54,16 @@ public class MemberController {
         HttpStatus status = HttpStatus.OK;
         String accessToken = "";
         try {
-            String kakaoAcessToken = memberService.getKakaoAccessToken(code);
+            log.info("code={}",code);
+            String kakaoAcessToken = memberService.getKakaoAccessToken(code,"/login/kakao");
             Map<String, Object> kakaoMemberInfo = memberService.getKakaoMemberInfo(kakaoAcessToken);
-            accessToken = memberService.login(kakaoMemberInfo.get("id").toString(), "", "kakao");
+            log.info("memberInfo={}",kakaoMemberInfo);
+            accessToken = memberService.login(kakaoMemberInfo.get("id").toString()
+                    , UUID.nameUUIDFromBytes("kakao".getBytes()).toString(), "kakao");
+            log.info("accessToken={}",accessToken);
             resultMap.put("message", "success");
         } catch (Exception e) {
+            log.info(e.getMessage());
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
         }
@@ -105,6 +110,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.CREATED;
         try {
+            log.info("dto={}",memberJoinDto);
             //비밀번호 대응을 위한 암호화
             memberJoinDto.setMemberPass(UUID.nameUUIDFromBytes(memberJoinDto.getMemberPass().getBytes()).toString());
             memberService.join(memberJoinDto);
@@ -122,8 +128,11 @@ public class MemberController {
         HttpStatus status = HttpStatus.OK;
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            String kakaoAcessToken = memberService.getKakaoAccessToken(code);
+            log.info("code={}",code);
+            String kakaoAcessToken = memberService.getKakaoAccessToken(code,"/regist/kakao");
+            log.info("token={}",kakaoAcessToken);
             resultMap = memberService.getKakaoMemberInfo(kakaoAcessToken);
+            resultMap.put("platform","kakao");
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.BAD_REQUEST;
@@ -167,6 +176,7 @@ public class MemberController {
         try {
             //토큰으로 유저 정보 받아옴
             Long accessMemberIndex = (Long) request.getAttribute("accessMemberIndex");
+            log.info("myinfo={}",accessMemberIndex);
             result = memberService.info(accessMemberIndex);
         } catch (NullPointerException e) {
             status = HttpStatus.NOT_FOUND;
