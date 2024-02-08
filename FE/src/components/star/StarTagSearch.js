@@ -3,11 +3,7 @@ import axios from 'axios';
 import { Card } from '@/components/ui/card';
 import { FaSearch } from 'react-icons/fa';
 import { IoCloseSharp } from 'react-icons/io5';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-
-// 추후 카드 형식으로 나오게 css 변경
-// 추후 input 창 위에 tag가 올라가게 css 변경
-// 유효성 검사 다시 꼼꼼하게
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function StarTagSearch() {
     const [tag, setTag] = useState('');
@@ -124,9 +120,13 @@ function StarTagSearch() {
                                                 {it.boardContent}
                                             </div>
                                             <div className="cardTag flex py-2">
-                                                {it.hash.map((tag) => (
-                                                    <div>#{tag}&nbsp;</div>
-                                                ))}
+                                                {it.hash && it.hash.length > 0
+                                                    ? it.hash.map((tag) => (
+                                                          <div>
+                                                              #{tag}&nbsp;
+                                                          </div>
+                                                      ))
+                                                    : null}
                                             </div>
                                         </div>
                                     </Card>

@@ -228,81 +228,101 @@ const form = useForm();
           <div className="form-el">
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="id">아이디</label> <br />
-              <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} />
+              <div>
+                <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} />
+                <p className="message regist-message"> {idMessage} </p>
+              </div>
             </div>
-            <p className="message regist-message"> {idMessage} </p>
           </div>
 
           <div className="form-el">  
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="name">이름</label> <br />
-              <input className="regist-input" id="name" name="name" ref={name} onBlur={onChangeName} />
+              <div>
+                <input className="regist-input" id="name" name="name" ref={name} onBlur={onChangeName} />
+                <p className="message regist-message">{nameMessage}</p>
+              </div>
             </div>
-            <p className="message regist-message">{nameMessage}</p>
           </div>
 
           <div className="form-el">  
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="nickName">닉네임</label> <br />
-              <input className="regist-input" id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
+              <div>
+                <input className="regist-input" id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
+                <p className="message regist-message">{nickNameMessage}</p>
+              </div>
             </div>
-            <p className="message regist-message">{nickNameMessage}</p>
           </div>
 
           <div className="form-el">
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="password">비밀번호</label> <br />
-              <input
-                className="regist-input"
-                id="password"
-                name="password"
-                ref={password}
-                onBlur={onChangePassword}
-              />
+              <div>
+                <input
+                  className="regist-input"
+                  id="password"
+                  name="password"
+                  ref={password}
+                  onBlur={onChangePassword}
+                />
+                <p className="message regist-message">{passwordMessage}</p>
+              </div>
             </div>
-              <p className="message regist-message">{passwordMessage}</p>
           </div>
 
           <div className="form-el">
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="passwordConfirm">비밀번호확인</label> <br />
-              <input
-                className="regist-input"
-                id="passwordConfirm"
-                name="passwordConfirm"
-                ref={passwordConfirm}
-                onBlur={onChangePasswordConfirm}
-              />
+              <div>
+                <input
+                  className="regist-input"
+                  id="passwordConfirm"
+                  name="passwordConfirm"
+                  ref={passwordConfirm}
+                  onBlur={onChangePasswordConfirm}
+                />
+                <p className="message regist-message">{passwordConfirmMessage}</p>
+              </div>
             </div>
-            <p className="message regist-message">{passwordConfirmMessage}</p>
           </div>
 
           <div className="form-el">
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="email">이메일</label> <br />
-              <input
-                className="regist-input"
-                id="email"
-                name="email"
-                ref={email}
-                onBlur={onChangeEmail}
-              />
-              <button className="regist-button" disabled={!isEmail} onClick={doAuth}>인증하기</button>
+              <div>
+                <div className="flex justify-end">
+                  <input
+                    className="regist-input w-6/12"
+                    id="email"
+                    name="email"
+                    ref={email}
+                    onBlur={onChangeEmail}
+                  />
+                  <button className="regist-button h-1/2" disabled={!isEmail} onClick={doAuth}>인증하기</button>
+                </div>
+                <p className="message regist-message">{emailMessage}</p>
+              </div>
+
             </div>
-            <p className="message regist-message">{emailMessage}</p>
           </div>
 
           {openAuthFoam && 
             <div className="form-el">
+              <div className="flex justify-between">
             <label className="regist-label" htmlFor="authCode">인증코드</label> <br />
-            <input
-              className="regist-input"
-              id="authCode"
-              name="authCode"
-              ref={authCode}
-              onBlur={onChangeAuthCode}
-            />
-            <p className="message regist-message">{authMessage}</p>
+            <div>
+              <input
+                className="regist-input"
+                id="authCode"
+                name="authCode"
+                ref={authCode}
+                onBlur={onChangeAuthCode}
+                placeholder={"인증번호를 입력하세요"}
+              />
+              <p className="message regist-message">{authMessage}</p>
+            </div>
+            </div>
           </div>
           }
 
@@ -324,7 +344,7 @@ const form = useForm();
             
           </div> 
 
-          <button className="regist-button" onClick={doRegist} disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>가입하기</button>
+          <button className="regist-button w-full h-button my-1" onClick={doRegist} disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>가입하기</button>
         </div>
       </CardContent>
     </Card>
