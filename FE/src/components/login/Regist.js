@@ -3,32 +3,64 @@ import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaUser } from "react-icons/fa";
 import { useForm } from "react-hook-form";
+import { useLocation } from 'react-router';
 export default function Regist() {
   const [formOpen, setFormOpen] = useState(false);
-  const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=b1189e38a050b511cf3ae169bea072fe&redirect_uri=https://i10b209.p.ssafy.io/api/member/join/kakao&response_type=code`;
+  const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_REDIRECT_URI}&response_type=code`;
   const [data, setData] = useState();
+
+  const location = useLocation();
+  const { social_id, social_platform } = location.state || {}; // state가 undefined인 경우를 대비한 기본값 설정
   useEffect(() => {
     // 리스너 설치해서 인증성공시, 동작하도록해야할까..
   }, [data]);
   return (
-    <div className="Regist">
-      {!formOpen && (
-        <div className="modal">
-          <button onClick={() => setFormOpen(true)}>일반회원가입</button>
-          <button
-            onClick={() => {
-              window.location.assign(kakao_join_uri);
-            }}
-          >
-            카카오
-          </button>
-          <a>네이버</a>
-          <a>구글</a>
-          <a>깃헙</a>
-        </div>
-      )}
-      {formOpen && <RegistForm />}
+
+    <div>
+    <Card className="Regist w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+        <CardHeader className="flex">
+          <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+            회원가입
+          </CardTitle>
+        </CardHeader>
+        <div></div>
+        <CardContent>
+
+        </CardContent>
+    </Card>
+      <div className="Regist">
+        {!formOpen &&
+          <div className="modal">
+            <button onClick={() => setFormOpen(true)}>일반회원가입</button>
+            <button onClick={() => {window.location.assign(kakao_join_uri)}}>카카오</button>
+            <button>네이버</button>
+            <button>구글</button> 
+            <button>깃헙</button>
+          </div>
+        }
+        {formOpen && <RegistForm/>} 
+      </div>
     </div>
+
+    // <div className="Regist">
+    //   {!formOpen && (
+    //     <div className="modal">
+    //       <button onClick={() => setFormOpen(true)}>일반회원가입</button>
+    //       <button
+    //         onClick={() => {
+    //           window.location.assign(kakao_join_uri);
+    //         }}
+    //       >
+    //         카카오
+    //       </button>
+    //       <a>네이버</a>
+    //       <a>구글</a>
+    //       <a>깃헙</a>
+    //     </div>
+    //   )}
+    //   {formOpen && <RegistForm social_id={social_id} social_platform={social_platform}/>}
+
+    // </div>
   );
 }
 //  처음들어왔을때, 모달창을 통해서 일반과 소셜중 선택 가능하게해야한다. = <Regist/>는 모달창
@@ -37,7 +69,7 @@ export default function Regist() {
 //  소셜인증을 했다면, 필요한 데이터들은 미리 채워져서 RegistForm에서 수정이 비활성화 되게끔해야한다.
 //  이후에 회원가입버튼 누를시, 그사람의 회원가입 플랫폼(origin/ kakao/ naver/google/github)을 스트링으로 보내주어야함.
 
-function RegistForm(data) {
+function RegistForm({ social_id: social_id, social_platform: social_platform }) {
   // 초기값 - 아이디, 닉네임, 비밀번호, 비밀번호확인, 이메일, 생년월일
   const id = useRef("");
   const name = useRef("");
@@ -134,8 +166,10 @@ function RegistForm(data) {
     } else {
       // 이메일 중복체크
       axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/email?email=${email.current.value}`).then((response) => {
-        setEmailMessage(response.data.message);
-        if (response.data.message === "사용 가능한 이메일이에요") setIsEmail(true);
+        if (response.data.message === "사용 가능한 이메일입니다.") {
+          setIsEmail(true);
+          setEmailMessage("사용 가능한 이메일이에요.");
+        }
         else setIsEmail(false);
       });
     }
@@ -171,7 +205,7 @@ function RegistForm(data) {
   };
   const doAuth = function () {
     setOpenAuthFoam(true);
-    // 이메일로 인증코드 보내기.  /member/check/{email}
+    // 이메일로 인증코드 보내기. 
     axios.get(`${process.env.REACT_APP_API_URL}/member/check/email?email=${email.current.value}`).then((response) => {
       console.log(response.data.code);
       setAUTH_CODE(response.data.code);
@@ -180,17 +214,16 @@ function RegistForm(data) {
   const doRegist = () => {
     // 중복체크 및 인증 완료시 회원가입 성공
     const data = {
-      memberId: id.current.value,
-      memberPass: password.current.value, //소셜로그인일 경우 ""로 입력 (null 아님)
-      memberPlatform: "origin", //소셜로그인인지 일반로그인인지
-      memberName: name.current.value,
-      memberNickname: nickName.current.value,
-      memberEmail: email.current.value,
-      memberBirth: birth.current.value, //형식 준수해야함
+      "memberId": id.current.value,
+      "memberPass": social_platform === undefined ? password.current.value : social_platform,//소셜로그인일 경우 소셜플랫폼으로 입력
+      "memberPlatform": social_platform === undefined ? "origin":social_platform  , //소셜로그인인지 일반로그인인지
+      "memberName": name.current.value,
+      "memberNickname": nickName.current.value,
+      "memberEmail": email.current.value,
+      "memberBirth": birth.current.value //형식 준수해야함
     };
-    axios.post(`${process.env.REACT_APP_API_URL}/member/join`, data).then((response) => {
-      console.log(response);
-    });
+    console.log(data)
+    axios.post(`${process.env.REACT_APP_API_URL}/member/join`, data).then((response) => {console.log(response)})
   };
   const form = useForm();
   return (
@@ -213,7 +246,7 @@ function RegistForm(data) {
                 <br />
                 <div>
                   <div className="flex justify-end">
-                    <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} />
+                    <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} value={social_id} disabled={!!social_id}/>
                   </div>
                   <p className="message regist-message"> {idMessage} </p>
                 </div>
@@ -288,7 +321,7 @@ function RegistForm(data) {
                   <p className="message regist-message">{emailMessage}</p>
                 </div>
               </div>
-              <button className="regist-button w-full h-button px-2 mb-2" disabled={!isEmail} onClick={doAuth}>
+              <button className="regist-button w-full h-button px-2 mb-2" disabled={!isEmail} onClick={()=>{doAuth()}}>
                 인증하기
               </button>
             </div>
@@ -322,7 +355,7 @@ function RegistForm(data) {
                 </div>
               </div>
             </div>
-            <button className="regist-button w-full h-button my-1" onClick={doRegist} disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>
+            <button className="regist-button w-full h-button my-1" onClick={doRegist} disabled={!(isId && isname && isNickName && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>
               가입하기
             </button>
           </div>
