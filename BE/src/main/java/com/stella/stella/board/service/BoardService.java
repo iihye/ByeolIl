@@ -202,6 +202,7 @@ public class BoardService {
                 }
 
                 board.setBoardDeleteYN(BoardDeleteYN.Y);
+                board.setBoardLocation(-1L);
                 //board 삭제시 라디오, 미디어 , 좋아요 삭제 로직
                 radioRepository.deleteAllIn(radioRepository.findByBoardBoardIndexList(dto.getBoardIndex()));
                 mediaRepository.deleteAllIn(mediaRepository.findByBoardBoardIndexList(dto.getBoardIndex()));
