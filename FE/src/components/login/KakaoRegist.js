@@ -18,7 +18,7 @@ function KakaoRegist() {
                 );
                 console.log("response: ",response);
                 if(response.status==200){
-                    navigate('/regist', 
+                    navigate('/landing/regist', 
                     { state: 
                         { social_id: response.data.id, 
                             social_platform: response.data.platform 

@@ -38,7 +38,7 @@ export default function Regist() {
             <button>깃헙</button>
           </div>
         }
-        {formOpen && <RegistForm/>} 
+        {formOpen && <RegistForm social_id={social_id} social_platform={social_platform}/>} 
       </div>
     </div>
 
