@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
-import { filterState } from 'components/atom';
-import {
-    useRecoilValue,
-    useRecoilState,
-    useSetRecoilState,
-    useResetRecoilState,
-} from 'recoil';
-import { isStarDetailOpenState, resetFilterState } from 'components/atom';
+import { filterState, listState } from 'components/atom';
+import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
+import { isStarDetailOpenState } from 'components/atom';
 import axios from 'axios';
 import StarDetail from 'components/star/StarDetail';
 import {
@@ -28,9 +23,10 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { WiStars } from 'react-icons/wi';
+import { useNavigate } from 'react-router';
 
 function List() {
-    const [listData, setListData] = useState('');
+    const [listData, setListData] = useRecoilState(listState);
     const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
     const [memberIndex, setMemberIndex] = useState(
@@ -39,6 +35,7 @@ function List() {
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
+    const navigate = useNavigate();
     const token = localStorage.getItem('token') ?? '';
 
     useEffect(() => {
@@ -92,9 +89,27 @@ function List() {
         fetchData();
     }, [memberIndex]);
 
+    useEffect(() => {
+        function handleClick(e) {
+            e.stopPropagation();
+
+            const check = [...e.target.classList].some(
+                (it) => it === 'outside'
+            );
+            if (check) {
+                navigate(-1);
+            }
+        }
+
+        window.addEventListener('click', handleClick);
+        return () => {
+            window.removeEventListener('click', handleClick);
+        };
+    });
+
     // 검색 결과와 일치하는 값을 렌더링
     return (
-        <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center">
+        <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center">
             <Card className="Report w-8/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">

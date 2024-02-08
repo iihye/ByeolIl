@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-    filterState,
-    isStarDetailOpenState,
-    resetFilterState,
-} from 'components/atom';
+import { filterState, isStarDetailOpenState } from 'components/atom';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import SearchBar from '../reusable/SearchBar';
 import { FaHeart } from 'react-icons/fa';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 function StarFavorList() {
     const token = localStorage.getItem('token');
@@ -23,9 +20,7 @@ function StarFavorList() {
     const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
 
-    useEffect(() => {
-        setMemberIndex(localStorage.getItem('memberIndex'));
-    }, [token]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,8 +45,28 @@ function StarFavorList() {
         fetchData();
     }, [token, memberIndex]);
 
+    useEffect(() => {
+        function handleClick(e) {
+            e.stopPropagation();
+
+            const check = [...e.target.classList].some(
+                (it) => it === 'outside'
+            );
+            if (check) {
+                navigate(-1);
+            }
+        }
+
+        window.addEventListener('click', handleClick);
+        return () => {
+            window.removeEventListener('click', handleClick);
+        };
+    });
+
+    console.log(filterData);
+
     return (
-        <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center">
+        <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center bg-modal-outside z-10">
             <Card className=" w-cardContainer card-contain-style py-3">
                 <div className="searchArea flex justify-between items-center search-input mx-auto my-3">
                     <div className="flex px-2">
