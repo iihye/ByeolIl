@@ -3,7 +3,7 @@ import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
 import Alert from "./Alert";
-import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } from "components/atom";
+import { isStarDetailOpenState } from "components/atom";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
@@ -32,7 +32,6 @@ function StarContent(props) {
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
-  const renewStarDetail = useRecoilValue(renewStarDetailState);
 
   const [data, setData] = useState(null);
   const [likeData, setLikeData] = useState([]);
@@ -75,7 +74,7 @@ function StarContent(props) {
         });
     };
     fetchData(starIndex);
-  }, [renewStarDetail]);
+  }, []);
 
   useEffect(() => {
     function handleClick(e) {
@@ -121,6 +120,7 @@ function StarContent(props) {
 
   const handleModify = () => {
     setIsStarModifyOpen([data, starIndex, location, loginUserIndex]);
+    setIsStarDetailOpen(false);
   };
 
   const handleLike = async () => {

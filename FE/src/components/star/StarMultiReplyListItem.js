@@ -47,7 +47,7 @@ function StarMultiReplyListItem(props) {
     };
 
     await axios
-      .delete(`${process.env.REACT_APP_API_URL}/multcomment`, {
+      .delete(`${process.env.REACT_APP_API_URL}/multicomment`, {
         headers: {
           token: localStorage.getItem("token"),
         },
