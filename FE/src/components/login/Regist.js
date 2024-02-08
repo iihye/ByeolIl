@@ -33,34 +33,34 @@ export default function Regist() {
           <div className="modal">
             <button onClick={() => setFormOpen(true)}>일반회원가입</button>
             <button onClick={() => {window.location.assign(kakao_join_uri)}}>카카오</button>
-            <a>네이버</a>
-            <a>구글</a> 
-            <a>깃헙</a>
+            <button>네이버</button>
+            <button>구글</button> 
+            <button>깃헙</button>
           </div>
         }
         {formOpen && <RegistForm/>} 
       </div>
-
-    <div className="Regist">
-      {!formOpen && (
-        <div className="modal">
-          <button onClick={() => setFormOpen(true)}>일반회원가입</button>
-          <button
-            onClick={() => {
-              window.location.assign(kakao_join_uri);
-            }}
-          >
-            카카오
-          </button>
-          <a>네이버</a>
-          <a>구글</a>
-          <a>깃헙</a>
-        </div>
-      )}
-      {formOpen && <RegistForm social_id={social_id} social_platform={social_platform}/>}
-
     </div>
-    </div>
+
+    // <div className="Regist">
+    //   {!formOpen && (
+    //     <div className="modal">
+    //       <button onClick={() => setFormOpen(true)}>일반회원가입</button>
+    //       <button
+    //         onClick={() => {
+    //           window.location.assign(kakao_join_uri);
+    //         }}
+    //       >
+    //         카카오
+    //       </button>
+    //       <a>네이버</a>
+    //       <a>구글</a>
+    //       <a>깃헙</a>
+    //     </div>
+    //   )}
+    //   {formOpen && <RegistForm social_id={social_id} social_platform={social_platform}/>}
+
+    // </div>
   );
 }
 //  처음들어왔을때, 모달창을 통해서 일반과 소셜중 선택 가능하게해야한다. = <Regist/>는 모달창
@@ -166,8 +166,10 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
     } else {
       // 이메일 중복체크
       axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/email?email=${email.current.value}`).then((response) => {
-        setEmailMessage(response.data.message);
-        if (response.data.message === "사용 가능한 이메일이에요") setIsEmail(true);
+        if (response.data.message === "사용 가능한 이메일입니다.") {
+          setIsEmail(true);
+          setEmailMessage("사용 가능한 이메일이에요.");
+        }
         else setIsEmail(false);
       });
     }
@@ -203,7 +205,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
   };
   const doAuth = function () {
     setOpenAuthFoam(true);
-    // 이메일로 인증코드 보내기.  /member/check/{email}
+    // 이메일로 인증코드 보내기. 
     axios.get(`${process.env.REACT_APP_API_URL}/member/check/email?email=${email.current.value}`).then((response) => {
       console.log(response.data.code);
       setAUTH_CODE(response.data.code);
@@ -319,7 +321,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                   <p className="message regist-message">{emailMessage}</p>
                 </div>
               </div>
-              <button className="regist-button w-full h-button px-2 mb-2" disabled={!isEmail} onClick={doAuth}>
+              <button className="regist-button w-full h-button px-2 mb-2" disabled={!isEmail} onClick={()=>{doAuth()}}>
                 인증하기
               </button>
             </div>
@@ -353,7 +355,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                 </div>
               </div>
             </div>
-            <button className="regist-button w-full h-button my-1" onClick={doRegist} disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>
+            <button className="regist-button w-full h-button my-1" onClick={doRegist} disabled={!(isId && isname && isNickName && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>
               가입하기
             </button>
           </div>
