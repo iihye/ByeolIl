@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarDetailOpenState, isPwCheckOpenState } from "components/atom";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
-
+import { useNavigate } from "react-router";
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
@@ -23,10 +23,12 @@ function Alert(props) {
 // Input 요소를 가진 alert
 function InputAlert(props) {
   const input = useRef(null);
- 
+
   const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
   const setIsPwCheckOpenState = useSetRecoilState(isPwCheckOpenState);
- 
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     function handleClick(e) {
       e.stopPropagation();
@@ -77,18 +79,19 @@ function InputAlert(props) {
   const handlePWChange = (inputData) => {
     /* 1. 비밀번호 일치하는지 체크 */
     const PWData = {
-      memberPass: inputData
-    }
-    axios.post(`${process.env.REACT_APP_API_URL}/member/check/pass`, PWData,{
-      headers: {
-        token: localStorage.getItem("token"),
-      },
-    }).then((response) => {
-      console.log(response.data);
-      if(response.data.message === "success") setIsPwCheckOpenState(false);
-      else alert("비밀번호가 틀렸습니다!")
-    })
-
+      memberPass: inputData,
+    };
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/member/check/pass`, PWData, {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.message === "success") setIsPwCheckOpenState(false);
+        else alert("비밀번호가 틀렸습니다!");
+      });
   };
 
   // 비밀번호 입력 / 신고 요청
@@ -113,7 +116,11 @@ function InputAlert(props) {
   };
 
   const handleClose = () => {
-    setIsReportAlertOpen(false);
+    if (props.type === "report") {
+      setIsReportAlertOpen(false);
+    } else if (props.type === "PWCheck") {
+      navigate(-1);
+    }
   };
   // className="rounded-input bg-transparent border-white-sub outline-none"
   return (
@@ -121,9 +128,7 @@ function InputAlert(props) {
       <div className="flex-row">
         {props.type === "report" ? <h1 className="text-center text-3xl mb-2 font-['Pre-bold']">신고하기</h1> : null}
         <div className="text-lg text-center mb-3">{toEnter[props.type]} 입력해주세요.</div>
-        <div className="flex justify-center mb-3">
-          <textarea className="bg-transparent rounded-lg  p-2 h-28 resize-none" ref={input} />
-        </div>
+        <div className="flex justify-center mb-3">{props.type === "report" ? <textarea className="bg-transparent rounded-lg  p-2 h-28 resize-none" ref={input} /> : <input type="password" className="bg-transparent border border-white-sub px-2 w-40" ref={input} />}</div>
         <div className="flex justify-center gap-5 px-28">
           <button
             className="h-8 px-2"

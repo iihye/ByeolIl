@@ -88,7 +88,7 @@ function StarReplyListItem(props) {
       </div>
       {!multiReply && (
         <div
-          className="text-sm"
+          className="text-sm hover:cursor-pointer"
           onClick={() => {
             setMultiReply(true);
           }}
