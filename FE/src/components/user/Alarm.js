@@ -25,7 +25,11 @@ function Alarm() {
 
   const CloseButton = ({ onClose, alarmIndex }) => (
     <div className="alarmClose">
-      <IoCloseSharp size="24" className="pl-2 text-btn-bg-hover" onClick={() => onClose(alarmIndex)} />
+      <IoCloseSharp
+        size="24"
+        className="pl-2 text-btn-bg-hover"
+        onClick={() => onClose(alarmIndex)}
+      />
       {/* <button className="size-6" onClick={() => onClose(alarmIndex)}>X</button>  */}
     </div>
   );
@@ -38,7 +42,9 @@ function Alarm() {
 
     axios
       .post(`${process.env.REACT_APP_API_URL}/alarm/check`, alarmInfo)
-      .then(setAlarmData((currentAlarmData) => currentAlarmData.filter((it) => it.alarmIndex !== index)))
+      .then(
+        setAlarmData((currentAlarmData) => currentAlarmData.filter((it) => it.alarmIndex !== index))
+      )
       .catch((error) => console.log(error));
   };
 
@@ -76,7 +82,7 @@ function Alarm() {
   // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
   return (
     <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-      <Card className="Alarm w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+      <Card className="Alarm w-5/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
         <CardHeader className="flex">
           <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
             <FaRegBell className="mr-1" />
@@ -107,7 +113,9 @@ function Alarm() {
                         {it.fromMemberNickName}님이 내 게시글에 댓글을 남겼습니다
                       </div>
                       <CloseButton onClose={onClose} alarmIndex={it.alarmIndex} className="mr-1" />
-                      {detailModal && boardState === it.boardIndex && <div>{<StarDetail starIndex={it.boardIndex} />}</div>}
+                      {detailModal && boardState === it.boardIndex && (
+                        <div>{<StarDetail starIndex={it.boardIndex} />}</div>
+                      )}
                     </div>
                   );
                 case "MULTCMT":

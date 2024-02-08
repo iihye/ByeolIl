@@ -1,60 +1,54 @@
-import { atom } from "recoil";
+import { atom, selector } from 'recoil';
 
 export const filterState = atom({
-  key: "filterState",
-  default: [],
-});
-
-// API로 받아온 전체 데이터를 관리하는 atom
-export const listState = atom({
-  key: "listState",
-  default: [],
+    key: 'filterState',
+    default: [],
 });
 
 // 게시글 등록 모달
 export const isStarRegistOpenState = atom({
-  key: "isStarRegistOpen",
-  default: false,
+    key: 'isStarRegistOpen',
+    default: false,
 });
 
 // 게시글 수정 모달
 export const isStarModifyOpenState = atom({
-  key: "isStarModifyOpen",
-  default: false,
+    key: 'isStarModifyOpen',
+    default: false,
 });
 
 // 게시글 상세보기 모달
 export const isStarDetailOpenState = atom({
-  key: "isStarDetailOpen",
-  default: false,
+    key: 'isStarDetailOpen',
+    default: false,
 });
 
 // 게시글 삭제 알럿
 export const isDeleteAlertOpenState = atom({
-  key: "isDeleteAlertOpen",
-  default: false,
+    key: 'isDeleteAlertOpen',
+    default: false,
 });
 
 // 게시글 신고 알럿
 export const isReportAlertOpenState = atom({
-  key: "isReportAlertOpen",
-  default: false,
+    key: 'isReportAlertOpen',
+    default: false,
 });
 
 // 신고 상세보기 알럿
 export const reportModalState = atom({
-  key: "reportModalState",
-  default: "",
+    key: 'reportModalState',
+    default: '',
 });
 
 // 현재 PW 확인 알럿
 export const isPwCheckOpenState = atom({
-  key: "isPwCheckOpenState",
-  default: true,
+    key: 'isPwCheckOpenState',
+    default: true,
 });
 
 // 댓글 리렌더링 atom
 export const renewReplyState = atom({
-  key: "renewReply",
-  default: false,
+    key: 'renewReply',
+    default: false,
 });
