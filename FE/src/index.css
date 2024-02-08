@@ -99,6 +99,26 @@
     .search-input {
         @apply rounded-input bg-white-sub outline-none w-searchBar h-searchBar;
     }
+
+    .regist-label {
+        @apply font-['Pre-Bold'] text-btn-bg-hover text-lg pb-5
+    }
+
+    .regist-input{
+        @apply font-['Pre-Light'] border border-white-sub focus:ring-1 focus:ring-white-sub h-input px-2   
+    }
+
+    .regist-message{
+        @apply font-['Pre-Light'] text-white-sub text-sm text-right
+    }
+
+    .regist-button{
+        @apply font-['Pre-Bold']  text-white-sub text-lg
+    }
+
+    .regist-between{
+        @apply flex justify-between
+    }
 }
 
 @font-face {
