@@ -101,7 +101,7 @@
     }
 
     .regist-label {
-        @apply font-['Pre-Bold'] text-btn-bg-hover text-lg pb-5
+        @apply font-['Pre-Bold'] text-btn-bg-hover text-lg mb-8
     }
 
     .regist-input{
