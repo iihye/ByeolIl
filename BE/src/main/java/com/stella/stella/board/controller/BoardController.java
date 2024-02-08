@@ -129,7 +129,7 @@ public class BoardController {
 
 
     @GetMapping("/like/{memberIndex}")
-    public ResponseEntity<List<BoardListResponseDto>> heartedBoardList(@PathVariable Long memberIndex, @PageableDefault(size = 5, sort = "boardInputDate", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<List<BoardListResponseDto>> heartedBoardList(@PathVariable Long memberIndex){
         List<BoardListResponseDto> list = new ArrayList();
         HttpStatus status = HttpStatus.OK;
         try {
