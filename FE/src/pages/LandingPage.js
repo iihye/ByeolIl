@@ -9,7 +9,7 @@ export default function LandingPage() {
     const location = useLocation();
     useEffect(() => {
         console.log(location.pathname.split('/').length === 3);
-        if (location.pathname.split('/').length > 2) setIsOpen(false);
+        if (location.pathname.split('/').length > 2) setIsOpen(true);
         else setIsOpen(false);
     }, [location]);
 
@@ -22,7 +22,7 @@ export default function LandingPage() {
                     </video>
                 </div>
                 <div className="content absolute">
-                    {isOpen && <h1 className="text-white text-5xl">별일</h1>}
+                    {!isOpen && <h1 className="text-white text-6xl text-center font-['Star'] py-4">별일</h1>}
                     <Outlet />
                 </div>
             </div>
