@@ -3,16 +3,13 @@ import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaUser } from "react-icons/fa";
 import { useForm } from "react-hook-form";
-
 export default function Regist() {
   const [formOpen, setFormOpen] = useState(false);
   const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=b1189e38a050b511cf3ae169bea072fe&redirect_uri=https://i10b209.p.ssafy.io/api/member/join/kakao&response_type=code`;
   const [data, setData] = useState();
-
   useEffect(() => {
     // 리스너 설치해서 인증성공시, 동작하도록해야할까..
   }, [data]);
-
   return (
     <div className="Regist">
       {!formOpen && (
@@ -50,7 +47,6 @@ function RegistForm(data) {
   const email = useRef("");
   const authCode = useRef("");
   const birth = useRef("");
-
   // 오류메세지 상태 저장
   const [idMessage, setIdMessage] = useState("");
   const [nameMessage, setNameMessage] = useState("");
@@ -60,7 +56,6 @@ function RegistForm(data) {
   const [emailMessage, setEmailMessage] = useState("");
   const [authMessage, setAuthMessage] = useState("");
   const [birthMessage, setBirthMessage] = useState("");
-
   // 유효성 검사
   const [isId, setIsId] = useState(false);
   const [isname, setIsName] = useState(false);
@@ -73,9 +68,7 @@ function RegistForm(data) {
   const [openAuthFoam, setOpenAuthFoam] = useState(false);
 
   // 인증코드
-
   const [AUTH_CODE, setAUTH_CODE] = useState("");
-
   const onChangeId = () => {
     const idRegExp = /^[a-z0-9]{4,20}$/;
     if (!idRegExp.test(id.current.value)) {
@@ -90,7 +83,6 @@ function RegistForm(data) {
       });
     }
   };
-
   const onChangeName = () => {
     const nameRegExp = /^[가-힣a-zA-Z]{2,20}$/;
     if (!nameRegExp.test(name.current.value)) {
@@ -101,7 +93,6 @@ function RegistForm(data) {
       setIsName(true);
     }
   };
-
   const onChangeNickName = () => {
     const nickNameRegExp = /^[가-힣a-zA-Z0-9_]{2,10}$/;
     if (!nickNameRegExp.test(nickName.current.value)) {
@@ -116,7 +107,6 @@ function RegistForm(data) {
       });
     }
   };
-
   const onChangePassword = () => {
     const passwordRegExp = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*+=-])(?=.*[0-9]).{8,25}$/;
     if (!passwordRegExp.test(password.current.value)) {
@@ -138,7 +128,6 @@ function RegistForm(data) {
   };
   const onChangeEmail = () => {
     const emailRegExp = /^[A-Za-z0-9_]+[A-Za-z0-9]*[@]{1}[A-Za-z0-9]+[A-Za-z0-9]*[.]{1}[A-Za-z]{1,3}$/;
-
     if (!emailRegExp.test(email.current.value)) {
       setEmailMessage("이메일의 형식이 올바르지 않아요");
       setIsEmail(false);
@@ -161,7 +150,6 @@ function RegistForm(data) {
       setIsAuthCode(true);
     }
   };
-
   const onChangeBirth = () => {
     const dateRegex1 = /^\d{4}-\d{2}-\d{2}$/; //? YYYY-MM-DD 형식의 정규식
     const dateRegex2 = /^(19|20)\d{2}-(0[1-9]|1[0-2])-([0-2][1-9]|3[01])$/; //YYYY-MM-DD 각 자리에 유효한 생년월일인지 확인
@@ -181,7 +169,6 @@ function RegistForm(data) {
       }
     }
   };
-
   const doAuth = function () {
     setOpenAuthFoam(true);
     // 이메일로 인증코드 보내기.  /member/check/{email}
@@ -190,7 +177,6 @@ function RegistForm(data) {
       setAUTH_CODE(response.data.code);
     });
   };
-
   const doRegist = () => {
     // 중복체크 및 인증 완료시 회원가입 성공
     const data = {
@@ -202,17 +188,14 @@ function RegistForm(data) {
       memberEmail: email.current.value,
       memberBirth: birth.current.value, //형식 준수해야함
     };
-
     axios.post(`${process.env.REACT_APP_API_URL}/member/join`, data).then((response) => {
       console.log(response);
     });
   };
-
   const form = useForm();
-
   return (
     <div>
-      <Card className="Regist w-102 px-6 py-6 card-contain-style">
+      <Card className="Regist w-14/16 px-6 py-6 card-contain-style">
         <CardHeader className="flex">
           <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
             <FaUser className="mr-1" />
@@ -229,12 +212,13 @@ function RegistForm(data) {
                 </label>{" "}
                 <br />
                 <div>
-                  <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} />
+                  <div className="flex justify-end">
+                    <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} />
+                  </div>
                   <p className="message regist-message"> {idMessage} </p>
                 </div>
               </div>
             </div>
-
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="name">
@@ -242,12 +226,13 @@ function RegistForm(data) {
                 </label>{" "}
                 <br />
                 <div>
-                  <input className="regist-input" id="name" name="name" ref={name} onBlur={onChangeName} />
+                  <div className="flex justify-end">
+                    <input className="regist-input" id="name" name="name" ref={name} onBlur={onChangeName} />
+                  </div>
                   <p className="message regist-message">{nameMessage}</p>
                 </div>
               </div>
             </div>
-
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="nickName">
@@ -255,12 +240,13 @@ function RegistForm(data) {
                 </label>{" "}
                 <br />
                 <div>
-                  <input className="regist-input" id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
+                  <div className="flex justify-end">
+                    <input className="regist-input" id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
+                  </div>
                   <p className="message regist-message">{nickNameMessage}</p>
                 </div>
               </div>
             </div>
-
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="password">
@@ -275,7 +261,6 @@ function RegistForm(data) {
                 </div>
               </div>
             </div>
-
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="passwordConfirm">
@@ -283,12 +268,13 @@ function RegistForm(data) {
                 </label>{" "}
                 <br />
                 <div>
-                  <input className="regist-input" id="passwordConfirm" name="passwordConfirm" ref={passwordConfirm} onBlur={onChangePasswordConfirm} />
+                  <div className="flex justify-end">
+                    <input className="regist-input" id="passwordConfirm" name="passwordConfirm" ref={passwordConfirm} onBlur={onChangePasswordConfirm} />
+                  </div>
                   <p className="message regist-message">{passwordConfirmMessage}</p>
                 </div>
               </div>
             </div>
-
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label w-1/3" htmlFor="email">
@@ -296,7 +282,9 @@ function RegistForm(data) {
                 </label>{" "}
                 <br />
                 <div>
-                  <input className="regist-input" id="email" name="email" ref={email} onBlur={onChangeEmail} />
+                  <div className="flex justify-end">
+                    <input className="regist-input" id="email" name="email" ref={email} onBlur={onChangeEmail} />
+                  </div>
                   <p className="message regist-message">{emailMessage}</p>
                 </div>
               </div>
@@ -304,7 +292,6 @@ function RegistForm(data) {
                 인증하기
               </button>
             </div>
-
             {openAuthFoam && (
               <div className="form-el">
                 <div className="flex justify-between">
@@ -313,13 +300,14 @@ function RegistForm(data) {
                   </label>{" "}
                   <br />
                   <div>
-                    <input className="regist-input" id="authCode" name="authCode" ref={authCode} onBlur={onChangeAuthCode} placeholder={"인증번호를 입력하세요"} />
+                    <div className="flex justify-end">
+                      <input className="regist-input" id="authCode" name="authCode" ref={authCode} onBlur={onChangeAuthCode} placeholder={"인증번호를 입력하세요"} />
+                    </div>
                     <p className="message regist-message">{authMessage}</p>
                   </div>
                 </div>
               </div>
             )}
-
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="birth">
@@ -327,12 +315,13 @@ function RegistForm(data) {
                 </label>{" "}
                 <br />
                 <div>
-                  <input className="regist-input" placeholder="YYYY-MM-DD" id="birth" name="birth" ref={birth} onBlur={onChangeBirth} />
+                  <div className="flex justify-end">
+                    <input className="regist-input" placeholder="YYYY-MM-DD" id="birth" name="birth" ref={birth} onBlur={onChangeBirth} />
+                  </div>
                   <p className="message regist-message">{birthMessage}</p>
                 </div>
               </div>
             </div>
-
             <button className="regist-button w-full h-button my-1" onClick={doRegist} disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>
               가입하기
             </button>
