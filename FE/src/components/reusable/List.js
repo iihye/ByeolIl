@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
-import { filterState, listState } from 'components/atom';
-import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
+import { filterState } from 'components/atom';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { isStarDetailOpenState } from 'components/atom';
 import axios from 'axios';
 import StarDetail from 'components/star/StarDetail';
@@ -26,7 +26,7 @@ import { WiStars } from 'react-icons/wi';
 import { useNavigate } from 'react-router';
 
 function List() {
-    const [listData, setListData] = useRecoilState(listState);
+    const [listData, setListData] = useState('');
     const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
     const [memberIndex, setMemberIndex] = useState(

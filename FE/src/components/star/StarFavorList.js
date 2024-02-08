@@ -107,12 +107,17 @@ function StarFavorList() {
                                             </div>
                                             <div className="absolute bottom-0 w-10/12 mb-3">
                                                 <div className="cardTag flex py-2 ">
-                                                    {it.hash.length > 0
-                                                        ? it.hash.map((tag) => (
-                                                              <div>
-                                                                  #{tag}&nbsp;
-                                                              </div>
-                                                          ))
+                                                    {it.hash
+                                                        ? it.hash.length > 0
+                                                            ? it.hash.map(
+                                                                  (tag) => (
+                                                                      <div>
+                                                                          #{tag}
+                                                                          &nbsp;
+                                                                      </div>
+                                                                  )
+                                                              )
+                                                            : null
                                                         : null}
                                                 </div>
                                                 <div className="cardLike flex justify-end">
