@@ -64,7 +64,7 @@ public class MemberService {
 
     @Transactional
     public String login(String memberId, String memberPass, String memberPlatform) throws Exception {
-
+        log.info("pass={}",memberPass);
         // 0. memberId와 memeberPlatform으로 memberIndex(PK) 검색
         Member accessMember = memberRepository.findByMemberIdAndMemberPassAndMemberPlatform(memberId, memberPass, memberPlatform)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
@@ -94,7 +94,7 @@ public class MemberService {
         return tokenInfo.getAccessToken();
     }
 
-    public String getKakaoAccessToken(String code) {
+    public String getKakaoAccessToken(String code, String url) {
         String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
         RestTemplate restTemplate = new RestTemplate();
 
@@ -108,8 +108,8 @@ public class MemberService {
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestAPIKey);
 
-        params.add("redirect_uri", redirectUrl);
-//        params.add("redirect_uri", "http://localhost:3000");
+        params.add("redirect_uri", redirectUrl+url);
+//        params.add("redirect_uri", "http://localhost:3000"+url);
         params.add("code", code);
 
         // Set http entity
