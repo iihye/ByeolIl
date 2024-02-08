@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import React, { useEffect, useState } from 'react';
+import { useRecoilValue, useSetRecoilState, useResetRecoilState } from 'recoil';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FaUserCircle } from 'react-icons/fa';
 import SearchBar from '../reusable/SearchBar';
-import { filterState, listState } from 'components/atom';
+import { filterState, resetFilterState } from 'components/atom';
 import { PiShootingStarLight } from 'react-icons/pi';
 import { TbHomeMove } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
@@ -12,10 +12,10 @@ import axios from 'axios';
 
 // 유저 검색 기능
 function FindUser() {
-    const setListData = useSetRecoilState(listState);
-    const listValue = useRecoilValue(listState);
+    const [listData, setListData] = useState('');
     const filterData = useRecoilValue(filterState);
     const userToken = localStorage.getItem('token') ?? '';
+    const resetList = useResetRecoilState(filterState);
 
     // API로 유저 전체 리스트를 받아와서 listData 상태 변경
     useEffect(() => {
@@ -30,6 +30,7 @@ function FindUser() {
                     },
                 })
                 .then((response) => {
+                    resetList();
                     setListData(response.data);
                 })
                 .catch((e) => console.log(e.response));
@@ -51,28 +52,32 @@ function FindUser() {
                 <CardContent>
                     <div className="searchArea flex justify-between items-center search-input w-72 mx-auto ">
                         <div className="px-2">
-                            <SearchBar filterKey="memberNickname" />
+                            <SearchBar
+                                filterKey="memberNickname"
+                                listItems={listData}
+                            />
                         </div>
                     </div>
                     <ScrollArea className=" h-96 overflow-auto mx-7 w-80 my-3">
                         <div className="userList">
-                            {filterData.map((it) => (
-                                <li
-                                    key={it.memberIndex}
-                                    className="flex p-2 text-lg"
-                                >
-                                    <FaUserCircle
-                                        size="30"
-                                        className="pr-2 text-btn-bg-hover"
-                                    />
-                                    {it.memberNickname}
-                                    <Link to={`/space/${it.memberIndex}`}>
-                                        <TbHomeMove className="size-7 mx-2">
-                                            이동하기
-                                        </TbHomeMove>
-                                    </Link>
-                                </li>
-                            ))}
+                            {filterData &&
+                                filterData.map((it) => (
+                                    <li
+                                        key={it.memberIndex}
+                                        className="flex p-2 text-lg"
+                                    >
+                                        <FaUserCircle
+                                            size="30"
+                                            className="pr-2 text-btn-bg-hover"
+                                        />
+                                        {it.memberNickname}
+                                        <Link to={`/space/${it.memberIndex}`}>
+                                            <TbHomeMove className="size-7 mx-2">
+                                                이동하기
+                                            </TbHomeMove>
+                                        </Link>
+                                    </li>
+                                ))}
                         </div>
                     </ScrollArea>
                 </CardContent>

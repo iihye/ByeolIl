@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
-import { filterState, listState } from 'components/atom';
-import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
-import { isStarDetailOpenState } from 'components/atom';
+import { filterState } from 'components/atom';
+import {
+    useRecoilValue,
+    useRecoilState,
+    useSetRecoilState,
+    useResetRecoilState,
+} from 'recoil';
+import { isStarDetailOpenState, resetFilterState } from 'components/atom';
 import axios from 'axios';
 import StarDetail from 'components/star/StarDetail';
 import {
@@ -25,7 +30,8 @@ import {
 import { WiStars } from 'react-icons/wi';
 
 function List() {
-    const [listData, setListData] = useRecoilState(listState);
+    const [listData, setListData] = useState('');
+    const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
     const [memberIndex, setMemberIndex] = useState(
         Number(localStorage.getItem('memberIndex'))
@@ -78,6 +84,7 @@ function List() {
                     `${process.env.REACT_APP_API_URL}/board/list/${memberIndex}`
                 )
                 .then((response) => {
+                    resetList();
                     setListData(response.data);
                 })
                 .catch((e) => console.log(e));
@@ -113,47 +120,50 @@ function List() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filterData.map((it) => (
-                                <>
-                                    <TableRow
-                                        className="font-['Pre-Light'] text-center"
-                                        key={it.boardIndex}
-                                    >
-                                        <TableCell>{it.boardRegTime}</TableCell>
-                                        <TableCell>
-                                            {it.boardInputDate}
-                                        </TableCell>
-                                        <TableCell
-                                            onClick={() =>
-                                                onDetail(
-                                                    it.boardIndex,
-                                                    it.memberIndex
-                                                )
-                                            }
+                            {filterData &&
+                                filterData.map((it) => (
+                                    <>
+                                        <TableRow
+                                            className="font-['Pre-Light'] text-center"
+                                            key={it.boardIndex}
                                         >
-                                            {it.boardContent}
-                                        </TableCell>
-                                        <TableCell>
-                                            <button
+                                            <TableCell>
+                                                {it.boardRegTime}
+                                            </TableCell>
+                                            <TableCell>
+                                                {it.boardInputDate}
+                                            </TableCell>
+                                            <TableCell
                                                 onClick={() =>
-                                                    deleteStar(
+                                                    onDetail(
                                                         it.boardIndex,
                                                         it.memberIndex
                                                     )
                                                 }
-                                                className="bg-modal-bg w-6/12"
                                             >
-                                                X
-                                            </button>
-                                        </TableCell>
-                                    </TableRow>
-                                </>
-                            ))}
+                                                {it.boardContent}
+                                            </TableCell>
+                                            <TableCell>
+                                                <button
+                                                    onClick={() =>
+                                                        deleteStar(
+                                                            it.boardIndex,
+                                                            it.memberIndex
+                                                        )
+                                                    }
+                                                    className="bg-modal-bg w-6/12"
+                                                >
+                                                    X
+                                                </button>
+                                            </TableCell>
+                                        </TableRow>
+                                    </>
+                                ))}
                             <TableRow></TableRow>
                         </TableBody>
                     </Table>
                 </CardContent>
-                <SearchBar filterKey="boardContent" />
+                <SearchBar filterKey="boardContent" listItems={listData} />
             </Card>
         </div>
     );

@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { listState, filterState, isStarDetailOpenState } from 'components/atom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+    filterState,
+    isStarDetailOpenState,
+    resetFilterState,
+} from 'components/atom';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import SearchBar from '../reusable/SearchBar';
 import { FaHeart } from 'react-icons/fa';
 import axios from 'axios';
 
 function StarFavorList() {
     const token = localStorage.getItem('token');
+    const [listData, setListData] = useState('');
     const [memberIndex, setMemberIndex] = useState(
         localStorage.getItem('memberIndex')
     );
-
-    const [listData, setListData] = useRecoilState(listState);
     const [starDetailState, setStarDetailState] = useRecoilState(
         isStarDetailOpenState
     );
+    const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
 
     useEffect(() => {
@@ -34,7 +38,7 @@ function StarFavorList() {
                         },
                     }
                 );
-
+                resetList();
                 setListData(
                     response.data.filter((item) => item.boardAccess === 'OPEN')
                 );
@@ -46,14 +50,15 @@ function StarFavorList() {
         fetchData();
     }, [token, memberIndex]);
 
-    console.log(filterData);
-
     return (
         <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center">
             <Card className=" w-cardContainer card-contain-style py-3">
                 <div className="searchArea flex justify-between items-center search-input mx-auto my-3">
                     <div className="flex px-2">
-                        <SearchBar filterKey="boardContent" />
+                        <SearchBar
+                            filterKey="boardContent"
+                            listItems={listData}
+                        />
                     </div>
                 </div>
                 <ScrollArea className=" h-96 overflow-auto">
