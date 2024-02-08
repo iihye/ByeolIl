@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_TEMP_URI}&response_type=code&prompt=login`;
+const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI}&response_type=code&prompt=login`;
 
 function Login() {
     const [idValue, setIdValue] = useState('');
@@ -205,8 +205,7 @@ function Login() {
                     <div className="kakaoLoginButton align-middle">
                         <Button
                             onClick={onKakaoLogin}
-                            className="w-full h-button my-1 no-hover-effect text-kakao-label flex justify-center items-center gap-2"
-                        >
+                            className="w-full h-button my-1 no-hover-effect text-kakao-label flex justify-center items-center gap-2">
                             <KakaoLogo className="w-6 h-6 p-0.5 " />
                             <div>카카오 로그인</div>
                         </Button>

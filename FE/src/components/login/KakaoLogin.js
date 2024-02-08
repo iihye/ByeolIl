@@ -1,43 +1,70 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
+import base64 from 'base-64';
 
 function KakaoLogin() {
+    const navigate = useNavigate();
     const location = useLocation();
     const params = new URL(document.URL).searchParams;
     const code = params.get('code');
 
-    console.log(code);
+    console.log("code: ",code);
 
-    const getKakaoToken = () => {
-        console.log('들어왔따');
-        // fetch(`https://kauth.kakao.com/oauth/token`, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        //     body: `grant_type=authorization_code&client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&code=${code}`,
-        // })
-        //     .then((res) => res.json())
-        //     .then((data) => {
-        //         if (data.access_token) {
-        //             console.log('됨');
-        //             localStorage.setItem('token', data.access_token);
-        //         } else {
-        //             console.log(data);
-        //             console.log('로그인 실패');
-        //         }
-        //     });
-        axios
-            .get(
-                `${process.env.REACT_APP_API_URL}/member/join/kakao?code=${code}`
-            )
-            .then((response) => console.log(response))
-            .catch((error) => console.log(error));
+    const getKakaoToken = async () => {
+        try{
+        const response = await axios.get(
+                    `${process.env.REACT_APP_API_URL}/member/login/kakao?code=${code}`
+                );
+                if(response.status==200){
+                    const token = `Bearer ${response.headers.accesstoken}`;
+                    console.log("token: ",token);
+
+                    localStorage.setItem('token', token);
+
+                    // JWT 디코딩
+                    let payload = token.substring(
+                        token.indexOf('.') + 1,
+                        token.lastIndexOf('.')
+                    );
+
+                    let dec = JSON.parse(base64.decode(payload));
+                    localStorage.setItem('auth', dec.auth);
+                    localStorage.setItem('memberIndex', dec.sub);
+                    console.log("localStrgetoken:",localStorage.getItem(`token`));
+                    console.log("memberIndex: ",dec.sub);
+                    getUserIndex();
+                    if (dec.sub) {
+                        navigate(`/space/${dec.sub}`);
+                    }
+                }
+        }catch(error){
+            alert(error.response.data.message);
+        }
+    };
+
+    const getUserIndex = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_URL}/member/info/mine`,
+                {
+                    headers: {
+                        token: localStorage.getItem('token'),
+                    },
+                }
+            );
+            console.log(response);
+            localStorage.setItem('nickname', response.data.memberNickname);
+        } catch (error) {
+            console.log('회원정보 가져오기 실패', error);
+        }
     };
 
     useEffect(() => {
         if (!location.search) return;
-
         getKakaoToken();
+        getUserIndex(); 
     }, []);
 }
 

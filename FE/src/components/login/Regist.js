@@ -1,10 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from 'axios';
+import { useLocation } from 'react-router';
 
 export default function Regist() {
   const [formOpen, setFormOpen] = useState(false);
-  const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=b1189e38a050b511cf3ae169bea072fe&redirect_uri=https://i10b209.p.ssafy.io/api/member/join/kakao&response_type=code`; 
+  const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_REDIRECT_URI}&response_type=code`; 
   const [data,setData] = useState();
+
+  const location = useLocation();
+  const { social_id, social_platform } = location.state || {}; // state가 undefined인 경우를 대비한 기본값 설정
+
+  console.log("아이디",social_id, "플래폼",social_platform); // 전달받은 데이터 사용
 
   useEffect(() =>{
    // 리스너 설치해서 인증성공시, 동작하도록해야할까..
@@ -21,7 +27,7 @@ export default function Regist() {
           <a>깃헙</a>
         </div>
       }
-      {formOpen && <RegistForm/>} 
+      {formOpen && <RegistForm social_id={social_id} social_platform={social_platform}/>} 
     </div>
   )
 }
@@ -32,7 +38,7 @@ export default function Regist() {
 //  이후에 회원가입버튼 누를시, 그사람의 회원가입 플랫폼(origin/ kakao/ naver/google/github)을 스트링으로 보내주어야함.
           
 
- function RegistForm(data) {
+ function RegistForm({ social_id: social_id, social_platform: social_platform }) {
  // 초기값 - 아이디, 닉네임, 비밀번호, 비밀번호확인, 이메일, 생년월일
  const id = useRef("");
  const name = useRef("");
@@ -196,14 +202,14 @@ const doRegist = () => {
   // 중복체크 및 인증 완료시 회원가입 성공
   const data = {
     "memberId": id.current.value,
-    "memberPass": password.current.value, //소셜로그인일 경우 ""로 입력 (null 아님)
-    "memberPlatform": "origin", //소셜로그인인지 일반로그인인지
+    "memberPass": social_platform === undefined ? password.current.value : social_platform,//소셜로그인일 경우 소셜플랫폼으로 입력 (null 아님)
+    "memberPlatform": social_platform === undefined ? "origin":social_platform  , //소셜로그인인지 일반로그인인지
     "memberName": name.current.value,
     "memberNickname": nickName.current.value,
     "memberEmail": email.current.value,
     "memberBirth": birth.current.value //형식 준수해야함
   };
-
+  console.log(data)
   axios.post(`${process.env.REACT_APP_API_URL}/member/join`, data).then((response) => {console.log(response)})
 }
 
@@ -214,7 +220,7 @@ const doRegist = () => {
      <div className="form">
        <div className="form-el">
          <label htmlFor="id">*아이디</label> <br />
-         <input id="id" name="id" ref={id} onBlur={onChangeId} />
+         <input id="id" name="id" ref={id} onBlur={onChangeId} value={social_id} disabled={!!social_id}/>
          <p className="message"> {idMessage} </p>
        </div>
        <div className="form-el">  
@@ -234,6 +240,7 @@ const doRegist = () => {
            name="password"
            ref={password}
            onBlur={onChangePassword}
+           disabled={!!social_platform}
          />
          <p className="message">{passwordMessage}</p>
        </div>
@@ -244,6 +251,7 @@ const doRegist = () => {
            name="passwordConfirm"
            ref={passwordConfirm}
            onBlur={onChangePasswordConfirm}
+           disabled={!!social_platform}
          />
          <p className="message">{passwordConfirmMessage}</p>
        </div>
