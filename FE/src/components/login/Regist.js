@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from 'axios';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FaUser } from "react-icons/fa";
+import { useForm } from "react-hook-form"
 
 export default function Regist() {
   const [formOpen, setFormOpen] = useState(false);
@@ -207,84 +210,125 @@ const doRegist = () => {
   axios.post(`${process.env.REACT_APP_API_URL}/member/join`, data).then((response) => {console.log(response)})
 }
 
+const form = useForm();
+
 
  return (
-   <>
-   <h3>회원가입</h3>
-     <div className="form">
-       <div className="form-el">
-         <label htmlFor="id">*아이디</label> <br />
-         <input id="id" name="id" ref={id} onBlur={onChangeId} />
-         <p className="message"> {idMessage} </p>
-       </div>
-       <div className="form-el">  
-         <label htmlFor="name">*이름</label> <br />
-         <input id="name" name="name" ref={name} onBlur={onChangeName} />
-         <p className="message">{nameMessage}</p>
-       </div>
-       <div className="form-el">  
-         <label htmlFor="nickName">*닉네임</label> <br />
-         <input id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
-         <p className="message">{nickNameMessage}</p>
-       </div>
-       <div className="form-el">
-         <label htmlFor="password">*비밀번호</label> <br />
-         <input
-           id="password"
-           name="password"
-           ref={password}
-           onBlur={onChangePassword}
-         />
-         <p className="message">{passwordMessage}</p>
-       </div>
-       <div className="form-el">
-         <label htmlFor="passwordConfirm">*비밀번호확인</label> <br />
-         <input
-           id="passwordConfirm"
-           name="passwordConfirm"
-           ref={passwordConfirm}
-           onBlur={onChangePasswordConfirm}
-         />
-         <p className="message">{passwordConfirmMessage}</p>
-       </div>
-       <div className="form-el">
-         <label htmlFor="email">*이메일</label> <br />
-         <input
-           id="email"
-           name="email"
-           ref={email}
-           onBlur={onChangeEmail}
-         />
-         <p className="message">{emailMessage}</p>
-         <button disabled={!isEmail} onClick={doAuth}>인증하기</button>
+  <div>
+    <Card className="Regist w-96 px-6 py-6 card-contain-style">
+      <CardHeader className="flex">
+        <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+          <FaUser className="mr-1" />
+          회원가입
+        </CardTitle>
+      </CardHeader>
+      <div></div>
+      <CardContent >
+        <div className="form">
+          <div className="form-el">
+            <div className="flex justify-between">
+              <label className="regist-label" htmlFor="id">아이디</label> <br />
+              <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} />
+            </div>
+            <p className="message regist-message"> {idMessage} </p>
+          </div>
+
+          <div className="form-el">  
+            <div className="flex justify-between">
+              <label className="regist-label" htmlFor="name">이름</label> <br />
+              <input className="regist-input" id="name" name="name" ref={name} onBlur={onChangeName} />
+            </div>
+            <p className="message regist-message">{nameMessage}</p>
+          </div>
+
+          <div className="form-el">  
+            <div className="flex justify-between">
+              <label className="regist-label" htmlFor="nickName">닉네임</label> <br />
+              <input className="regist-input" id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
+            </div>
+            <p className="message regist-message">{nickNameMessage}</p>
+          </div>
+
+          <div className="form-el">
+            <div className="flex justify-between">
+              <label className="regist-label" htmlFor="password">비밀번호</label> <br />
+              <input
+                className="regist-input"
+                id="password"
+                name="password"
+                ref={password}
+                onBlur={onChangePassword}
+              />
+            </div>
+              <p className="message regist-message">{passwordMessage}</p>
+          </div>
+
+          <div className="form-el">
+            <div className="flex justify-between">
+              <label className="regist-label" htmlFor="passwordConfirm">비밀번호확인</label> <br />
+              <input
+                className="regist-input"
+                id="passwordConfirm"
+                name="passwordConfirm"
+                ref={passwordConfirm}
+                onBlur={onChangePasswordConfirm}
+              />
+            </div>
+            <p className="message regist-message">{passwordConfirmMessage}</p>
+          </div>
+
+          <div className="form-el">
+            <div className="flex justify-between">
+              <label className="regist-label" htmlFor="email">이메일</label> <br />
+              <input
+                className="regist-input"
+                id="email"
+                name="email"
+                ref={email}
+                onBlur={onChangeEmail}
+              />
+              <button className="regist-button" disabled={!isEmail} onClick={doAuth}>인증하기</button>
+            </div>
+            <p className="message regist-message">{emailMessage}</p>
+          </div>
+
+          {openAuthFoam && 
+            <div className="form-el">
+            <label className="regist-label" htmlFor="authCode">인증코드</label> <br />
+            <input
+              className="regist-input"
+              id="authCode"
+              name="authCode"
+              ref={authCode}
+              onBlur={onChangeAuthCode}
+            />
+            <p className="message regist-message">{authMessage}</p>
+          </div>
+          }
+
+          <div className="form-el">
+            <div className="flex justify-between">
+              <label className="regist-label" htmlFor="birth">생년월일</label> <br />
+              <div>
+              <input
+                className="regist-input"
+                placeholder="YYYY-MM-DD"
+                id="birth"
+                name="birth"
+                ref={birth}
+                onBlur={onChangeBirth}
+              />
+              <p className="message regist-message">{birthMessage}</p>
+              </div>
+            </div>
+            
+          </div> 
+
+          <button className="regist-button" onClick={doRegist} disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>가입하기</button>
         </div>
-       {openAuthFoam && 
-        <div className="form-el">
-         <label htmlFor="authCode">*인증코드</label> <br />
-         <input
-           id="authCode"
-           name="authCode"
-           ref={authCode}
-           onBlur={onChangeAuthCode}
-         />
-         <p className="message">{authMessage}</p>
-       </div>
-       }
-       <div className="form-el">
-         <label htmlFor="birth">*생년월일</label> <br />
-         <input
-          placeholder="YYYY-MM-DD"
-           id="birth"
-           name="birth"
-           ref={birth}
-           onBlur={onChangeBirth}
-         />
-         <p className="message">{birthMessage}</p>
-       </div> 
-       <br />
-       <button onClick={doRegist} disabled={!(isId && isname && isPassword && isPasswordConfirm && isEmail && isBirth && isAuthCode)}>가입하기</button>
-     </div>
-   </>
+      </CardContent>
+    </Card>
+  </div>
  );
 };
 
