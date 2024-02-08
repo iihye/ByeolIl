@@ -20,23 +20,23 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import LandingPage from "pages/LandingPage";
 import { useEffect } from "react";
 
-
-function App() {     // 로그인 ? mainpage : landingpage 
+function App() {
+  // 로그인 ? mainpage : landingpage
   const navigate = useNavigate();
   const rendering = () => {
-    localStorage.getItem('token') ? navigate(`/space/${localStorage.getItem('memberIndex')}`) : navigate('/landing')
-  }
+    localStorage.getItem("token") ? navigate(`/space/${localStorage.getItem("memberIndex")}`) : navigate("/landing");
+  };
   useEffect(() => {
     rendering();
-  },[])
+  }, []);
   return (
     <div className="App">
-      <Header/>
+      <Header />
       <Routes>
-        <Route path="/landing" element={<LandingPage/>}>
+        <Route path="/landing" element={<LandingPage />}>
           {/* <Route path="/" element={<KakaoLogin />}></Route> */}
-          <Route exact path="login" element={<Login/>}></Route>
-          <Route path="regist" element={<Regist/>}></Route>
+          <Route exact path="login" element={<Login />}></Route>
+          <Route path="regist" element={<Regist />}></Route>
           <Route path="findId" element={<FindID />} />
           <Route path="findPw" element={<FindPW />} />
         </Route>
@@ -50,7 +50,7 @@ function App() {     // 로그인 ? mainpage : landingpage
           <Route path="tagSearch" element={<StarTagSearch />} />
           <Route path="settings" element={<Settings />}></Route>
           <Route path="report" element={<Report />}></Route>
-          <Route path="radio" element={<Radio/>}/>
+          <Route path="radio" element={<Radio />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
       </Routes>
