@@ -6,7 +6,12 @@ import Alert from "./Alert";
 import { isStarDetailOpenState } from "components/atom";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
+import {
+  isDeleteAlertOpenState,
+  isReportAlertOpenState,
+  isStarModifyOpenState,
+  renewReplyState,
+} from "components/atom";
 import { GoRocket } from "react-icons/go";
 import { useNavigate } from "react-router";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
@@ -22,7 +27,9 @@ function Modal(props) {
 
   return (
     <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
-      <div className="modal bg-modal-bg rounded-lg p-3 w-96 font-['Pre-bold']">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
+      <div className="modal bg-modal-bg rounded-lg p-3 w-96 font-['Pre-bold']">
+        {type === "radio" ? <RadioContent /> : <StarContent {...props} />}
+      </div>
     </div>
   );
 }
@@ -199,7 +206,8 @@ function StarContent(props) {
           <div className="text-2xl mb-2 font-['Pre-bold']">
             {data ? (
               <div>
-                20{data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일<span className="text-lg">의 기록</span>
+                20{data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일
+                <span className="text-lg">의 기록</span>
               </div>
             ) : (
               "로딩중"
@@ -218,7 +226,9 @@ function StarContent(props) {
         </div>
         <div>
           {/* 해시태그 */}
-          <div style={{ display: "flex" }}>{data ? data.hashContent.map((i, idx) => <div key={idx}>{i}</div>) : "로딩중"}</div>
+          <div style={{ display: "flex" }}>
+            {data ? data.hashContent.map((i, idx) => <div key={idx}>{i}</div>) : "로딩중"}
+          </div>
         </div>
         {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
         <div>
@@ -238,7 +248,11 @@ function StarContent(props) {
           <div className="flex gap-1 items-center">
             {type === "star" ? (
               <>
-                <LikeButtons isLike={isLike} handleLike={handleLike} handleDislike={handleDislike} />
+                <LikeButtons
+                  isLike={isLike}
+                  handleLike={handleLike}
+                  handleDislike={handleDislike}
+                />
                 <ReportButton handleReport={handleReport} />
                 {isWriter() && (
                   <>
@@ -318,7 +332,12 @@ function LikeButtons(props) {
 }
 
 function MediaArea(props) {
-  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
+  return (
+    <div style={{ display: "flex" }}>
+      {props.data &&
+        props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}
+    </div>
+  );
 }
 
 function ReplyRegistArea(props) {
@@ -363,8 +382,16 @@ function ReplyRegistArea(props) {
   return (
     <>
       <div className="w-full flex items-center justify-between">
-        <input className="border my-2 p-1 px-2 mr-2 w-full" placeholder="댓글 내용을 입력해주세요." ref={inputRef} onKeyDown={handleKeyDown} />
-        <div className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
+        <input
+          className="border my-2 p-1 px-2 mr-2 w-full"
+          placeholder="댓글 내용을 입력해주세요."
+          ref={inputRef}
+          onKeyDown={handleKeyDown}
+        />
+        <div
+          className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer"
+          onClick={handleRegistReply}
+        >
           <IoMdSend />
         </div>
       </div>
@@ -430,7 +457,8 @@ function RadioContent() {
         {/*라디오 모달 상단 헤더 */}
         {rdata ? (
           <div>
-            20{rdata.boardInputDate.split(".")[0]}년 {rdata.boardInputDate.split(".")[1]}월 {rdata.boardInputDate.split(".")[2]}일
+            20{rdata.boardInputDate.split(".")[0]}년 {rdata.boardInputDate.split(".")[1]}월{" "}
+            {rdata.boardInputDate.split(".")[2]}일
           </div>
         ) : (
           "로딩중"
@@ -471,7 +499,11 @@ function RadioContent() {
           재송신하기
         </button>
       </div>
-      <div className="reportAlert">{isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />}</div>
+      <div className="reportAlert">
+        {isReportAlertOpen && (
+          <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />
+        )}
+      </div>
     </div>
   );
 }
