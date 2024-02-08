@@ -215,7 +215,7 @@ const form = useForm();
 
  return (
   <div>
-    <Card className="Regist w-102 px-6 py-6 card-contain-style">
+    <Card className="Regist w-14/16 px-6 py-6 card-contain-style">
       <CardHeader className="flex">
         <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
           <FaUser className="mr-1" />
@@ -229,7 +229,9 @@ const form = useForm();
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="id">아이디</label> <br />
               <div>
-                <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} />
+                <div className="flex justify-end">
+                  <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} />
+                </div>
                 <p className="message regist-message"> {idMessage} </p>
               </div>
             </div>
@@ -239,7 +241,9 @@ const form = useForm();
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="name">이름</label> <br />
               <div>
-                <input className="regist-input" id="name" name="name" ref={name} onBlur={onChangeName} />
+                <div className="flex justify-end">
+                  <input className="regist-input" id="name" name="name" ref={name} onBlur={onChangeName} />
+                </div>
                 <p className="message regist-message">{nameMessage}</p>
               </div>
             </div>
@@ -249,9 +253,11 @@ const form = useForm();
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="nickName">닉네임</label> <br />
               <div>
-                <input className="regist-input" id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
+                <div className="flex justify-end">
+                  <input className="regist-input" id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
+                </div>
                 <p className="message regist-message">{nickNameMessage}</p>
-              </div>
+                </div>
             </div>
           </div>
 
@@ -260,13 +266,13 @@ const form = useForm();
               <label className="regist-label" htmlFor="password">비밀번호</label> <br />
               <div>
                 <div className="flex justify-end">
-                <input
-                  className="regist-input"
-                  id="password"
-                  name="password"
-                  ref={password}
-                  onBlur={onChangePassword}
-                  />
+                  <input
+                    className="regist-input"
+                    id="password"
+                    name="password"
+                    ref={password}
+                    onBlur={onChangePassword}
+                    />
                 </div>
                 <p className="message regist-message">{passwordMessage}</p>
               </div>
@@ -277,13 +283,15 @@ const form = useForm();
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="passwordConfirm">비밀번호확인</label> <br />
               <div>
-                <input
-                  className="regist-input"
-                  id="passwordConfirm"
-                  name="passwordConfirm"
-                  ref={passwordConfirm}
-                  onBlur={onChangePasswordConfirm}
-                />
+                <div className="flex justify-end">
+                  <input
+                    className="regist-input"
+                    id="passwordConfirm"
+                    name="passwordConfirm"
+                    ref={passwordConfirm}
+                    onBlur={onChangePasswordConfirm}
+                  />
+                </div>
                 <p className="message regist-message">{passwordConfirmMessage}</p>
               </div>
             </div>
@@ -293,13 +301,15 @@ const form = useForm();
             <div className="flex justify-between">
               <label className="regist-label w-1/3" htmlFor="email">이메일</label> <br />
                 <div>
-                  <input
-                    className="regist-input"
-                    id="email"
-                    name="email"
-                    ref={email}
-                    onBlur={onChangeEmail}
-                  />
+                  <div className="flex justify-end">
+                    <input
+                      className="regist-input"
+                      id="email"
+                      name="email"
+                      ref={email}
+                      onBlur={onChangeEmail}
+                    />
+                  </div>
                   <p className="message regist-message">{emailMessage}</p>
                 </div>
               </div>
@@ -309,34 +319,38 @@ const form = useForm();
           {openAuthFoam && 
             <div className="form-el">
               <div className="flex justify-between">
-            <label className="regist-label" htmlFor="authCode">인증코드</label> <br />
-            <div>
-              <input
-                className="regist-input"
-                id="authCode"
-                name="authCode"
-                ref={authCode}
-                onBlur={onChangeAuthCode}
-                placeholder={"인증번호를 입력하세요"}
-              />
-              <p className="message regist-message">{authMessage}</p>
+                <label className="regist-label" htmlFor="authCode">인증코드</label> <br />
+                <div>
+                  <div className="flex justify-end">
+                    <input
+                      className="regist-input"
+                      id="authCode"
+                      name="authCode"
+                      ref={authCode}
+                      onBlur={onChangeAuthCode}
+                      placeholder={"인증번호를 입력하세요"}
+                    />
+                  </div>
+                  <p className="message regist-message">{authMessage}</p>
+                </div>
+              </div>
             </div>
-            </div>
-          </div>
           }
 
           <div className="form-el">
             <div className="flex justify-between">
               <label className="regist-label" htmlFor="birth">생년월일</label> <br />
               <div>
-              <input
-                className="regist-input"
-                placeholder="YYYY-MM-DD"
-                id="birth"
-                name="birth"
-                ref={birth}
-                onBlur={onChangeBirth}
-              />
+                <div className="flex justify-end">
+                <input
+                  className="regist-input"
+                  placeholder="YYYY-MM-DD"
+                  id="birth"
+                  name="birth"
+                  ref={birth}
+                  onBlur={onChangeBirth}
+                />
+              </div>
               <p className="message regist-message">{birthMessage}</p>
               </div>
             </div>
