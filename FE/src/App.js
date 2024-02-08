@@ -7,6 +7,7 @@ import ChangeInfo from "components/user/ChangeInfo";
 import ErrorPage from "pages/ErrorPage";
 import FindUser from "components/user/FindUser";
 import KakaoLogin from "./components/login/KakaoLogin";
+import KakaoRegist from "components/login/KakaoRegist";
 import List from "components/reusable/List";
 import StarFavorList from "components/star/StarFavorList";
 import FollowList from "components/user/FollowList";
@@ -33,8 +34,9 @@ function App() {
     <div className="App">
       <Header />
       <Routes>
+        <Route path="/regist/kakao" element={<KakaoRegist />}></Route>
+        <Route path="/login/kakao" element={<KakaoLogin />}></Route>
         <Route path="/landing" element={<LandingPage />}>
-          {/* <Route path="/" element={<KakaoLogin />}></Route> */}
           <Route exact path="login" element={<Login />}></Route>
           <Route path="regist" element={<Regist />}></Route>
           <Route path="findId" element={<FindID />} />
