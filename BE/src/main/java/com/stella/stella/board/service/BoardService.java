@@ -43,8 +43,7 @@ public class BoardService {
     @Transactional
     public void addBoard(BoardCreateRequestDto dto, MultipartFile[] files) throws IOException {
         Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.FIND_ID_INVALID));
-        //location이 중복 안되게 유니크를 줘서 등록은 안되는데 entity가 만들어졌다가 등록이 안되는 거라
-        //index값은 증가해버려서 방지하기 위해 넣음
+
         BoardAccessStatus boardAccessStatus = BoardAccessStatus.OPEN;
         if(dto.getBoardAccess().equals("PARTOPEN")){
             boardAccessStatus = BoardAccessStatus.PARTOPEN;
@@ -195,14 +194,19 @@ public class BoardService {
         int boardCount = boardRepository.countByBoardIndex(dto.getBoardIndex());
         if (boardCount == 1) {
             if (boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow().getMember().getMemberIndex() == dto.getMemberIndex()) {
+
                 Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+                // 이미 삭제된 보드가 들어오면 에러남
                 if (board.getBoardDeleteYN() == BoardDeleteYN.Y) {
                     throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
                 }
 
                 board.setBoardDeleteYN(BoardDeleteYN.Y);
-                //board 삭제시 로직 작성중
-//                radioRepository.deleteAllInBatch(radioRepository.findByBoardBoardIndex(dto.getBoardIndex()));
+                //board 삭제시 라디오, 미디어 , 좋아요 삭제 로직
+                radioRepository.deleteAllIn(radioRepository.findByBoardBoardIndexList(dto.getBoardIndex()));
+                mediaRepository.deleteAllIn(mediaRepository.findByBoardBoardIndexList(dto.getBoardIndex()));
+                heartRepository.deleteAllIn(heartRepository.findByBoardBoardIndexList(dto.getBoardIndex()));
+                hashRepository.deleteAllIn(hashRepository.findByBoardBoardIndexList(dto.getBoardIndex()));
             } else {
                 throw new CustomException(CustomExceptionStatus.MEMBER_INVALID);
             }

@@ -72,7 +72,7 @@ public class RadioService {
                 .fromMemberIndex(radio.getFromMember().getMemberIndex())
                 .build();
 
-        radioRepository.deleteByRadioIndex(radio.getRadioIndex());
+        radioRepository.deleteById(radio.getRadioIndex());
         //한번 수신한 라디오는 지움.
         return dto;
     }

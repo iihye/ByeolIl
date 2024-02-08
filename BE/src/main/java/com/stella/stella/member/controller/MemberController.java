@@ -261,7 +261,9 @@ public class MemberController {
         try {
             Long memberIndex = (Long) request.getAttribute("accessMemberIndex");
             //암호화
-            memberService.deleteMember(memberIndex);
+            Long testMemberIndex =1L;
+            System.out.println("들어감");
+            memberService.deleteMember(testMemberIndex);
             resultMap.put("message", "success");
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());

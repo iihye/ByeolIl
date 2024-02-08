@@ -1,5 +1,10 @@
 package com.stella.stella.member.service;
 
+import com.stella.stella.board.dto.BoardDeleteRequestDto;
+import com.stella.stella.board.entity.Board;
+import com.stella.stella.board.entity.BoardDeleteYN;
+import com.stella.stella.board.repository.BoardRepository;
+import com.stella.stella.board.service.BoardService;
 import com.stella.stella.common.Jwt.JwtTokenProvider;
 import com.stella.stella.common.Jwt.TokenInfo;
 import com.stella.stella.common.email.EmailSender;
@@ -41,6 +46,8 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailSender emailSender;
+    private final BoardService boardService;
+    private final BoardRepository boardRepository;
 
     @Value("${social.url}")
     private String redirectUrl;
@@ -293,10 +300,16 @@ public class MemberService {
         Optional.ofNullable(memberUpdateRequestDto.getMemberDeleteDate()).ifPresent(member::setMemberDeleteDate);
     }
 
-    public void deleteMember(long memberIndex){
+    public void deleteMember(long memberIndex) {
         Member member = memberRepository.findByMemberIndex(memberIndex)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
         member.setMemberDeleteYN(MemberDeleteYN.Y);
+        for (Board b : boardRepository.findAllByMemberIndexForDelete(memberIndex, BoardDeleteYN.N)) {
+            boardService.removeBoard(BoardDeleteRequestDto.builder()
+                    .boardIndex(b.getBoardIndex())
+                    .memberIndex(memberIndex)
+                    .build());
+        }
     }
 
     public String sendEmail(String email, String order) {
