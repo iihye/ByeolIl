@@ -97,11 +97,7 @@ function Login() {
                         navigate(`/space/${dec.sub}`);
                     }
                 }
-            } catch (error) {
-                if (error.response.status === 400) {
-                    alert(error.response.data.message);
-                }
-            }
+            } catch (error) {}
         };
 
         // 유저 정보 가져오기
