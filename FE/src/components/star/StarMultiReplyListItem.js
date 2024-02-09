@@ -28,7 +28,9 @@ function StarMultiReplyListItem(props) {
 
     let returnDate = `${regTime.getFullYear()}년 ${regTime.getMonth()}월 ${regTime.getDate()}일`;
 
-    if (timeDiff < 60) {
+    if (timeDiff === 0) {
+      returnDate = "방금 전";
+    } else if (timeDiff < 60) {
       returnDate = `${timeDiff}분 전`;
     } else if (timeDiff < 1440) {
       returnDate = `${Math.round(timeDiff / 60)}시간 전`;
@@ -47,7 +49,7 @@ function StarMultiReplyListItem(props) {
     };
 
     await axios
-      .delete(`${process.env.REACT_APP_API_URL}/multcomment`, {
+      .delete(`${process.env.REACT_APP_API_URL}/multicomment`, {
         headers: {
           token: localStorage.getItem("token"),
         },

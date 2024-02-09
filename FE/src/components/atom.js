@@ -1,13 +1,7 @@
-import { atom } from 'recoil';
+import { atom, selector } from 'recoil';
 
 export const filterState = atom({
     key: 'filterState',
-    default: [],
-});
-
-// API로 받아온 전체 데이터를 관리하는 atom
-export const listState = atom({
-    key: 'listState',
     default: [],
 });
 
@@ -20,12 +14,6 @@ export const isStarRegistOpenState = atom({
 // 게시글 수정 모달
 export const isStarModifyOpenState = atom({
     key: 'isStarModifyOpen',
-    default: false,
-});
-
-// 게시글 수정 후 Detail 리렌더링
-export const renewStarDetailState = atom({
-    key: 'renewStarDetail',
     default: false,
 });
 

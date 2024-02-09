@@ -3,7 +3,7 @@ import StarDeleteAlert from "components/star/StarDeleteAlert";
 import StarReplyList from "components/star/StarReplyList";
 import StarReportAlert from "components/star/StarReportAlert";
 import Alert from "./Alert";
-import { isStarDetailOpenState, isStarRegistOpenState, renewStarDetailState } from "components/atom";
+import { isStarDetailOpenState } from "components/atom";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { isDeleteAlertOpenState, isReportAlertOpenState, isStarModifyOpenState, renewReplyState } from "components/atom";
@@ -32,7 +32,6 @@ function StarContent(props) {
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
-  const renewStarDetail = useRecoilValue(renewStarDetailState);
 
   const [data, setData] = useState(null);
   const [likeData, setLikeData] = useState([]);
@@ -75,7 +74,7 @@ function StarContent(props) {
         });
     };
     fetchData(starIndex);
-  }, [renewStarDetail]);
+  }, []);
 
   useEffect(() => {
     function handleClick(e) {
@@ -121,6 +120,7 @@ function StarContent(props) {
 
   const handleModify = () => {
     setIsStarModifyOpen([data, starIndex, location, loginUserIndex]);
+    setIsStarDetailOpen(false);
   };
 
   const handleLike = async () => {
@@ -205,8 +205,6 @@ function StarContent(props) {
               "로딩중"
             )}
           </div>
-          {/* 작성일(수정일) */}
-          {/* <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div> */}
         </div>
         <div className="star-content-content relative border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
           <MediaArea data={data} />
@@ -218,7 +216,7 @@ function StarContent(props) {
         </div>
         <div>
           {/* 해시태그 */}
-          <div style={{ display: "flex" }}>{data ? data.hashContent.map((i, idx) => <div key={idx}>{i}</div>) : "로딩중"}</div>
+          <div className="flex text-white-sub gap-3 mt-2">{data ? data.hashContent.map((i, idx) => <div key={idx}># {i}</div>) : "로딩중"}</div>
         </div>
         {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
         <div>
@@ -363,8 +361,16 @@ function ReplyRegistArea(props) {
   return (
     <>
       <div className="w-full flex items-center justify-between">
-        <input className="border my-2 p-1 px-2 mr-2 w-full" placeholder="댓글 내용을 입력해주세요." ref={inputRef} onKeyDown={handleKeyDown} />
-        <div className="text-white-sub text-xl w-8 p-2 text-start rounded  hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
+        <input
+          className="border my-2 p-1 px-2 mr-2 w-full bg-alert-bg text-white-sub"
+          placeholder="댓글 내용을 입력해주세요."
+          ref={inputRef}
+          onKeyDown={handleKeyDown}
+        />
+        <div
+          className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer"
+          onClick={handleRegistReply}
+        >
           <IoMdSend />
         </div>
       </div>

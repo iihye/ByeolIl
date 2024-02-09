@@ -5,6 +5,9 @@ import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaFileImage, FaRegFileImage } from "react-icons/fa";
+import { MdOutlineCancel } from "react-icons/md";
+import { Calendar } from "@/components/ui/calendar";
+import { isClickableInput } from "@testing-library/user-event/dist/utils";
 
 const fileListState = atom({
   key: "fileList",
@@ -12,11 +15,11 @@ const fileListState = atom({
 });
 
 function StarRegist(props) {
-  const [renewStarDetail, setRenewStarDetail] = useRecoilState(renewStarDetailState);
   const curPage = useRecoilValue(curPageState);
   const setStars = useSetRecoilState(starsState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
   const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
+  const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
 
   const accessRangeRef = useRef();
   const dateRef = useRef();
@@ -83,10 +86,11 @@ function StarRegist(props) {
     const hashContent = [];
     hashtagSet.forEach((it) => hashContent.push(it));
     if (type === "regist") {
+      console.log(dateRef.current.innerText);
       const data = {
         memberIndex: writerIndex,
         boardContent: contentRef.current.value,
-        boardInputDate: "2024-01-23",
+        boardInputDate: dateRef.current.innerText,
         mediaContent: [],
         boardLocation: location,
         boardAccess: accessRangeRef.current.value,
@@ -98,7 +102,6 @@ function StarRegist(props) {
       let requestDtoBlob = new Blob([dataDto], { type: "application/json" });
 
       formData.append("requestDto", requestDtoBlob);
-      console.log(formData);
       try {
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/board`, formData, {
           header: {
@@ -124,18 +127,16 @@ function StarRegist(props) {
           setStars(res.data);
           handleClose();
         } else {
-          console.log(response.data);
           alert("게시글 작성 실패");
         }
       } catch (error) {
         console.log(error);
       }
     } else if (type === "modify") {
-      const inputDate = "2024-02-02";
       const data = {
         boardIndex: boardIndex,
         memberIndex: writerIndex,
-        boardInputDate: inputDate,
+        boardInputDate: dateRef.current.innerText,
         boardContent: contentRef.current.value,
         boardMedia: ["새 이미지 경로1", "새 이미지 경로2"],
         boardAccess: accessRangeRef.current.value,
@@ -150,7 +151,7 @@ function StarRegist(props) {
           })
           .then((response) => {
             if (response.status === 200) {
-              setRenewStarDetail(!renewStarDetail);
+              setIsStarDetailOpen([boardIndex, writerIndex]);
               handleClose();
             }
           });
@@ -169,7 +170,7 @@ function StarRegist(props) {
   }
 
   return (
-    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard']">
+    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside">
       <div>{/* <ImagePreviewArea /> */}</div>
       <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3 w-96">
         <div className="star-regist-middle">
@@ -223,22 +224,8 @@ const FileUploadArea = forwardRef((props, ref) => {
     };
   }, []);
 
-  function handleFileChange(e) {
-    // 파일 개수 제한 체크
-    // Map -> 중복 파일 거르기
-
-    const fileMap = new Map();
-    [...fileList].forEach((it) => fileMap.set(it.name, it));
-    [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
-    if (e.dataTransfer) {
-      [...e.dataTransfer.files].forEach((it) => fileMap.set(it.name, it));
-    }
-
+  function limitFileCnt(e, imageFileCnt, videoFileCnt) {
     const [maxImageCnt, maxVideoCnt] = [5, 1];
-    const uploadFileList = [...fileMap.values()];
-
-    const imageFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image").length;
-    const videoFileCnt = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video").length;
 
     const [remainImageFileCnt, remainVideoFileCnt] = [maxImageCnt - imageFileCnt, maxVideoCnt - videoFileCnt];
 
@@ -254,27 +241,58 @@ const FileUploadArea = forwardRef((props, ref) => {
     if (msg !== "") {
       alert(msg);
       // IE에서 호환성 문제 있음
-      ref.current.value = "";
-      return;
+      return false;
     }
-
-    // const urlList = [...uploadFileList].map((it) => URL.createObjectURL(it));
-    setFileList([...uploadFileList]);
-    ref.current.value = "";
+    return true;
   }
 
-  function handleDragEnter() {}
+  function limitFileVolume(e, imageFileList, videoFileList) {
+    const imageLimit = 1024 ** 2 * 5; // 5MB
+    const videoLimit = 1024 ** 2 * 100; // 100MB
+    console.log(imageFileList, videoFileList);
+
+    const imageSizeCheck = [...imageFileList].some((it) => it.size > imageLimit);
+    const videoSizeCheck = [...videoFileList].some((it) => it.size > videoLimit);
+
+    if (imageSizeCheck || videoSizeCheck) {
+      return false;
+    }
+    return true;
+  }
+
+  function handleFileChange(e) {
+    const fileMap = new Map();
+    [...fileList].forEach((it) => fileMap.set(it.name, it));
+    [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
+    if (e.dataTransfer) {
+      [...e.dataTransfer.files].forEach((it) => fileMap.set(it.name, it));
+    }
+
+    const uploadFileList = [...fileMap.values()];
+
+    const imageFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image");
+    const videoFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video");
+
+    // 파일 개수 제한 체크
+    const fileCntCheckRes = limitFileCnt(e, imageFileList.length, videoFileList.length);
+    const fileVolumeCheckRes = limitFileVolume(e, imageFileList, videoFileList);
+    if (fileCntCheckRes && fileVolumeCheckRes) {
+      setFileList([...uploadFileList]);
+    }
+    ref.current.value = "";
+  }
 
   function handleDragOver(e) {
     e.preventDefault();
   }
 
-  function handleDragLeave() {}
-
   function handleDrop(e) {
     e.preventDefault();
-
     handleFileChange(e);
+  }
+
+  function handleClick() {
+    ref.current.click();
   }
 
   return (
@@ -286,34 +304,42 @@ const FileUploadArea = forwardRef((props, ref) => {
           <div className="ml-1">파일 첨부</div>
         </label>
       </div>
-      <label for="file" className="bg-white inline cursor-pointer " onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-        <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center">
-          {fileList.length === 0 ? (
-            <div className="hover:text-white">
-              <FaFileImage className="w-full text-5xl" />
-              <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
-              <div>이미지 파일 5개 / 영상 파일 1개</div>
-            </div>
-          ) : (
-            <FileList files={fileList} classList="w-full h-full" />
-          )}
-        </div>
-      </label>
+      <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center hover:cursor-pointer" onDragOver={handleDragOver} onDrop={handleDrop} onClick={handleClick}>
+        {fileList.length === 0 ? (
+          <div className="hover:text-white">
+            <FaFileImage className="w-full text-5xl" />
+            <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
+            <div>이미지 파일 5개 / 영상 파일 1개</div>
+          </div>
+        ) : (
+          <FileList classList="w-full h-full" />
+        )}
+      </div>
     </>
   );
 });
 
-function FileList(props) {
-  const fileList = [...props.files];
+function FileList() {
+  const [fileList, setFileList] = useRecoilState(fileListState);
 
+  function handleClick(e, index) {
+    e.stopPropagation();
+
+    const tmp = [...fileList];
+    tmp.splice(index, 1);
+    setFileList(tmp);
+  }
   return (
-    <>
-      <div for="file" className="text-left w-full ml-3 hover:text-white">
-        {fileList.map((it, index) => (
-          <div key={index}>- {it.name}</div>
-        ))}
-      </div>
-    </>
+    <div className="text-left w-full h-full ml-3">
+      {fileList.map((it, index) => (
+        <div className="flex items-center" key={index}>
+          <div>- {it.name}</div>
+          <div className="ml-1 mt-1 hover:cursor-pointer text-red-500 hover:text-red-400" onClick={(e) => handleClick(e, index)}>
+            <MdOutlineCancel />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -324,26 +350,33 @@ function ImagePreviewArea() {
 }
 
 const DateArea = forwardRef((props, ref) => {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [date, setDate] = useState(new Date());
-  let year = date.getFullYear();
-  let month = date.getMonth();
-  let day = date.getDate();
+  const [year, setYear] = useState();
+  const [month, setMonth] = useState();
+  const [day, setDay] = useState();
 
   useEffect(() => {
-    year = date.getFullYear();
-    month = date.getMonth();
-    day = date.getDate();
-    console.log(year);
+    setYear(date.getFullYear());
+    setMonth(date.getMonth() + 1);
+    setDay(date.getDate());
+    setIsCalendarOpen(false);
   }, [date]);
 
-  const handleCalander = () => {};
+  const handleCalander = () => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
 
   return (
-    <div onClick={handleCalander} className="text-white-sub text-2xl mb-1 hover:text-white hover:cursor-pointer flex items-center">
-      <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
-      <div>
-        <HiOutlinePencilSquare />
+    <div className="text-white-sub text-2xl mb-1 relative">
+      <div onClick={handleCalander} className="flex items-center  hover:text-white hover:cursor-pointer">
+        <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
+        <div className="hidden" ref={ref}>{`${year}-${month >= 10 ? month : "0" + month}-${day >= 10 ? day : "0" + day}`}</div>
+        <div>
+          <HiOutlinePencilSquare />
+        </div>
       </div>
+      {isCalendarOpen && <Calendar className={"absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"} mode="single" selected={date} onSelect={setDate} />}
     </div>
   );
 });

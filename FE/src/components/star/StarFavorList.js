@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { listState, filterState, isStarDetailOpenState } from 'components/atom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { filterState, isStarDetailOpenState } from 'components/atom';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import SearchBar from '../reusable/SearchBar';
 import { FaHeart } from 'react-icons/fa';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 function StarFavorList() {
     const token = localStorage.getItem('token');
+    const [listData, setListData] = useState('');
     const [memberIndex, setMemberIndex] = useState(
         localStorage.getItem('memberIndex')
     );
-
-    const [listData, setListData] = useRecoilState(listState);
     const [starDetailState, setStarDetailState] = useRecoilState(
         isStarDetailOpenState
     );
+    const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
 
-    useEffect(() => {
-        setMemberIndex(localStorage.getItem('memberIndex'));
-    }, [token]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,7 +33,7 @@ function StarFavorList() {
                         },
                     }
                 );
-
+                resetList();
                 setListData(
                     response.data.filter((item) => item.boardAccess === 'OPEN')
                 );
@@ -46,14 +45,35 @@ function StarFavorList() {
         fetchData();
     }, [token, memberIndex]);
 
+    useEffect(() => {
+        function handleClick(e) {
+            e.stopPropagation();
+
+            const check = [...e.target.classList].some(
+                (it) => it === 'outside'
+            );
+            if (check) {
+                navigate(-1);
+            }
+        }
+
+        window.addEventListener('click', handleClick);
+        return () => {
+            window.removeEventListener('click', handleClick);
+        };
+    });
+
     console.log(filterData);
 
     return (
-        <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center">
+        <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center bg-modal-outside z-10">
             <Card className=" w-cardContainer card-contain-style py-3">
                 <div className="searchArea flex justify-between items-center search-input mx-auto my-3">
                     <div className="flex px-2">
-                        <SearchBar filterKey="boardContent" />
+                        <SearchBar
+                            filterKey="boardContent"
+                            listItems={listData}
+                        />
                     </div>
                 </div>
                 <ScrollArea className=" h-96 overflow-auto">
@@ -87,9 +107,18 @@ function StarFavorList() {
                                             </div>
                                             <div className="absolute bottom-0 w-10/12 mb-3">
                                                 <div className="cardTag flex py-2 ">
-                                                    {it.hash.map((tag) => (
-                                                        <div>#{tag}&nbsp;</div>
-                                                    ))}
+                                                    {it.hash
+                                                        ? it.hash.length > 0
+                                                            ? it.hash.map(
+                                                                  (tag) => (
+                                                                      <div>
+                                                                          #{tag}
+                                                                          &nbsp;
+                                                                      </div>
+                                                                  )
+                                                              )
+                                                            : null
+                                                        : null}
                                                 </div>
                                                 <div className="cardLike flex justify-end">
                                                     <FaHeart
