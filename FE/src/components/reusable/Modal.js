@@ -205,8 +205,6 @@ function StarContent(props) {
               "로딩중"
             )}
           </div>
-          {/* 작성일(수정일) */}
-          {/* <div>{data ? `${data.boardUpdateDate[0]}년 ${data.boardUpdateDate[1]}월 ${data.boardUpdateDate[2]}일` : "로딩중"}</div> */}
         </div>
         <div className="star-content-content relative border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
           <MediaArea data={data} />
@@ -363,8 +361,16 @@ function ReplyRegistArea(props) {
   return (
     <>
       <div className="w-full flex items-center justify-between">
-        <input className="border my-2 p-1 px-2 mr-2 w-full" placeholder="댓글 내용을 입력해주세요." ref={inputRef} onKeyDown={handleKeyDown} />
-        <div className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
+        <input
+          className="border my-2 p-1 px-2 mr-2 w-full bg-alert-bg text-white-sub"
+          placeholder="댓글 내용을 입력해주세요."
+          ref={inputRef}
+          onKeyDown={handleKeyDown}
+        />
+        <div
+          className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer"
+          onClick={handleRegistReply}
+        >
           <IoMdSend />
         </div>
       </div>

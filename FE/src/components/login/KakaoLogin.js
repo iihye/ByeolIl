@@ -15,7 +15,7 @@ function KakaoLogin() {
     const getKakaoToken = async () => {
         try{
         const response = await axios.get(
-                    `${process.env.REACT}/member/login/kakao?code=${code}`
+                    `${process.env.REACT_APP_API_URL}/member/login/kakao?code=${code}`
                 );
                 if(response.status==200){
                     const token = `Bearer ${response.headers.accesstoken}`;

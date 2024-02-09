@@ -119,6 +119,10 @@
     .regist-between{
         @apply flex justify-between
     }
+
+    .find-input{
+        @apply w-full font-['Pre-Light'] border border-white-sub focus:ring-1 focus:ring-white-sub h-input px-2
+    }
 }
 
 @font-face {

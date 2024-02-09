@@ -6,44 +6,45 @@ import { renewReplyState } from "components/atom";
 import { FaDeleteLeft } from "react-icons/fa6";
 
 function StarReplyListItem(props) {
+  console.log("asf");
   const [renewReply, setRenewReply] = useRecoilState(renewReplyState);
 
   const [multiReply, setMultiReply] = useState(false);
 
+  const now = new Date();
   const commentIndex = props.reply.commentIndex;
   const writerIndex = props.reply.memberIndex;
-  const [commentRegDate, setCommentRegDate] = useState(props.reply.commentRegdate);
+  const commentRegDate = props.reply.commentRegdate;
   const commentContent = props.reply.commentContent;
   const multiComments = props.reply.multiComments;
   const boardIndex = props.boardIndex;
   const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
-
-  function timeCheck() {
-    const now = new Date();
-
-    const ymd = commentRegDate.splice(0, 3).join(",");
-    const hm = commentRegDate.splice(0, 2).join(":");
-
-    const regTime = new Date(ymd + " " + hm);
-
-    const diff = 1000 * 60;
-    const timeDiff = Math.round((now - regTime) / diff);
-
-    console.log(timeDiff);
-
-    let returnDate = `${regTime.getFullYear()}년 ${regTime.getMonth()}월 ${regTime.getDate()}일`;
-
-    if (timeDiff < 60) {
-      returnDate = `${timeDiff}분 전`;
-    } else if (timeDiff < 1440) {
-      returnDate = `${Math.round(timeDiff / 60)}시간 전`;
-    }
-    setCommentRegDate(returnDate);
-  }
+  const [printedDate, setPrintedDate] = useState();
 
   useEffect(() => {
     timeCheck();
   }, []);
+
+  function timeCheck() {
+    const ymd = commentRegDate.splice(0, 3).join(",");
+    const hm = commentRegDate.splice(0, 2).join(":");
+
+    const regTime = new Date(ymd + " " + hm);
+    const diff = 1000 * 60;
+    const timeDiff = Math.round((now - regTime) / diff);
+
+    let returnDate = `${regTime.getFullYear()}년 ${regTime.getMonth() + 1}월 ${regTime.getDate()}일`;
+
+    if (timeDiff === 0) {
+      returnDate = "방금 전";
+    } else if (timeDiff < 60) {
+      returnDate = `${timeDiff}분 전`;
+    } else if (timeDiff < 1440) {
+      returnDate = `${Math.round(timeDiff / 60)}시간 전`;
+    }
+
+    setPrintedDate(returnDate);
+  }
 
   const isWriter = () => {
     return writerIndex === loginUserIndex;
@@ -74,7 +75,7 @@ function StarReplyListItem(props) {
     <div className="star-reply-list-item" style={{ border: "1px solid black", margin: "5px" }}>
       <div className="flex items-end">
         <div className="text-xl">{commentIndex}번 유저</div>
-        <div className="ml-2">{commentRegDate}</div>
+        <div className="ml-2">{printedDate}</div>
       </div>
       <div style={{ display: "flex" }}>
         <div>{commentContent}</div>
