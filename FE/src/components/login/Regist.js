@@ -3,7 +3,7 @@ import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaUser } from "react-icons/fa";
 import { useForm } from "react-hook-form";
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 export default function Regist() {
   const [formOpen, setFormOpen] = useState(false);
   const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_REDIRECT_URI}&response_type=code`;
@@ -73,6 +73,8 @@ export default function Regist() {
 //  이후에 회원가입버튼 누를시, 그사람의 회원가입 플랫폼(origin/ kakao/ naver/google/github)을 스트링으로 보내주어야함.
 
 function RegistForm({ social_id: social_id, social_platform: social_platform }) {
+
+  const navigate = useNavigate();
   // 초기값 - 아이디, 닉네임, 비밀번호, 비밀번호확인, 이메일, 생년월일
   const id = useRef("");
   const name = useRef("");
@@ -104,6 +106,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
 
   // 인증코드
   const [AUTH_CODE, setAUTH_CODE] = useState("");
+
   const onChangeId = () => {
     const idRegExp = /^[a-z0-9]{4,20}$/;
     if (!idRegExp.test(id.current.value)) {
@@ -112,7 +115,6 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
     } else {
       // 아이디 중복체크
       axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/id?id=${id.current.value}`).then((response) => {
-        console.log(response.data.message);
         setIdMessage(response.data.message);
         if (response.data.message === "사용 가능한 아이디입니다.") setIsId(true);
         else setIsId(false);
@@ -138,7 +140,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
       // 닉네임 중복체크
       axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/nickname?nickname=${nickName.current.value}`).then((response) => {
         setNickNameMessage(response.data.message);
-        if (response.data.message === "사용 가능한 닉네임이에요") setIsNickName(true);
+        if (response.data.message === "사용 가능한 닉네임입니다.") setIsNickName(true);
         else setIsNickName(false);
       });
     }
@@ -170,14 +172,11 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
     } else {
       // 이메일 중복체크
       axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/email?email=${email.current.value}`).then((response) => {
-        if (response.data.message === "사용 가능한 이메일입니다.") {
+        setEmailMessage(response.data.message);
+        if (response.data.message === "사용 가능한 이메일입니다.")
           setIsEmail(true);
-          setEmailMessage(response.data.message);
-        }
-        else {
+        else 
           setIsEmail(false);
-          setEmailMessage(response.data.message); //이미 존재하는 이메일입니다.
-        }
       });
     }
   };
@@ -218,6 +217,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
       setAUTH_CODE(response.data.code);
     });
   };
+
   const doRegist = () => {
     // 중복체크 및 인증 완료시 회원가입 성공
     const data = {
@@ -229,8 +229,9 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
       "memberEmail": email.current.value,
       "memberBirth": birth.current.value //형식 준수해야함
     };
-    console.log(data)
-    axios.post(`${process.env.REACT_APP_API_URL}/member/join`, data).then((response) => {console.log(response)})
+    axios.post(`${process.env.REACT_APP_API_URL}/member/join`, data).then((response) => {
+      if(response.data.message === "success") navigate(-1);
+    }).catch((e)=>{console.log(e)})
   };
   const form = useForm();
   return (
@@ -304,7 +305,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                 <br />
                 <div>
                   <div className="flex justify-end">
-                    <input className="regist-input" id="password" name="password" ref={password} onBlur={onChangePassword} />
+                    <input type="password" className="regist-input" id="password" name="password" ref={password} onBlur={onChangePassword} />
                   </div>
                   <p className={`messag regist-message ${
                     passwordMessage.length > 10 ? `text-red-600` : `text-green-500`
@@ -322,7 +323,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                 <br />
                 <div>
                   <div className="flex justify-end">
-                    <input className="regist-input" id="passwordConfirm" name="passwordConfirm" ref={passwordConfirm} onBlur={onChangePasswordConfirm} />
+                    <input type="password" className="regist-input" id="passwordConfirm" name="passwordConfirm" ref={passwordConfirm} onBlur={onChangePasswordConfirm} />
                   </div>
                   <p className={`messag regist-message ${
                     passwordConfirmMessage.length < 12 ? `text-red-600` : `text-green-500`
