@@ -50,10 +50,7 @@ function StarReplyList(props) {
         <div>댓글 목록</div>
         <IoMdRefresh className="my-1 hover:cursor-pointer flex" onClick={handleRefresh} />
       </div>
-      <div
-        className="star-reply-list relative min-h-20  max-h-72 border border-white-sub rounded-xl overflow-y-scroll bg-alert-bg text-white-sub"
-        ref={replyListRef}
-      >
+      <div className="star-reply-list relative h-52 border border-white-sub rounded-xl overflow-y-scroll bg-alert-bg text-white-sub" ref={replyListRef}>
         {data[0] ? (
           [...data].map((reply, index) => <StarReplyListItem reply={reply} key={index} boardIndex={boardIndex} />)
         ) : (
