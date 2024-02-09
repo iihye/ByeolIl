@@ -42,6 +42,7 @@ function StarReplyListItem(props) {
     } else if (timeDiff < 1440) {
       returnDate = `${Math.round(timeDiff / 60)}시간 전`;
     }
+
     setPrintedDate(returnDate);
   }
 
