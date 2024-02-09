@@ -4,6 +4,7 @@ import { useLocation } from 'react-router';
 import { Link, useNavigate } from 'react-router-dom';
 
 function KakaoRegist() {
+    console.log("/regist/kakao접근");
     const navigate = useNavigate();
     const location = useLocation();
     const params = new URL(document.URL).searchParams;

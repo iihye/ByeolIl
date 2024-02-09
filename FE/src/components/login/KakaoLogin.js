@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import base64 from 'base-64';
 
 function KakaoLogin() {
+    console.log("/login/kakao 접근")
     const navigate = useNavigate();
     const location = useLocation();
     const params = new URL(document.URL).searchParams;
