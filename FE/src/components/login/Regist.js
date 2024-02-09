@@ -109,16 +109,17 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
     } else {
       // 아이디 중복체크
       axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/id?id=${id.current.value}`).then((response) => {
+        console.log(response.data.message);
         setIdMessage(response.data.message);
-        if (response.data.message === "사용 가능한 아이디예요") setIsId(true);
+        if (response.data.message === "사용 가능한 아이디입니다.") setIsId(true);
         else setIsId(false);
       });
     }
   };
   const onChangeName = () => {
-    const nameRegExp = /^[가-힣a-zA-Z]{2,20}$/;
+    const nameRegExp = /^[가-힣a-zA-Z]{2,10}$/;
     if (!nameRegExp.test(name.current.value)) {
-      setNameMessage("이름을 확인해주세요");
+      setNameMessage("이름을 확인해주세요(최대10자, 한글 영문)");
       setIsName(false);
     } else {
       setNameMessage("사용 가능한 이름이에요");
@@ -168,9 +169,12 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
       axios.get(`${process.env.REACT_APP_API_URL}/member/dup-check/email?email=${email.current.value}`).then((response) => {
         if (response.data.message === "사용 가능한 이메일입니다.") {
           setIsEmail(true);
-          setEmailMessage("사용 가능한 이메일이에요.");
+          setEmailMessage(response.data.message);
         }
-        else setIsEmail(false);
+        else {
+          setIsEmail(false);
+          setEmailMessage(response.data.message); //이미 존재하는 이메일입니다.
+        }
       });
     }
   };
@@ -248,7 +252,9 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                   <div className="flex justify-end">
                     <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} value={social_id} disabled={!!social_id}/>
                   </div>
-                  <p className="message regist-message"> {idMessage} </p>
+                  <p className={`message regist-message ${
+                    idMessage.length > 14 ? `text-red-600` : `text-green-500`
+                  }`}> {idMessage} </p>
                 </div>
               </div>
             </div>
@@ -262,7 +268,9 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                   <div className="flex justify-end">
                     <input className="regist-input" id="name" name="name" ref={name} onBlur={onChangeName} />
                   </div>
-                  <p className="message regist-message">{nameMessage}</p>
+                  <p className={`messag regist-message ${
+                    nameMessage.length > 12 ? `text-red-600` : `text-green-500`
+                  }`}>{nameMessage}</p>
                 </div>
               </div>
             </div>
@@ -276,7 +284,9 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                   <div className="flex justify-end">
                     <input className="regist-input" id="nickName" name="nickName" ref={nickName} onBlur={onChangeNickName} />
                   </div>
-                  <p className="message regist-message">{nickNameMessage}</p>
+                  <p className={`messag regist-message ${
+                    nickNameMessage.length > 14 ? `text-red-600` : `text-green-500`
+                  }`}>{nickNameMessage}</p>
                 </div>
               </div>
             </div>
@@ -290,7 +300,9 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                   <div className="flex justify-end">
                     <input className="regist-input" id="password" name="password" ref={password} onBlur={onChangePassword} />
                   </div>
-                  <p className="message regist-message">{passwordMessage}</p>
+                  <p className={`messag regist-message ${
+                    passwordMessage.length > 10 ? `text-red-600` : `text-green-500`
+                  }`}>{passwordMessage}</p>
                 </div>
               </div>
             </div>
@@ -304,7 +316,9 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                   <div className="flex justify-end">
                     <input className="regist-input" id="passwordConfirm" name="passwordConfirm" ref={passwordConfirm} onBlur={onChangePasswordConfirm} />
                   </div>
-                  <p className="message regist-message">{passwordConfirmMessage}</p>
+                  <p className={`messag regist-message ${
+                    passwordConfirmMessage.length < 12 ? `text-red-600` : `text-green-500`
+                  }`}>{passwordConfirmMessage}</p>
                 </div>
               </div>
             </div>
@@ -318,7 +332,9 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                   <div className="flex justify-end">
                     <input className="regist-input" id="email" name="email" ref={email} onBlur={onChangeEmail} />
                   </div>
-                  <p className="message regist-message">{emailMessage}</p>
+                  <p className={`messag regist-message ${
+                    emailMessage.length > 14 ? `text-red-600` : `text-green-500`
+                  }`}>{emailMessage}</p>
                 </div>
               </div>
               <button className="regist-button w-full h-button px-2 mb-2" disabled={!isEmail} onClick={()=>{doAuth()}}>
@@ -336,10 +352,12 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                     <div className="flex justify-end">
                       <input className="regist-input" id="authCode" name="authCode" ref={authCode} onBlur={onChangeAuthCode} placeholder={"인증번호를 입력하세요"} />
                     </div>
-                    <p className="message regist-message">{authMessage}</p>
+                    <p className={`messag regist-message ${
+                    authMessage.length > 6 ? `text-red-600` : `text-green-500`
+                  }`}>{authMessage}</p>
                   </div>
                 </div>
-              </div>
+              </div>  
             )}
             <div className="form-el">
               <div className="flex justify-between">
@@ -351,7 +369,9 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                   <div className="flex justify-end">
                     <input className="regist-input" placeholder="YYYY-MM-DD" id="birth" name="birth" ref={birth} onBlur={onChangeBirth} />
                   </div>
-                  <p className="message regist-message">{birthMessage}</p>
+                  <p className={`messag regist-message ${
+                    birthMessage.length > 10 ? `text-red-600` : `text-green-500`
+                  }`}>{birthMessage}</p>
                 </div>
               </div>
             </div>
