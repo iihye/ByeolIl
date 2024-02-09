@@ -13,6 +13,9 @@ export default function Regist() {
   const { social_id, social_platform } = location.state || {}; // state가 undefined인 경우를 대비한 기본값 설정
   useEffect(() => {
     // 리스너 설치해서 인증성공시, 동작하도록해야할까..
+    if (social_id) {
+      setFormOpen(true); // social_id가 있으면 formOpen을 true로 설정
+    }
   }, [data]);
   return (
 
@@ -33,9 +36,9 @@ export default function Regist() {
           <div className="modal">
             <button onClick={() => setFormOpen(true)}>일반회원가입</button>
             <button onClick={() => {window.location.assign(kakao_join_uri)}}>카카오</button>
-            <button>네이버</button>
+            {/* <button>네이버</button>
             <button>구글</button> 
-            <button>깃헙</button>
+            <button>깃헙</button> */}
           </div>
         }
         {formOpen && <RegistForm social_id={social_id} social_platform={social_platform}/>} 
@@ -214,7 +217,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
   const doRegist = () => {
     // 중복체크 및 인증 완료시 회원가입 성공
     const data = {
-      "memberId": id.current.value,
+      "memberId": social_id === undefined ? id.current.value : social_id,
       "memberPass": social_platform === undefined ? password.current.value : social_platform,//소셜로그인일 경우 소셜플랫폼으로 입력
       "memberPlatform": social_platform === undefined ? "origin":social_platform  , //소셜로그인인지 일반로그인인지
       "memberName": name.current.value,
@@ -238,6 +241,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
         <div></div>
         <CardContent>
           <div className="form">
+            {!social_id && (
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="id">
@@ -246,12 +250,13 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                 <br />
                 <div>
                   <div className="flex justify-end">
-                    <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId} value={social_id} disabled={!!social_id}/>
+                    <input className="regist-input" id="id" name="id" ref={id} onBlur={onChangeId}/>
                   </div>
                   <p className="message regist-message"> {idMessage} </p>
                 </div>
               </div>
             </div>
+            )}
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="name">
@@ -280,6 +285,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                 </div>
               </div>
             </div>
+            {!social_id && (
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="password">
@@ -294,6 +300,8 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                 </div>
               </div>
             </div>
+            )}
+            {!social_id && (
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label" htmlFor="passwordConfirm">
@@ -308,6 +316,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
                 </div>
               </div>
             </div>
+            )}
             <div className="form-el">
               <div className="flex justify-between">
                 <label className="regist-label w-1/3" htmlFor="email">
