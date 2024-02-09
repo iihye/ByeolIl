@@ -36,7 +36,8 @@ function StarReplyList(props) {
       await axios
         .get(`${process.env.REACT_APP_API_URL}/comment/${boardIndex}`)
         .then((res) => {
-          setData(res.data.reverse());
+          const newData = [...res.data.reverse()];
+          setData(newData);
         })
         .catch((error) => console.log(error));
     };
@@ -49,10 +50,17 @@ function StarReplyList(props) {
         <div>댓글 목록</div>
         <IoMdRefresh className="my-1 hover:cursor-pointer flex" onClick={handleRefresh} />
       </div>
-      <div className="star-reply-list min-h-20  max-h-72 border border-white-sub rounded-xl overflow-y-scroll bg-alert-bg text-white-sub" ref={replyListRef}>
-        {data.map((reply, index) => (
-          <StarReplyListItem reply={reply} key={index} boardIndex={boardIndex} />
-        ))}
+      <div
+        className="star-reply-list relative min-h-20  max-h-72 border border-white-sub rounded-xl overflow-y-scroll bg-alert-bg text-white-sub"
+        ref={replyListRef}
+      >
+        {data[0] ? (
+          [...data].map((reply, index) => <StarReplyListItem reply={reply} key={index} boardIndex={boardIndex} />)
+        ) : (
+          <div className="flex absolute top-0 bottom-0 left-0 right-0 justify-center items-center h-full">
+            <div>등록된 댓글이 없습니다.</div>
+          </div>
+        )}
       </div>
     </>
   );
