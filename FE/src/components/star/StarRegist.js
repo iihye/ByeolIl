@@ -6,6 +6,7 @@ import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaFileImage, FaRegFileImage } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
+import { Calendar } from "@/components/ui/calendar";
 
 const fileListState = atom({
   key: "fileList",
@@ -99,7 +100,6 @@ function StarRegist(props) {
       let requestDtoBlob = new Blob([dataDto], { type: "application/json" });
 
       formData.append("requestDto", requestDtoBlob);
-      console.log(formData);
       try {
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/board`, formData, {
           header: {
@@ -125,7 +125,6 @@ function StarRegist(props) {
           setStars(res.data);
           handleClose();
         } else {
-          console.log(response.data);
           alert("게시글 작성 실패");
         }
       } catch (error) {
@@ -170,7 +169,7 @@ function StarRegist(props) {
   }
 
   return (
-    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard']">
+    <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside">
       <div>{/* <ImagePreviewArea /> */}</div>
       <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3 w-96">
         <div className="star-regist-middle">
@@ -349,30 +348,38 @@ function ImagePreviewArea() {
   return <div>{fileList.length > 0 ? fileList.map((it, index) => <div>{it}</div>) : null}</div>;
 }
 
-const DateArea = forwardRef((props, ref) => {
+function DateArea() {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [date, setDate] = useState(new Date());
-  let year = date.getFullYear();
-  let month = date.getMonth();
-  let day = date.getDate();
+
+  const [year, setYear] = useState();
+  const [month, setMonth] = useState();
+  const [day, setDay] = useState();
 
   useEffect(() => {
-    year = date.getFullYear();
-    month = date.getMonth();
-    day = date.getDate();
-    console.log(year);
+    if (date) {
+      setYear(date.getFullYear());
+      setMonth(date.getMonth());
+      setDay(date.getDate());
+    }
   }, [date]);
 
-  const handleCalander = () => {};
+  const handleCalander = (e) => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
 
   return (
-    <div onClick={handleCalander} className="text-white-sub text-2xl mb-1 hover:text-white hover:cursor-pointer flex items-center">
-      <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
-      <div>
-        <HiOutlinePencilSquare />
+    <div className="text-white-sub text-2xl mb-1 relative hover:text-white hover:cursor-pointer">
+      <div onClick={handleCalander} className="flex items-center">
+        <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
+        <div>
+          <HiOutlinePencilSquare />
+        </div>
       </div>
+      {isCalendarOpen && <Calendar className={"absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"} mode="single" selected={date} onSelect={setDate} />}
     </div>
   );
-});
+}
 
 const AccessRangeArea = forwardRef((props, ref) => {
   return (
