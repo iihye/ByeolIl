@@ -1,9 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GrUserAdmin } from "react-icons/gr";
-
 /**
  *
  * @param {String} toFind ID or PW
@@ -13,8 +12,17 @@ function Find({ toFind }) {
   const email = useRef();
   const ID = useRef();
   const membername = useRef();
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   const handleClick = (toFind) => {
+    if (isButtonClicked) {
+      setIsButtonClicked(true);
+    }
+
+    setTimeout(() => {
+      setIsButtonClicked(false);
+    }, 3000);
+
     if (toFind === "ID") {
       reqFindID();
     } else if (toFind === "PW") {
@@ -29,7 +37,14 @@ function Find({ toFind }) {
         `${process.env.REACT_APP_API_URL}/member/find/id?name=${membername.current.value}&email=${email.current.value}`
       )
       .then((response) => {
-        alert(`ID는 ${response.data.id} 입니다.`);
+        if (response.status === 200) {
+          alert(`ID는 ${response.data.id} 입니다`);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 400) {
+          alert(`아이디를 찾을 수 없습니다`);
+        }
       });
   }
 
@@ -41,9 +56,16 @@ function Find({ toFind }) {
       memberEmail: email.current.value,
     };
 
-    axios.post(`${process.env.REACT_APP_API_URL}/member/find/pass`, data).then((response) => {
-      alert(response.data.message);
-    });
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/member/find/pass`, data)
+      .then((response) => {
+        alert(response.data.message);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 400) {
+          alert(`일치하는 회원정보를 찾을 수 없습니다`);
+        }
+      });
   }
 
   return (
