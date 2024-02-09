@@ -358,7 +358,7 @@ const DateArea = forwardRef((props, ref) => {
 
   useEffect(() => {
     setYear(date.getFullYear());
-    setMonth(date.getMonth());
+    setMonth(date.getMonth() + 1);
     setDay(date.getDate());
     setIsCalendarOpen(false);
   }, [date]);
