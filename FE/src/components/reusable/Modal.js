@@ -265,7 +265,7 @@ function StarContent(props) {
 function CloseButton(props) {
   const handleClose = props.handleClose;
   return (
-    <div className="text-white-sub hover:cursor-pointer text-3xl" onClick={handleClose}>
+    <div className="text-white-sub hover:cursor-pointer hover:text-white text-3xl" onClick={handleClose}>
       <CgCloseR />
     </div>
   );
@@ -273,7 +273,7 @@ function CloseButton(props) {
 function ModifyButton(props) {
   const handleModify = props.handleModify;
   return (
-    <div className="text-white-sub hover:cursor-pointer text-3xl" onClick={handleModify}>
+    <div className="text-white-sub hover:cursor-pointer hover:text-white text-3xl" onClick={handleModify}>
       <TiSpannerOutline />
     </div>
   );
@@ -283,7 +283,7 @@ function DeleteButton(props) {
   const handleDelete = props.handleDelete;
 
   return (
-    <div className="text-white-sub hover:cursor-pointer" onClick={handleDelete}>
+    <div className="text-white-sub hover:cursor-pointer hover:text-white" onClick={handleDelete}>
       <FaRegTrashCan />
     </div>
   );
@@ -292,7 +292,7 @@ function ReportButton(props) {
   const handleReport = props.handleReport;
 
   return (
-    <div className="text-white-sub text-3xl hover:cursor-pointer" onClick={handleReport}>
+    <div className="text-white-sub text-3xl hover:cursor-pointer hover:text-white" onClick={handleReport}>
       <PiSiren />
     </div>
   );
@@ -305,11 +305,11 @@ function LikeButtons(props) {
   return (
     <>
       {!isLike ? (
-        <div className="hover:cursor-pointer text-white-sub " onClick={handleLike}>
+        <div className="hover:cursor-pointer text-white-sub hover:text-white" onClick={handleLike}>
           <FaRegHeart />
         </div>
       ) : (
-        <div className="hover:cursor-pointer text-white-sub " onClick={handleDislike}>
+        <div className="hover:cursor-pointer text-white-sub hover:text-white" onClick={handleDislike}>
           <FaHeart />
         </div>
       )}
@@ -364,7 +364,7 @@ function ReplyRegistArea(props) {
     <>
       <div className="w-full flex items-center justify-between">
         <input className="border my-2 p-1 px-2 mr-2 w-full" placeholder="댓글 내용을 입력해주세요." ref={inputRef} onKeyDown={handleKeyDown} />
-        <div className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
+        <div className="text-white-sub text-xl w-8 p-2 text-start rounded  hover:text-white hover:cursor-pointer" onClick={handleRegistReply}>
           <IoMdSend />
         </div>
       </div>
