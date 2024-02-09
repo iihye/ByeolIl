@@ -22,7 +22,7 @@ function Modal(props) {
 
   return (
     <div className="modal-container absolute top-0 left-0 flex justify-center items-center w-full h-full">
-      <div className="modal bg-modal-bg rounded-lg p-3 w-96 font-['Pre-bold']">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
+      <div className="modal bg-modal-bg rounded-lg p-3 w-fit font-['Pre-bold']">{type === "radio" ? <RadioContent /> : <StarContent {...props} />}</div>
     </div>
   );
 }
@@ -191,7 +191,8 @@ function StarContent(props) {
   };
 
   return (
-    <>
+    <div className="flex items-center">
+      {data && data.boardMedia.length > 0 ? <MediaArea data={data} /> : null}
       <div className="star-content">
         {/* 최상단 */}
         <div className="star-content-top text-white-sub">
@@ -207,7 +208,6 @@ function StarContent(props) {
           </div>
         </div>
         <div className="star-content-content relative border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
-          <MediaArea data={data} />
           {/* 게시글 내용 */}
           {data ? data.boardContent : "로딩중"}
           <div className="absolute right-0 bottom-0 mr-2 mb-2 text-2xl duration-200 hover:text-4xl hover:text-whiteh hover:cursor-pointer">
@@ -223,40 +223,40 @@ function StarContent(props) {
           {/* 댓글 리스트 영역 */}
           <StarReplyList boardIndex={starIndex} />
         </div>
-      </div>
-      <div>
-        {/* 최하단 */}
-        {type === "star" ? (
-          <>
-            {/* 댓글 작성 영역 */}
-            {isLogin() && <ReplyRegistArea starIndex={starIndex} loginUserIndex={loginUserIndex} />}
-          </>
-        ) : null}
-        <div className="flex justify-between items-center text-2xl">
-          <div className="flex gap-1 items-center">
-            {type === "star" ? (
-              <>
-                <LikeButtons isLike={isLike} handleLike={handleLike} handleDislike={handleDislike} />
-                <ReportButton handleReport={handleReport} />
-                {isWriter() && (
-                  <>
-                    <DeleteButton handleDelete={handleDelete} />
-                    <ModifyButton handleModify={handleModify} />
-                  </>
-                )}
-              </>
-            ) : (
-              <button onClick={handleBlock}>차단</button>
-            )}
+        <div>
+          {/* 최하단 */}
+          {type === "star" ? (
+            <>
+              {/* 댓글 작성 영역 */}
+              {isLogin() && <ReplyRegistArea starIndex={starIndex} loginUserIndex={loginUserIndex} />}
+            </>
+          ) : null}
+          <div className="flex justify-between items-center text-2xl">
+            <div className="flex gap-1 items-center">
+              {type === "star" ? (
+                <>
+                  <LikeButtons isLike={isLike} handleLike={handleLike} handleDislike={handleDislike} />
+                  <ReportButton handleReport={handleReport} />
+                  {isWriter() && (
+                    <>
+                      <DeleteButton handleDelete={handleDelete} />
+                      <ModifyButton handleModify={handleModify} />
+                    </>
+                  )}
+                </>
+              ) : (
+                <button onClick={handleBlock}>차단</button>
+              )}
+            </div>
+            <CloseButton handleClose={handleClose} />
           </div>
-          <CloseButton handleClose={handleClose} />
         </div>
       </div>
       <div className="alert">
         {isDeleteAlertOpen && <StarDeleteAlert boardIndex={starIndex} userIndex={loginUserIndex} />}
         {isReportAlertOpen && <StarReportAlert boardIndex={starIndex} userIndex={loginUserIndex} />}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -316,7 +316,20 @@ function LikeButtons(props) {
 }
 
 function MediaArea(props) {
-  return <div style={{ display: "flex" }}>{props.data && props.data.boardMedia.map((it, index) => <img src={it} style={{ width: "50px" }}></img>)}</div>;
+  return (
+    <div className="flex items-center top-12 rounded right-full p-5 mr-6 h-full bg-modal-bg">
+      {/* <div className="flex overflow-hidden items-center w-96"> */}
+      <div className="gap-3 items-center w-pic h-pic overflow-hidden">
+        {props.data &&
+          props.data.boardMedia.map((it, index) => (
+            <div className="w-pic h-pic bg-black-sub flex items-center">
+              <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
+            </div>
+          ))}
+      </div>
+      {/* </div> */}
+    </div>
+  );
 }
 
 function ReplyRegistArea(props) {

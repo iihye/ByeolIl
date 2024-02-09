@@ -46,7 +46,7 @@ function StarReplyList(props) {
 
   return (
     <>
-      <div className="flex items-center text-white-sub text-xl gap-2 mt-2 mb-1 ml-1">
+      <div className="flex items-center text-white-sub text-xl gap-2 mt-2 mb-1 ml-1 w-96">
         <div>댓글 목록</div>
         <IoMdRefresh className="my-1 hover:cursor-pointer flex" onClick={handleRefresh} />
       </div>
