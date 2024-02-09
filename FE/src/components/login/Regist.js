@@ -17,29 +17,29 @@ export default function Regist() {
   return (
 
     <div>
-    <Card className="Regist w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+       {!formOpen &&
+    <Card className="Regist w-96 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
         <CardHeader className="flex">
           <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
             회원가입
           </CardTitle>
         </CardHeader>
-        <div></div>
+        <div>
+          <div className="Regist">
+              <div className="modal">
+                <button onClick={() => setFormOpen(true)}>일반회원가입</button>
+                <button onClick={() => {window.location.assign(kakao_join_uri)}}>카카오</button>
+                <button>네이버</button>
+                <button>구글</button> 
+                <button>깃헙</button>
+              </div>
+          </div>
+        </div>
         <CardContent>
 
         </CardContent>
-    </Card>
-      <div className="Regist">
-        {!formOpen &&
-          <div className="modal">
-            <button onClick={() => setFormOpen(true)}>일반회원가입</button>
-            <button onClick={() => {window.location.assign(kakao_join_uri)}}>카카오</button>
-            <button>네이버</button>
-            <button>구글</button> 
-            <button>깃헙</button>
-          </div>
-        }
-        {formOpen && <RegistForm/>} 
-      </div>
+    </Card>}
+      {formOpen && <RegistForm/>} 
     </div>
 
     // <div className="Regist">
@@ -142,7 +142,7 @@ function RegistForm({ social_id: social_id, social_platform: social_platform }) 
   const onChangePassword = () => {
     const passwordRegExp = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*+=-])(?=.*[0-9]).{8,25}$/;
     if (!passwordRegExp.test(password.current.value)) {
-      setPasswordMessage("8~25자 영문 대,소문자, 숫자, 특수문자를 사용해주세요");
+      setPasswordMessage("8~25자 영문, 숫자, 특수문자를 사용해주세요");
       setIsPassword(false);
     } else {
       setPasswordMessage("안전한 비밀번호예요");
