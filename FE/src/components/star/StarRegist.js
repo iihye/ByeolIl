@@ -376,7 +376,12 @@ const DateArea = forwardRef((props, ref) => {
           <HiOutlinePencilSquare />
         </div>
       </div>
-      {isCalendarOpen && <Calendar className={"absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"} mode="single" selected={date} onSelect={setDate} />}
+      {isCalendarOpen && (
+        <>
+          <div className="fixed top-0 left-0 bg-modal-outside w-full h-full z-10" onClick={handleCalander}></div>
+          <Calendar className={"absolute p-1 top-10 bg-alert-bg border border-white-sub rounded z-10"} mode="single" selected={date} onSelect={setDate} />
+        </>
+      )}
     </div>
   );
 });
