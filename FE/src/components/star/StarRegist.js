@@ -7,6 +7,7 @@ import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaFileImage, FaRegFileImage } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 import { Calendar } from "@/components/ui/calendar";
+import { isClickableInput } from "@testing-library/user-event/dist/utils";
 
 const fileListState = atom({
   key: "fileList",
@@ -85,10 +86,11 @@ function StarRegist(props) {
     const hashContent = [];
     hashtagSet.forEach((it) => hashContent.push(it));
     if (type === "regist") {
+      console.log(dateRef.current.innerText);
       const data = {
         memberIndex: writerIndex,
         boardContent: contentRef.current.value,
-        boardInputDate: "2024-01-23",
+        boardInputDate: dateRef.current.innerText,
         mediaContent: [],
         boardLocation: location,
         boardAccess: accessRangeRef.current.value,
@@ -131,11 +133,10 @@ function StarRegist(props) {
         console.log(error);
       }
     } else if (type === "modify") {
-      const inputDate = "2024-02-02";
       const data = {
         boardIndex: boardIndex,
         memberIndex: writerIndex,
-        boardInputDate: inputDate,
+        boardInputDate: dateRef.current.innerText,
         boardContent: contentRef.current.value,
         boardMedia: ["새 이미지 경로1", "새 이미지 경로2"],
         boardAccess: accessRangeRef.current.value,
@@ -348,30 +349,29 @@ function ImagePreviewArea() {
   return <div>{fileList.length > 0 ? fileList.map((it, index) => <div>{it}</div>) : null}</div>;
 }
 
-function DateArea() {
+const DateArea = forwardRef((props, ref) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [date, setDate] = useState(new Date());
-
   const [year, setYear] = useState();
   const [month, setMonth] = useState();
   const [day, setDay] = useState();
 
   useEffect(() => {
-    if (date) {
-      setYear(date.getFullYear());
-      setMonth(date.getMonth());
-      setDay(date.getDate());
-    }
+    setYear(date.getFullYear());
+    setMonth(date.getMonth());
+    setDay(date.getDate());
+    setIsCalendarOpen(false);
   }, [date]);
 
-  const handleCalander = (e) => {
+  const handleCalander = () => {
     setIsCalendarOpen(!isCalendarOpen);
   };
 
   return (
-    <div className="text-white-sub text-2xl mb-1 relative hover:text-white hover:cursor-pointer">
-      <div onClick={handleCalander} className="flex items-center">
+    <div className="text-white-sub text-2xl mb-1 relative">
+      <div onClick={handleCalander} className="flex items-center  hover:text-white hover:cursor-pointer">
         <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
+        <div className="hidden" ref={ref}>{`${year}-${month >= 10 ? month : "0" + month}-${day >= 10 ? day : "0" + day}`}</div>
         <div>
           <HiOutlinePencilSquare />
         </div>
@@ -379,7 +379,7 @@ function DateArea() {
       {isCalendarOpen && <Calendar className={"absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"} mode="single" selected={date} onSelect={setDate} />}
     </div>
   );
-}
+});
 
 const AccessRangeArea = forwardRef((props, ref) => {
   return (
