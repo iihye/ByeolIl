@@ -15,6 +15,8 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { TiSpannerOutline } from "react-icons/ti";
 import { CgCloseR } from "react-icons/cg";
 import { IoMdSend } from "react-icons/io";
+import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -49,6 +51,7 @@ function StarContent(props) {
 
   // 글 조회 / 수정시 내용 갱신
   useEffect(() => {
+    console.log("Fetch");
     const fetchData = async (starIndex) => {
       await axios
         .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
@@ -316,18 +319,39 @@ function LikeButtons(props) {
 }
 
 function MediaArea(props) {
+  const areaRef = useRef();
+
+  const data = props.data;
+
+  let lastPage = data.boardMedia.length - 1;
+  let curPage = 0;
+
+  function handleLeft() {
+    if (curPage <= 0) return;
+    curPage--;
+    areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
+  }
+
+  function handleRight() {
+    if (curPage >= lastPage) return;
+    curPage++;
+    areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
+  }
+
   return (
     <div className="flex items-center top-12 rounded right-full p-5 mr-6 h-full bg-modal-bg">
-      {/* <div className="flex overflow-hidden items-center w-96"> */}
-      <div className="gap-3 items-center w-pic h-pic overflow-hidden">
-        {props.data &&
-          props.data.boardMedia.map((it, index) => (
-            <div className="w-pic h-pic bg-black-sub flex items-center">
-              <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
-            </div>
-          ))}
+      <div className="flex relative overflow-hidden items-center w-pic">
+        <div className="flex items-center h-pic transition-all" ref={areaRef}>
+          {data &&
+            data.boardMedia.map((it, index) => (
+              <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
+                <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
+              </div>
+            ))}
+        </div>
+        <FaChevronLeft className="absolute left-0 h-full w-8 mx-2 text-black-sub hover:text-black" onClick={handleLeft} />
+        <FaChevronRight className="absolute right-0 h-full w-8 mx-2 text-black-sub hover:text-black" onClick={handleRight} />
       </div>
-      {/* </div> */}
     </div>
   );
 }

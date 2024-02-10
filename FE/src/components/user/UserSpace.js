@@ -121,7 +121,8 @@ function Star(props) {
     setCurStarState(isAddedStar.get(props.location));
   }, [stars]);
 
-  const handleClick = (locationNum) => {
+  const handleClick = (e, locationNum) => {
+    e.stopPropagation();
     console.log(locationNum);
     const starIndex = isAddedStar.get(locationNum) ? isAddedStar.get(locationNum).boardIndex : null;
     if (starIndex) {
@@ -157,8 +158,8 @@ function StarSurround(props) {
   return (
     <mesh
       position={props.position}
-      onClick={() => {
-        props.handleClick(props.location);
+      onClick={(e) => {
+        props.handleClick(e, props.location);
       }}
       onPointerEnter={() => setOpacity(0.14)}
       onPointerLeave={() => setOpacity(0)}
