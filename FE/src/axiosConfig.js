@@ -13,4 +13,20 @@ axios.interceptors.request.use(
     }
 );
 
+axios.interceptors.response.use(
+    (response) => {
+        const token = response.data.accessToken;
+        if (token) {
+            localStorage.setItem('token', token);
+        }
+        return response;
+    },
+    async (error) => {
+        if (error.response.status === 400 && error.response.data.message) {
+            alert(error.response.data.message);
+            return error.response;
+        }
+    }
+);
+
 export default axios;
