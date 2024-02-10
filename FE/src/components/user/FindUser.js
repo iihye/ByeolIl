@@ -14,7 +14,7 @@ import axios from 'axios';
 function FindUser() {
     const [listData, setListData] = useState('');
     const filterData = useRecoilValue(filterState);
-    const userToken = localStorage.getItem('token') ?? '';
+    const userToken = sessionStorage.getItem('token') ?? '';
     const resetList = useResetRecoilState(filterState);
     const navigate = useNavigate();
 

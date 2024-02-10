@@ -9,10 +9,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router';
 
 function StarFavorList() {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const [listData, setListData] = useState('');
     const [memberIndex, setMemberIndex] = useState(
-        localStorage.getItem('memberIndex')
+        sessionStorage.getItem('memberIndex')
     );
     const [starDetailState, setStarDetailState] = useRecoilState(
         isStarDetailOpenState

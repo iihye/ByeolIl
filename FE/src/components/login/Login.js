@@ -81,7 +81,7 @@ function Login() {
                 if (response.status === 200) {
                     const token = `Bearer ${response.headers.accesstoken}`;
 
-                    localStorage.setItem('token', token);
+                    sessionStorage.setItem('token', token);
 
                     // JWT 디코딩
                     let payload = token.substring(
@@ -90,8 +90,8 @@ function Login() {
                     );
 
                     let dec = JSON.parse(base64.decode(payload));
-                    localStorage.setItem('auth', dec.auth);
-                    localStorage.setItem('memberIndex', dec.sub);
+                    sessionStorage.setItem('auth', dec.auth);
+                    sessionStorage.setItem('memberIndex', dec.sub);
                     getUserIndex();
                     if (dec.sub) {
                         navigate(`/space/${dec.sub}`);
@@ -107,12 +107,15 @@ function Login() {
                     `${process.env.REACT_APP_API_URL}/member/info/mine`,
                     {
                         headers: {
-                            token: localStorage.getItem('token'),
+                            token: sessionStorage.getItem('token'),
                         },
                     }
                 );
 
-                localStorage.setItem('nickname', response.data.memberNickname);
+                sessionStorage.setItem(
+                    'nickname',
+                    response.data.memberNickname
+                );
             } catch (error) {
                 console.log('회원정보 가져오기 실패', error);
             }
