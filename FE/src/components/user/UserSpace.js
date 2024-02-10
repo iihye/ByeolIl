@@ -1,15 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, useTexture } from "@react-three/drei";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { TextureLoader } from "three/src/loaders/TextureLoader";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
 import axios from "axios";
-import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { Link, useParams } from "react-router-dom";
-import StarRegist from "components/star/StarRegist";
-import StarDetail from "components/star/StarDetail";
-import { isDeleteAlertOpenState, isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from "components/atom";
+import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
 import { position } from "../../data";
 import ModalSpace from "components/ModalSpace";
 
@@ -103,7 +99,6 @@ function Star(props) {
 
   const stars = useRecoilValue(starsState);
 
-  const isStarModifyOpen = useRecoilState(isStarModifyOpenState);
   const isFriend = useRecoilValue(isFriendState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
@@ -140,6 +135,7 @@ function Star(props) {
       }
     }
   };
+
   return (
     <>
       <mesh ref={mesh} position={props.position}>
@@ -160,7 +156,10 @@ function StarSurround(props) {
       onClick={() => {
         props.handleClick(props.location);
       }}
-      onPointerEnter={() => setOpacity(0.14)}
+      onPointerEnter={(e) => {
+        e.stopPropagation();
+        setOpacity(0.14);
+      }}
       onPointerLeave={() => setOpacity(0)}
     >
       <sphereGeometry args={[0.8, 48, 48]} />
@@ -295,9 +294,6 @@ function SceneLights() {
       {/* 광원 */}
       <directionalLight position={[0, 0, 5]} intensity={2} />
       <ambientLight intensity={2} />
-
-      {/* 중심점 - 추후 삭제 */}
-      <Sphere size={[0.01, 16, 16]} position={[0.5, -7.8, -1]} color={"red"} />
     </>
   );
 }
@@ -306,8 +302,7 @@ function SceneEnvironment() {
   return (
     <>
       {/* 우주 배경 */}
-      <Sphere size={[40, 48, 48, 0, Math.PI * 2, 0, (Math.PI * 2) / 3]} position={[0, -4, 0]} color={"black"} type={"back"} />
-      {/* <Cube /> */}
+      <Sphere size={[60, 48, 48, 0, Math.PI * 2, 0, (Math.PI * 2) / 3]} position={[0, 0, 0]} color={"black"} type={"back"} />
 
       {/* 바닥면 */}
       <Sphere size={[2, 48, 48, 0, Math.PI * 2]} position={[0, -2.2, 0]} color={"orange"} />
@@ -387,7 +382,7 @@ function UserSpace() {
           <SceneStars />
           <SceneLights />
           <SceneEnvironment />
-          <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={false} />
+          <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
           <PerspectiveCamera makeDefault position={[-0.01, 0, 0.1]} fov={60} zoom={1} aspect={window.innerWidth / window.innerHeight} />
         </Canvas>
       </div>
