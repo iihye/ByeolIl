@@ -15,9 +15,9 @@ export default function LandingPage() {
 
     return (
         <div>
-            <div className="w-screen h-screen relative flex justify-center items-center">
+            <div className="relative flex justify-center items-center">
                 <div>
-                    <video autoPlay loop muted>
+                    <video autoPlay loop muted className="w-screen ">
                         <source src={video} type="video/mp4"></source>
                     </video>
                 </div>
