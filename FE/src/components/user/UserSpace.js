@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei";
 import * as THREE from "three";
 import axios from "axios";
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
@@ -86,7 +86,7 @@ function Line(props) {
   return (
     <>
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.2 : 0.04} />
+        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.0025} />
       </line>
     </>
   );
@@ -151,7 +151,7 @@ function Star(props) {
     <>
       <mesh ref={mesh} position={props.position}>
         <sphereGeometry args={props.size} />
-        <meshStandardMaterial color={curStarState ? colors[isFriend] : "grey"} />
+        <meshStandardMaterial color={curStarState ? colors[isFriend] : "grey"} opacity={curStarState ? 1 : 0.2} transparent={true} />
       </mesh>
       <StarSurround position={props.position} location={props.location} handleClick={handleClick} />
     </>
@@ -168,7 +168,7 @@ function StarSurround(props) {
         props.handleClick(e, props.location);
       }}
       onPointerEnter={(e) => {
-        setOpacity(0.5);
+        setOpacity(0.1);
       }}
       onPointerLeave={() => setOpacity(0)}
     >
@@ -317,7 +317,7 @@ function SceneLights() {
     <>
       {/* 광원 */}
       {/* <directionalLight position={[0, 0, 5]} intensity={2} /> */}
-      <ambientLight intensity={1} />
+      <ambientLight intensity={2} />
     </>
   );
 }
@@ -384,14 +384,15 @@ function UserSpace() {
     <div className="user-space relative">
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
         <Canvas>
-          {/* <EffectComposer>
-            <Bloom intensity={0.25} luminanceThreshold={0.9} kernelSize={KernelSize.VERY_LARGE} />
-          </EffectComposer> */}
+          <EffectComposer>
+            <Bloom intensity={0.3} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
+          </EffectComposer>
           <SceneStars />
           <SceneLights />
           <SceneEnvironment />
           <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
           <PerspectiveCamera makeDefault position={[-0.01, 0, 0.1]} fov={55} zoom={1} aspect={window.innerWidth / window.innerHeight} />
+          <Stats />
         </Canvas>
       </div>
       {userName && (
