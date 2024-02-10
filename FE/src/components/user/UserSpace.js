@@ -8,6 +8,8 @@ import { Link, useParams } from "react-router-dom";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
 import { position } from "../../data";
 import ModalSpace from "components/ModalSpace";
+import { Bloom, EffectComposer, Select, Selection, SelectiveBloom } from "@react-three/postprocessing";
+import { KernelSize } from "postprocessing";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
 const starRange = [];
@@ -46,6 +48,10 @@ const followerState = atom({
   default: [],
 });
 
+const starLineOpacityState = atom({
+  key: "starLineOpacity",
+  default: Array(24).fill(0.025),
+});
 ///////////////////////////////// ↑ atoms
 
 // isAddedStar : starLocation : starIndex
@@ -71,12 +77,16 @@ const constellationCheck = (starNum) => {
 };
 
 function Line(props) {
+  const starLineOpacity = useRecoilValue(starLineOpacityState);
+
+  const groupNum = props.groupNum;
+
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
   return (
     <>
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={0} />
+        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.1 : 0.04} />
       </line>
     </>
   );
@@ -157,12 +167,11 @@ function StarSurround(props) {
         props.handleClick(props.location);
       }}
       onPointerEnter={(e) => {
-        e.stopPropagation();
-        setOpacity(0.14);
+        setOpacity(0.01);
       }}
       onPointerLeave={() => setOpacity(0)}
     >
-      <sphereGeometry args={[0.8, 48, 48]} />
+      <sphereGeometry args={[0.6, 48, 48]} />
       <meshStandardMaterial transparent={true} opacity={opacity} />
     </mesh>
   );
@@ -170,9 +179,15 @@ function StarSurround(props) {
 
 function GroupStar(props) {
   const stars = useRecoilValue(starsState);
+
+  const setStarLineOpacityState = useSetRecoilState(starLineOpacityState);
+
   const [lineState, setLineState] = useState([]);
   const [lineColor, setLineColor] = useState(true);
+
   const group = useRef(null);
+
+  const groupNum = props.groupNum;
 
   // 작성한 별 목록 변경 시 별자리 체크
   useEffect(() => {
@@ -189,16 +204,24 @@ function GroupStar(props) {
 
   // 하늘 회전
   useFrame((state, delta) => {
-    group.current.rotation.y += delta / 220;
+    group.current.rotation.y += delta / 250;
   });
+
+  function handlePointerEnter() {
+    setStarLineOpacityState(groupNum);
+  }
+
+  function handlePointerLeave() {
+    setStarLineOpacityState(-1);
+  }
 
   return (
     <>
-      <group ref={group}>
+      <group ref={group} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
         {props.position.map((val, index) => (
           <Star key={index} size={[0.13, 32, 32]} positions={position} position={val.slice(1, 4)} location={val[0]} setLineColor={setLineColor} />
-        ))}
-        <Line points={lineState} lineColor={lineColor} />
+        ))}{" "}
+        <Line points={lineState} lineColor={lineColor} groupNum={groupNum} />
       </group>
     </>
   );
@@ -292,8 +315,8 @@ function SceneLights() {
   return (
     <>
       {/* 광원 */}
-      <directionalLight position={[0, 0, 5]} intensity={2} />
-      <ambientLight intensity={2} />
+      {/* <directionalLight position={[0, 0, 5]} intensity={2} /> */}
+      <ambientLight intensity={1} />
     </>
   );
 }
@@ -302,7 +325,7 @@ function SceneEnvironment() {
   return (
     <>
       {/* 우주 배경 */}
-      <Sphere size={[60, 48, 48, 0, Math.PI * 2, 0, (Math.PI * 2) / 3]} position={[0, 0, 0]} color={"black"} type={"back"} />
+      <Sphere size={[55, 48, 48, 0, Math.PI * 2, 0, (Math.PI * 3.5) / 5]} position={[0, -7, 0]} color={"black"} type={"back"} />
 
       {/* 바닥면 */}
       <Sphere size={[2, 48, 48, 0, Math.PI * 2]} position={[0, -2.2, 0]} color={"orange"} />
@@ -379,11 +402,14 @@ function UserSpace() {
     <div className="user-space relative">
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
         <Canvas>
+          {/* <EffectComposer>
+            <Bloom intensity={0.25} luminanceThreshold={0.2} kernelSize={KernelSize.VERY_LARGE} />
+          </EffectComposer> */}
           <SceneStars />
           <SceneLights />
           <SceneEnvironment />
           <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
-          <PerspectiveCamera makeDefault position={[-0.01, 0, 0.1]} fov={60} zoom={1} aspect={window.innerWidth / window.innerHeight} />
+          <PerspectiveCamera makeDefault position={[-0.01, 0, 0.1]} fov={55} zoom={1} aspect={window.innerWidth / window.innerHeight} />
         </Canvas>
       </div>
       {userName && (
