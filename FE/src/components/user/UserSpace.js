@@ -8,7 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
 import { position } from "../../data";
 import ModalSpace from "components/ModalSpace";
-import { Bloom, EffectComposer, Select, Selection, SelectiveBloom } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, Select, Selection, SelectiveBloom, ToneMapping } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
@@ -86,7 +86,7 @@ function Line(props) {
   return (
     <>
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.1 : 0.04} />
+        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.2 : 0.04} />
       </line>
     </>
   );
@@ -167,7 +167,7 @@ function StarSurround(props) {
         props.handleClick(props.location);
       }}
       onPointerEnter={(e) => {
-        setOpacity(0.01);
+        setOpacity(0.5);
       }}
       onPointerLeave={() => setOpacity(0)}
     >
@@ -403,7 +403,7 @@ function UserSpace() {
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
         <Canvas>
           {/* <EffectComposer>
-            <Bloom intensity={0.25} luminanceThreshold={0.2} kernelSize={KernelSize.VERY_LARGE} />
+            <Bloom intensity={0.25} luminanceThreshold={0.9} kernelSize={KernelSize.VERY_LARGE} />
           </EffectComposer> */}
           <SceneStars />
           <SceneLights />
