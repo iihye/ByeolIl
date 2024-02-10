@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    parameters{
+        string(name: 'NAME', defaultValue: 'react')
+    }
+
+    tools {
+        nodejs "Node20"
+    }
+
+    stages {
+        stage('React build'){
+            steps{
+                dir('FE'){
+                    echo 'React build...'
+                    sh 'npm install'
+                    sh 'CI=false npm run build'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend (color: 'good',
+                message: "Jenkins Success: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)"
+                )
+            }
+        }
+        failure {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend (color: 'danger',
+                message: "Jenkins Fail: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)"
+                )
+            }
+        }
+    }
+}
