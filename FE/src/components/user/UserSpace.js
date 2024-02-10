@@ -50,7 +50,7 @@ const followerState = atom({
 
 const starLineOpacityState = atom({
   key: "starLineOpacity",
-  default: Array(24).fill(0.025),
+  default: -1,
 });
 ///////////////////////////////// ↑ atoms
 
@@ -114,7 +114,7 @@ function Star(props) {
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
   const writerIndex = Number(params["user_id"]);
-  const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
+  const loginUserIndex = Number(JSON.parse(atob(sessionStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
   const colors = {
     true: "yellow",
     false: "red",
@@ -238,8 +238,8 @@ function SceneStars() {
 
   const params = useParams();
   const writerIndex = Number(params.user_id);
-  const loginUserId = Number(localStorage.getItem("memberIndex"));
-  const loginUserNickname = localStorage.getItem("nickname");
+  const loginUserId = Number(sessionStorage.getItem("memberIndex"));
+  const loginUserNickname = sessionStorage.getItem("nickname");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -248,7 +248,7 @@ function SceneStars() {
         await axios
           .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
             header: {
-              token: localStorage.getItem("token") ?? "",
+              token: sessionStorage.getItem("token") ?? "",
             },
             params: {
               page: curPage ?? 0,
@@ -338,8 +338,8 @@ function UserSpace() {
   const params = useParams();
   const userId = params.user_id;
 
-  const [loginToken, setLoginToken] = useState(localStorage.getItem("token"));
-  const [loginIndex, setLoginIndex] = useState(localStorage.getItem("memberIndex"));
+  const [loginToken, setLoginToken] = useState(sessionStorage.getItem("token"));
+  const [loginIndex, setLoginIndex] = useState(sessionStorage.getItem("memberIndex"));
   const [userName, setUserName] = useState(null);
   const [followState, setFollowState] = useState("");
 
@@ -379,25 +379,6 @@ function UserSpace() {
     setLoginToken(loginToken);
     setLoginIndex(loginIndex);
   }, [loginToken, loginIndex]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/member/search/list`, {
-          headers: {
-            token: loginToken,
-          },
-        });
-        const user = response.data.find((it) => it.memberIndex == userId);
-
-        if (user) setUserName(user.memberNickname);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchData();
-  }, [userId]);
 
   return (
     <div className="user-space relative">

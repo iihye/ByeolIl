@@ -30,16 +30,16 @@ function List() {
     const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
     const [memberIndex, setMemberIndex] = useState(
-        Number(localStorage.getItem('memberIndex'))
+        Number(sessionStorage.getItem('memberIndex'))
     );
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
     const navigate = useNavigate();
-    const token = localStorage.getItem('token') ?? '';
+    const token = sessionStorage.getItem('token') ?? '';
 
     useEffect(() => {
-        setMemberIndex(Number(localStorage.getItem('memberIndex')));
+        setMemberIndex(Number(sessionStorage.getItem('memberIndex')));
     }, [token]);
 
     const deleteStar = (boardIndex, memberIndex) => {

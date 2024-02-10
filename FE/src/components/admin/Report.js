@@ -28,7 +28,7 @@ function Report() {
     const [boardIndex, setBoardIndex] = useState([]); // 게시글에서 boardIndex만 뽑아옴
     const [reportModal, setReportModal] = useRecoilState(reportModalState); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     useEffect(() => {
         const fetchData = async () => {

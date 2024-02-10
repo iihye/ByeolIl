@@ -1,0 +1,112 @@
+pipeline {
+    agent any
+    
+    parameters{
+        string(name: 'NAME', defaultValue: 'springboot')
+    }
+
+    stages {
+        stage('SCM') {
+            steps {
+                sh "echo 'SCM...'"
+                checkout scm
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                dir('BE') {
+                    script{
+                        withSonarQubeEnv('sonarqube') {
+                            sh "echo 'SonarQube Analysis...'"
+                            sh "chmod +x gradlew"
+                            sh "./gradlew sonar"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('SonarQube Quality Gate') {
+            steps {
+                dir('BE') {
+                    sh "echo 'SonarQube Quality Gate...'"
+                    timeout(time: 1, unit: 'MINUTES') {
+                        script{
+                            def analysisStatus = waitForQualityGate('sonarqube')
+                            echo "Status: ${analysisStatus.status}"
+                            if (analysisStatus.status != 'OK') {
+                                echo "SonarQube Analysis Fail..."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Springboot build'){
+            steps{
+                dir('BE'){
+                    sh '''
+                    echo 'Springboot build...'
+                    chmod +x gradlew
+                    ./gradlew clean build
+                    '''
+                }
+            }
+        }
+
+        stage('Dockerimage build'){
+            steps {
+                dir('BE') {
+                    script {
+                        def containerExists = sh(script: "docker ps -a --format '{{.Names}}' | grep ${params.NAME}", returnStatus: true) == 0
+
+                        if (containerExists) {
+                            sh "docker stop ${params.NAME}"
+                            sh "docker rm ${params.NAME}"
+                        }
+
+                        sh '''
+                        echo 'Dockerimage build...'
+                        docker rmi docker-springboot:0.0.1
+                        docker build -t docker-springboot:0.0.1 .
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy'){
+            steps{
+                dir('BE'){
+                    sh '''
+                    echo 'Deploy BE...'
+                    docker run -d -p 8081:8080 --name springboot docker-springboot:0.0.1
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend (color: 'good',
+                message: "Jenkins Success: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)"
+                )
+            }
+        }
+        failure {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend (color: 'danger',
+                message: "Jenkins Fail: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)"
+                )
+            }
+        }
+    }
+}
