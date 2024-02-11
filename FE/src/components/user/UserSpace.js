@@ -385,7 +385,7 @@ function UserSpace() {
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
         <Canvas>
           <EffectComposer>
-            <Bloom intensity={0.3} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
+            <Bloom intensity={0.5} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
           </EffectComposer>
           <SceneStars />
           <SceneLights />
