@@ -15,7 +15,8 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { TiSpannerOutline } from "react-icons/ti";
 import { CgCloseR } from "react-icons/cg";
 import { IoMdSend } from "react-icons/io";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -41,7 +42,7 @@ function StarContent(props) {
   const replyInputRef = useRef();
 
   // properties
-  const loginUserIndex = Number(sessionStorage.getItem("memberIndex"));
+  const loginUserIndex = Number(localStorage.getItem("memberIndex"));
   const type = props.type;
   const reportInfo = props.reportInfo;
   const starIndex = props.starIndex;
@@ -50,11 +51,12 @@ function StarContent(props) {
 
   // 글 조회 / 수정시 내용 갱신
   useEffect(() => {
+    console.log("Fetch");
     const fetchData = async (starIndex) => {
       await axios
         .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
           headers: {
-            token: sessionStorage.getItem("token") ?? "",
+            token: localStorage.getItem("token") ?? "",
           },
         })
         .then((response) => {
@@ -134,7 +136,7 @@ function StarContent(props) {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/like`, data, {
         headers: {
-          token: sessionStorage.getItem("token"),
+          token: localStorage.getItem("token"),
         },
       });
 
@@ -157,7 +159,7 @@ function StarContent(props) {
     await axios
       .delete(`${process.env.REACT_APP_API_URL}/board/like`, {
         headers: {
-          token: sessionStorage.getItem("token"),
+          token: localStorage.getItem("token"),
         },
         data: data,
       })
@@ -188,11 +190,12 @@ function StarContent(props) {
 
   /* 로그인 체크 */
   const isLogin = () => {
-    return sessionStorage.getItem("token") ? true : false;
+    return localStorage.getItem("token") ? true : false;
   };
 
   return (
-    <>
+    <div className="flex items-center">
+      {data && data.boardMedia.length > 0 ? <MediaArea data={data} /> : null}
       <div className="star-content">
         {/* 최상단 */}
         <div className="star-content-top text-white-sub">
@@ -208,7 +211,6 @@ function StarContent(props) {
           </div>
         </div>
         <div className="star-content-content relative border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
-          <MediaArea data={data} />
           {/* 게시글 내용 */}
           {data ? data.boardContent : "로딩중"}
           <div className="absolute right-0 bottom-0 mr-2 mb-2 text-2xl duration-200 hover:text-4xl hover:text-whiteh hover:cursor-pointer">
@@ -217,54 +219,54 @@ function StarContent(props) {
         </div>
         <div>
           {/* 해시태그 */}
-          <div style={{ display: "flex" }}>{data ? data.hashContent.map((i, idx) => <div key={idx}>{i}</div>) : "로딩중"}</div>
+          <div className="flex text-white-sub gap-3 mt-2">{data ? data.hashContent.map((i, idx) => <div key={idx}># {i}</div>) : "로딩중"}</div>
         </div>
         {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
         <div>
           {/* 댓글 리스트 영역 */}
           <StarReplyList boardIndex={starIndex} />
         </div>
-      </div>
-      <div>
-        {/* 최하단 */}
-        {type === "star" ? (
-          <>
-            {/* 댓글 작성 영역 */}
-            {isLogin() && <ReplyRegistArea starIndex={starIndex} loginUserIndex={loginUserIndex} />}
-          </>
-        ) : null}
-        <div className="flex justify-between items-center text-2xl">
-          <div className="flex gap-1 items-center">
-            {type === "star" ? (
-              <>
-                <LikeButtons isLike={isLike} handleLike={handleLike} handleDislike={handleDislike} />
-                <ReportButton handleReport={handleReport} />
-                {isWriter() && (
-                  <>
-                    <DeleteButton handleDelete={handleDelete} />
-                    <ModifyButton handleModify={handleModify} />
-                  </>
-                )}
-              </>
-            ) : (
-              <button onClick={handleBlock}>차단</button>
-            )}
+        <div>
+          {/* 최하단 */}
+          {type === "star" ? (
+            <>
+              {/* 댓글 작성 영역 */}
+              {isLogin() && <ReplyRegistArea starIndex={starIndex} loginUserIndex={loginUserIndex} />}
+            </>
+          ) : null}
+          <div className="flex justify-between items-center text-2xl">
+            <div className="flex gap-1 items-center">
+              {type === "star" ? (
+                <>
+                  <LikeButtons isLike={isLike} handleLike={handleLike} handleDislike={handleDislike} />
+                  <ReportButton handleReport={handleReport} />
+                  {isWriter() && (
+                    <>
+                      <DeleteButton handleDelete={handleDelete} />
+                      <ModifyButton handleModify={handleModify} />
+                    </>
+                  )}
+                </>
+              ) : (
+                <button onClick={handleBlock}>차단</button>
+              )}
+            </div>
+            <CloseButton handleClose={handleClose} />
           </div>
-          <CloseButton handleClose={handleClose} />
         </div>
       </div>
       <div className="alert">
         {isDeleteAlertOpen && <StarDeleteAlert boardIndex={starIndex} userIndex={loginUserIndex} />}
         {isReportAlertOpen && <StarReportAlert boardIndex={starIndex} userIndex={loginUserIndex} />}
       </div>
-    </>
+    </div>
   );
 }
 
 function CloseButton(props) {
   const handleClose = props.handleClose;
   return (
-    <div className="text-white-sub hover:cursor-pointer text-3xl" onClick={handleClose}>
+    <div className="text-white-sub hover:cursor-pointer hover:text-white text-3xl" onClick={handleClose}>
       <CgCloseR />
     </div>
   );
@@ -272,7 +274,7 @@ function CloseButton(props) {
 function ModifyButton(props) {
   const handleModify = props.handleModify;
   return (
-    <div className="text-white-sub hover:cursor-pointer text-3xl" onClick={handleModify}>
+    <div className="text-white-sub hover:cursor-pointer hover:text-white text-3xl" onClick={handleModify}>
       <TiSpannerOutline />
     </div>
   );
@@ -373,7 +375,7 @@ function ReplyRegistArea(props) {
     await axios
       .post(`${process.env.REACT_APP_API_URL}/comment`, data, {
         header: {
-          token: sessionStorage.getItem("token"),
+          token: localStorage.getItem("token"),
         },
       })
       .then((response) => {
@@ -421,9 +423,9 @@ function RadioContent() {
   const navigate = useNavigate();
   const fetchData = async () => {
     await axios
-      .get(`${process.env.REACT_APP_API_URL}/radio/${sessionStorage.getItem("memberIndex")}`, {
+      .get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem("memberIndex")}`, {
         headers: {
-          token: sessionStorage.getItem("token") ?? "",
+          token: localStorage.getItem("token") ?? "",
         },
       })
       .then((response) => {
@@ -454,7 +456,7 @@ function RadioContent() {
         },
         {
           headers: {
-            token: sessionStorage.getItem("token") ?? "",
+            token: localStorage.getItem("token") ?? "",
           },
         }
       )
