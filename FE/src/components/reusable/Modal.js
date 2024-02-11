@@ -42,7 +42,7 @@ function StarContent(props) {
   const replyInputRef = useRef();
 
   // properties
-  const loginUserIndex = Number(localStorage.getItem("memberIndex"));
+  const loginUserIndex = Number(sessionStorage.getItem("memberIndex"));
   const type = props.type;
   const reportInfo = props.reportInfo;
   const starIndex = props.starIndex;
@@ -56,7 +56,7 @@ function StarContent(props) {
       await axios
         .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
           headers: {
-            token: localStorage.getItem("token") ?? "",
+            token: sessionStorage.getItem("token") ?? "",
           },
         })
         .then((response) => {
@@ -136,7 +136,7 @@ function StarContent(props) {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/like`, data, {
         headers: {
-          token: localStorage.getItem("token"),
+          token: sessionStorage.getItem("token"),
         },
       });
 
@@ -159,7 +159,7 @@ function StarContent(props) {
     await axios
       .delete(`${process.env.REACT_APP_API_URL}/board/like`, {
         headers: {
-          token: localStorage.getItem("token"),
+          token: sessionStorage.getItem("token"),
         },
         data: data,
       })
@@ -190,7 +190,7 @@ function StarContent(props) {
 
   /* 로그인 체크 */
   const isLogin = () => {
-    return localStorage.getItem("token") ? true : false;
+    return sessionStorage.getItem("token") ? true : false;
   };
 
   return (
@@ -375,7 +375,7 @@ function ReplyRegistArea(props) {
     await axios
       .post(`${process.env.REACT_APP_API_URL}/comment`, data, {
         header: {
-          token: localStorage.getItem("token"),
+          token: sessionStorage.getItem("token"),
         },
       })
       .then((response) => {
@@ -423,9 +423,9 @@ function RadioContent() {
   const navigate = useNavigate();
   const fetchData = async () => {
     await axios
-      .get(`${process.env.REACT_APP_API_URL}/radio/${localStorage.getItem("memberIndex")}`, {
+      .get(`${process.env.REACT_APP_API_URL}/radio/${sessionStorage.getItem("memberIndex")}`, {
         headers: {
-          token: localStorage.getItem("token") ?? "",
+          token: sessionStorage.getItem("token") ?? "",
         },
       })
       .then((response) => {
@@ -456,7 +456,7 @@ function RadioContent() {
         },
         {
           headers: {
-            token: localStorage.getItem("token") ?? "",
+            token: sessionStorage.getItem("token") ?? "",
           },
         }
       )
