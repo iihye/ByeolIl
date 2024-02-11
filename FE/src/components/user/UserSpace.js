@@ -6,7 +6,7 @@ import axios from "axios";
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { Link, useParams } from "react-router-dom";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
-import { position } from "../../data";
+import { position, linePosition } from "../../data";
 import ModalSpace from "components/ModalSpace";
 import { Bloom, EffectComposer, Select, Selection, SelectiveBloom, ToneMapping } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
