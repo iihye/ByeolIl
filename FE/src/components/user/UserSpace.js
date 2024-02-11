@@ -199,9 +199,9 @@ function GroupStar(props) {
   }, [stars]);
 
   // 별자리 긋는 선들의 꼭짓점 정의
-  useEffect(() => {
-    setLineState(props.position.map((val) => new THREE.Vector3(...val.slice(1, 4))));
-  }, []);
+  // useEffect(() => {
+  //   setLineState(props.position.map((val) => new THREE.Vector3(...val.slice(1, 4))));
+  // }, []);
 
   // 하늘 회전
   useFrame((state, delta) => {
@@ -215,14 +215,18 @@ function GroupStar(props) {
   function handlePointerLeave() {
     setStarLineOpacityState(-1);
   }
-
+  console.log(props.position);
   return (
     <>
       <group ref={group} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
         {props.position.map((val, index) => (
           <Star key={index} size={[0.13, 32, 32]} positions={position} position={val.slice(1, 4)} location={val[0]} setLineColor={setLineColor} />
-        ))}{" "}
-        <Line points={lineState} lineColor={lineColor} groupNum={groupNum} />
+        ))}
+        {linePosition[groupNum].map((it) => {
+          const pos = it.map((it) => new THREE.Vector3(...it));
+          return <Line points={pos} lineColor={lineColor} groupNum={groupNum} />;
+        })}
+        {/* <Line points={lineState} lineColor={lineColor} groupNum={groupNum} /> */}
       </group>
     </>
   );
