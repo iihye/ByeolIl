@@ -194,7 +194,7 @@ function GroupStar(props) {
   const position = props.position;
   const groupNum = props.groupNum;
 
-  const startStarNum = position[0][0];
+  let startStarNum = position[0][0];
   const lastStarNum = position[position.length - 1][0];
 
   // 황소자리, 페가수스 자리의 경우는 다른 별자리의 별과 이어지므로 startStartNum -1 처리
