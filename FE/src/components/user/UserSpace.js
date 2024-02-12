@@ -125,6 +125,8 @@ function Star(props) {
 
     if (isAddedStar.get(props.location)) {
       constellationCheck.update(1, 0, lastStarIndex, props.location, true);
+    } else {
+      constellationCheck.update(1, 0, lastStarIndex, props.location, false);
     }
   }, [stars]);
 
@@ -195,11 +197,18 @@ function GroupStar(props) {
   const startStarNum = position[0][0];
   const lastStarNum = position[position.length - 1][0];
 
+  // 황소자리, 페가수스 자리의 경우는 다른 별자리의 별과 이어지므로 startStartNum -1 처리
+  if (groupNum === 12 || groupNum === 14) {
+    startStarNum--;
+  }
+
   // 작성한 별 목록 변경 시 별자리 체크
   useEffect(() => {
     const check = constellationCheck.query(1, 0, lastStarIndex, startStarNum, lastStarNum);
     if (check) {
       setLineColor(false);
+    } else if (!check) {
+      setLineColor(true);
     }
   }, [stars]);
 
