@@ -402,24 +402,30 @@ const DateArea = forwardRef((props, ref) => {
 
 const AccessRangeArea = forwardRef((props, ref) => {
   const setAccessReange = useSetRecoilState(accessRangeState);
-  const [isOptionVisible, setIsOptionVisible] = useState(false);
+
+  const [selectedRange, setSelectedRange] = useState(0);
+
+  const displayRef = useRef();
+
+  const accessRangeArr = ["전체 공개", "친구 공개", "비공개"];
+  const accessRangeValueArr = ["OPEN", "PARTOPEN", "NOOPEN"];
+
+  useEffect(() => {
+    // displayRef.current.classList.remove("animate-fade-in");
+    // displayRef.current.classList.add("animate-fade-in");
+  }, [selectedRange]);
+
   return (
     <div
-      className="text-white-sub  hover:cursor-pointer relative"
-      onPointerEnter={() => {
-        setIsOptionVisible(true);
+      className="text-white-sub  hover:cursor-pointer relative w-20 text-center"
+      onClick={() => {
+        setSelectedRange((selectedRange + 1) % 3);
+        setAccessReange(accessRangeValueArr[(selectedRange + 1) % 3]);
       }}
     >
-      <div className="border border-white-sub p-1 rounded-lg">
-        <div>전체 공개</div>
+      <div className="border border-white-sub p-1 rounded-lg ">
+        {accessRangeArr.map((it, index) => (selectedRange === index ? <div className="animate-fade-in">{it}</div> : null))}
       </div>
-      {isOptionVisible && (
-        <ul>
-          <li>전체 공개</li>
-          <li>친구 공개</li>
-          <li>비공개</li>
-        </ul>
-      )}
     </div>
   );
 });
