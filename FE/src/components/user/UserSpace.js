@@ -204,9 +204,9 @@ function GroupStar(props) {
   // }, []);
 
   // 하늘 회전
-  useFrame((state, delta) => {
-    group.current.rotation.y += delta / 250;
-  });
+  // useFrame((state, delta) => {
+  //   group.current.rotation.y += delta / 250;
+  // });
 
   function handlePointerEnter() {
     setStarLineOpacityState(groupNum);
