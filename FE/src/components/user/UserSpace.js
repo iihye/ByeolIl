@@ -413,7 +413,7 @@ function UserSpace() {
           {userId !== loginIndex && <button onClick={() => handleFollow(followState)}>{followState}</button>}
         </>
       )}
-      <ModalSpace />
+      {/* <ModalSpace /> */}
       <Link to={`/space/${localStorage.getItem("memberIndex")}/radio`}>
         <button className="absolute bottom-2 left-2">라디오</button>
       </Link>
