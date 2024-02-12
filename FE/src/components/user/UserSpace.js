@@ -125,6 +125,8 @@ function Star(props) {
 
     if (isAddedStar.get(props.location)) {
       constellationCheck.update(1, 0, lastStarIndex, props.location, true);
+    } else {
+      constellationCheck.update(1, 0, lastStarIndex, props.location, false);
     }
   }, [stars]);
 
@@ -200,6 +202,8 @@ function GroupStar(props) {
     const check = constellationCheck.query(1, 0, lastStarIndex, startStarNum, lastStarNum);
     if (check) {
       setLineColor(false);
+    } else if (!check) {
+      setLineColor(true);
     }
   }, [stars]);
 
