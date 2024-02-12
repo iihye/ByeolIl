@@ -39,7 +39,7 @@ function App() {
                 <Route path="/regist/kakao" element={<KakaoRegist />}></Route>
                 <Route path="/login/kakao" element={<KakaoLogin />}></Route>
                 <Route path="/landing" element={<LandingPage />}>
-                    <Route exact path="login" element={<Login />}></Route>
+                    <Route path="login" element={<Login />}></Route>
                     <Route path="regist" element={<Regist />}></Route>
                     <Route path="findId" element={<FindID />} />
                     <Route path="findPw" element={<FindPW />} />
@@ -55,8 +55,8 @@ function App() {
                     <Route path="settings" element={<Settings />}></Route>
                     <Route path="report" element={<Report />}></Route>
                     <Route path="radio" element={<Radio />} />
-                    <Route path="*" element={<ErrorPage />} />
                 </Route>
+                <Route path="*" element={<ErrorPage />} />
             </Routes>
         </div>
     );

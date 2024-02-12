@@ -1,19 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { RecoilRoot } from "recoil";
-import { BrowserRouter } from "react-router-dom";
-import reportWebVitals from "./reportWebVitals";
-import "./axiosConfig";
-import "./index.css";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { RecoilRoot } from 'recoil';
+import { BrowserRouter } from 'react-router-dom';
+import reportWebVitals from './reportWebVitals';
+import AxiosInterceptor from './axiosConfig';
+import './index.css';
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <RecoilRoot>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </RecoilRoot>
+    <RecoilRoot>
+        <BrowserRouter>
+            <AxiosInterceptor />
+            <App />
+        </BrowserRouter>
+    </RecoilRoot>
 );
 
 // If you want to start measuring performance in your app, pass a function

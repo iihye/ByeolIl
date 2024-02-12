@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FaUserCircle } from 'react-icons/fa';
 import SearchBar from '../reusable/SearchBar';
-import { filterState, resetFilterState } from 'components/atom';
+import { filterState } from 'components/atom';
 import { PiShootingStarLight } from 'react-icons/pi';
 import { TbHomeMove } from 'react-icons/tb';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,6 +17,7 @@ function FindUser() {
     const userToken = sessionStorage.getItem('token') ?? '';
     const resetList = useResetRecoilState(filterState);
     const navigate = useNavigate();
+    const isEmpty = false;
 
     // API로 유저 전체 리스트를 받아와서 listData 상태 변경
     useEffect(() => {
@@ -34,7 +35,7 @@ function FindUser() {
                     resetList();
                     setListData(response.data);
                 })
-                .catch((e) => console.log(e.response));
+                .catch((e) => e.response.status == 400 ?? (isEmpty = true));
         };
         fetchData();
     }, []);
@@ -78,7 +79,9 @@ function FindUser() {
                     </div>
                     <ScrollArea className=" h-96 overflow-auto mx-7 w-80 my-3">
                         <div className="userList">
-                            {filterData &&
+                            {filterData.length === 0 || isEmpty === true ? (
+                                <div>데이터가 없습니다</div>
+                            ) : (
                                 filterData.map((it) => (
                                     <li
                                         key={it.memberIndex}
@@ -95,7 +98,8 @@ function FindUser() {
                                             </TbHomeMove>
                                         </Link>
                                     </li>
-                                ))}
+                                ))
+                            )}
                         </div>
                     </ScrollArea>
                 </CardContent>
