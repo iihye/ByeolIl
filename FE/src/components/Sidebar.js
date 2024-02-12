@@ -5,9 +5,6 @@ import { useVideoTexture } from '@react-three/drei';
 import { IoMdMenu } from 'react-icons/io';
 
 function SidebarList(props) {
-    const [memberIndex, setMemberIndex] = useState(
-        sessionStorage.getItem('memberIndex')
-    );
     const [items, setItems] = useState([]);
     const isAdmin = sessionStorage.getItem('auth');
 
@@ -22,23 +19,34 @@ function SidebarList(props) {
     };
 
     useEffect(() => {
-        setMemberIndex(memberIndex);
         setItems([
-            { name: '회원정보수정', path: `/space/${memberIndex}/editInfo` },
-            { name: '나의 별 목록', path: `/space/${memberIndex}/starMine` },
+            {
+                name: '회원정보수정',
+                path: `/space/${props.memberIndex}/editInfo`,
+            },
+            {
+                name: '나의 별 목록',
+                path: `/space/${props.memberIndex}/starMine`,
+            },
             {
                 name: '좋아하는 별 목록',
-                path: `/space/${memberIndex}/starFavor`,
+                path: `/space/${props.memberIndex}/starFavor`,
             },
             {
                 name: '팔로우/팔로워 목록',
-                path: `/space/${memberIndex}/follow`,
+                path: `/space/${props.memberIndex}/follow`,
             },
-            { name: '다른 우주 찾기', path: `/space/${memberIndex}/findUser` },
-            { name: '태그로 별 찾기', path: `/space/${memberIndex}/tagSearch` },
-            { name: '환경설정', path: `/space/${memberIndex}/settings` },
+            {
+                name: '다른 우주 찾기',
+                path: `/space/${props.memberIndex}/findUser`,
+            },
+            {
+                name: '태그로 별 찾기',
+                path: `/space/${props.memberIndex}/tagSearch`,
+            },
+            { name: '환경설정', path: `/space/${props.memberIndex}/settings` },
         ]);
-    }, [memberIndex]);
+    }, []);
 
     useEffect(() => {
         if (isAdmin == 'ROLE_ADMIN')
@@ -46,7 +54,7 @@ function SidebarList(props) {
                 ...prevItems,
                 { name: '신고관리', path: `/space/admin/report` },
             ]);
-    }, []);
+    }, [props.memberIndex]);
 
     return (
         <div className="sidebarList bg-modal-bg text-white-sub p-2 rounded-xl">
@@ -68,6 +76,9 @@ function SidebarList(props) {
 
 export default function Sidebar() {
     const [viewSideBar, setViewSideBar] = useState(false);
+    const [memberIndex, setMemberIndex] = useState(
+        sessionStorage.getItem('memberIndex')
+    );
     const [name, setName] = useState('');
 
     useEffect(() => {
@@ -82,7 +93,7 @@ export default function Sidebar() {
             }
         };
         fetchData();
-    });
+    }, [memberIndex]);
 
     return (
         <div className="Sidebar">
@@ -94,7 +105,11 @@ export default function Sidebar() {
                 =
             </button>
             <div className="absolute top-10 right-0">
-                {viewSideBar ? <SidebarList name={name} /> : <div />}
+                {viewSideBar ? (
+                    <SidebarList name={name} memberIndex={memberIndex} />
+                ) : (
+                    <div />
+                )}
             </div>
         </div>
     );
