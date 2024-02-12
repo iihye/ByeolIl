@@ -84,7 +84,7 @@ function Line(props) {
   return (
     <>
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.0025} color={0xced6ff} />
+        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.005} color={0xced6ff} />
       </line>
     </>
   );
