@@ -1,24 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, useTexture } from "@react-three/drei";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { TextureLoader } from "three/src/loaders/TextureLoader";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei";
 import * as THREE from "three";
 import axios from "axios";
-import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { Link, useParams } from "react-router-dom";
-import StarRegist from "components/star/StarRegist";
-import StarDetail from "components/star/StarDetail";
-import { isDeleteAlertOpenState, isStarDetailOpenState, isStarModifyOpenState, isStarRegistOpenState } from "components/atom";
-import { position } from "../../data";
+import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
+import { position, linePosition, lastStarIndex } from "../../data";
 import ModalSpace from "components/ModalSpace";
+import { Bloom, EffectComposer, Select, Selection, SelectiveBloom, ToneMapping } from "@react-three/postprocessing";
+import { KernelSize } from "postprocessing";
+import { constellationCheck } from "util";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
 const starRange = [];
 position.forEach((element, index) => starRange.push([element[0][0], element[element.length - 1][0]]));
-
-// 페이지 내 존재하는 별 개수
-const totalStarCount = position[position.length - 1][position[position.length - 1].length - 1][0] + 1;
 
 ///////////////////////////////// ↓ atoms
 
@@ -50,37 +46,45 @@ const followerState = atom({
   default: [],
 });
 
+const starLineOpacityState = atom({
+  key: "starLineOpacity",
+  default: -1,
+});
 ///////////////////////////////// ↑ atoms
 
 // isAddedStar : starLocation : starIndex
 const isAddedStar = new Map();
 
 // 별자리 이어짐 체크
-const constellationCheck = (starNum) => {
-  let res = true;
+// const constellationCheck = (starNum) => {
+//   let res = true;
 
-  outer: for (let i = 0; i < starRange.length; i++) {
-    if (starRange[i][1] >= starNum) {
-      for (let j = starRange[i][0]; j <= starRange[i][1]; j++) {
-        if (!isAddedStar.has(j)) {
-          res = false;
-          break outer;
-        }
-      }
-      break;
-    }
-  }
+//   outer: for (let i = 0; i < starRange.length; i++) {
+//     if (starRange[i][1] >= starNum) {
+//       for (let j = starRange[i][0]; j <= starRange[i][1]; j++) {
+//         if (!isAddedStar.has(j)) {
+//           res = false;
+//           break outer;
+//         }
+//       }
+//       break;
+//     }
+//   }
 
-  return res;
-};
+//   return res;
+// };
 
 function Line(props) {
+  const starLineOpacity = useRecoilValue(starLineOpacityState);
+
+  const groupNum = props.groupNum;
+
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
   return (
     <>
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={0} />
+        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.0025} color={0xced6ff} />
       </line>
     </>
   );
@@ -103,13 +107,12 @@ function Star(props) {
 
   const stars = useRecoilValue(starsState);
 
-  const isStarModifyOpen = useRecoilState(isStarModifyOpenState);
   const isFriend = useRecoilValue(isFriendState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
   const writerIndex = Number(params["user_id"]);
-  const loginUserIndex = Number(JSON.parse(atob(localStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
+  const loginUserIndex = Number(JSON.parse(atob(sessionStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
   const colors = {
     true: "yellow",
     false: "red",
@@ -119,9 +122,16 @@ function Star(props) {
 
   useEffect(() => {
     setCurStarState(isAddedStar.get(props.location));
+
+    if (isAddedStar.get(props.location)) {
+      constellationCheck.update(1, 0, lastStarIndex, props.location, true);
+    } else {
+      constellationCheck.update(1, 0, lastStarIndex, props.location, false);
+    }
   }, [stars]);
 
-  const handleClick = (locationNum) => {
+  const handleClick = (e, locationNum) => {
+    e.stopPropagation();
     console.log(locationNum);
     const starIndex = isAddedStar.get(locationNum) ? isAddedStar.get(locationNum).boardIndex : null;
     if (starIndex) {
@@ -140,11 +150,12 @@ function Star(props) {
       }
     }
   };
+
   return (
     <>
       <mesh ref={mesh} position={props.position}>
         <sphereGeometry args={props.size} />
-        <meshStandardMaterial color={curStarState ? colors[isFriend] : "grey"} />
+        <meshStandardMaterial color={curStarState ? colors[isFriend] : "grey"} opacity={curStarState ? 1 : 0.2} transparent={true} />
       </mesh>
       <StarSurround position={props.position} location={props.location} handleClick={handleClick} />
     </>
@@ -157,13 +168,15 @@ function StarSurround(props) {
   return (
     <mesh
       position={props.position}
-      onClick={() => {
-        props.handleClick(props.location);
+      onClick={(e) => {
+        props.handleClick(e, props.location);
       }}
-      onPointerEnter={() => setOpacity(0.14)}
+      onPointerEnter={(e) => {
+        setOpacity(0.1);
+      }}
       onPointerLeave={() => setOpacity(0)}
     >
-      <sphereGeometry args={[0.8, 48, 48]} />
+      <sphereGeometry args={[0.6, 48, 48]} />
       <meshStandardMaterial transparent={true} opacity={opacity} />
     </mesh>
   );
@@ -171,35 +184,52 @@ function StarSurround(props) {
 
 function GroupStar(props) {
   const stars = useRecoilValue(starsState);
-  const [lineState, setLineState] = useState([]);
+
+  const setStarLineOpacityState = useSetRecoilState(starLineOpacityState);
+
   const [lineColor, setLineColor] = useState(true);
+
   const group = useRef(null);
+
+  const position = props.position;
+  const groupNum = props.groupNum;
+
+  const startStarNum = position[0][0];
+  const lastStarNum = position[position.length - 1][0];
 
   // 작성한 별 목록 변경 시 별자리 체크
   useEffect(() => {
-    const lastStarOfThisGroup = props.position[props.position.length - 1][0];
-    if (constellationCheck(lastStarOfThisGroup)) {
+    const check = constellationCheck.query(1, 0, lastStarIndex, startStarNum, lastStarNum);
+    if (check) {
       setLineColor(false);
+    } else if (!check) {
+      setLineColor(true);
     }
   }, [stars]);
 
-  // 별자리 긋는 선들의 꼭짓점 정의
-  useEffect(() => {
-    setLineState(props.position.map((val) => new THREE.Vector3(...val.slice(1, 4))));
-  }, []);
-
   // 하늘 회전
   useFrame((state, delta) => {
-    group.current.rotation.y += delta / 220;
+    group.current.rotation.y += delta / 250;
   });
+
+  function handlePointerEnter() {
+    setStarLineOpacityState(groupNum);
+  }
+
+  function handlePointerLeave() {
+    setStarLineOpacityState(-1);
+  }
 
   return (
     <>
-      <group ref={group}>
+      <group ref={group} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
         {props.position.map((val, index) => (
           <Star key={index} size={[0.13, 32, 32]} positions={position} position={val.slice(1, 4)} location={val[0]} setLineColor={setLineColor} />
         ))}
-        <Line points={lineState} lineColor={lineColor} />
+        {linePosition[groupNum].map((it, index) => {
+          const pos = it.map((it) => new THREE.Vector3(...it));
+          return <Line key={index} points={pos} lineColor={lineColor} groupNum={groupNum} />;
+        })}
       </group>
     </>
   );
@@ -215,8 +245,8 @@ function SceneStars() {
 
   const params = useParams();
   const writerIndex = Number(params.user_id);
-  const loginUserId = Number(localStorage.getItem("memberIndex"));
-  const loginUserNickname = localStorage.getItem("nickname");
+  const loginUserId = Number(sessionStorage.getItem("memberIndex"));
+  const loginUserNickname = sessionStorage.getItem("nickname");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -225,7 +255,7 @@ function SceneStars() {
         await axios
           .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
             header: {
-              token: localStorage.getItem("token") ?? "",
+              token: sessionStorage.getItem("token") ?? "",
             },
             params: {
               page: curPage ?? 0,
@@ -293,11 +323,8 @@ function SceneLights() {
   return (
     <>
       {/* 광원 */}
-      <directionalLight position={[0, 0, 5]} intensity={2} />
+      {/* <directionalLight position={[0, 0, 5]} intensity={2} /> */}
       <ambientLight intensity={2} />
-
-      {/* 중심점 - 추후 삭제 */}
-      <Sphere size={[0.01, 16, 16]} position={[0.5, -7.8, -1]} color={"red"} />
     </>
   );
 }
@@ -306,8 +333,7 @@ function SceneEnvironment() {
   return (
     <>
       {/* 우주 배경 */}
-      <Sphere size={[40, 48, 48, 0, Math.PI * 2, 0, (Math.PI * 2) / 3]} position={[0, -4, 0]} color={"black"} type={"back"} />
-      {/* <Cube /> */}
+      <Sphere size={[55, 48, 48, 0, Math.PI * 2, 0, (Math.PI * 3.5) / 5]} position={[0, -7, 0]} color={"black"} type={"back"} />
 
       {/* 바닥면 */}
       <Sphere size={[2, 48, 48, 0, Math.PI * 2]} position={[0, -2.2, 0]} color={"orange"} />
@@ -319,8 +345,8 @@ function UserSpace() {
   const params = useParams();
   const userId = params.user_id;
 
-  const [loginToken, setLoginToken] = useState(localStorage.getItem("token"));
-  const [loginIndex, setLoginIndex] = useState(localStorage.getItem("memberIndex"));
+  const [loginToken, setLoginToken] = useState(sessionStorage.getItem("token"));
+  const [loginIndex, setLoginIndex] = useState(sessionStorage.getItem("memberIndex"));
   const [userName, setUserName] = useState(null);
   const [followState, setFollowState] = useState("");
 
@@ -361,34 +387,19 @@ function UserSpace() {
     setLoginIndex(loginIndex);
   }, [loginToken, loginIndex]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/member/search/list`, {
-          headers: {
-            token: loginToken,
-          },
-        });
-        const user = response.data.find((it) => it.memberIndex == userId);
-
-        if (user) setUserName(user.memberNickname);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchData();
-  }, [userId]);
-
   return (
     <div className="user-space relative">
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
         <Canvas>
+          <EffectComposer>
+            <Bloom intensity={0.5} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
+          </EffectComposer>
           <SceneStars />
           <SceneLights />
           <SceneEnvironment />
-          <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={false} />
-          <PerspectiveCamera makeDefault position={[-0.01, 0, 0.1]} fov={60} zoom={1} aspect={window.innerWidth / window.innerHeight} />
+          <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
+          <PerspectiveCamera makeDefault position={[-0.01, 0, 0.1]} fov={55} zoom={1} aspect={window.innerWidth / window.innerHeight} />
+          <Stats />
         </Canvas>
       </div>
       {userName && (

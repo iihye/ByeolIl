@@ -2,7 +2,7 @@ import axios from 'axios';
 
 axios.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (token) {
             config.headers['Authorization'] = `${token}`;
         }
@@ -10,6 +10,22 @@ axios.interceptors.request.use(
     },
     (error) => {
         return Promise.reject(error);
+    }
+);
+
+axios.interceptors.response.use(
+    (response) => {
+        const token = response.data.accessToken;
+        if (token) {
+            sessionStorage.setItem('token', token);
+        }
+        return response;
+    },
+    async (error) => {
+        if (error.response.status === 400 && error.response.data.message) {
+            alert(error.response.data.message);
+            return error.response;
+        }
     }
 );
 

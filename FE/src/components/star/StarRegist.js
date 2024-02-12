@@ -14,6 +14,11 @@ const fileListState = atom({
   default: [],
 });
 
+const accessRangeState = atom({
+  key: "accessRange",
+  default: "OPEN",
+});
+
 function StarRegist(props) {
   const curPage = useRecoilValue(curPageState);
   const setStars = useSetRecoilState(starsState);
@@ -67,7 +72,7 @@ function StarRegist(props) {
     };
   }, []);
 
-  const handleRegist = async (fileList) => {
+  const handleRegist = async (fileList, accessRange) => {
     if (contentRef.current.value.trim() === "") {
       alert("공백 입력했어요");
       return;
@@ -93,19 +98,21 @@ function StarRegist(props) {
         boardInputDate: dateRef.current.innerText,
         mediaContent: [],
         boardLocation: location,
-        boardAccess: accessRangeRef.current.value,
+        boardAccess: accessRange,
         boardDeleteYN: "N",
         hashContent: hashContent,
       };
 
       const dataDto = JSON.stringify(data);
-      let requestDtoBlob = new Blob([dataDto], { type: "application/json" });
+      let requestDtoBlob = new Blob([dataDto], {
+        type: "application/json",
+      });
 
       formData.append("requestDto", requestDtoBlob);
       try {
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/board`, formData, {
           header: {
-            token: localStorage.getItem("token"),
+            token: sessionStorage.getItem("token"),
             "Content-Type": "multipart/form-data",
           },
         });
@@ -115,7 +122,7 @@ function StarRegist(props) {
 
           const res = await axios.get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
             header: {
-              token: localStorage.getItem("token") ?? "",
+              token: sessionStorage.getItem("token") ?? "",
             },
             params: {
               page: curPage ?? 0,
@@ -139,14 +146,14 @@ function StarRegist(props) {
         boardInputDate: dateRef.current.innerText,
         boardContent: contentRef.current.value,
         boardMedia: ["새 이미지 경로1", "새 이미지 경로2"],
-        boardAccess: accessRangeRef.current.value,
+        boardAccess: accessRange,
       };
 
       try {
         await axios
           .put(`${process.env.REACT_APP_API_URL}/board`, data, {
             headers: {
-              token: localStorage.getItem("token"),
+              token: sessionStorage.getItem("token"),
             },
           })
           .then((response) => {
@@ -178,7 +185,11 @@ function StarRegist(props) {
             <DateArea ref={dateRef} type={type} />
             <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
           </div>
-          <textarea className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub" ref={contentRef} placeholder="일기 내용을 입력해주세요." />
+          <textarea
+            className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub"
+            ref={contentRef}
+            placeholder="일기 내용을 입력해주세요."
+          />
         </div>
         {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
         <div className="relative">
@@ -192,6 +203,7 @@ function StarRegist(props) {
 
 function Buttons(props) {
   const fileList = useRecoilValue(fileListState);
+  const accessRange = useRecoilValue(accessRangeState);
 
   const buttonValue = props.buttonValue;
   const type = props.type;
@@ -203,7 +215,7 @@ function Buttons(props) {
       <button
         className="h-8 w-14 px-2 shadow-md"
         onClick={() => {
-          handleRegist(fileList);
+          handleRegist(fileList, accessRange);
         }}
       >
         {buttonValue[type]}
@@ -304,7 +316,12 @@ const FileUploadArea = forwardRef((props, ref) => {
           <div className="ml-1">파일 첨부</div>
         </label>
       </div>
-      <div className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center hover:cursor-pointer" onDragOver={handleDragOver} onDrop={handleDrop} onClick={handleClick}>
+      <div
+        className="mt-3 border border-dashed text-white-sub h-40 flex justify-center items-center text-center hover:cursor-pointer"
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onClick={handleClick}
+      >
         {fileList.length === 0 ? (
           <div className="hover:text-white">
             <FaFileImage className="w-full text-5xl" />
@@ -377,23 +394,32 @@ const DateArea = forwardRef((props, ref) => {
         </div>
       </div>
       {isCalendarOpen && (
-        <>
-          <div className="fixed top-0 left-0 bg-modal-outside w-full h-full z-10" onClick={handleCalander}></div>
-          <Calendar className={"absolute p-1 top-10 bg-alert-bg border border-white-sub rounded z-10"} mode="single" selected={date} onSelect={setDate} />
-        </>
+        <Calendar className={"absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"} mode="single" selected={date} onSelect={setDate} />
       )}
     </div>
   );
 });
 
 const AccessRangeArea = forwardRef((props, ref) => {
+  const setAccessReange = useSetRecoilState(accessRangeState);
+  const [isOptionVisible, setIsOptionVisible] = useState(false);
   return (
-    <div>
-      <select name="access" ref={ref} defaultValue={props.preBoard && props.preBoard.boardAccess}>
-        <option value="OPEN">전체 공개</option>
-        <option value="PARTOPEN">친구 공개</option>
-        <option value="NOOPEN">비공개</option>
-      </select>
+    <div
+      className="text-white-sub  hover:cursor-pointer relative"
+      onPointerEnter={() => {
+        setIsOptionVisible(true);
+      }}
+    >
+      <div className="border border-white-sub p-1 rounded-lg">
+        <div>전체 공개</div>
+      </div>
+      {isOptionVisible && (
+        <ul>
+          <li>전체 공개</li>
+          <li>친구 공개</li>
+          <li>비공개</li>
+        </ul>
+      )}
     </div>
   );
 });
@@ -448,7 +474,11 @@ const HashtagArea = (props) => {
     <>
       <div className="flex items-center flex-wrap mb-2">
         {hashtagList.map((it, index) => (
-          <div className="text-white-sub mr-3 hover:text-white hover:cursor-pointer flex items-center h-6" key={index} onClick={() => handleRemoveHashtag(it, index)}>
+          <div
+            className="text-white-sub mr-3 hover:text-white hover:cursor-pointer flex items-center h-6"
+            key={index}
+            onClick={() => handleRemoveHashtag(it, index)}
+          >
             <span className="mr-1">#</span>
             <span>{it}</span>
           </div>

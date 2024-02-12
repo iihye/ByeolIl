@@ -95,10 +95,15 @@ module.exports = {
         button: "2.375rem",
         login: "31.625rem",
         searchBar: "2.5rem",
+        pic: "32rem",
+      },
+      maxHeight: {
+        pic: "32rem",
       },
       width: {
         cardContainer: "59.188rem",
         searchBar: "25rem",
+        pic: "32rem",
       },
       keyframes: {
         "accordion-down": {

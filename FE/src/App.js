@@ -20,16 +20,20 @@ import Radio from "components/radio/Radio";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import LandingPage from "pages/LandingPage";
 import { useEffect } from "react";
+import { RecoilEnv } from "recoil";
 
 function App() {
+  RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
   // 로그인 ? mainpage : landingpage
   const navigate = useNavigate();
   const rendering = () => {
-    localStorage.getItem("token") ? navigate(`/space/${localStorage.getItem("memberIndex")}`) : navigate("/landing");
+    sessionStorage.getItem("token") ? navigate(`/space/${sessionStorage.getItem("memberIndex")}`) : navigate("/landing");
   };
+
   useEffect(() => {
     rendering();
   }, []);
+
   return (
     <div className="App">
       <Header />
