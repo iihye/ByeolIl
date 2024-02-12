@@ -84,7 +84,7 @@ function Line(props) {
   return (
     <>
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.0025} color={0xced6ff} />
+        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.005} color={0xced6ff} />
       </line>
     </>
   );
@@ -194,8 +194,13 @@ function GroupStar(props) {
   const position = props.position;
   const groupNum = props.groupNum;
 
-  const startStarNum = position[0][0];
+  let startStarNum = position[0][0];
   const lastStarNum = position[position.length - 1][0];
+
+  // 황소자리, 페가수스 자리의 경우는 다른 별자리의 별과 이어지므로 startStartNum -1 처리
+  if (groupNum === 12 || groupNum === 14) {
+    startStarNum--;
+  }
 
   // 작성한 별 목록 변경 시 별자리 체크
   useEffect(() => {
