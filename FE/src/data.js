@@ -286,10 +286,10 @@ export const position = [
   ],
 ];
 
-let idx = 0;
+let idx = -1;
 position.forEach((it, index) => {
   it.forEach((it) => {
-    it.unshift(idx++);
+    it.unshift(++idx);
     // let line1 = Math.sqrt(it[0] ** 2 + it[1] ** 2);
     // let cal1 = Math.sqrt(50 ** 2 - line1 ** 2);
     // it.splice(2, 0, Math.round((cal1 - 15) * 10) / 10);
@@ -759,3 +759,5 @@ export const linePosition = [
     ],
   ],
 ];
+
+export const lastStarIndex = idx;

@@ -6,17 +6,15 @@ import axios from "axios";
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { Link, useParams } from "react-router-dom";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
-import { position, linePosition } from "../../data";
+import { position, linePosition, lastStarIndex } from "../../data";
 import ModalSpace from "components/ModalSpace";
 import { Bloom, EffectComposer, Select, Selection, SelectiveBloom, ToneMapping } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
+import { constellationCheck } from "util";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
 const starRange = [];
 position.forEach((element, index) => starRange.push([element[0][0], element[element.length - 1][0]]));
-
-// 페이지 내 존재하는 별 개수
-const totalStarCount = position[position.length - 1][position[position.length - 1].length - 1][0] + 1;
 
 ///////////////////////////////// ↓ atoms
 
@@ -58,23 +56,23 @@ const starLineOpacityState = atom({
 const isAddedStar = new Map();
 
 // 별자리 이어짐 체크
-const constellationCheck = (starNum) => {
-  let res = true;
+// const constellationCheck = (starNum) => {
+//   let res = true;
 
-  outer: for (let i = 0; i < starRange.length; i++) {
-    if (starRange[i][1] >= starNum) {
-      for (let j = starRange[i][0]; j <= starRange[i][1]; j++) {
-        if (!isAddedStar.has(j)) {
-          res = false;
-          break outer;
-        }
-      }
-      break;
-    }
-  }
+//   outer: for (let i = 0; i < starRange.length; i++) {
+//     if (starRange[i][1] >= starNum) {
+//       for (let j = starRange[i][0]; j <= starRange[i][1]; j++) {
+//         if (!isAddedStar.has(j)) {
+//           res = false;
+//           break outer;
+//         }
+//       }
+//       break;
+//     }
+//   }
 
-  return res;
-};
+//   return res;
+// };
 
 function Line(props) {
   const starLineOpacity = useRecoilValue(starLineOpacityState);
@@ -124,6 +122,10 @@ function Star(props) {
 
   useEffect(() => {
     setCurStarState(isAddedStar.get(props.location));
+
+    if (isAddedStar.get(props.location)) {
+      constellationCheck.update(1, 0, lastStarIndex, props.location, true);
+    }
   }, [stars]);
 
   const handleClick = (e, locationNum) => {
@@ -187,12 +189,16 @@ function GroupStar(props) {
 
   const group = useRef(null);
 
+  const position = props.position;
   const groupNum = props.groupNum;
+
+  const startStarNum = position[0][0];
+  const lastStarNum = position[position.length - 1][0];
 
   // 작성한 별 목록 변경 시 별자리 체크
   useEffect(() => {
-    const lastStarOfThisGroup = props.position[props.position.length - 1][0];
-    if (constellationCheck(lastStarOfThisGroup)) {
+    const check = constellationCheck.query(1, 0, lastStarIndex, startStarNum, lastStarNum);
+    if (check) {
       setLineColor(false);
     }
   }, [stars]);
@@ -220,7 +226,6 @@ function GroupStar(props) {
           const pos = it.map((it) => new THREE.Vector3(...it));
           return <Line key={index} points={pos} lineColor={lineColor} groupNum={groupNum} />;
         })}
-        {/* <Line points={lineState} lineColor={lineColor} groupNum={groupNum} /> */}
       </group>
     </>
   );
