@@ -86,7 +86,7 @@ function Line(props) {
   return (
     <>
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.0025} />
+        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.0025} color={0xced6ff} />
       </line>
     </>
   );
@@ -183,7 +183,6 @@ function GroupStar(props) {
 
   const setStarLineOpacityState = useSetRecoilState(starLineOpacityState);
 
-  const [lineState, setLineState] = useState([]);
   const [lineColor, setLineColor] = useState(true);
 
   const group = useRef(null);
@@ -198,15 +197,10 @@ function GroupStar(props) {
     }
   }, [stars]);
 
-  // 별자리 긋는 선들의 꼭짓점 정의
-  // useEffect(() => {
-  //   setLineState(props.position.map((val) => new THREE.Vector3(...val.slice(1, 4))));
-  // }, []);
-
   // 하늘 회전
-  // useFrame((state, delta) => {
-  //   group.current.rotation.y += delta / 250;
-  // });
+  useFrame((state, delta) => {
+    group.current.rotation.y += delta / 250;
+  });
 
   function handlePointerEnter() {
     setStarLineOpacityState(groupNum);
@@ -215,16 +209,16 @@ function GroupStar(props) {
   function handlePointerLeave() {
     setStarLineOpacityState(-1);
   }
-  console.log(props.position);
+
   return (
     <>
       <group ref={group} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
         {props.position.map((val, index) => (
           <Star key={index} size={[0.13, 32, 32]} positions={position} position={val.slice(1, 4)} location={val[0]} setLineColor={setLineColor} />
         ))}
-        {linePosition[groupNum].map((it) => {
+        {linePosition[groupNum].map((it, index) => {
           const pos = it.map((it) => new THREE.Vector3(...it));
-          return <Line points={pos} lineColor={lineColor} groupNum={groupNum} />;
+          return <Line key={index} points={pos} lineColor={lineColor} groupNum={groupNum} />;
         })}
         {/* <Line points={lineState} lineColor={lineColor} groupNum={groupNum} /> */}
       </group>

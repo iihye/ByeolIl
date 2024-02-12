@@ -296,6 +296,7 @@ position.forEach((it, index) => {
   });
 });
 
+console.log(position);
 export const linePosition = [
   // 0 URSA MINOR 작은곰자리
   [
