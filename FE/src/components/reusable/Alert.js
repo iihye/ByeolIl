@@ -89,6 +89,8 @@ function InputAlert(props) {
             })
             .then((response) => {
                 console.log(response.data.message);
+                alert("신고가 접수되었습니다🚨");
+                navigate(-1);
             })
             .catch((e) => console.log(e));
     };
@@ -159,7 +161,8 @@ function InputAlert(props) {
                 <div className="flex justify-center mb-3">
                     {props.type === "report" ? (
                         <textarea
-                            className="bg-transparent rounded-lg  p-2 h-28 resize-none"
+                            className="bg-transparent rounded-lg p-2 h-28 w-80 resize-none border border-gray-300"
+                            maxLength="80"
                             ref={input}
                         />
                     ) : (
