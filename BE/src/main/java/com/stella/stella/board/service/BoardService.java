@@ -218,19 +218,13 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, Object> findBoardListToPage(Long memberIndex, Pageable pageable) {
-        Map<String, Object> responseBody = new HashMap<>();
-        Page<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex, BoardDeleteYN.N, pageable);
+    public List<BoardListResponseDto> findBoardListToPage(Long memberIndex, Long page) {
+        Long locLow = page*209;
+        Long locHigh = (page+1)*209-1;
+   
+        List<Board> boards = boardRepository.findByBoardforPage(memberIndex, BoardDeleteYN.N,locLow,locHigh );
 
-        responseBody.put("totalPage", boards.getTotalPages());
-        //총 페이지 넘버
-        responseBody.put("previousPageNumber", boards.previousOrFirstPageable().getPageNumber());
-        //이전이 있으면 이전 페이지 넘버, 없으면 현재 넘버
-        responseBody.put("nextPageNumber", boards.nextOrLastPageable().getPageNumber());
-        //다음이 있으면 다음 페이지 넘버, 없으면 현재 넘버
-        responseBody.put("BoardListResponseDtoList", BoardListResponseDto.wrap(memberIndex, boards.getContent()));
-
-        return responseBody;
+        return BoardListResponseDto.wrap(memberIndex,boards);
 
     }
 

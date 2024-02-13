@@ -8,7 +8,9 @@ import com.stella.stella.common.dto.BasicResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -59,5 +61,9 @@ public class AlarmController {
         return ResponseEntity.ok(basicResponse);
     }
 
-
+    // 알림 SSE
+    @GetMapping("/subscribe/{memberIndex}")
+    public SseEmitter alarmSubscribe(@PathVariable Long memberIndex){
+        return alarmService.connectAlarm(memberIndex);
+    }
 }
