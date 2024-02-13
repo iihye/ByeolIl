@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useRecoilValue, useSetRecoilState, useResetRecoilState } from "recoil";
-import { filterState, resetFilterState } from "components/atom";
+import React, { useState, useEffect } from 'react';
+import { useRecoilValue, useSetRecoilState, useResetRecoilState } from 'recoil';
+import { filterState, resetFilterState } from 'components/atom';
 
 // useDebounce를 이용하여 상태가 변경될 때마다 화면이 깜빡이는 이슈 해결
 const useDebounce = (value, delay) => {
@@ -20,7 +20,7 @@ const useDebounce = (value, delay) => {
 };
 
 function SearchBar({ filterKey, listItems }) {
-    const [searchValue, setSearchValue] = useState(""); // 검색창에 입력되는 값
+    const [searchValue, setSearchValue] = useState(''); // 검색창에 입력되는 값
     const setFilterData = useSetRecoilState(filterState); // 필터링된 값
     const resetList = useResetRecoilState(filterState);
 
@@ -37,11 +37,11 @@ function SearchBar({ filterKey, listItems }) {
             listItems.filter((it) =>
                 it[filterKey]
                     ?.toLocaleLowerCase()
-                    .replace(/\s/g, "")
+                    .replace(/\s/g, '')
                     .includes(
                         debouncedSearchValue
                             .toLocaleLowerCase()
-                            .replace(/\s/g, "")
+                            .replace(/\s/g, '')
                     )
             );
 
@@ -56,6 +56,11 @@ function SearchBar({ filterKey, listItems }) {
                 value={searchValue}
                 onChange={handleSearchValue}
                 className=" text-black-sub my-3 font-['Pre-Bold']"
+                placeholder={
+                    filterKey === 'memberNickname'
+                        ? '닉네임을 입력해주세요'
+                        : '내용을 입력해주세요'
+                }
             />
         </div>
     );
