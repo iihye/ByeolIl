@@ -304,6 +304,7 @@ public class MemberService {
         Member member = memberRepository.findByMemberIndex(memberIndex)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
         member.setMemberDeleteYN(MemberDeleteYN.Y);
+        member.setMemberDeleteDate(LocalDate.now());
         for (Board b : boardRepository.findAllByMemberIndexForDelete(memberIndex, BoardDeleteYN.N)) {
             boardService.removeBoard(BoardDeleteRequestDto.builder()
                     .boardIndex(b.getBoardIndex())
