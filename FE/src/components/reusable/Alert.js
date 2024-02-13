@@ -90,7 +90,7 @@ function InputAlert(props) {
             .then((response) => {
                 console.log(response.data.message);
                 alert("신고가 접수되었습니다🚨");
-                navigate(-1);
+                setIsReportAlertOpen(false);
             })
             .catch((e) => console.log(e));
     };
