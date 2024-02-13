@@ -134,7 +134,7 @@ function StarRegist(props) {
           });
 
           isAddedStar.clear();
-          res.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+          res.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
           setStars(res.data);
           handleClose();
         } else {
@@ -366,7 +366,6 @@ function FileList() {
           </div>
         </div>
       ))}
-      {fileList}
     </div>
   );
 }
@@ -381,12 +380,17 @@ function ImagePreviewArea(props) {
   const data = props.preBoard;
 
   useEffect(() => {
-    const tmpList = [].concat(...data.boardMedia);
-    setPreviewFileList(tmpList);
-    console.log(fileList);
-  }, []);
+    const tmpList = [...fileList.map((it, index) => URL.createObjectURL(it))];
 
-  let lastPage = data ? data.boardMedia.length - 1 : 0;
+    if (props.type === "modify") {
+      tmpList.concat(...data.boardMedia);
+    }
+
+    setPreviewFileList(tmpList);
+    console.log(tmpList);
+  }, [fileList]);
+
+  let lastPage = previewFileList.length - 1;
   let curPage = 0;
 
   function handleLeft() {
