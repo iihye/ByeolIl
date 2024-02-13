@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/table";
 import { PiSiren } from "react-icons/pi";
 import { useNavigate } from "react-router";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function Report() {
     const navigate = useNavigate();
@@ -145,94 +146,75 @@ function Report() {
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
-                            {reportData.length > 0 &&
-                            boardContent.length > 0 ? (
-                                reportData.map((it, index) => (
-                                    <>
-                                        {reportModal === it.boardIndex && (
-                                            <ReportDetail
-                                                boardIndex={it.boardIndex}
-                                                reportContent={it.reportContent}
-                                            />
-                                        )}
-                                        <TableRow
-                                            className="font-['Pre-Light']"
-                                            key={it.reportIndex}
-                                        >
-                                            <TableCell className="text-center">
-                                                {it.memberNickname}
-                                            </TableCell>
-                                            {/* <TableCell>{boardContent[index]}</TableCell> */}
-                                            <TableCell>
-                                                {it.reportContent}
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                {it.reportRegdate}
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                <button
-                                                    className="bg-modal-bg w-3/5"
-                                                    onClick={() => {
-                                                        handleBan(
-                                                            it.memberIndex
-                                                        );
-                                                    }}
-                                                >
-                                                    차단하기
-                                                </button>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                <button
-                                                    className="bg-modal-bg w-6/12"
-                                                    onClick={() =>
-                                                        setReportModal(
-                                                            it.boardIndex
-                                                        )
-                                                    }
-                                                >
-                                                    글보기
-                                                </button>
-                                            </TableCell>
-                                        </TableRow>
-                                    </>
-                                ))
-                            ) : (
-                                <div className="font-['Pre-Light'] m-2 text-center">
-                                    Loading...
-                                </div>
-                            )}
-                            <TableRow></TableRow>
-                        </TableBody>
                     </Table>
+                    <ScrollArea className="h-96 ">
+                        <Table>
+                            <TableBody>
+                                {reportData.length > 0 &&
+                                boardContent.length > 0 ? (
+                                    reportData.map((it, index) => (
+                                        <>
+                                            {reportModal === it.boardIndex && (
+                                                <ReportDetail
+                                                    boardIndex={it.boardIndex}
+                                                    reportContent={
+                                                        it.reportContent
+                                                    }
+                                                />
+                                            )}
+                                            <TableRow
+                                                className="font-['Pre-Light']"
+                                                key={it.reportIndex}
+                                            >
+                                                <TableCell className="text-center w-2/12">
+                                                    {it.memberNickname}
+                                                </TableCell>
+                                                {/* <TableCell>{boardContent[index]}</TableCell> */}
+                                                <TableCell>
+                                                    {it.reportContent}
+                                                </TableCell>
+                                                <TableCell className="text-center w-2/12">
+                                                    {it.reportRegdate}
+                                                </TableCell>
+                                                <TableCell className="text-center w-2/12">
+                                                    <button
+                                                        className="bg-modal-bg w-3/5"
+                                                        onClick={() => {
+                                                            handleBan(
+                                                                it.memberIndex
+                                                            );
+                                                        }}
+                                                    >
+                                                        차단하기
+                                                    </button>
+                                                </TableCell>
+                                                <TableCell className="text-center w-2/12">
+                                                    <button
+                                                        className="bg-modal-bg w-6/12"
+                                                        onClick={() =>
+                                                            setReportModal(
+                                                                it.boardIndex
+                                                            )
+                                                        }
+                                                    >
+                                                        글보기
+                                                    </button>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
+                                    ))
+                                ) : (
+                                    <div className="font-['Pre-Light'] m-2 text-center">
+                                        Loading...
+                                    </div>
+                                )}
+                                <TableRow></TableRow>
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
                 </CardContent>
             </Card>
         </div>
-        // <div className="Report">
-        //     {reportData.length > 0 && boardContent.length > 0 ? (
-        //         reportData.map((it, index) => (
-        //             <>
-        //                 {reportModal === it.boardIndex && (
-        //                     <ReportDetail
-        //                         boardIndex={it.boardIndex}
-        //                         reportContent={it.reportContent}
-        //                     />
-        //                 )}
-        //                 <li
-        //                     key={it.reportIndex}
-        //                     onClick={() => setReportModal(it.boardIndex)}
-        //                 >
-        //                     {boardContent[index]}&nbsp;
-        //                     {it.reportRegdate}&nbsp;
-        //                     {it.memberNickname}&nbsp;
-        //                     {it.reportContent}&nbsp;
-        //                 </li>
-        //             </>
-        //         ))
-        //     ) : (
-        //         <div>Loading...</div>
-        //     )}
-        // </div>
     );
 }
 
