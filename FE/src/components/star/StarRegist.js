@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
 import { isAddedStar, starsState, curPageState } from "components/user/UserSpace";
-import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState, renewStarDetailState } from "components/atom";
+import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState } from "components/atom";
 import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaFileImage, FaRegFileImage } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 import { Calendar } from "@/components/ui/calendar";
-import { isClickableInput } from "@testing-library/user-event/dist/utils";
+import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 
 const fileListState = atom({
   key: "fileList",
@@ -90,6 +91,7 @@ function StarRegist(props) {
     // 해쉬태그 데이터 Set -> Array
     const hashContent = [];
     hashtagSet.forEach((it) => hashContent.push(it));
+
     if (type === "regist") {
       console.log(dateRef.current.innerText);
       const data = {
@@ -103,12 +105,14 @@ function StarRegist(props) {
         hashContent: hashContent,
       };
 
+      // Object to Blob
       const dataDto = JSON.stringify(data);
       let requestDtoBlob = new Blob([dataDto], {
         type: "application/json",
       });
 
       formData.append("requestDto", requestDtoBlob);
+
       try {
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/board`, formData, {
           header: {
@@ -178,23 +182,25 @@ function StarRegist(props) {
 
   return (
     <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside">
-      <div>{/* <ImagePreviewArea /> */}</div>
-      <div className="star-regist bg-modal-bg text-black-sub flex-row rounded p-3 w-96">
-        <div className="star-regist-middle">
-          <div className="flex justify-between items-center mb-2">
-            <DateArea ref={dateRef} type={type} />
-            <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
+      <div className="star-regist bg-modal-bg text-black-sub flex rounded p-3 w-fit">
+        <ImagePreviewArea preBoard={preBoard} />
+        <div>
+          <div className="star-regist-middle w-96">
+            <div className="flex justify-between items-center mb-2">
+              <DateArea ref={dateRef} type={type} />
+              <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
+            </div>
+            <textarea
+              className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub"
+              ref={contentRef}
+              placeholder="일기 내용을 입력해주세요."
+            />
           </div>
-          <textarea
-            className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub"
-            ref={contentRef}
-            placeholder="일기 내용을 입력해주세요."
-          />
-        </div>
-        {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
-        <div className="relative">
-          <FileUploadArea ref={fileRef} />
-          <Buttons buttonValue={buttonValue} type={type} handleRegist={handleRegist} handleClose={handleClose} />
+          {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
+          <div className="relative">
+            <FileUploadArea ref={fileRef} type={type} preBoard={preBoard} />
+            <Buttons buttonValue={buttonValue} type={type} handleRegist={handleRegist} handleClose={handleClose} />
+          </div>
         </div>
       </div>
     </div>
@@ -276,6 +282,8 @@ const FileUploadArea = forwardRef((props, ref) => {
     const fileMap = new Map();
     [...fileList].forEach((it) => fileMap.set(it.name, it));
     [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
+
+    // 드래그로 파일 업로드할 경우
     if (e.dataTransfer) {
       [...e.dataTransfer.files].forEach((it) => fileMap.set(it.name, it));
     }
@@ -288,9 +296,11 @@ const FileUploadArea = forwardRef((props, ref) => {
     // 파일 개수 제한 체크
     const fileCntCheckRes = limitFileCnt(e, imageFileList.length, videoFileList.length);
     const fileVolumeCheckRes = limitFileVolume(e, imageFileList, videoFileList);
+
     if (fileCntCheckRes && fileVolumeCheckRes) {
       setFileList([...uploadFileList]);
     }
+
     ref.current.value = "";
   }
 
@@ -356,14 +366,60 @@ function FileList() {
           </div>
         </div>
       ))}
+      {fileList}
     </div>
   );
 }
 
-function ImagePreviewArea() {
+function ImagePreviewArea(props) {
   const fileList = useRecoilValue(fileListState);
-  console.log(fileList);
-  return <div>{fileList.length > 0 ? fileList.map((it, index) => <div>{it}</div>) : null}</div>;
+
+  const [previewFileList, setPreviewFileList] = useState([]);
+
+  const areaRef = useRef();
+
+  const data = props.preBoard;
+
+  useEffect(() => {
+    const tmpList = [].concat(...data.boardMedia);
+    setPreviewFileList(tmpList);
+    console.log(fileList);
+  }, []);
+
+  let lastPage = data ? data.boardMedia.length - 1 : 0;
+  let curPage = 0;
+
+  function handleLeft() {
+    if (curPage <= 0) return;
+    curPage--;
+    areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
+  }
+
+  function handleRight() {
+    if (curPage >= lastPage) return;
+    curPage++;
+    areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
+  }
+
+  return (
+    <>
+      {fileList.length > 0 || (data && data.boardMedia.length > 0) ? (
+        <div className="flex items-center top-12 rounded right-full p-5 mr-6 h-full bg-modal-bg">
+          <div className="flex relative overflow-hidden items-center w-pic">
+            <div className="flex items-center h-pic transition-all" ref={areaRef}>
+              {previewFileList.map((it, index) => (
+                <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
+                  <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
+                </div>
+              ))}
+            </div>
+            <FaChevronLeft className="absolute left-0 h-full w-8 mx-2 text-black-sub hover:text-black" onClick={handleLeft} />
+            <FaChevronRight className="absolute right-0 h-full w-8 mx-2 text-black-sub hover:text-black" onClick={handleRight} />
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
 }
 
 const DateArea = forwardRef((props, ref) => {
@@ -410,11 +466,6 @@ const AccessRangeArea = forwardRef((props, ref) => {
   const accessRangeArr = ["전체 공개", "친구 공개", "비공개"];
   const accessRangeValueArr = ["OPEN", "PARTOPEN", "NOOPEN"];
 
-  useEffect(() => {
-    // displayRef.current.classList.remove("animate-fade-in");
-    // displayRef.current.classList.add("animate-fade-in");
-  }, [selectedRange]);
-
   return (
     <div
       className="text-white-sub  hover:cursor-pointer relative w-20 text-center"
@@ -424,7 +475,13 @@ const AccessRangeArea = forwardRef((props, ref) => {
       }}
     >
       <div className="border border-white-sub p-1 rounded-lg ">
-        {accessRangeArr.map((it, index) => (selectedRange === index ? <div className="animate-fade-in">{it}</div> : null))}
+        {accessRangeArr.map((it, index) =>
+          selectedRange === index ? (
+            <div key={index} className="animate-fade-in">
+              {it}
+            </div>
+          ) : null
+        )}
       </div>
     </div>
   );

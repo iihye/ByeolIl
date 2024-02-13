@@ -20,6 +20,7 @@ function StarRegistArea() {
 }
 
 function StarModifyArea() {
+  // [data, starIndex, location. loginUserIndex]
   const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
 
   return (
