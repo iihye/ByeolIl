@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import ReportDetail from "./ReportDetail";
-import { useRecoilState } from "recoil";
-import { reportModalState } from "components/atom";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import ReportDetail from './ReportDetail';
+import { useRecoilState } from 'recoil';
+import { reportModalState } from 'components/atom';
 import {
     Card,
     CardContent,
@@ -10,7 +10,7 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -19,9 +19,9 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { PiSiren } from "react-icons/pi";
-import { useNavigate } from "react-router";
+} from '@/components/ui/table';
+import { PiSiren } from 'react-icons/pi';
+import { useNavigate } from 'react-router';
 
 function Report() {
     const navigate = useNavigate();
@@ -31,7 +31,7 @@ function Report() {
     const [boardIndex, setBoardIndex] = useState([]); // 게시글에서 boardIndex만 뽑아옴
     const [reportModal, setReportModal] = useRecoilState(reportModalState); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
 
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem('token');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -60,7 +60,9 @@ function Report() {
                     )
                 );
 
-                const newBoardContent = responses.map((res) => res.data.boardContent);
+                const newBoardContent = responses.map(
+                    (res) => res.data.boardContent
+                );
 
                 const newBoardIndex = reportData.map((res) => res.boardIndex);
 
@@ -80,15 +82,17 @@ function Report() {
         function handleClick(e) {
             e.stopPropagation();
 
-            const check = [...e.target.classList].some((it) => it === "outside");
+            const check = [...e.target.classList].some(
+                (it) => it === 'outside'
+            );
             if (check) {
                 navigate(-1);
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     });
 
@@ -106,15 +110,26 @@ function Report() {
                     <Table className="Report-Table">
                         <TableHeader>
                             <TableRow className="font-['Pre-Bold'] bg-white text-m ">
-                                <TableHead className="text-center w-2/12">닉네임</TableHead>
-                                <TableHead className="text-center">신고내용</TableHead>
-                                <TableHead className="text-center w-2/12">신고일</TableHead>
-                                <TableHead className="text-center w-2/12">사용자 차단</TableHead>
-                                <TableHead className="text-center w-2/12">게시글 확인</TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    닉네임
+                                </TableHead>
+                                <TableHead className="text-center">
+                                    신고내용
+                                </TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    신고일
+                                </TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    사용자 차단
+                                </TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    게시글 확인
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {reportData.length > 0 && boardContent.length > 0 ? (
+                            {reportData.length > 0 &&
+                            boardContent.length > 0 ? (
                                 reportData.map((it, index) => (
                                     <>
                                         {reportModal === it.boardIndex && (
@@ -131,7 +146,9 @@ function Report() {
                                                 {it.memberNickname}
                                             </TableCell>
                                             {/* <TableCell>{boardContent[index]}</TableCell> */}
-                                            <TableCell>{it.reportContent}</TableCell>
+                                            <TableCell>
+                                                {it.reportContent}
+                                            </TableCell>
                                             <TableCell className="text-center">
                                                 {it.reportRegdate}
                                             </TableCell>
@@ -143,7 +160,11 @@ function Report() {
                                             <TableCell className="text-center">
                                                 <button
                                                     className="bg-modal-bg w-6/12"
-                                                    onClick={() => setReportModal(it.boardIndex)}
+                                                    onClick={() =>
+                                                        setReportModal(
+                                                            it.boardIndex
+                                                        )
+                                                    }
                                                 >
                                                     글보기
                                                 </button>
@@ -152,7 +173,9 @@ function Report() {
                                     </>
                                 ))
                             ) : (
-                                <div className="font-['Pre-Light'] m-2 text-center">Loading...</div>
+                                <div className="font-['Pre-Light'] m-2 text-center">
+                                    Loading...
+                                </div>
                             )}
                             <TableRow></TableRow>
                         </TableBody>
