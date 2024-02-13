@@ -405,7 +405,7 @@ function ReplyRegistArea(props) {
           onKeyDown={handleKeyDown}
         />
         <div
-          className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer"
+          className="text-white-sub text-xl w-8 p-2 text-start rounded transition-all hover:text-modal-bg hover:bg-white-sub hover:text-alert-bg hover:cursor-pointer"
           onClick={handleRegistReply}
         >
           <IoMdSend />

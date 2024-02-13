@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRecoilState } from "recoil";
 import { renewReplyState } from "components/atom";
 import { FaDeleteLeft } from "react-icons/fa6";
+import { IoArrowForwardCircle } from "react-icons/io5";
 
 function StarReplyListItem(props) {
   const [renewReply, setRenewReply] = useRecoilState(renewReplyState);
@@ -27,6 +28,7 @@ function StarReplyListItem(props) {
   }, [props]);
 
   function timeCheck() {
+    if (commentRegDate.length !== 7) return;
     const ymd = commentRegDate.splice(0, 3).join(",");
     const hm = commentRegDate.splice(0, 2).join(":");
 
@@ -43,7 +45,7 @@ function StarReplyListItem(props) {
     } else if (timeDiff < 1440) {
       returnDate = `${Math.round(timeDiff / 60)}시간 전`;
     }
-
+    console.log(returnDate);
     setPrintedDate(returnDate);
   }
 
@@ -73,7 +75,7 @@ function StarReplyListItem(props) {
   };
 
   return (
-    <div className="star-reply-list-item p-2">
+    <div className="star-reply-list-item py-1 ml-1">
       <div className="flex items-end">
         <div className="text-xl font-['Pre-bold']">{writerNickname}</div>
         <div className="ml-2">{printedDate}</div>
@@ -98,8 +100,8 @@ function StarReplyListItem(props) {
           답글달기
         </div>
       )}
-      <StarMultiReplyList multiReplyList={multiComments} />
       {multiReply && <MultiReplyInput setMultiReply={setMultiReply} loginUserIndex={loginUserIndex} {...props} />}
+      <StarMultiReplyList multiReplyList={multiComments} />
     </div>
   );
 }
@@ -149,9 +151,12 @@ function MultiReplyInput(props) {
   };
 
   return (
-    <div>
-      └ <input ref={input} onKeyDown={handleKeyDown} />
+    <div className="flex items-center text-lg ">
+      {/* <IoArrowForwardCircle className="mr-1 text-2xl" /> */}
+      <div className="mr-2">└</div>
+      <input ref={input} onKeyDown={handleKeyDown} className="w-full border-b rounded-none mr-3" />
       <button
+        className="w-16"
         onClick={() => {
           handleMultiReplyQuit();
         }}
@@ -159,6 +164,7 @@ function MultiReplyInput(props) {
         취소
       </button>
       <button
+        className="w-16 ml-1"
         onClick={() => {
           handleMultiReplySubmit();
         }}
