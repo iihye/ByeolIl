@@ -37,7 +37,9 @@ public enum CustomExceptionStatus {
     FOLLOW_INVALID(1201, "존재하지 않는 팔로잉입니다"),
 
     // alarm 관련
-    ALARM_INVALID(1301, "존재하지 않는 알림입니다");
+    ALARM_INVALID(1301, "존재하지 않는 알림입니다"),
+    INTERNAL_ERROR(1302, "알림을 가져올 수 없습니다"),
+    CONNECT_ERROR(1303, "알림을 연결할 수 없습니다");
 
     // radio 관련
 
