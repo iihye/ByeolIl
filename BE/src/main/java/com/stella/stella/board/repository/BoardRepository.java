@@ -18,7 +18,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByBoardIndex(Long BoardIndex);
 
     int countByBoardLocation(Long BoardLocation);
-    Page<Board> findByMemberMemberIndexAndBoardDeleteYN(Long MemberIndex, BoardDeleteYN boardDeleteYN, Pageable pageable);
+    @Query(value = "select b from Board b where b.member.memberIndex = :memberIndex and b.boardDeleteYN =:boardDeleteYN and b.boardLocation between :locLow and :locHigh")
+    List<Board> findByBoardforPage(@Param("memberIndex")Long memberIndex, @Param("boardDeleteYN")BoardDeleteYN boardDeleteYN,  @Param("locLow")Long locLow,  @Param("locHigh")Long locHigh);
 
     List<Board> findByMemberMemberIndexAndBoardDeleteYN(Long MemberIndex, BoardDeleteYN boardDeleteYN);
 

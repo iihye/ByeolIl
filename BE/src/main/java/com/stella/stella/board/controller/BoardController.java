@@ -99,17 +99,16 @@ public class BoardController {
         return ResponseEntity.status(status).body(new ResultResponseDto(message));
     }
     @GetMapping("/star/{memberIndex}")
-    public ResponseEntity<Map<String, Object>> boardListToStar(@PathVariable Long memberIndex, @PageableDefault(size = 100, sort = "boardLocation", direction = Sort.Direction.ASC) Pageable pageable) {
-        Map<String, Object> responseBody = new HashMap<>();
+    public ResponseEntity<List<BoardListResponseDto>> boardListToStar(@PathVariable Long memberIndex, Long page) {
+        List<BoardListResponseDto> list = new ArrayList();
         HttpStatus status = HttpStatus.OK;
         try {
-            responseBody = boardService.findBoardListToPage(memberIndex, pageable);
+            list = boardService.findBoardListToPage(memberIndex, page);
 
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
-            responseBody.put("error", e.getMessage());
         }
-        return ResponseEntity.status(status).body(responseBody);
+        return ResponseEntity.status(status).body(list);
     }
 
     @GetMapping("/list/{memberIndex}")
