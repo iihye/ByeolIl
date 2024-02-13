@@ -47,6 +47,8 @@ public class AlarmService {
 
         Member fromMember = memberRepository.findByMemberIndex(alarmRequestDto.getFromMemberIndex())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
+        
+        if(toMember.getMemberIndex() == fromMember.getMemberIndex()) return;
 
         Alarm alarm;
 
