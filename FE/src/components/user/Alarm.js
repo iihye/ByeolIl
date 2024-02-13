@@ -8,13 +8,12 @@ import { IoCloseSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 
 // 추후 에러핸들링 필요
-// onClose, get에서 유저 인덱스로 변경
 
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
     const [detailModal, setDetailModal] = useState(false);
     const [boardState, setBoardState] = useState('');
-    const userIndex = Number(sessionStorage.getItem('memberIndex'));
+    const memberIndex = Number(sessionStorage.getItem('memberIndex'));
 
     const navigate = useNavigate();
 
@@ -37,11 +36,11 @@ function Alarm() {
     const onClose = (index) => {
         const alarmInfo = {
             alarmIndex: index,
-            memberIndex: userIndex,
+            memberIndex: memberIndex,
         };
 
         axios
-            .post(`${process.env.REACT_APP_API_URL}/alarm/check`, alarmInfo)
+            .post(`${process.env.REACT_APP_ALARM_URL}/alarm/check`, alarmInfo)
             .then(
                 setAlarmData((currentAlarmData) =>
                     currentAlarmData.filter((it) => it.alarmIndex !== index)
@@ -51,18 +50,24 @@ function Alarm() {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            await axios
-                .get(`${process.env.REACT_APP_API_URL}/alarm/list/${userIndex}`)
-                .then((response) => {
-                    // console.log(response.data.result);
-                    setAlarmData(response.data.result);
-                })
-                .catch((e) => console.log(e, userIndex));
-        };
+        const eventSource = new EventSource(
+            `${process.env.REACT_APP_API_URL}/alarm/list/${memberIndex}`
+        );
 
-        fetchData();
-    }, [userIndex]);
+        eventSource.addEventListener('open', function (event) {
+            console.log('열렸음', event);
+        });
+        eventSource.addEventListener('alarm', function (event) {
+            console.log('이벤트 발생', event);
+        });
+        eventSource.addEventListener('error', function (event) {
+            console.log('알림 에러 발생', event);
+            if (event.target.readyState === EventSource.CLOSED) {
+                console.log('eventsource closed');
+            }
+            eventSource.close();
+        });
+    }, []);
 
     useEffect(() => {
         function handleClick(e) {
