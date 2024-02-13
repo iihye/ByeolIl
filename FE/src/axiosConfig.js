@@ -8,7 +8,6 @@ function AxiosInterceptor() {
     useEffect(() => {
         const reqInterceptor = axios.interceptors.request.use(
             (config) => {
-                console.log('요청');
                 const token = sessionStorage.getItem('token');
                 if (token) {
                     config.headers['Authorization'] = `${token}`;
@@ -33,7 +32,11 @@ function AxiosInterceptor() {
                 if (res.status === 400 && res.data.message) {
                     alert(res.data.message);
                     return res;
-                } else if (res.status === 401 || res.status === 403) {
+                } else if (
+                    res.status === 401 ||
+                    res.status === 403 ||
+                    res.status === 400
+                ) {
                     sessionStorage.removeItem('memberIndex');
                     sessionStorage.removeItem('nickname');
                     sessionStorage.removeItem('token');
