@@ -3,7 +3,7 @@ import PWCheck from "./PWCheckAlert";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { isPwCheckOpenState } from "components/atom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RiLockPasswordFill } from "react-icons/ri";
 
@@ -13,8 +13,9 @@ import { RiLockPasswordFill } from "react-icons/ri";
 // + 닉네임수정은 메인화면에서 "OO님의 우주" 옆에 수정 아이콘을 눌러서 바로 수정이 되는 기능도
 
 export default function ChangeInfo() {
-    const isPwCheckOpen = useRecoilValue(isPwCheckOpenState);
-
+    // const isPwCheckOpen = useRecoilValue(isPwCheckOpenState);
+    const [isPwCheckOpen, setIsPwCheckOpen] =
+        useRecoilState(isPwCheckOpenState);
     const navigate = useNavigate();
 
     // 패스워드, 패스워드확인
@@ -30,7 +31,8 @@ export default function ChangeInfo() {
     const [isPasswordConfirm, setIsPasswordConfirm] = useState(false);
 
     const onChangePassword = () => {
-        const passwordRegExp = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*+=-])(?=.*[0-9]).{8,25}$/;
+        const passwordRegExp =
+            /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*+=-])(?=.*[0-9]).{8,25}$/;
         if (!passwordRegExp.test(password.current.value)) {
             setPasswordMessage(
                 "숫자+영문자+특수문자 조합으로 8자리 이상 25자 이하로 입력해주세요!"
@@ -64,16 +66,44 @@ export default function ChangeInfo() {
                 },
             })
             .then((response) => {
-                console.log(response.data);
+                // console.log(response.data);
+                alert("비밀번호를 변경했습니다");
+                navigate(-1);
+                setIsPwCheckOpen(true);
             });
+    };
+
+    // 회원탈퇴
+    const handleDelete = () => {
+        if (window.confirm("정말로 탈퇴하시겠습니까?")) {
+            axios
+                .put(`${process.env.REACT_APP_API_URL}/member/delete`, {
+                    headers: {
+                        token: sessionStorage.getItem("token") ?? "",
+                    },
+                })
+                .then((response) => {
+                    // console.log(response.data);
+                    alert("회원탈퇴가 처리되었습니다");
+                    sessionStorage.removeItem("memberIndex");
+                    sessionStorage.removeItem("nickname");
+                    sessionStorage.removeItem("token");
+                    sessionStorage.removeItem("auth");
+                    navigate("/landing");
+                    setIsPwCheckOpen(true);
+                });
+        }
     };
 
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "outside");
+            const check = [...e.target.classList].some(
+                (it) => it === "outside"
+            );
             if (check) {
                 navigate(-1);
+                setIsPwCheckOpen(true);
             }
         }
 
@@ -90,7 +120,10 @@ export default function ChangeInfo() {
                 <PWCheck />
             ) : (
                 <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-                    <Card className="changePW w-104 h-88 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+                    <Card
+                        className="changePW h-88 bg-modal-bg text-white-sub px-6 py-6 rounded-component"
+                        style={{ width: "500px" }}
+                    >
                         <CardHeader className="flex">
                             <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                                 <RiLockPasswordFill className="mr-1" />
@@ -101,7 +134,10 @@ export default function ChangeInfo() {
                         <CardContent>
                             <div className="form">
                                 <div className="form-el mb-2 h-24">
-                                    <label className="regist-label" htmlFor="password">
+                                    <label
+                                        className="regist-label"
+                                        htmlFor="password"
+                                    >
                                         새로운 비밀번호
                                     </label>{" "}
                                     <br />
@@ -112,10 +148,15 @@ export default function ChangeInfo() {
                                         ref={password}
                                         onBlur={onChangePassword}
                                     />
-                                    <p className="message regist-message">{passwordMessage}</p>
+                                    <p className="message regist-message">
+                                        {passwordMessage}
+                                    </p>
                                 </div>
                                 <div className="form-el mb-2 h-24">
-                                    <label className="regist-label" htmlFor="passwordConfirm">
+                                    <label
+                                        className="regist-label"
+                                        htmlFor="passwordConfirm"
+                                    >
                                         비밀번호 확인
                                     </label>{" "}
                                     <br />
@@ -133,65 +174,36 @@ export default function ChangeInfo() {
                                 <br />
                                 <div className="flex justify-center itmes-center">
                                     <button
-                                        className="regist-button w-full h-button mt-2 px-2 mb-2"
+                                        className={`regist-button w-full h-button mt-2 px-2 mb-2 ${
+                                            !(isPassword && isPasswordConfirm)
+                                                ? "opacity-50"
+                                                : ""
+                                        }`}
                                         onClick={() => {
                                             handlesubmit();
                                         }}
-                                        disabled={!(isPassword && isPasswordConfirm)}
+                                        disabled={
+                                            !(isPassword && isPasswordConfirm)
+                                        }
                                     >
                                         수정하기
                                     </button>
                                 </div>
+                            </div>
+                            <div className="flex justify-center itmes-center">
+                                <button
+                                    className="regist-button w-full h-button mt-2 px-2 mb-2"
+                                    onClick={() => {
+                                        handleDelete();
+                                    }}
+                                >
+                                    탈퇴하기
+                                </button>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
             )}
         </>
-
-        // <>
-        //     {isPwCheckOpen ? (
-        //         <PWCheck />
-        //     ) : (
-        //         <div className="changePW">
-        //             <h3>비밀번호 수정</h3>
-        //             <div className="form">
-        //                 <div className="form-el">
-        //                     <label htmlFor="password">*새로운 비밀번호</label>{' '}
-        //                     <br />
-        //                     <input
-        //                         id="password"
-        //                         name="password"
-        //                         ref={password}
-        //                         onBlur={onChangePassword}
-        //                     />
-        //                     <p className="message">{passwordMessage}</p>
-        //                 </div>
-        //                 <div className="form-el">
-        //                     <label htmlFor="passwordConfirm">
-        //                         *비밀번호 확인
-        //                     </label>{' '}
-        //                     <br />
-        //                     <input
-        //                         id="passwordConfirm"
-        //                         name="passwordConfirm"
-        //                         ref={passwordConfirm}
-        //                         onBlur={onChangePasswordConfirm}
-        //                     />
-        //                     <p className="message">{passwordConfirmMessage}</p>
-        //                 </div>
-        //                 <br />
-        //                 <button
-        //                     onClick={() => {
-        //                         handlesubmit();
-        //                     }}
-        //                     disabled={!(isPassword && isPasswordConfirm)}
-        //                 >
-        //                     수정하기
-        //                 </button>
-        //             </div>
-        //         </div>
-        //     )}
-        // </>
     );
 }

@@ -33,6 +33,24 @@ function Report() {
 
     const token = sessionStorage.getItem('token');
 
+    // 로그인 차단
+    const handleBan = (memberIndex) => {
+        if (window.confirm('정말로 차단하시겠습니까?')) {
+            axios
+                .put(
+                    `${process.env.REACT_APP_API_URL}/member/ban?index=${memberIndex}`,
+                    {
+                        headers: {
+                            token: sessionStorage.getItem('token') ?? '',
+                        },
+                    }
+                )
+                .then((response) => {
+                    alert(`7일 간 차단하였습니다🚨`);
+                });
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             await axios
@@ -55,7 +73,7 @@ function Report() {
                 const responses = await Promise.all(
                     reportData.map((it) =>
                         axios.get(
-                            `${process.env.REACT_APP_API_URL}/board/${it.boardIndex}/${it.memberIndex}`
+                            `${process.env.REACT_APP_API_URL}/board/adminstar/${it.boardIndex}/${it.memberIndex}`
                         )
                     )
                 );
@@ -153,7 +171,14 @@ function Report() {
                                                 {it.reportRegdate}
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <button className="bg-modal-bg w-3/5">
+                                                <button
+                                                    className="bg-modal-bg w-3/5"
+                                                    onClick={() => {
+                                                        handleBan(
+                                                            it.memberIndex
+                                                        );
+                                                    }}
+                                                >
                                                     차단하기
                                                 </button>
                                             </TableCell>

@@ -33,6 +33,10 @@ function AxiosInterceptor() {
                     alert(res.data.message);
                     return res;
                 } else if (res.status === 401 || res.status === 403) {
+                    sessionStorage.removeItem('memberIndex');
+                    sessionStorage.removeItem('nickname');
+                    sessionStorage.removeItem('token');
+                    sessionStorage.removeItem('auth');
                     alert('재로그인이 필요해요');
                     navigate('/landing/login');
                 } else if (res.status === 404) {
