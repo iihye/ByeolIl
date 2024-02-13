@@ -10,6 +10,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 
+const EXTENSION_IMAGE = ["png", "gif"];
+const EXTENSION_VIDEO = ["wav", "mp4"];
+
 const fileListState = atom({
   key: "fileList",
   default: [],
@@ -183,7 +186,7 @@ function StarRegist(props) {
   return (
     <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside">
       <div className="star-regist bg-modal-bg text-black-sub flex rounded p-3 w-fit">
-        <ImagePreviewArea preBoard={preBoard} />
+        <ImagePreviewArea preBoard={preBoard} type={type} />
         <div>
           <div className="star-regist-middle w-96">
             <div className="flex justify-between items-center mb-2">
@@ -380,7 +383,6 @@ function ImagePreviewArea(props) {
   const data = props.preBoard;
 
   useEffect(() => {
-    console.log(fileList);
     const tmpList = [
       ...fileList.map((it, index) => {
         const url = URL.createObjectURL(it) + "_" + it.type.split("/")[0];
@@ -390,11 +392,31 @@ function ImagePreviewArea(props) {
     ];
 
     if (props.type === "modify") {
-      tmpList.concat(...data.boardMedia);
+      const existData = data.boardMedia.map((it, index) => {
+        let extension;
+
+        let url = it.split(".");
+        let type = url[url.length - 1];
+
+        EXTENSION_IMAGE.forEach((it, index) => {
+          if (it === type) {
+            extension = "image";
+          }
+        });
+
+        EXTENSION_VIDEO.forEach((it, index) => {
+          if (it === type) {
+            extension = "video";
+          }
+        });
+
+        return it + "_" + extension;
+      });
+
+      tmpList.splice(tmpList.length - 1, 0, ...existData);
     }
 
     setPreviewFileList(tmpList);
-    console.log(tmpList);
   }, [fileList]);
 
   let lastPage = previewFileList.length - 1;
