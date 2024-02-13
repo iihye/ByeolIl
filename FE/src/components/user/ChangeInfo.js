@@ -73,6 +73,28 @@ export default function ChangeInfo() {
             });
     };
 
+    // 회원탈퇴
+    const handleDelete = () => {
+        if (window.confirm("정말로 탈퇴하시겠습니까?")) {
+            axios
+                .put(`${process.env.REACT_APP_API_URL}/member/delete`, {
+                    headers: {
+                        token: sessionStorage.getItem("token") ?? "",
+                    },
+                })
+                .then((response) => {
+                    // console.log(response.data);
+                    alert("회원탈퇴가 처리되었습니다");
+                    sessionStorage.removeItem("memberIndex");
+                    sessionStorage.removeItem("nickname");
+                    sessionStorage.removeItem("token");
+                    sessionStorage.removeItem("auth");
+                    navigate("/landing");
+                    setIsPwCheckOpen(true);
+                });
+        }
+    };
+
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
@@ -167,6 +189,16 @@ export default function ChangeInfo() {
                                         수정하기
                                     </button>
                                 </div>
+                            </div>
+                            <div className="flex justify-center itmes-center">
+                                <button
+                                    className="regist-button w-full h-button mt-2 px-2 mb-2"
+                                    onClick={() => {
+                                        handleDelete();
+                                    }}
+                                >
+                                    탈퇴하기
+                                </button>
                             </div>
                         </CardContent>
                     </Card>
