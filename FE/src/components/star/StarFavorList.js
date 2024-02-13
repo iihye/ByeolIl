@@ -95,11 +95,11 @@ function StarFavorList() {
 
                         <FaSearch size="20" className="text-black-sub mx-3" />
                     </div>
-                    {filterData ? (
-                        filterData.length > 0 ? (
-                            filterData.map((it) => (
-                                <ScrollArea className="Card-ScrollArea h-96 overflow-auto justify-center items-center">
-                                    <div className="grid grid-cols-3 justify-items-center gap-4">
+                    <ScrollArea className="Card-ScrollArea h-96 overflow-auto justify-center items-center">
+                        <div className="grid grid-cols-3 justify-items-center gap-4">
+                            {filterData ? (
+                                filterData.length > 0 ? (
+                                    filterData.map((it) => (
                                         <Card
                                             key={it.boardIndex}
                                             className="card-style h-80 w-64 relative"
@@ -152,18 +152,18 @@ function StarFavorList() {
                                                 </div>
                                             </div>
                                         </Card>
+                                    ))
+                                ) : (
+                                    <div className="Card-ScrollArea-NonResult h-96 flex flex-col col-span-3 justify-center items-center">
+                                        <FaRegFaceSadTear className="mr-1" />
+                                        <div className="font-['Pre-Bold']">
+                                            일치하는 결과가 없습니다
+                                        </div>
                                     </div>
-                                </ScrollArea>
-                            ))
-                        ) : (
-                            <div className="Card-ScrollArea-NonResult h-96 flex flex-col justify-center items-center">
-                                <FaRegFaceSadTear className="mr-1" />
-                                <div className="font-['Pre-Bold']">
-                                    일치하는 결과가 없습니다
-                                </div>
-                            </div>
-                        )
-                    ) : null}
+                                )
+                            ) : null}
+                        </div>
+                    </ScrollArea>
                 </CardContent>
             </Card>
         </div>
