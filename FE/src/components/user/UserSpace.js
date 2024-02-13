@@ -3,7 +3,12 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Stats } from '@react-three/drei';
 import * as THREE from 'three';
 import axios from 'axios';
-import { atom, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+    atom,
+    useRecoilState,
+    useRecoilValue,
+    useSetRecoilState,
+} from 'recoil';
 import { Link, useParams } from 'react-router-dom';
 import {
     isDeleteAlertOpenState,
@@ -65,6 +70,12 @@ const starLineOpacityState = atom({
     key: 'starLineOpacity',
     default: -1,
 });
+
+const followState = atom({
+    key: 'followState',
+    default: null,
+});
+
 ///////////////////////////////// ↑ atoms
 
 // isAddedStar : starLocation : starInfo
@@ -313,9 +324,14 @@ function SceneStars() {
     const loginUserId = Number(sessionStorage.getItem('memberIndex'));
     const loginUserNickname = sessionStorage.getItem('nickname');
 
+    const [isFollowState, setIsFollowState] = useRecoilState(followState);
+
     useEffect(() => {
         const fetchData = async () => {
             // 게시글 리스트 불러오기
+
+            setIsFollowState(null);
+
             if (!isDeleteAlertOpen) {
                 await axios
                     .get(
@@ -331,7 +347,8 @@ function SceneStars() {
                     )
                     .then((response) => {
                         isAddedStar.clear();
-                        response.data.BoardListResponseDtoList.forEach((star) =>
+
+                        response.data.forEach((star) =>
                             isAddedStar.set(star.boardLocation, star)
                         );
                         setStars(response.data);
@@ -339,10 +356,8 @@ function SceneStars() {
                     .then(async () => {
                         let following = [];
                         let follower = [];
-
                         // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
                         if (writerIndex !== loginUserId) {
-                            console.log(writerIndex, loginUserId);
                             await axios
                                 .get(
                                     `${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`
@@ -376,6 +391,8 @@ function SceneStars() {
                                     loginUserNickname.split('@')[0]
                             );
 
+                            setIsFollowState(followerCheck);
+
                             if (!followingCheck) {
                                 if (!followerCheck) {
                                     setIsFriend(false);
@@ -390,7 +407,7 @@ function SceneStars() {
         };
 
         fetchData();
-    }, [curPage, isDeleteAlertOpen]);
+    }, [curPage, isDeleteAlertOpen, writerIndex]);
 
     return (
         <>
@@ -446,14 +463,14 @@ function UserSpace() {
         sessionStorage.getItem('memberIndex')
     );
     const [userName, setUserName] = useState('');
-    const [followState, setFollowState] = useState('');
+    const [isFollowState, setIsFollowState] = useRecoilState(followState);
 
-    const handleFollow = (followState) => {
+    const handleFollow = (isFollowState) => {
         const relationData = {
             toMemberIndex: userId,
             fromMemberIndex: loginIndex,
         };
-        if (followState === '언팔로우') {
+        if (isFollowState) {
             // 팔로우 취소 api 호출
             axios
                 .delete(
@@ -467,8 +484,8 @@ function UserSpace() {
                         },
                     }
                 )
-                .then(() => setFollowState('팔로우'));
-        } else if (followState === '팔로우') {
+                .then(() => setIsFollowState(false));
+        } else if (!isFollowState) {
             // 팔로우 api 호출
             axios
                 .post(
@@ -480,13 +497,17 @@ function UserSpace() {
                         },
                     }
                 )
-                .then(() => setFollowState('언팔로우'));
+                .then(() => setIsFollowState(true));
         }
     };
 
     useEffect(() => {
-        setUserName(location.state.props);
-    }, []);
+        const writerIndex = Number(params.user_id);
+        const loginUserId = Number(sessionStorage.getItem('memberIndex'));
+        if (writerIndex !== loginUserId && location.state?.props) {
+            setUserName(location.state.props);
+        }
+    }, [location]);
 
     useEffect(() => {
         setLoginToken(loginToken);
@@ -526,22 +547,30 @@ function UserSpace() {
                     <Stats />
                 </Canvas>
             </div>
-            {userName && (
-                <>
-                    <div className="space-name absolute top-0 left-0 flex justify-center items-center text-white">
-                        {userName}님의 우주입니다
-                    </div>
-                    {userId !== loginIndex && (
-                        <Button onClick={() => handleFollow(followState)}>
-                            {followState}
-                        </Button>
-                    )}
-                </>
-            )}
 
-            <Link to={`/space/${sessionStorage.getItem('memberIndex')}/radio`}>
-                <button className="absolute bottom-2 left-2">라디오</button>
-            </Link>
+            {userName ? (
+                <div className="absolute bottom-0 left-0 flex justify-center items-center text-white">
+                    <div className="space-name">{userName}님의 우주입니다</div>
+                    <div>
+                        {userId !== loginIndex &&
+                            (isFollowState === null ? (
+                                <div>Loading</div>
+                            ) : (
+                                <button
+                                    onClick={() => handleFollow(isFollowState)}
+                                >
+                                    {isFollowState ? '언팔로우' : '팔로우'}
+                                </button>
+                            ))}
+                    </div>
+                </div>
+            ) : (
+                <Link
+                    to={`/space/${sessionStorage.getItem('memberIndex')}/radio`}
+                >
+                    <button className="absolute bottom-2 left-2">라디오</button>
+                </Link>
+            )}
         </div>
     );
 }
