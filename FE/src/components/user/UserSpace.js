@@ -7,8 +7,7 @@ import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { Link, useParams } from "react-router-dom";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
 import { position, linePosition, lastStarIndex } from "../../data";
-import ModalSpace from "components/ModalSpace";
-import { Bloom, EffectComposer, Select, Selection, SelectiveBloom, ToneMapping } from "@react-three/postprocessing";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
 import { constellationCheck } from "util";
 
@@ -65,7 +64,7 @@ function Line(props) {
   return (
     <>
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.025 : 0.005} color={0xced6ff} />
+        <lineBasicMaterial attach="material" transparent={props.lineColor} opacity={starLineOpacity === groupNum ? 0.05 : 0.01} color={0xced6ff} />
       </line>
     </>
   );
@@ -91,6 +90,10 @@ function Star(props) {
   const isFriend = useRecoilValue(isFriendState);
   const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
   const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+
+  // 컨텐츠 길이에 따라 밝기 or 별 크기 변화
+  const star = isAddedStar.get(props.location);
+  const sizeProp = star ? star.boardContent.length / 400 : 0;
 
   const writerIndex = Number(params["user_id"]);
   const loginUserIndex = Number(JSON.parse(atob(sessionStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
@@ -136,7 +139,7 @@ function Star(props) {
     <>
       <mesh ref={mesh} position={props.position}>
         <sphereGeometry args={props.size} />
-        <meshStandardMaterial color={curStarState ? colors[isFriend] : "grey"} opacity={curStarState ? 1 : 0.2} transparent={true} />
+        <meshStandardMaterial color={curStarState ? colors[isFriend] : "grey"} opacity={curStarState ? 1 : 0.4} transparent={true} />
       </mesh>
       <StarSurround position={props.position} location={props.location} handleClick={handleClick} />
     </>
@@ -153,11 +156,11 @@ function StarSurround(props) {
         props.handleClick(e, props.location);
       }}
       onPointerEnter={(e) => {
-        setOpacity(0.1);
+        setOpacity(0.05);
       }}
       onPointerLeave={() => setOpacity(0)}
     >
-      <sphereGeometry args={[0.6, 48, 48]} />
+      <sphereGeometry args={[0.7, 48, 48]} />
       <meshStandardMaterial transparent={true} opacity={opacity} />
     </mesh>
   );
@@ -210,7 +213,7 @@ function GroupStar(props) {
     <>
       <group ref={group} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
         {props.position.map((val, index) => (
-          <Star key={index} size={[0.13, 32, 32]} positions={position} position={val.slice(1, 4)} location={val[0]} setLineColor={setLineColor} />
+          <Star key={index} size={[0.17, 32, 32]} positions={position} position={val.slice(1, 4)} location={val[0]} setLineColor={setLineColor} />
         ))}
         {linePosition[groupNum].map((it, index) => {
           const pos = it.map((it) => new THREE.Vector3(...it));
@@ -310,7 +313,7 @@ function SceneLights() {
     <>
       {/* 광원 */}
       {/* <directionalLight position={[0, 0, 5]} intensity={2} /> */}
-      <ambientLight intensity={2} />
+      <ambientLight intensity={2.6} />
     </>
   );
 }
@@ -378,7 +381,7 @@ function UserSpace() {
       <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
         <Canvas>
           <EffectComposer>
-            <Bloom intensity={0.5} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
+            <Bloom intensity={0.7} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
           </EffectComposer>
           <SceneStars />
           <SceneLights />
