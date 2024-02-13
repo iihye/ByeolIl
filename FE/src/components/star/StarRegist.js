@@ -10,6 +10,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 
+const EXTENSION_IMAGE = ["png", "gif"];
+const EXTENSION_VIDEO = ["wav", "mp4"];
+
 const fileListState = atom({
   key: "fileList",
   default: [],
@@ -134,7 +137,7 @@ function StarRegist(props) {
           });
 
           isAddedStar.clear();
-          res.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+          res.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
           setStars(res.data);
           handleClose();
         } else {
@@ -149,7 +152,7 @@ function StarRegist(props) {
         memberIndex: writerIndex,
         boardInputDate: dateRef.current.innerText,
         boardContent: contentRef.current.value,
-        boardMedia: ["새 이미지 경로1", "새 이미지 경로2"],
+        boardMedia: [],
         boardAccess: accessRange,
       };
 
@@ -183,7 +186,7 @@ function StarRegist(props) {
   return (
     <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside">
       <div className="star-regist bg-modal-bg text-black-sub flex rounded p-3 w-fit">
-        <ImagePreviewArea preBoard={preBoard} />
+        <ImagePreviewArea preBoard={preBoard} type={type} />
         <div>
           <div className="star-regist-middle w-96">
             <div className="flex justify-between items-center mb-2">
@@ -366,7 +369,6 @@ function FileList() {
           </div>
         </div>
       ))}
-      {fileList}
     </div>
   );
 }
@@ -381,12 +383,43 @@ function ImagePreviewArea(props) {
   const data = props.preBoard;
 
   useEffect(() => {
-    const tmpList = [].concat(...data.boardMedia);
-    setPreviewFileList(tmpList);
-    console.log(fileList);
-  }, []);
+    const tmpList = [
+      ...fileList.map((it, index) => {
+        const url = URL.createObjectURL(it) + "_" + it.type.split("/")[0];
 
-  let lastPage = data ? data.boardMedia.length - 1 : 0;
+        return url;
+      }),
+    ];
+
+    if (props.type === "modify") {
+      const existData = data.boardMedia.map((it, index) => {
+        let extension;
+
+        let url = it.split(".");
+        let type = url[url.length - 1];
+
+        EXTENSION_IMAGE.forEach((it, index) => {
+          if (it === type) {
+            extension = "image";
+          }
+        });
+
+        EXTENSION_VIDEO.forEach((it, index) => {
+          if (it === type) {
+            extension = "video";
+          }
+        });
+
+        return it + "_" + extension;
+      });
+
+      tmpList.splice(tmpList.length - 1, 0, ...existData);
+    }
+
+    setPreviewFileList(tmpList);
+  }, [fileList]);
+
+  let lastPage = previewFileList.length - 1;
   let curPage = 0;
 
   function handleLeft() {
@@ -409,7 +442,8 @@ function ImagePreviewArea(props) {
             <div className="flex items-center h-pic transition-all" ref={areaRef}>
               {previewFileList.map((it, index) => (
                 <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
-                  <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
+                  {it.split("_")[1] === "image" ? <img className="w-pic max-h-pic" src={it.split("_")[0]} key={index} alt="it"></img> : null}
+                  {it.split("_")[1] === "video" ? <video className="w-pic max-h-pic" src={it.split("_")[0]} controls /> : null}
                 </div>
               ))}
             </div>
