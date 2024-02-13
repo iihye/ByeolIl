@@ -108,7 +108,7 @@ public class MemberService {
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestAPIKey);
 
-        params.add("redirect_uri", redirectUrl+url);
+        params.add("redirect_uri", "https://i10b209.p.ssafy.io"+url);
 //        params.add("redirect_uri", "http://localhost:3000"+url);
         params.add("code", code);
 
