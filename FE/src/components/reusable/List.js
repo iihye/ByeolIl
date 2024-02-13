@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import SearchBar from "./SearchBar";
-import { filterState } from "components/atom";
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import { isStarDetailOpenState } from "components/atom";
-import axios from "axios";
-import StarDetail from "components/star/StarDetail";
+import React, { useEffect, useState } from 'react';
+import SearchBar from './SearchBar';
+import { filterState } from 'components/atom';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { isStarDetailOpenState } from 'components/atom';
+import axios from 'axios';
+import StarDetail from 'components/star/StarDetail';
 import {
     Card,
     CardContent,
@@ -12,7 +12,7 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -21,26 +21,26 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { WiStars } from "react-icons/wi";
-import { useNavigate } from "react-router";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from '@/components/ui/table';
+import { WiStars } from 'react-icons/wi';
+import { useNavigate } from 'react-router';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function List() {
-    const [listData, setListData] = useState("");
+    const [listData, setListData] = useState('');
     const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
     const [memberIndex, setMemberIndex] = useState(
-        Number(sessionStorage.getItem("memberIndex"))
+        Number(sessionStorage.getItem('memberIndex'))
     );
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
     const navigate = useNavigate();
-    const token = sessionStorage.getItem("token") ?? "";
+    const token = sessionStorage.getItem('token') ?? '';
 
     useEffect(() => {
-        setMemberIndex(Number(sessionStorage.getItem("memberIndex")));
+        setMemberIndex(Number(sessionStorage.getItem('memberIndex')));
     }, [token]);
 
     const deleteStar = (boardIndex, memberIndex) => {
@@ -95,16 +95,16 @@ function List() {
             e.stopPropagation();
 
             const check = [...e.target.classList].some(
-                (it) => it === "outside"
+                (it) => it === 'outside'
             );
             if (check) {
                 navigate(-1);
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     });
 

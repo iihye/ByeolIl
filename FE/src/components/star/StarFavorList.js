@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
     Card,
     CardContent,
@@ -6,23 +6,23 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { filterState, isStarDetailOpenState } from "components/atom";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import SearchBar from "../reusable/SearchBar";
-import { FaHeart } from "react-icons/fa";
-import axios from "axios";
-import { useNavigate } from "react-router";
-import { FaSearch } from "react-icons/fa";
-import { LuFolderHeart } from "react-icons/lu";
-import { FaRegFaceSadTear } from "react-icons/fa6";
+} from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { filterState, isStarDetailOpenState } from 'components/atom';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import SearchBar from '../reusable/SearchBar';
+import { FaHeart } from 'react-icons/fa';
+import axios from 'axios';
+import { useNavigate } from 'react-router';
+import { FaSearch } from 'react-icons/fa';
+import { LuFolderHeart } from 'react-icons/lu';
+import { FaRegFaceSadTear } from 'react-icons/fa6';
 
 function StarFavorList() {
-    const token = sessionStorage.getItem("token");
-    const [listData, setListData] = useState("");
+    const token = sessionStorage.getItem('token');
+    const [listData, setListData] = useState('');
     const [memberIndex, setMemberIndex] = useState(
-        sessionStorage.getItem("memberIndex")
+        sessionStorage.getItem('memberIndex')
     );
     const [starDetailState, setStarDetailState] = useRecoilState(
         isStarDetailOpenState
@@ -45,7 +45,7 @@ function StarFavorList() {
                 );
                 resetList();
                 setListData(
-                    response.data.filter((item) => item.boardAccess === "OPEN")
+                    response.data.filter((item) => item.boardAccess === 'OPEN')
                 );
             } catch (error) {
                 console.log(error);
@@ -60,16 +60,16 @@ function StarFavorList() {
             e.stopPropagation();
 
             const check = [...e.target.classList].some(
-                (it) => it === "outside"
+                (it) => it === 'outside'
             );
             if (check) {
                 navigate(-1);
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     });
 
