@@ -38,7 +38,7 @@ function KakaoLogin() {
                     sessionStorage.getItem(`token`)
                 );
                 console.log('memberIndex: ', dec.sub);
-                getUserIndex();
+                await getUserIndex();
                 if (dec.sub) {
                     navigate(`/space/${dec.sub}`);
                 }
@@ -68,7 +68,6 @@ function KakaoLogin() {
     useEffect(() => {
         if (!location.search) return;
         getKakaoToken();
-        getUserIndex();
     }, []);
 }
 

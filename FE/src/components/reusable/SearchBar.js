@@ -55,7 +55,12 @@ function SearchBar({ filterKey, listItems }) {
             <input
                 value={searchValue}
                 onChange={handleSearchValue}
-                className=" text-black-sub my-3"
+                className=" text-black-sub my-3 font-['Pre-Bold']"
+                placeholder={
+                    filterKey === 'memberNickname'
+                        ? '닉네임을 입력해주세요'
+                        : '내용을 입력해주세요'
+                }
             />
         </div>
     );
