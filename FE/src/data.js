@@ -759,5 +759,5 @@ export const linePosition = [
     ],
   ],
 ];
-
+console.log(position);
 export const lastStarIndex = idx;
