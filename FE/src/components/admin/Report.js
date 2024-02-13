@@ -33,6 +33,24 @@ function Report() {
 
     const token = sessionStorage.getItem("token");
 
+    // 로그인 차단
+    const handleBan = (memberIndex) => {
+        if (window.confirm("정말로 차단하시겠습니까?")) {
+            axios
+                .put(
+                    `${process.env.REACT_APP_API_URL}/member/ban?index=${memberIndex}`,
+                    {
+                        headers: {
+                            token: sessionStorage.getItem("token") ?? "",
+                        },
+                    }
+                )
+                .then((response) => {
+                    alert(`7일 간 차단하였습니다🚨`);
+                });
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             await axios
@@ -55,12 +73,14 @@ function Report() {
                 const responses = await Promise.all(
                     reportData.map((it) =>
                         axios.get(
-                            `${process.env.REACT_APP_API_URL}/board/${it.boardIndex}/${it.memberIndex}`
+                            `${process.env.REACT_APP_API_URL}/board/adminstar/${it.boardIndex}/${it.memberIndex}`
                         )
                     )
                 );
 
-                const newBoardContent = responses.map((res) => res.data.boardContent);
+                const newBoardContent = responses.map(
+                    (res) => res.data.boardContent
+                );
 
                 const newBoardIndex = reportData.map((res) => res.boardIndex);
 
@@ -80,7 +100,9 @@ function Report() {
         function handleClick(e) {
             e.stopPropagation();
 
-            const check = [...e.target.classList].some((it) => it === "outside");
+            const check = [...e.target.classList].some(
+                (it) => it === "outside"
+            );
             if (check) {
                 navigate(-1);
             }
@@ -106,15 +128,26 @@ function Report() {
                     <Table className="Report-Table">
                         <TableHeader>
                             <TableRow className="font-['Pre-Bold'] bg-white text-m ">
-                                <TableHead className="text-center w-2/12">닉네임</TableHead>
-                                <TableHead className="text-center">신고내용</TableHead>
-                                <TableHead className="text-center w-2/12">신고일</TableHead>
-                                <TableHead className="text-center w-2/12">사용자 차단</TableHead>
-                                <TableHead className="text-center w-2/12">게시글 확인</TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    닉네임
+                                </TableHead>
+                                <TableHead className="text-center">
+                                    신고내용
+                                </TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    신고일
+                                </TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    사용자 차단
+                                </TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    게시글 확인
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {reportData.length > 0 && boardContent.length > 0 ? (
+                            {reportData.length > 0 &&
+                            boardContent.length > 0 ? (
                                 reportData.map((it, index) => (
                                     <>
                                         {reportModal === it.boardIndex && (
@@ -131,19 +164,32 @@ function Report() {
                                                 {it.memberNickname}
                                             </TableCell>
                                             {/* <TableCell>{boardContent[index]}</TableCell> */}
-                                            <TableCell>{it.reportContent}</TableCell>
+                                            <TableCell>
+                                                {it.reportContent}
+                                            </TableCell>
                                             <TableCell className="text-center">
                                                 {it.reportRegdate}
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <button className="bg-modal-bg w-3/5">
+                                                <button
+                                                    className="bg-modal-bg w-3/5"
+                                                    onClick={() => {
+                                                        handleBan(
+                                                            it.memberIndex
+                                                        );
+                                                    }}
+                                                >
                                                     차단하기
                                                 </button>
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <button
                                                     className="bg-modal-bg w-6/12"
-                                                    onClick={() => setReportModal(it.boardIndex)}
+                                                    onClick={() =>
+                                                        setReportModal(
+                                                            it.boardIndex
+                                                        )
+                                                    }
                                                 >
                                                     글보기
                                                 </button>
@@ -152,7 +198,9 @@ function Report() {
                                     </>
                                 ))
                             ) : (
-                                <div className="font-['Pre-Light'] m-2 text-center">Loading...</div>
+                                <div className="font-['Pre-Light'] m-2 text-center">
+                                    Loading...
+                                </div>
                             )}
                             <TableRow></TableRow>
                         </TableBody>
