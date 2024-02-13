@@ -118,6 +118,37 @@ public class BoardService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
+    public BoardStarResponseDto findBoardReport(Long boardIndex, Long memberIndex) {
+        Board board = boardRepository.findById(boardIndex).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+
+        Heart heart = heartRepository.findByBoardBoardIndexAndMemberMemberIndex(boardIndex,memberIndex).orElse(null);
+        boolean alreadyHeartedTF = true;
+        if(heart!=null) alreadyHeartedTF = false; //모든게 true로 나옴 고치기
+        List<Media> medias = mediaRepository.findByBoardBoardIndex(boardIndex).orElse(Collections.emptyList());
+        List<String> mediaLocations = medias.stream()
+                .map(Media::getMediaLocation)
+                .toList();
+
+        List<Hash> hashes = hashRepository.findByBoardBoardIndex(boardIndex).orElse(Collections.emptyList());
+        List<String> hashContent = hashes.stream()
+                .map(Hash::getHashContent)
+                .toList();
+
+        BoardStarResponseDto dto = BoardStarResponseDto.builder()
+                .boardRegtime(board.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
+                .boardUpdateDate(board.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
+                .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                .boardContent(board.getBoardContent())
+                .boardMedia(mediaLocations)
+                .alreadyHeartedTF(alreadyHeartedTF)
+                .boardAccess(board.getBoardAccess())
+                .boardLike(heartRepository.countByBoardBoardIndex(boardIndex))
+                .hashContent(hashContent).build();
+
+        return dto;
+    }
+
     @Transactional
     public void modifyBoard(BoardUpdateRequestDto dto,MultipartFile[] files) throws IOException  {
         Board board = boardRepository.findById(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));

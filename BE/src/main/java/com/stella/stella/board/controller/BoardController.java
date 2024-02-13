@@ -209,4 +209,20 @@ public class BoardController {
 
         return ResponseEntity.status(status).body(list);
     }
+
+    @GetMapping("/adminstar/{boardIndex}/{memberIndex}")
+    public ResponseEntity<BoardStarResponseDto> reportDetails (@PathVariable Long boardIndex, @PathVariable Long memberIndex) {
+        HttpStatus status = HttpStatus.OK;
+        BoardStarResponseDto dto = null;
+        try {
+            dto = boardService.findBoardReport(boardIndex,memberIndex);
+
+        } catch (NullPointerException e) {
+            status = HttpStatus.NOT_FOUND;
+        } catch (Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity.status(status).body(dto);
+
+    }
 }
