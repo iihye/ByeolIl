@@ -7,6 +7,7 @@ import com.stella.stella.alarm.entity.Alarm;
 import com.stella.stella.alarm.entity.Alarmcheck;
 import com.stella.stella.alarm.repository.AlarmRepository;
 import com.stella.stella.alarm.repository.AlarmcheckRepository;
+import com.stella.stella.alarm.repository.EmitterRepository;
 import com.stella.stella.board.entity.Board;
 import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.common.exception.CustomException;
@@ -17,7 +18,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,10 @@ public class AlarmService {
     private final AlarmcheckRepository alarmcheckRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
+    private final EmitterRepository emitterRepository;
+
+    private final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private final String ALARM_NAME = "alarm";
 
     // 알림 등록
     public void addAlarm(AlarmRequestDto alarmRequestDto){
@@ -40,6 +47,8 @@ public class AlarmService {
 
         Member fromMember = memberRepository.findByMemberIndex(alarmRequestDto.getFromMemberIndex())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
+        
+        if(toMember.getMemberIndex() == fromMember.getMemberIndex()) return;
 
         Alarm alarm;
 
@@ -102,5 +111,51 @@ public class AlarmService {
         }
 
         return alarmListResponseDtos;
+    }
+
+    // 알림 SSE
+    public void send(final long alarmId, final Long memberIndex, final String msg) {
+        emitterRepository.get(memberIndex).ifPresentOrElse(sseEmitter -> {
+            try {
+                sseEmitter.send(SseEmitter.event().id(createAlarmId(memberIndex, alarmId)).name(ALARM_NAME).data(msg));
+            } catch (IOException e) {
+                emitterRepository.delete(memberIndex);
+                throw new CustomException(CustomExceptionStatus.INTERNAL_ERROR);
+            }
+        }, () -> log.info("[SseEmitter] {} SseEmitter Not Founded", memberIndex));
+    }
+
+    public SseEmitter connectAlarm(Long memberIndex) {
+        Member findMember = memberRepository.findByMemberIndex(memberIndex)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
+
+        SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
+        emitterRepository.save(memberIndex, sseEmitter);
+
+        // 종료 되었을 때 처리
+        sseEmitter.onCompletion(() -> {
+            emitterRepository.delete(memberIndex);
+        });
+
+        // timeOut 시 처리
+        sseEmitter.onTimeout(() -> {
+            emitterRepository.delete(memberIndex);
+        });
+
+        try {
+            sseEmitter.send(SseEmitter.event().id(createAlarmId(memberIndex, null)).name(ALARM_NAME).data("connect completed!!"));
+        } catch (IOException e) {
+            throw new CustomException(CustomExceptionStatus.CONNECT_ERROR);
+        }
+
+        return sseEmitter;
+    }
+
+    private String createAlarmId(Long memberIndex, Long alarmId) {
+        if (alarmId == null) {
+            return memberIndex + "_" + System.currentTimeMillis();
+        }
+
+        return memberIndex + "_" + alarmId;
     }
 }
