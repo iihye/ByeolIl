@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MultiCommentListResponseDto {
     private Long memberIndex;
+    private String memberNickname;
     private Long multiCommentIndex;
     private String multiCommentContent;
     private LocalDateTime multiCommentRegdate;

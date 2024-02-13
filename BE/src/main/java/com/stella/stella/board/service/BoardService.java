@@ -221,7 +221,7 @@ public class BoardService {
     public List<BoardListResponseDto> findBoardListToPage(Long memberIndex, Long page) {
         Long locLow = page*209;
         Long locHigh = (page+1)*209-1;
-   
+
         List<Board> boards = boardRepository.findByBoardforPage(memberIndex, BoardDeleteYN.N,locLow,locHigh );
 
         return BoardListResponseDto.wrap(memberIndex,boards);

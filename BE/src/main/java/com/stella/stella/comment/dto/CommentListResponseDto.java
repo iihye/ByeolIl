@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class CommentListResponseDto {
     private Long memberIndex;
+    private String memberNickname;
     private Long commentIndex;
     private String commentContent;
     private LocalDateTime commentRegdate;
