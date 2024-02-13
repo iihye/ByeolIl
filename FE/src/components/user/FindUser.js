@@ -94,7 +94,10 @@ function FindUser() {
                                             className="pr-2 text-btn-bg-hover"
                                         />
                                         {it.memberNickname}
-                                        <Link to={`/space/${it.memberIndex}`}>
+                                        <Link
+                                            to={`/space/${it.memberIndex}`}
+                                            state={{ props: it.memberNickname }}
+                                        >
                                             <TbHomeMove className="size-7 mx-2">
                                                 이동하기
                                             </TbHomeMove>
