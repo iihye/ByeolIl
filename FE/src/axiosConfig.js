@@ -8,7 +8,6 @@ function AxiosInterceptor() {
     useEffect(() => {
         const reqInterceptor = axios.interceptors.request.use(
             (config) => {
-                console.log('요청');
                 const token = sessionStorage.getItem('token');
                 if (token) {
                     config.headers['Authorization'] = `${token}`;

@@ -11,6 +11,8 @@ import {
     isStarRegistOpenState,
 } from 'components/atom';
 import { position, linePosition, lastStarIndex } from '../../data';
+import { Button } from '@/components/ui/button';
+import { useLocation } from 'react-router-dom';
 import ModalSpace from 'components/ModalSpace';
 import {
     Bloom,
@@ -454,6 +456,7 @@ function SceneEnvironment() {
 function UserSpace() {
     const params = useParams();
     const userId = params.user_id;
+    const location = useLocation();
 
     const [loginToken, setLoginToken] = useState(
         sessionStorage.getItem('token')
@@ -461,7 +464,7 @@ function UserSpace() {
     const [loginIndex, setLoginIndex] = useState(
         sessionStorage.getItem('memberIndex')
     );
-    const [userName, setUserName] = useState(null);
+    const [userName, setUserName] = useState('');
     const [followState, setFollowState] = useState('');
 
     const handleFollow = (followState) => {
@@ -499,6 +502,10 @@ function UserSpace() {
                 .then(() => setFollowState('언팔로우'));
         }
     };
+
+    useEffect(() => {
+        setUserName(location.state.props);
+    }, []);
 
     useEffect(() => {
         setLoginToken(loginToken);
@@ -540,15 +547,17 @@ function UserSpace() {
             </div>
             {userName && (
                 <>
-                    <div className="space-name">{userName}님의 우주입니다</div>
+                    <div className="space-name absolute top-0 left-0 flex justify-center items-center text-white">
+                        {userName}님의 우주입니다
+                    </div>
                     {userId !== loginIndex && (
-                        <button onClick={() => handleFollow(followState)}>
+                        <Button onClick={() => handleFollow(followState)}>
                             {followState}
-                        </button>
+                        </Button>
                     )}
                 </>
             )}
-            {/* <ModalSpace /> */}
+
             <Link to={`/space/${sessionStorage.getItem('memberIndex')}/radio`}>
                 <button className="absolute bottom-2 left-2">라디오</button>
             </Link>
