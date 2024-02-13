@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { PiRadioFill } from 'react-icons/pi';
 import { Slider } from '@/components/ui/slider';
-import { SliderRange, SliderThumb } from '@radix-ui/react-slider';
 import { useNavigate } from 'react-router';
 
 function Settings() {
@@ -27,15 +19,17 @@ function Settings() {
     const memberIndex = sessionStorage.getItem('memberIndex');
     const userToken = sessionStorage.getItem('token');
 
-    const handleOption = (e) => {
-        const currentRadioState = e.target.value;
+    // 슬라이더 값에 따른 처리 함수
+    const handleSliderChange = (valueArray) => {
+        const sliderValue = valueArray[0]; // 슬라이더는 하나의 값만 반환
+        const selectedOption = options[sliderValue]; // 슬라이더 값에 해당하는 옵션 선택
 
         axios
             .put(
                 `${process.env.REACT_APP_API_URL}/member`,
                 {
                     memberIndex: memberIndex,
-                    memberRadioStatus: currentRadioState,
+                    memberRadioStatus: selectedOption.value,
                 },
                 {
                     headers: {
@@ -51,8 +45,8 @@ function Settings() {
                         : '변경 실패';
                 setSettingValue(result);
             })
-            .catch((e) => {
-                console.log(e);
+            .catch((error) => {
+                console.log(error);
             });
     };
 
@@ -72,7 +66,7 @@ function Settings() {
         return () => {
             window.removeEventListener('click', handleClick);
         };
-    });
+    }, [navigate]);
 
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
@@ -83,7 +77,6 @@ function Settings() {
                         환경설정
                     </CardTitle>
                 </CardHeader>
-                <div></div>
                 <CardContent>
                     <div className="flex font-['Pre-bold'] mb-2">
                         <PiRadioFill
@@ -96,27 +89,12 @@ function Settings() {
                         <div className="w-1/6 mr-2 font-['Pre-bold']">최근</div>
                         <Slider
                             className="Settings-Slider flex-grow"
-                            defaultValue={[1]}
-                            max={2}
+                            defaultValue={[0]} // 기본값을 options 배열의 첫 번째 요소에 맞춤
+                            max={options.length - 1} // 최대값을 options 배열의 마지막 요소에 맞춤
                             step={1}
+                            onValueChange={handleSliderChange} // 슬라이더 값이 변경될 때 호출될 함수
                         />
-                        <div className="w-1/6 ml-2 font-['Pre-bold'] ">
-                            과거
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between px-16">
-                        {/* {options.map((option) => {
-                        return (
-                            <button
-                                className="mr-1 px-2 py-2 mb-2 rounded-custom font-['Pre-Light']"
-                                onClick={handleOption}
-                                value={option.value}
-                            >
-                                {option.name}
-                            </button>
-                        );
-                    })} */}
+                        <div className="w-1/6 ml-2 font-['Pre-bold']">과거</div>
                     </div>
                 </CardContent>
             </Card>
