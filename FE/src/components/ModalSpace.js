@@ -16,18 +16,32 @@ function ModalSpace() {
 function StarRegistArea() {
   const isStarRegistOpen = useRecoilValue(isStarRegistOpenState);
 
-  return <>{isStarRegistOpen !== false ? <StarRegist type={"regist"} location={isStarRegistOpen[0]} writerIndex={isStarRegistOpen[1]} /> : null}</>;
+  return <>{isStarRegistOpen && <StarRegist type={"regist"} location={isStarRegistOpen[0]} writerIndex={isStarRegistOpen[1]} />}</>;
 }
 
 function StarModifyArea() {
+  // [data, starIndex, location. loginUserIndex]
   const isStarModifyOpen = useRecoilValue(isStarModifyOpenState);
-  return <>{isStarModifyOpen !== false ? <StarRegist type={"modify"} preBoard={isStarModifyOpen[0]} boardIndex={isStarModifyOpen[1]} location={isStarModifyOpen[2]} writerIndex={isStarModifyOpen[3]} /> : null}</>;
+
+  return (
+    <>
+      {isStarModifyOpen && (
+        <StarRegist
+          type={"modify"}
+          preBoard={isStarModifyOpen[0]}
+          boardIndex={isStarModifyOpen[1]}
+          location={isStarModifyOpen[2]}
+          writerIndex={isStarModifyOpen[3]}
+        />
+      )}
+    </>
+  );
 }
 
 function StarDetailArea() {
   const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
-  return <>{isStarDetailOpen !== false ? <StarDetail starIndex={isStarDetailOpen[0]} userIndex={isStarDetailOpen[1]} /> : null}</>;
+  return <>{isStarDetailOpen && <StarDetail starIndex={isStarDetailOpen[0]} userIndex={isStarDetailOpen[1]} />}</>;
 }
 
 export default ModalSpace;

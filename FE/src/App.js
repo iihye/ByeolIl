@@ -20,8 +20,10 @@ import Radio from 'components/radio/Radio';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import LandingPage from 'pages/LandingPage';
 import { useEffect } from 'react';
+import { RecoilEnv } from 'recoil';
 
 function App() {
+    RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
     // 로그인 ? mainpage : landingpage
     const navigate = useNavigate();
     const rendering = () => {
@@ -39,7 +41,7 @@ function App() {
                 <Route path="/regist/kakao" element={<KakaoRegist />}></Route>
                 <Route path="/login/kakao" element={<KakaoLogin />}></Route>
                 <Route path="/landing" element={<LandingPage />}>
-                    <Route exact path="login" element={<Login />}></Route>
+                    <Route path="login" element={<Login />}></Route>
                     <Route path="regist" element={<Regist />}></Route>
                     <Route path="findId" element={<FindID />} />
                     <Route path="findPw" element={<FindPW />} />
