@@ -149,7 +149,7 @@ function StarRegist(props) {
         memberIndex: writerIndex,
         boardInputDate: dateRef.current.innerText,
         boardContent: contentRef.current.value,
-        boardMedia: ["새 이미지 경로1", "새 이미지 경로2"],
+        boardMedia: [],
         boardAccess: accessRange,
       };
 
@@ -380,7 +380,14 @@ function ImagePreviewArea(props) {
   const data = props.preBoard;
 
   useEffect(() => {
-    const tmpList = [...fileList.map((it, index) => URL.createObjectURL(it))];
+    console.log(fileList);
+    const tmpList = [
+      ...fileList.map((it, index) => {
+        const url = URL.createObjectURL(it) + "_" + it.type.split("/")[0];
+
+        return url;
+      }),
+    ];
 
     if (props.type === "modify") {
       tmpList.concat(...data.boardMedia);
@@ -413,7 +420,8 @@ function ImagePreviewArea(props) {
             <div className="flex items-center h-pic transition-all" ref={areaRef}>
               {previewFileList.map((it, index) => (
                 <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
-                  <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
+                  {it.split("_")[1] === "image" ? <img className="w-pic max-h-pic" src={it.split("_")[0]} key={index} alt="it"></img> : null}
+                  {it.split("_")[1] === "video" ? <video className="w-pic max-h-pic" src={it.split("_")[0]} controls /> : null}
                 </div>
               ))}
             </div>
