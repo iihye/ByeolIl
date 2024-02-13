@@ -17,6 +17,7 @@ import { CgCloseR } from "react-icons/cg";
 import { IoMdSend } from "react-icons/io";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import ReactAudioPlayer from "react-audio-player";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -418,7 +419,7 @@ function ReplyRegistArea(props) {
 function RadioContent() {
   const [rdata, setRdata] = useState();
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
-
+  const [audioData, setAudioData] = useState(null);
   const [repostActive, setRepostActive] = useState(false);
   const navigate = useNavigate();
   const fetchData = async () => {
@@ -436,16 +437,44 @@ function RadioContent() {
         console.log(e);
       });
   };
+
+  const fetchDataWav = async () => {
+    if (!rdata) return;   // rdata가 null일 때는 메소드를 종료
+
+    await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`)
+    .then((response) => {
+      console.log(response.config)
+      // setAudioData(URL.createObjectURL(response)); 
+            
+    }).catch((e) => { console.log(e) })
+  }
+
   useEffect(() => {
     // 최초1회 데이터를 수신한다.
     fetchData();
+  }, []);
 
-    // TTS 음성수신 미해결
-    // axios.get(`${process.env.REACT_APP_API_URL}/tts-server/api/infer-glowtts?text=테스트123`);
-  }, [rdata]);
-  function handlePlay() {
-    // 음성파일 재생시켜야됨. => 오디오 플레이어 요소도 추가 필요
-  }
+  useEffect(() => {
+    // TTS 음성파일 추출 및 다운. 
+    fetchDataWav();
+  },[rdata, audioData]) // rdata에 의존성 
+
+  // useEffect(() => {
+  //   const fetchAudioData = async () => {
+  //     const response = await axios.get('/audio.mp3', {
+  //       responseType: 'blob',
+  //     });
+
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       setAudioData(reader.result);
+  //     };
+  //     reader.readAsDataURL(response.data);
+  //   };
+    
+  //   fetchAudioData();
+  // }, []);
+
   function handleRepost() {
     axios
       .post(
@@ -498,13 +527,7 @@ function RadioContent() {
         <div>{rdata ? rdata.boardContent : "로딩중"}</div>
       </div>
       <div>
-        <button
-          onClick={() => {
-            handlePlay();
-          }}
-        >
-          PLAY
-        </button>
+        <ReactAudioPlayer src={audioData} controls/>
         <button
           disabled={repostActive}
           onClick={() => {
