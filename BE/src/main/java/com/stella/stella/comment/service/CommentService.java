@@ -36,9 +36,9 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final AlarmRepository alarmRepository;
 
-    public void addComment(CommentCreateRequestDto dto){
-        Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.BOARDID_INVALID));
-        Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.MEMBERID_INVALID));
+    public void addComment(CommentCreateRequestDto dto) {
+        Board board = boardRepository.findByBoardIndex(dto.getBoardIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+        Member member = memberRepository.findByMemberIndex(dto.getMemberIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBERID_INVALID));
 
         Comment comment = Comment.builder()
                 .commentContent(dto.getCommentContent())
@@ -56,29 +56,30 @@ public class CommentService {
         alarmRepository.save(alarm);
     }
 
-    public void removeComment(CommentDeleteRequestDto dto){
-        Comment comment = commentRepository.findByCommentIndex(dto.getCommentIndex()).orElseThrow(()->new CustomException(CustomExceptionStatus.COMMENTID_INVALID));
-        if(comment.getMember().getMemberIndex() == dto.getMemberIndex()){
+    public void removeComment(CommentDeleteRequestDto dto) {
+        Comment comment = commentRepository.findByCommentIndex(dto.getCommentIndex()).orElseThrow(() -> new CustomException(CustomExceptionStatus.COMMENTID_INVALID));
+        if (comment.getMember().getMemberIndex() == dto.getMemberIndex()) {
             commentRepository.delete(comment);
-        }else{
+        } else {
             throw new CustomException(CustomExceptionStatus.MEMBERID_INVALID);
         }
 
     }
 
-    public List<CommentListResponseDto> findCommentList(Long BoardIndex){
+    public List<CommentListResponseDto> findCommentList(Long BoardIndex) {
         Board board = boardRepository.findByBoardIndex(BoardIndex)
-                .orElseThrow(()-> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
 
         List<CommentListResponseDto> list = new ArrayList<>();
 
-        for(Comment c : board.getComments()){
+        for (Comment c : board.getComments()) {
 
             List<MultiCommentListResponseDto> mList = new ArrayList<>();
 
-            for(MultiComment m : c.getMultiComments()){
+            for (MultiComment m : c.getMultiComments()) {
                 mList.add(MultiCommentListResponseDto.builder()
                         .memberIndex(m.getMember().getMemberIndex())
+                        .memberNickname(m.getMember().getMemberNickname())
                         .multiCommentIndex(m.getMultiCommentIndex())
                         .multiCommentContent(m.getMultiCommentContent())
                         .multiCommentRegdate(m.getMultiCommentRegdate())
@@ -87,6 +88,7 @@ public class CommentService {
 
             list.add(CommentListResponseDto.builder()
                     .memberIndex(c.getMember().getMemberIndex())
+                    .memberNickname(c.getMember().getMemberNickname())
                     .commentIndex(c.getCommentIndex())
                     .commentContent(c.getCommentContent())
                     .commentRegdate(c.getCommentRegdate())
