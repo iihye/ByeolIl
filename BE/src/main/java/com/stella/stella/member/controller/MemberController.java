@@ -324,7 +324,7 @@ public class MemberController {
         return ResponseEntity.status(status).body(resultMap);
     }
 
-    @GetMapping("/ban")
+    @PutMapping("/ban")
     public ResponseEntity<Map<String, Object>> banMember(@RequestParam("index") long memberIndex) {
         //filter로 관리자만
         Map<String, Object> resultMap = new HashMap<>();
