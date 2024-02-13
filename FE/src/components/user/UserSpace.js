@@ -52,27 +52,8 @@ const starLineOpacityState = atom({
 });
 ///////////////////////////////// ↑ atoms
 
-// isAddedStar : starLocation : starIndex
+// isAddedStar : starLocation : starInfo
 const isAddedStar = new Map();
-
-// 별자리 이어짐 체크
-// const constellationCheck = (starNum) => {
-//   let res = true;
-
-//   outer: for (let i = 0; i < starRange.length; i++) {
-//     if (starRange[i][1] >= starNum) {
-//       for (let j = starRange[i][0]; j <= starRange[i][1]; j++) {
-//         if (!isAddedStar.has(j)) {
-//           res = false;
-//           break outer;
-//         }
-//       }
-//       break;
-//     }
-//   }
-
-//   return res;
-// };
 
 function Line(props) {
   const starLineOpacity = useRecoilValue(starLineOpacityState);
@@ -268,7 +249,7 @@ function SceneStars() {
           })
           .then((response) => {
             isAddedStar.clear();
-            response.data.BoardListResponseDtoList.forEach((star) => isAddedStar.set(star.boardLocation, star));
+            response.data.forEach((star) => isAddedStar.set(star.boardLocation % 209, star));
             setStars(response.data);
           })
           .then(async () => {
