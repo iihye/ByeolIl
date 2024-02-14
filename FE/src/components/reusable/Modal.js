@@ -17,7 +17,6 @@ import { CgCloseR } from "react-icons/cg";
 import { IoMdSend } from "react-icons/io";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
-import AudioPlayer from "components/radio/AudioPlayer";
 import ReactAudioPlayer from "react-audio-player";
 
 // type: "radio", "star", "report"
@@ -447,10 +446,22 @@ function RadioContent() {
       console.log(response);
       const blob = new Blob([response.data], { type: 'audio/wav'}); // blob파일 생성.
       console.log(blob);
-      setAudioSrc(URL.createObjectURL(blob));
-      console.log(audioSrc);
+      blobToDataURL(blob);
+      // setAudioSrc(URL.createObjectURL(blob));
     }).catch((e) => { console.log(e) })
   }
+
+  function blobToDataURL(blob) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      var dataURL = reader.result;
+      setAudioSrc(dataURL);
+    };
+    reader.readAsDataURL(blob);
+  }
+  useEffect(() => {
+    console.log(audioSrc);
+  }, [audioSrc])
 
   useEffect(() => {
     // 최초1회 데이터를 수신한다.
