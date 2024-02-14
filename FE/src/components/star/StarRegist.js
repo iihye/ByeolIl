@@ -621,6 +621,11 @@ const HashtagArea = (props) => {
             // 한글 문자 두번씩 입력되는 오류 방지하기 위해 추가
             if (e.nativeEvent.isComposing) return;
 
+            if (input.current.value.length > 10) {
+                alert("해시태그의 길이는 10자를 초과할 수 없습니다.");
+                return;
+            }
+
             // 문자열 파싱 및 input value 비우기
             const value = input.current.value.trim();
             input.current.value = null;
@@ -654,7 +659,7 @@ const HashtagArea = (props) => {
 
     return (
         <>
-            <div className="flex items-center flex-wrap mb-2">
+            <div className="flex items-center flex-wrap mb-2 mt-1 w-96">
                 {hashtagList.map((it, index) => (
                     <div
                         className="text-white-sub mr-3 hover:text-white hover:cursor-pointer flex items-center h-6"
@@ -669,11 +674,11 @@ const HashtagArea = (props) => {
                     <div className="flex items-center h-6 text-white-sub">
                         <span className="text-white-sub mr-1 text-xl">#</span>
                         <input
-                            className="rounded-none mr-3 my-1 w-20"
+                            className="rounded-none mr-3 my-1 w-32"
                             ref={input}
                             type="text"
                             onKeyDown={handleKeyDown}
-                            placeholder="해시태그"
+                            placeholder="해시태그 10자 이하"
                         ></input>
                     </div>
                 )}
