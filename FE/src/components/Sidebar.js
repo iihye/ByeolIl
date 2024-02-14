@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { TfiMenu } from "react-icons/tfi";
 import { FaUserCircle } from "react-icons/fa";
 import * as RiIcons from "react-icons/ri";
 import * as WiIcons from "react-icons/wi";
@@ -86,7 +87,7 @@ function SidebarList(props) {
     }, [props.memberIndex]);
 
     return (
-        <div className="sidebarList bg-modal-bg text-white-sub p-3 m-1 rounded-xl">
+        <div className="sidebarList bg-modal-bg text-white-sub p-3 rounded-xl">
             <div className="flex justify-left">
                 <FaUserCircle size="24" className="pr-2 text-btn-bg-hover" />
                 <h2 className="mb-2 text-btn-bg-hover">{nickname}</h2>
@@ -117,10 +118,10 @@ function SidebarList(props) {
                         key={index}
                     >
                         <div className="flex justyfy-center items-center">
-                            {IconComponent && (
-                                <IconComponent className="mr-2" />
-                            )}
                             <Link to={item.path}>
+                                {IconComponent && (
+                                    <IconComponent className="mr-2" />
+                                )}
                                 <p>{item.name}</p>
                             </Link>
                         </div>
@@ -156,15 +157,23 @@ export default function Sidebar() {
     }, [memberIndex]);
 
     return (
-        <div className="Sidebar">
-            <button
+        <div className="Sidebar m-2">
+            <TfiMenu
+                className="Sidebar-Menu"
+                onClick={() =>
+                    viewSideBar ? setViewSideBar(false) : setViewSideBar(true)
+                }
+                size="28"
+                color="white"
+            />
+            {/* <button
+                className="bg-black hover:bg-opacity-0"
                 onClick={() =>
                     viewSideBar ? setViewSideBar(false) : setViewSideBar(true)
                 }
             >
-                =
-            </button>
-            <div className="absolute top-10 right-0 font-['Pre-Bold']">
+            </button> */}
+            <div className="absolute top-10 right-2 font-['Pre-Bold']">
                 {viewSideBar ? (
                     <SidebarList name={name} memberIndex={memberIndex} />
                 ) : (
