@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useRecoilValue, useSetRecoilState, useResetRecoilState } from "recoil";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { FaUserCircle } from "react-icons/fa";
-import SearchBar from "../reusable/SearchBar";
-import { filterState } from "components/atom";
-import { PiShootingStarLight } from "react-icons/pi";
-import { TbHomeMove } from "react-icons/tb";
-import { Link, useNavigate } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { useRecoilValue, useSetRecoilState, useResetRecoilState } from 'recoil';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { FaUserCircle } from 'react-icons/fa';
+import SearchBar from '../reusable/SearchBar';
+import { filterState } from 'components/atom';
+import { PiShootingStarLight } from 'react-icons/pi';
+import { TbHomeMove } from 'react-icons/tb';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaSearch } from 'react-icons/fa';
+import axios from 'axios';
 
 // 유저 검색 기능
 function FindUser() {
-    const [listData, setListData] = useState("");
+    const [listData, setListData] = useState('');
     const filterData = useRecoilValue(filterState);
-    const userToken = sessionStorage.getItem("token") ?? "";
+    const userToken = sessionStorage.getItem('token') ?? '';
     const resetList = useResetRecoilState(filterState);
     const navigate = useNavigate();
     const isEmpty = false;
@@ -46,16 +46,16 @@ function FindUser() {
             e.stopPropagation();
 
             const check = [...e.target.classList].some(
-                (it) => it === "outside"
+                (it) => it === 'outside'
             );
             if (check) {
                 navigate(-1);
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     });
 
