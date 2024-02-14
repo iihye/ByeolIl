@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IoSettingsOutline } from "react-icons/io5";
-import { PiRadioFill } from "react-icons/pi";
-import { Slider } from "@/components/ui/slider";
-import { useResetRecoilState } from "recoil";
-import { isSettingOpenState } from "components/atom";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { IoSettingsOutline } from 'react-icons/io5';
+import { PiRadioFill } from 'react-icons/pi';
+import { Slider } from '@/components/ui/slider';
+import { useResetRecoilState } from 'recoil';
+import { isSettingOpenState } from 'components/atom';
+import swal from 'sweetalert';
 
 function Settings() {
     const resetIsSettingOpen = useResetRecoilState(isSettingOpenState);
 
-    const options = ["OLD", "OLDER", "OLDEST"];
+    const options = ['OLD', 'OLDER', 'OLDEST'];
     const [initOption, setInitOption] = useState(null);
-    const memberIndex = sessionStorage.getItem("memberIndex");
-    const userToken = sessionStorage.getItem("token");
+    const memberIndex = sessionStorage.getItem('memberIndex');
+    const userToken = sessionStorage.getItem('token');
 
     useEffect(() => {
         // 유저 정보 가져오기
@@ -23,13 +24,13 @@ function Settings() {
                     `${process.env.REACT_APP_API_URL}/member/info/mine`,
                     {
                         headers: {
-                            token: sessionStorage.getItem("token"),
+                            token: sessionStorage.getItem('token'),
                         },
                     }
                 );
 
                 const memberRadioStatus = response.data.memberRadioStatus;
-                console.log("라디오 상태", memberRadioStatus);
+                console.log('라디오 상태', memberRadioStatus);
 
                 // option에서 selectedOption과 일치하는 배열 index 가져오기 (초기값 세팅)
 
@@ -39,7 +40,7 @@ function Settings() {
 
                 setInitOption(result);
             } catch (error) {
-                console.log("회원정보 가져오기 실패", error);
+                console.log('회원정보 가져오기 실패', error);
             }
         };
 
@@ -66,7 +67,10 @@ function Settings() {
                     }
                 )
                 .then(() => {
-                    alert("변경되었습니다.");
+                    swal({
+                        title: '라디오 범위 설정 완료!',
+                        icon: 'success',
+                    });
                 })
                 .catch((error) => {
                     console.log(error);
@@ -79,16 +83,16 @@ function Settings() {
             e.stopPropagation();
 
             const check = [...e.target.classList].some(
-                (it) => it === "outside"
+                (it) => it === 'outside'
             );
             if (check) {
                 resetIsSettingOpen();
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     }, []);
 
