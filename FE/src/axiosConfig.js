@@ -29,6 +29,12 @@ function AxiosInterceptor() {
             },
             (error) => {
                 const res = error.response;
+
+                if (!res) {
+                    alert('네트워크 에러 발생');
+                    return res;
+                }
+
                 if (res.status === 400 && res.data.message) {
                     alert(res.data.message);
                     return res;
