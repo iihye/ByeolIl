@@ -1,11 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FaUser } from "react-icons/fa";
-import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router";
+import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { FaUser } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
+import { useLocation, useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ReactComponent as KakaoLogo } from 'img/kakao-logo.svg';
+import swal from 'sweetalert';
 export default function Regist() {
     const [formOpen, setFormOpen] = useState(false);
     const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_REDIRECT_URI}&response_type=code`;
@@ -23,7 +30,7 @@ export default function Regist() {
         <div>
             {!formOpen && (
                 <Card className="w-96 px-6 py-4 card-contain-style">
-                    <CardHeader >
+                    <CardHeader>
                         <CardTitle className="text-6xl text-center font-['Star'] py-4">
                             별일
                         </CardTitle>
@@ -31,14 +38,20 @@ export default function Regist() {
                     <CardContent className="font-['Pre-Bold'] ">
                         <div>
                             <div className="Regist">
-                                <div >
-                                    <Button onClick={() => setFormOpen(true)} className="w-full h-button my-1">
+                                <div>
+                                    <Button
+                                        onClick={() => setFormOpen(true)}
+                                        className="w-full h-button my-1"
+                                    >
                                         일반회원가입
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            window.location.assign(kakao_join_uri);
-                                        }} className="w-full h-button my-1 no-hover-effect text-kakao-label flex justify-center items-center gap-2"
+                                            window.location.assign(
+                                                kakao_join_uri
+                                            );
+                                        }}
+                                        className="w-full h-button my-1 no-hover-effect text-kakao-label flex justify-center items-center gap-2"
                                     >
                                         <KakaoLogo className="w-6 h-6 p-0.5 " />
                                         <div>카카오로 시작하기</div>
@@ -93,23 +106,23 @@ function RegistForm({
 }) {
     const navigate = useNavigate();
     // 초기값 - 아이디, 닉네임, 비밀번호, 비밀번호확인, 이메일, 생년월일
-    const id = useRef("");
-    const name = useRef("");
-    const nickName = useRef("");
-    const password = useRef("");
-    const passwordConfirm = useRef("");
-    const email = useRef("");
-    const authCode = useRef("");
-    const birth = useRef("");
+    const id = useRef('');
+    const name = useRef('');
+    const nickName = useRef('');
+    const password = useRef('');
+    const passwordConfirm = useRef('');
+    const email = useRef('');
+    const authCode = useRef('');
+    const birth = useRef('');
     // 오류메세지 상태 저장
-    const [idMessage, setIdMessage] = useState("");
-    const [nameMessage, setNameMessage] = useState("");
-    const [nickNameMessage, setNickNameMessage] = useState("");
-    const [passwordMessage, setPasswordMessage] = useState("");
-    const [passwordConfirmMessage, setPasswordConfirmMessage] = useState("");
-    const [emailMessage, setEmailMessage] = useState("");
-    const [authMessage, setAuthMessage] = useState("");
-    const [birthMessage, setBirthMessage] = useState("");
+    const [idMessage, setIdMessage] = useState('');
+    const [nameMessage, setNameMessage] = useState('');
+    const [nickNameMessage, setNickNameMessage] = useState('');
+    const [passwordMessage, setPasswordMessage] = useState('');
+    const [passwordConfirmMessage, setPasswordConfirmMessage] = useState('');
+    const [emailMessage, setEmailMessage] = useState('');
+    const [authMessage, setAuthMessage] = useState('');
+    const [birthMessage, setBirthMessage] = useState('');
     // 유효성 검사
     const [isId, setIsId] = useState(false);
     const [isname, setIsName] = useState(false);
@@ -122,12 +135,12 @@ function RegistForm({
     const [openAuthFoam, setOpenAuthFoam] = useState(false);
 
     // 인증코드
-    const [AUTH_CODE, setAUTH_CODE] = useState("");
+    const [AUTH_CODE, setAUTH_CODE] = useState('');
 
     const onChangeId = () => {
         const idRegExp = /^[a-z0-9]{4,20}$/;
         if (!idRegExp.test(id.current.value)) {
-            setIdMessage("4~15자 사이의 영문, 숫자만 입력해주세요");
+            setIdMessage('4~15자 사이의 영문, 숫자만 입력해주세요');
             setIsId(false);
         } else {
             // 아이디 중복체크
@@ -137,7 +150,7 @@ function RegistForm({
                 )
                 .then((response) => {
                     setIdMessage(response.data.message);
-                    if (response.data.message === "사용 가능한 아이디입니다.")
+                    if (response.data.message === '사용 가능한 아이디입니다.')
                         setIsId(true);
                     else setIsId(false);
                 });
@@ -146,10 +159,10 @@ function RegistForm({
     const onChangeName = () => {
         const nameRegExp = /^[가-힣a-zA-Z]{2,10}$/;
         if (!nameRegExp.test(name.current.value)) {
-            setNameMessage("이름을 확인해주세요(최대10자, 한글 영문)");
+            setNameMessage('이름을 확인해주세요(최대10자, 한글 영문)');
             setIsName(false);
         } else {
-            setNameMessage("사용 가능한 이름이에요");
+            setNameMessage('사용 가능한 이름이에요');
             setIsName(true);
         }
     };
@@ -168,7 +181,7 @@ function RegistForm({
                 )
                 .then((response) => {
                     setNickNameMessage(response.data.message);
-                    if (response.data.message === "사용 가능한 닉네임입니다.")
+                    if (response.data.message === '사용 가능한 닉네임입니다.')
                         setIsNickName(true);
                     else setIsNickName(false);
                 });
@@ -178,19 +191,19 @@ function RegistForm({
         const passwordRegExp =
             /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*+=-])(?=.*[0-9]).{8,25}$/;
         if (!passwordRegExp.test(password.current.value)) {
-            setPasswordMessage("8~25자 영문, 숫자, 특수문자를 사용해주세요");
+            setPasswordMessage('8~25자 영문, 숫자, 특수문자를 사용해주세요');
             setIsPassword(false);
         } else {
-            setPasswordMessage("안전한 비밀번호예요");
+            setPasswordMessage('안전한 비밀번호예요');
             setIsPassword(true);
         }
     };
     const onChangePasswordConfirm = () => {
         if (password.current.value !== passwordConfirm.current.value) {
-            setPasswordConfirmMessage("비밀번호가 달라요");
+            setPasswordConfirmMessage('비밀번호가 달라요');
             setIsPasswordConfirm(false);
         } else {
-            setPasswordConfirmMessage("비밀번호가 확인되었어요");
+            setPasswordConfirmMessage('비밀번호가 확인되었어요');
             setIsPasswordConfirm(true);
         }
     };
@@ -198,7 +211,7 @@ function RegistForm({
         const emailRegExp =
             /^[A-Za-z0-9_]+[A-Za-z0-9]*[@]{1}[A-Za-z0-9]+[A-Za-z0-9]*[.]{1}[A-Za-z]{1,3}$/;
         if (!emailRegExp.test(email.current.value)) {
-            setEmailMessage("이메일의 형식이 올바르지 않아요");
+            setEmailMessage('이메일의 형식이 올바르지 않아요');
             setIsEmail(false);
         } else {
             // 이메일 중복체크
@@ -208,7 +221,7 @@ function RegistForm({
                 )
                 .then((response) => {
                     setEmailMessage(response.data.message);
-                    if (response.data.message === "사용 가능한 이메일입니다.")
+                    if (response.data.message === '사용 가능한 이메일입니다.')
                         setIsEmail(true);
                     else setIsEmail(false);
                 });
@@ -217,10 +230,10 @@ function RegistForm({
     // 인증번호 일치 검사
     const onChangeAuthCode = () => {
         if (authCode.current.value !== AUTH_CODE) {
-            setAuthMessage("인증번호를 다시 입력해주세요");
+            setAuthMessage('인증번호를 다시 입력해주세요');
             setIsAuthCode(false);
         } else {
-            setAuthMessage("인증되었어요");
+            setAuthMessage('인증되었어요');
             setIsAuthCode(true);
         }
     };
@@ -230,15 +243,15 @@ function RegistForm({
 
         if (dateRegex1.test(birth.current.value)) {
             if (dateRegex2.test(birth.current.value)) {
-                setBirthMessage("올바르게 입력했어요");
+                setBirthMessage('올바르게 입력했어요');
                 setIsBirth(true);
             } else {
-                setBirthMessage("유효하지 않은 생년월일이에요");
+                setBirthMessage('유효하지 않은 생년월일이에요');
                 setIsBirth(false);
             }
         } else {
             {
-                setBirthMessage("유효하지 않은 생년월일이에요");
+                setBirthMessage('유효하지 않은 생년월일이에요');
                 setIsBirth(false);
             }
         }
@@ -265,7 +278,7 @@ function RegistForm({
                     ? password.current.value
                     : social_platform, //소셜로그인일 경우 소셜플랫폼으로 입력
             memberPlatform:
-                social_platform === undefined ? "origin" : social_platform, //소셜로그인인지 일반로그인인지
+                social_platform === undefined ? 'origin' : social_platform, //소셜로그인인지 일반로그인인지
             memberName: name.current.value,
             memberNickname: nickName.current.value,
             memberEmail: email.current.value,
@@ -274,9 +287,12 @@ function RegistForm({
         axios
             .post(`${process.env.REACT_APP_API_URL}/member/join`, data)
             .then((response) => {
-                if (response.data.message === "success") {
-                    alert(`${data.memberNickname}님 환영합니다😊`);
-                    navigate(-1);
+                if (response.data.message === 'success') {
+                    swal({
+                        title: '회원가입 성공!',
+                        text: `${data.memberNickname}님 환영합니다😊`,
+                        icon: 'success',
+                    }).then(() => navigate(-1));
                 }
             })
             .catch((e) => {
@@ -286,7 +302,7 @@ function RegistForm({
     const form = useForm();
     return (
         <div>
-            <Card className="Regist w-14/16 px-6 py-6 card-contain-style">
+            <Card className="Regist w-96 px-6 py-6 card-contain-style">
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                         <FaUser className="mr-1" />
@@ -304,7 +320,7 @@ function RegistForm({
                                         htmlFor="id"
                                     >
                                         아이디
-                                    </label>{" "}
+                                    </label>{' '}
                                     <br />
                                     <div>
                                         <div className="flex justify-end">
@@ -323,8 +339,8 @@ function RegistForm({
                                                     : `text-green-500`
                                             }`}
                                         >
-                                            {" "}
-                                            {idMessage}{" "}
+                                            {' '}
+                                            {idMessage}{' '}
                                         </p>
                                     </div>
                                 </div>
@@ -334,7 +350,7 @@ function RegistForm({
                             <div className="flex justify-between">
                                 <label className="regist-label" htmlFor="name">
                                     이름
-                                </label>{" "}
+                                </label>{' '}
                                 <br />
                                 <div>
                                     <div className="flex justify-end">
@@ -365,7 +381,7 @@ function RegistForm({
                                     htmlFor="nickName"
                                 >
                                     닉네임
-                                </label>{" "}
+                                </label>{' '}
                                 <br />
                                 <div>
                                     <div className="flex justify-end">
@@ -397,7 +413,7 @@ function RegistForm({
                                         htmlFor="password"
                                     >
                                         비밀번호
-                                    </label>{" "}
+                                    </label>{' '}
                                     <br />
                                     <div>
                                         <div className="flex justify-end">
@@ -431,7 +447,7 @@ function RegistForm({
                                         htmlFor="passwordConfirm"
                                     >
                                         비밀번호확인
-                                    </label>{" "}
+                                    </label>{' '}
                                     <br />
                                     <div>
                                         <div className="flex justify-end">
@@ -465,7 +481,7 @@ function RegistForm({
                                     htmlFor="email"
                                 >
                                     이메일
-                                </label>{" "}
+                                </label>{' '}
                                 <br />
                                 <div>
                                     <div className="flex justify-end">
@@ -506,7 +522,7 @@ function RegistForm({
                                         htmlFor="authCode"
                                     >
                                         인증코드
-                                    </label>{" "}
+                                    </label>{' '}
                                     <br />
                                     <div>
                                         <div className="flex justify-end">
@@ -517,7 +533,7 @@ function RegistForm({
                                                 ref={authCode}
                                                 onBlur={onChangeAuthCode}
                                                 placeholder={
-                                                    "인증번호를 입력하세요"
+                                                    '인증번호를 입력하세요'
                                                 }
                                             />
                                         </div>
@@ -538,7 +554,7 @@ function RegistForm({
                             <div className="flex justify-between">
                                 <label className="regist-label" htmlFor="birth">
                                     생년월일
-                                </label>{" "}
+                                </label>{' '}
                                 <br />
                                 <div>
                                     <div className="flex justify-end">

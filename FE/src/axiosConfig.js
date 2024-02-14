@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert';
 
 function AxiosInterceptor() {
     const navigate = useNavigate();
@@ -31,24 +32,41 @@ function AxiosInterceptor() {
                 const res = error.response;
 
                 if (!res) {
-                    alert('네트워크 에러 발생');
+                    swal({
+                        title: '네트워크 에러 발생',
+                        text: '관리자에게 문의하세요',
+                        icon: 'error',
+                    });
+
                     return res;
                 }
 
                 if (res.status === 400 && res.data.message) {
-                    alert(res.data.message);
+                    swal({
+                        title: res.data.message,
+                        icon: 'error',
+                    });
+
                     return res;
                 } else if (res.status === 401 || res.status === 403) {
                     sessionStorage.removeItem('memberIndex');
                     sessionStorage.removeItem('nickname');
                     sessionStorage.removeItem('token');
                     sessionStorage.removeItem('auth');
-                    alert('재로그인이 필요해요');
-                    navigate('/landing/login');
+                    swal({
+                        title: '재로그인이 필요해요',
+                        icon: 'info',
+                    }).then(() => {
+                        navigate('/landing/login');
+                    });
                 } else if (res.status === 404) {
                     return navigate('/not-found');
                 } else if (res.status === 500) {
-                    alert('서버에 문제가 있어요 잠시 기다려주세요!');
+                    swal({
+                        title: '서버에 문제가 있어요',
+                        text: '잠시 기다려주세요!',
+                        icon: 'error',
+                    });
                 }
                 return Promise.reject(error);
             }

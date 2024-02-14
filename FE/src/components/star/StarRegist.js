@@ -1,27 +1,40 @@
-import { useEffect, useRef, useState, forwardRef } from "react";
-import { isAddedStar, starsState, curPageState } from "components/user/UserSpace";
-import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState } from "components/atom";
-import axios from "axios";
-import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { FaFileImage, FaRegFileImage } from "react-icons/fa";
-import { MdOutlineCancel } from "react-icons/md";
-import { Calendar } from "@/components/ui/calendar";
-import { FaChevronLeft } from "react-icons/fa";
-import { FaChevronRight } from "react-icons/fa";
-import { PiSmileySadDuotone } from "react-icons/pi";
+import { useEffect, useRef, useState, forwardRef } from 'react';
+import {
+    isAddedStar,
+    starsState,
+    curPageState,
+} from 'components/user/UserSpace';
+import {
+    isStarDetailOpenState,
+    isStarRegistOpenState,
+    isStarModifyOpenState,
+} from 'components/atom';
+import axios from 'axios';
+import {
+    atom,
+    useRecoilState,
+    useRecoilValue,
+    useSetRecoilState,
+} from 'recoil';
+import { HiOutlinePencilSquare } from 'react-icons/hi2';
+import { FaFileImage, FaRegFileImage } from 'react-icons/fa';
+import { MdOutlineCancel } from 'react-icons/md';
+import { Calendar } from '@/components/ui/calendar';
+import { FaChevronLeft } from 'react-icons/fa';
+import { FaChevronRight } from 'react-icons/fa';
+import swal from 'sweetalert';
 
-const EXTENSION_IMAGE = ["png", "gif"];
-const EXTENSION_VIDEO = ["wav", "mp4"];
+const EXTENSION_IMAGE = ['png', 'gif'];
+const EXTENSION_VIDEO = ['wav', 'mp4'];
 
 const fileListState = atom({
-    key: "fileList",
+    key: 'fileList',
     default: [],
 });
 
 const accessRangeState = atom({
-    key: "accessRange",
-    default: "OPEN",
+    key: 'accessRange',
+    default: 'OPEN',
 });
 
 function StarRegist(props) {
@@ -45,48 +58,60 @@ function StarRegist(props) {
     const MAX_STAR_CNT = 209;
 
     const buttonValue = {
-        regist: "등록",
-        modify: "수정",
+        regist: '등록',
+        modify: '수정',
     };
 
     const hashtagSet = new Set();
 
     useEffect(() => {
-        if (type === "modify") {
+        if (type === 'modify') {
             contentRef.current.value = preBoard.boardContent;
         }
 
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "star-regist-container");
+            const check = [...e.target.classList].some(
+                (it) => it === 'star-regist-container'
+            );
             if (check) {
                 handleClose();
             }
         }
 
         function handleKeydown(e) {
-            if (e.key === "Escape") {
+            if (e.key === 'Escape') {
                 setIsStarRegistOpen(false);
             }
         }
 
-        window.addEventListener("click", handleClick);
-        window.addEventListener("keydown", handleKeydown);
+        window.addEventListener('click', handleClick);
+        window.addEventListener('keydown', handleKeydown);
 
         return () => {
-            window.removeEventListener("click", handleClick);
-            window.removeEventListener("keydown", handleKeydown);
+            window.removeEventListener('click', handleClick);
+            window.removeEventListener('keydown', handleKeydown);
         };
     }, []);
 
     const handleRegist = async (fileList, accessRange) => {
-        if (contentRef.current.value.trim() === "") {
-            alert("공백 입력했어요");
+        if (contentRef.current.value.trim() === '') {
+            swal({
+                title: '공백을 입력했어요!',
+                text: '공백 제거 후 다시 시도해주세요',
+                icon: 'warning',
+            });
+
             return;
         }
 
         if (contentRef.current.value.length > 200) {
-            alert("내용의 길이가 200자를 초과했습니다.");
+            swal({
+                title: '내용의 길이가 200자를 초과했습니다!',
+                text: '200자 미만의 글만 등록할 수 있어요.',
+                icon: 'warning',
+            });
+
             return;
         }
 
@@ -96,15 +121,14 @@ function StarRegist(props) {
 
         // 파일 담기
         for (let i = 0; i < files.length; i++) {
-            formData.append("files", files[i]);
+            formData.append('files', files[i]);
         }
 
         // 해쉬태그 데이터 Set -> Array
         const hashContent = [];
         hashtagSet.forEach((it) => hashContent.push(it));
 
-        if (type === "regist") {
-            console.log(dateRef.current.innerText);
+        if (type === 'regist') {
             const data = {
                 memberIndex: writerIndex,
                 boardContent: contentRef.current.value,
@@ -112,63 +136,88 @@ function StarRegist(props) {
                 mediaContent: [],
                 boardLocation: curPage * MAX_STAR_CNT + location,
                 boardAccess: accessRange,
-                boardDeleteYN: "N",
+                boardDeleteYN: 'N',
                 hashContent: hashContent,
             };
 
             // Object to Blob
             const dataDto = JSON.stringify(data);
             let requestDtoBlob = new Blob([dataDto], {
-                type: "application/json",
+                type: 'application/json',
             });
 
-            formData.append("requestDto", requestDtoBlob);
+            formData.append('requestDto', requestDtoBlob);
 
             try {
-                const response = await axios.post(`${process.env.REACT_APP_API_URL}/board`, formData, {
-                    header: {
-                        token: sessionStorage.getItem("token"),
-                        "Content-Type": "multipart/form-data",
-                    },
-                });
+                const response = await axios.post(
+                    `${process.env.REACT_APP_API_URL}/board`,
+                    formData,
+                    {
+                        header: {
+                            token: sessionStorage.getItem('token'),
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
 
                 if (response.status === 200) {
-                    alert("게시글 작성 성공");
-
-                    const res = await axios.get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
-                        header: {
-                            token: sessionStorage.getItem("token") ?? "",
-                        },
-                        params: {
-                            page: curPage ?? 0,
-                        },
+                    swal({
+                        title: '게시글 작성 성공!',
+                        icon: 'success',
                     });
 
+                    const res = await axios.get(
+                        `${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`,
+                        {
+                            header: {
+                                token: sessionStorage.getItem('token') ?? '',
+                            },
+                            params: {
+                                page: curPage ?? 0,
+                            },
+                        }
+                    );
+
                     isAddedStar.clear();
-                    res.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
+                    res.data.forEach((star) =>
+                        isAddedStar.set(star.boardLocation, star)
+                    );
                     setStars(res.data);
                     handleClose();
                 } else {
-                    alert("게시글 작성 실패");
+                    swal({
+                        title: '게시글 작성에 실패했어요',
+                        text: '잠시 후 다시 시도해주세요',
+                        icon: 'error',
+                    });
                 }
             } catch (error) {
                 console.log(error);
             }
-        } else if (type === "modify") {
+        } else if (type === 'modify') {
             const data = {
                 boardIndex: boardIndex,
                 memberIndex: writerIndex,
                 boardInputDate: dateRef.current.innerText,
                 boardContent: contentRef.current.value,
-                boardMedia: [],
+                boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
             };
 
+            // Object to Blob
+            const dataDto = JSON.stringify(data);
+            let requestDtoBlob = new Blob([dataDto], {
+                type: 'application/json',
+            });
+
+            formData.append('requestDto', requestDtoBlob);
+
             try {
                 await axios
-                    .put(`${process.env.REACT_APP_API_URL}/board`, data, {
+                    .put(`${process.env.REACT_APP_API_URL}/board`, formData, {
                         headers: {
-                            token: sessionStorage.getItem("token"),
+                            token: sessionStorage.getItem('token'),
+                            'Content-Type': 'multipart/form-data',
                         },
                     })
                     .then((response) => {
@@ -184,9 +233,9 @@ function StarRegist(props) {
     };
 
     function handleClose() {
-        if (type === "regist") {
+        if (type === 'regist') {
             setIsStarRegistOpen(false);
-        } else if (type === "modify") {
+        } else if (type === 'modify') {
             setIsStarModifyOpen(false);
         }
     }
@@ -199,13 +248,26 @@ function StarRegist(props) {
                     <div className="star-regist-middle w-96">
                         <div className="flex justify-between items-center mb-2">
                             <DateArea ref={dateRef} type={type} />
-                            <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
+                            <AccessRangeArea
+                                ref={accessRangeRef}
+                                preBoard={preBoard}
+                            />
                         </div>
                         <ContentArea ref={contentRef} />
                     </div>
-                    {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
+                    {
+                        <HashtagArea
+                            hashtagSet={hashtagSet}
+                            preBoard={preBoard}
+                            type={type}
+                        />
+                    }
                     <div className="relative">
-                        <FileUploadArea ref={fileRef} type={type} preBoard={preBoard} />
+                        <FileUploadArea
+                            ref={fileRef}
+                            type={type}
+                            preBoard={preBoard}
+                        />
                         <Buttons
                             buttonValue={buttonValue}
                             type={type}
@@ -227,15 +289,18 @@ const ContentArea = forwardRef((props, ref) => {
             <div className="relative bg-alert-bg rounded-lg w-full h-44 border text-white-sub">
                 <textarea
                     className="w-full h-36 bg-transparent resize-none p-2 border-transparent outline-none"
-                    style={{ outlineColor: "transparent" }}
+                    style={{ outlineColor: 'transparent' }}
                     ref={ref}
                     placeholder="일기 내용을 입력해주세요."
                     onChange={() => {
                         setContentLength(ref.current.value.length);
                     }}
+                    maxLength={200}
                 />
 
-                <div className="absolute text-white-sub bottom-1 right-2">{contentLength} / 200자</div>
+                <div className="absolute text-white-sub bottom-1 right-2">
+                    {contentLength} / 200자
+                </div>
             </div>
         </>
     );
@@ -279,19 +344,26 @@ const FileUploadArea = forwardRef((props, ref) => {
     function limitFileCnt(e, imageFileCnt, videoFileCnt) {
         const [maxImageCnt, maxVideoCnt] = [5, 1];
 
-        const [remainImageFileCnt, remainVideoFileCnt] = [maxImageCnt - imageFileCnt, maxVideoCnt - videoFileCnt];
+        const [remainImageFileCnt, remainVideoFileCnt] = [
+            maxImageCnt - imageFileCnt,
+            maxVideoCnt - videoFileCnt,
+        ];
 
-        let msg = "";
+        let msg = '';
         if (remainImageFileCnt < 0) {
-            msg += "이미지 파일은 최대 5개 까지 첨부 가능합니다.\n";
+            msg += '이미지 파일은 최대 5개 까지 첨부 가능합니다.\n';
         }
 
         if (remainVideoFileCnt < 0) {
-            msg += "비디오 파일은 최대 1개 까지 첨부 가능합니다.";
+            msg += '비디오 파일은 최대 1개 까지 첨부 가능합니다.';
         }
 
-        if (msg !== "") {
-            alert(msg);
+        if (msg !== '') {
+            swal({
+                title: msg,
+                icon: 'error',
+            });
+
             // IE에서 호환성 문제 있음
             return false;
         }
@@ -303,8 +375,12 @@ const FileUploadArea = forwardRef((props, ref) => {
         const videoLimit = 1024 ** 2 * 100; // 100MB
         console.log(imageFileList, videoFileList);
 
-        const imageSizeCheck = [...imageFileList].some((it) => it.size > imageLimit);
-        const videoSizeCheck = [...videoFileList].some((it) => it.size > videoLimit);
+        const imageSizeCheck = [...imageFileList].some(
+            (it) => it.size > imageLimit
+        );
+        const videoSizeCheck = [...videoFileList].some(
+            (it) => it.size > videoLimit
+        );
 
         if (imageSizeCheck || videoSizeCheck) {
             return false;
@@ -313,8 +389,8 @@ const FileUploadArea = forwardRef((props, ref) => {
     }
 
     function fileTypeCheck(file) {
-        const type = file.type.split("/")[0];
-        return type === "image" || type === "video";
+        const type = file.type.split('/')[0];
+        return type === 'image' || type === 'video';
     }
 
     function handleFileChange(e) {
@@ -329,34 +405,51 @@ const FileUploadArea = forwardRef((props, ref) => {
 
         const uploadFileList = [...fileMap.values()];
 
-        const imageFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image");
-        const videoFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video");
+        const imageFileList = [...uploadFileList].filter(
+            (it) => it.type.split('/')[0] === 'image'
+        );
+        const videoFileList = [...uploadFileList].filter(
+            (it) => it.type.split('/')[0] === 'video'
+        );
 
         // 파일 유효성 체크
-        const fileTypeCheckRes = uploadFileList.every((it) => fileTypeCheck(it));
-        const fileCntCheckRes = limitFileCnt(e, imageFileList.length, videoFileList.length);
-        const fileVolumeCheckRes = limitFileVolume(e, imageFileList, videoFileList);
+        const fileTypeCheckRes = uploadFileList.every((it) =>
+            fileTypeCheck(it)
+        );
+        const fileCntCheckRes = limitFileCnt(
+            e,
+            imageFileList.length,
+            videoFileList.length
+        );
+        const fileVolumeCheckRes = limitFileVolume(
+            e,
+            imageFileList,
+            videoFileList
+        );
 
         if (fileCntCheckRes && fileVolumeCheckRes && fileTypeCheckRes) {
             setFileList([...uploadFileList]);
         }
 
-        let msg = "";
+        let msg = '';
 
         if (!fileTypeCheckRes) {
-            msg += "이미지, 비디오 파일만 업로드 가능합니다.\n";
+            msg += '이미지, 비디오 파일만 업로드 가능합니다.\n';
         }
         if (!fileCntCheckRes) {
-            msg += "파일 업로드 허용 개수를 초과했습니다.\n";
+            msg += '파일 업로드 허용 개수를 초과했습니다.\n';
         }
         if (!fileVolumeCheckRes) {
-            msg += "파일의 용량이 허용 용량을 초과했습니다..\n";
+            msg += '파일의 용량이 허용 용량을 초과했습니다..\n';
         }
 
         if (msg) {
-            alert(msg);
+            swal({
+                title: msg,
+                icon: 'success',
+            });
         }
-        ref.current.value = "";
+        ref.current.value = '';
     }
 
     function handleDragOver(e) {
@@ -383,7 +476,10 @@ const FileUploadArea = forwardRef((props, ref) => {
                     onChange={handleFileChange}
                     ref={ref}
                 />
-                <label className="text-white-sub flex items-center  hover:text-white hover:cursor-pointer" for="file">
+                <label
+                    className="text-white-sub flex items-center  hover:text-white hover:cursor-pointer"
+                    for="file"
+                >
                     <FaRegFileImage />
                     <div className="ml-1">파일 첨부</div>
                 </label>
@@ -397,7 +493,9 @@ const FileUploadArea = forwardRef((props, ref) => {
                 {fileList.length === 0 ? (
                     <div className="hover:text-white">
                         <FaFileImage className="w-full text-5xl" />
-                        <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
+                        <div className="text-lg mt-2 text-center">
+                            드래그하여 파일을 업로드해주세요.
+                        </div>
                         <div>이미지 파일 5개 / 영상 파일 1개</div>
                     </div>
                 ) : (
@@ -447,32 +545,33 @@ function ImagePreviewArea(props) {
     useEffect(() => {
         const tmpList = [
             ...fileList.map((it) => {
-                const url = URL.createObjectURL(it) + "_" + it.type.split("/")[0];
+                const url =
+                    URL.createObjectURL(it) + '_' + it.type.split('/')[0];
 
                 return url;
             }),
         ];
 
-        if (props.type === "modify") {
+        if (props.type === 'modify') {
             const existData = data.boardMedia.map((it) => {
                 let extension;
 
-                let url = it.split(".");
+                let url = it.split('.');
                 let type = url[url.length - 1];
 
                 EXTENSION_IMAGE.forEach((it) => {
                     if (it === type) {
-                        extension = "image";
+                        extension = 'image';
                     }
                 });
 
                 EXTENSION_VIDEO.forEach((it) => {
                     if (it === type) {
-                        extension = "video";
+                        extension = 'video';
                     }
                 });
 
-                return it + "_" + extension;
+                return it + '_' + extension;
             });
 
             tmpList.splice(tmpList.length - 1, 0, ...existData);
@@ -482,7 +581,7 @@ function ImagePreviewArea(props) {
     }, [fileList]);
 
     useEffect(() => {
-        if (props.type === "modify" && areaRef.current) {
+        if (areaRef.current) {
             areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
         }
     }, [curPage]);
@@ -502,19 +601,29 @@ function ImagePreviewArea(props) {
             {fileList.length > 0 || (data && data.boardMedia.length > 0) ? (
                 <div className="flex items-center top-12 rounded right-full p-5 mr-6 h-full bg-modal-bg">
                     <div className="flex relative overflow-hidden items-center w-pic">
-                        <div className="flex items-center h-pic transition-all" ref={areaRef}>
+                        <div
+                            className="flex items-center h-pic transition-all"
+                            ref={areaRef}
+                        >
                             {previewFileList.map((it, index) => (
-                                <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
-                                    {it.split("_")[1] === "image" ? (
+                                <div
+                                    className="w-pic h-pic bg-black-sub flex items-center"
+                                    key={index}
+                                >
+                                    {it.split('_')[1] === 'image' ? (
                                         <img
                                             className="w-pic max-h-pic"
-                                            src={it.split("_")[0]}
+                                            src={it.split('_')[0]}
                                             key={index}
                                             alt="it"
                                         ></img>
                                     ) : null}
-                                    {it.split("_")[1] === "video" ? (
-                                        <video className="w-pic max-h-pic" src={it.split("_")[0]} controls />
+                                    {it.split('_')[1] === 'video' ? (
+                                        <video
+                                            className="w-pic max-h-pic"
+                                            src={it.split('_')[0]}
+                                            controls
+                                        />
                                     ) : null}
                                 </div>
                             ))}
@@ -554,18 +663,23 @@ const DateArea = forwardRef((props, ref) => {
 
     return (
         <div className="text-white-sub text-2xl mb-1 relative">
-            <div onClick={handleCalander} className="flex items-center  hover:text-white hover:cursor-pointer">
+            <div
+                onClick={handleCalander}
+                className="flex items-center  hover:text-white hover:cursor-pointer"
+            >
                 <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
-                <div className="hidden" ref={ref}>{`${year}-${month >= 10 ? month : "0" + month}-${
-                    day >= 10 ? day : "0" + day
-                }`}</div>
+                <div className="hidden" ref={ref}>{`${year}-${
+                    month >= 10 ? month : '0' + month
+                }-${day >= 10 ? day : '0' + day}`}</div>
                 <div>
                     <HiOutlinePencilSquare />
                 </div>
             </div>
             {isCalendarOpen && (
                 <Calendar
-                    className={"absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"}
+                    className={
+                        'absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10'
+                    }
                     mode="single"
                     selected={date}
                     onSelect={setDate}
@@ -580,10 +694,8 @@ const AccessRangeArea = forwardRef((props, ref) => {
 
     const [selectedRange, setSelectedRange] = useState(0);
 
-    const displayRef = useRef();
-
-    const accessRangeArr = ["전체 공개", "친구 공개", "비공개"];
-    const accessRangeValueArr = ["OPEN", "PARTOPEN", "NOOPEN"];
+    const accessRangeArr = ['전체 공개', '팔로워 공개', '비공개'];
+    const accessRangeValueArr = ['OPEN', 'PARTOPEN', 'NOOPEN'];
 
     return (
         <div
@@ -617,12 +729,15 @@ const HashtagArea = (props) => {
     }, []);
 
     const handleKeyDown = (e) => {
-        if (e.code === "Enter" || e.code === "Space") {
+        if (e.code === 'Enter' || e.code === 'Space') {
             // 한글 문자 두번씩 입력되는 오류 방지하기 위해 추가
             if (e.nativeEvent.isComposing) return;
 
             if (input.current.value.length > 10) {
-                alert("해시태그의 길이는 10자를 초과할 수 없습니다.");
+                swal({
+                    title: '해시태그의 길이는 10자를 초과할 수 없습니다.',
+                    icon: 'info',
+                });
                 return;
             }
 
@@ -631,7 +746,7 @@ const HashtagArea = (props) => {
             input.current.value = null;
 
             // 공백 해시태그 추가 방지
-            if (value === "") return;
+            if (value === '') return;
 
             // Set에 저장되어 있는지 체크
             if (!props.hashtagSet.has(value)) {
@@ -670,7 +785,7 @@ const HashtagArea = (props) => {
                         <span>{it}</span>
                     </div>
                 ))}
-                {props.type === "regist" && hashtagList.length < 10 && (
+                {props.type === 'regist' && hashtagList.length < 10 && (
                     <div className="flex items-center h-6 text-white-sub">
                         <span className="text-white-sub mr-1 text-xl">#</span>
                         <input

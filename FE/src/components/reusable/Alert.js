@@ -1,22 +1,31 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import {
     isDeleteAlertOpenState,
     isReportAlertOpenState,
     isStarDetailOpenState,
     isPwCheckOpenState,
     isChangeInfoOpenState,
-} from "components/atom";
-import axios from "axios";
-import { useSetRecoilState } from "recoil";
-import { useNavigate } from "react-router";
+} from 'components/atom';
+import axios from 'axios';
+import { useSetRecoilState } from 'recoil';
+import { useNavigate } from 'react-router';
+import swal from 'sweetalert';
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
     const alertTypes = {
         block: <Block />,
-        delete: <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />,
+        delete: (
+            <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />
+        ),
         PWCheck: <InputAlert type={props.type} />,
-        report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex} />,
+        report: (
+            <InputAlert
+                type={props.type}
+                boardIndex={props.boardIndex}
+                userIndex={props.userIndex}
+            />
+        ),
     };
 
     return (
@@ -39,28 +48,30 @@ function InputAlert(props) {
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "alert-container");
+            const check = [...e.target.classList].some(
+                (it) => it === 'alert-container'
+            );
 
             if (check) {
                 handleClose();
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
 
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     }, []);
 
     const toEnter = {
-        PWCheck: "비밀번호를",
-        report: "신고 내용을",
+        PWCheck: '비밀번호를',
+        report: '신고 내용을',
     };
 
     const buttonValue = {
-        PWCheck: "입력",
-        report: "신고",
+        PWCheck: '입력',
+        report: '신고',
     };
 
     const handleReport = async (inputData) => {
@@ -74,12 +85,15 @@ function InputAlert(props) {
         await axios
             .post(`${process.env.REACT_APP_API_URL}/board/report`, reportData, {
                 headers: {
-                    token: sessionStorage.getItem("token"),
+                    token: sessionStorage.getItem('token'),
                 },
             })
-            .then((response) => {
-                console.log(response.data.message);
-                alert("신고가 접수되었습니다🚨");
+            .then(() => {
+                swal({
+                    title: '신고가 접수되었습니다🚨',
+                    icon: 'warning',
+                });
+
                 setIsReportAlertOpen(false);
             })
             .catch((e) => console.log(e));
@@ -91,14 +105,19 @@ function InputAlert(props) {
             memberPass: inputData,
         };
         axios
-            .post(`${process.env.REACT_APP_API_URL}/member/check/pass`, PWData, {
-                headers: {
-                    token: sessionStorage.getItem("token"),
-                },
-            })
+            .post(
+                `${process.env.REACT_APP_API_URL}/member/check/pass`,
+                PWData,
+                {
+                    headers: {
+                        token: sessionStorage.getItem('token'),
+                    },
+                }
+            )
             .then((response) => {
                 // console.log(response.data);
-                if (response.data.message === "success") setIsPwCheckOpenState(false);
+                if (response.data.message === 'success')
+                    setIsPwCheckOpenState(false);
                 // else alert('비밀번호가 틀렸습니다!');
             });
     };
@@ -113,21 +132,24 @@ function InputAlert(props) {
         const inputData = input.current.value;
 
         if (!emptyCheck(inputData)) {
-            alert(`${toEnter[props.type]} 입력해주세요!`);
+            swal({
+                title: `${toEnter[props.type]} 입력해주세요!`,
+                icon: 'warning',
+            });
             return;
         }
 
-        if (buttonValue[props.type] === "신고") {
+        if (buttonValue[props.type] === '신고') {
             handleReport(inputData);
-        } else if (buttonValue[props.type] === "입력") {
+        } else if (buttonValue[props.type] === '입력') {
             handlePWChange(inputData);
         }
     };
 
     const handleClose = () => {
-        if (props.type === "report") {
+        if (props.type === 'report') {
             setIsReportAlertOpen(false);
-        } else if (props.type === "PWCheck") {
+        } else if (props.type === 'PWCheck') {
             setIsPwCheckOpenState(false);
             setIsChangeInfoOpen(false);
         }
@@ -136,12 +158,16 @@ function InputAlert(props) {
     return (
         <>
             <div className="flex-row">
-                {props.type === "report" ? (
-                    <h1 className="text-center text-3xl mb-2 font-['Pre-bold']">신고하기</h1>
+                {props.type === 'report' ? (
+                    <h1 className="text-center text-3xl mb-2 font-['Pre-bold']">
+                        신고하기
+                    </h1>
                 ) : null}
-                <div className="text-lg text-center mb-3">{toEnter[props.type]} 입력해주세요.</div>
+                <div className="text-lg text-center mb-3">
+                    {toEnter[props.type]} 입력해주세요.
+                </div>
                 <div className="flex justify-center mb-3">
-                    {props.type === "report" ? (
+                    {props.type === 'report' ? (
                         <textarea
                             className="bg-transparent rounded-lg p-2 h-28 w-80 resize-none border border-gray-300"
                             maxLength="80"
@@ -185,17 +211,19 @@ function Delete(props) {
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "alert-container");
+            const check = [...e.target.classList].some(
+                (it) => it === 'alert-container'
+            );
 
             if (check) {
                 handleClose();
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
 
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     }, []);
 
@@ -208,11 +236,11 @@ function Delete(props) {
         await axios
             .put(`${process.env.REACT_APP_API_URL}/board/delete`, data, {
                 headers: {
-                    token: sessionStorage.getItem("token"),
+                    token: sessionStorage.getItem('token'),
                 },
             })
             .then((response) => {
-                if (response.data.map.response === "success") {
+                if (response.data.map.response === 'success') {
                     setIsDeleteAlertOpen(false);
                     setIsStarDetailOpen(false);
                 }
@@ -256,10 +284,10 @@ function Block() {
     // memberRole -> Ban일 경우 차단된 사용자
     // memberBanDate -> 차단 일자
     const [userData, setUserData] = useState({
-        memberRole: "Ban",
-        memberBanDate: "2024-01-26",
+        memberRole: 'Ban',
+        memberBanDate: '2024-01-26',
     });
-    const [dueDate, setDueDate] = useState("");
+    const [dueDate, setDueDate] = useState('');
 
     useEffect(() => {
         // const fetchData = async () => {
@@ -291,10 +319,10 @@ function Block() {
             <div>
                 차단된 사용자입니다.
                 <br />
-                차단 해제일 :{" "}
-                {`${dueDate && dueDate.getFullYear()}년 ${dueDate && dueDate.getMonth() + 1}월 ${
-                    dueDate && dueDate.getDate()
-                }일`}
+                차단 해제일 :{' '}
+                {`${dueDate && dueDate.getFullYear()}년 ${
+                    dueDate && dueDate.getMonth() + 1
+                }월 ${dueDate && dueDate.getDate()}일`}
             </div>
         </>
     );
