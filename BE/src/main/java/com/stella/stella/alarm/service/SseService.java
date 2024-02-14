@@ -16,7 +16,6 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class SseService {
-    private final MemberRepository memberRepository;
     private final EmitterRepository emitterRepository;
 
     private final Long DEFAULT_TIMEOUT = 60L * 1000;
@@ -35,9 +34,6 @@ public class SseService {
     }
 
     public SseEmitter connectAlarm(Long memberIndex) {
-        Member findMember = memberRepository.findByMemberIndex(memberIndex)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
-
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
         emitterRepository.save(memberIndex, sseEmitter);
 
