@@ -6,15 +6,17 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { FaUserPlus, FaComment, FaComments, FaRegBell } from 'react-icons/fa';
 import { IoCloseSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
+import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 
 // 추후 에러핸들링 필요
-// onClose, get에서 유저 인덱스로 변경
 
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
     const [detailModal, setDetailModal] = useState(false);
     const [boardState, setBoardState] = useState('');
-    const userIndex = Number(sessionStorage.getItem('memberIndex'));
+    const memberIndex = Number(sessionStorage.getItem('memberIndex'));
+    const token = sessionStorage.getItem('token');
+    const EventSource = EventSourcePolyfill || NativeEventSource;
 
     const navigate = useNavigate();
 
@@ -30,18 +32,17 @@ function Alarm() {
                 className="pl-2 text-btn-bg-hover"
                 onClick={() => onClose(alarmIndex)}
             />
-            {/* <button className="size-6" onClick={() => onClose(alarmIndex)}>X</button>  */}
         </div>
     );
 
     const onClose = (index) => {
         const alarmInfo = {
             alarmIndex: index,
-            memberIndex: userIndex,
+            memberIndex: memberIndex,
         };
 
         axios
-            .post(`${process.env.REACT_APP_API_URL}/alarm/check`, alarmInfo)
+            .post(`${process.env.REACT_APP_ALARM_URL}/alarm/check`, alarmInfo)
             .then(
                 setAlarmData((currentAlarmData) =>
                     currentAlarmData.filter((it) => it.alarmIndex !== index)
@@ -53,16 +54,45 @@ function Alarm() {
     useEffect(() => {
         const fetchData = async () => {
             await axios
-                .get(`${process.env.REACT_APP_API_URL}/alarm/list/${userIndex}`)
+                .get(
+                    `${process.env.REACT_APP_API_URL}/alarm/list/${memberIndex}`
+                )
                 .then((response) => {
                     // console.log(response.data.result);
                     setAlarmData(response.data.result);
                 })
-                .catch((e) => console.log(e, userIndex));
+                .catch((e) => console.log(e, memberIndex));
         };
 
         fetchData();
-    }, [userIndex]);
+
+        if (token) {
+            const eventSource = new EventSource(
+                `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
+                {
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                    heartbeatTimeout: 30000,
+                }
+            );
+
+            eventSource.addEventListener('open', function (event) {
+                console.log('열렸음', event);
+            });
+            eventSource.addEventListener('alarm', function (event) {
+                console.log('이벤트 발생', event);
+            });
+            eventSource.addEventListener('error', function (event) {
+                console.log('알림 에러 발생', event.target);
+                if (event.target.readyState === EventSource.CLOSED) {
+                    console.log('eventsource closed');
+                }
+                eventSource.close();
+            });
+            return () => eventSource.current?.close();
+        }
+    }, []);
 
     useEffect(() => {
         function handleClick(e) {

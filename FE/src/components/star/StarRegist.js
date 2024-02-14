@@ -9,6 +9,7 @@ import { MdOutlineCancel } from "react-icons/md";
 import { Calendar } from "@/components/ui/calendar";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import { PiSmileySadDuotone } from "react-icons/pi";
 
 const EXTENSION_IMAGE = ["png", "gif"];
 const EXTENSION_VIDEO = ["wav", "mp4"];
@@ -281,6 +282,11 @@ const FileUploadArea = forwardRef((props, ref) => {
     return true;
   }
 
+  function fileTypeCheck(file) {
+    const type = file.type.split("/")[0];
+    return type === "image" || type === "video";
+  }
+
   function handleFileChange(e) {
     const fileMap = new Map();
     [...fileList].forEach((it) => fileMap.set(it.name, it));
@@ -296,14 +302,30 @@ const FileUploadArea = forwardRef((props, ref) => {
     const imageFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image");
     const videoFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video");
 
-    // 파일 개수 제한 체크
+    // 파일 유효성 체크
+    const fileTypeCheckRes = uploadFileList.every((it) => fileTypeCheck(it));
     const fileCntCheckRes = limitFileCnt(e, imageFileList.length, videoFileList.length);
     const fileVolumeCheckRes = limitFileVolume(e, imageFileList, videoFileList);
 
-    if (fileCntCheckRes && fileVolumeCheckRes) {
+    if (fileCntCheckRes && fileVolumeCheckRes && fileTypeCheckRes) {
       setFileList([...uploadFileList]);
     }
 
+    let msg = "";
+
+    if (!fileTypeCheckRes) {
+      msg += "이미지, 비디오 파일만 업로드 가능합니다.\n";
+    }
+    if (!fileCntCheckRes) {
+      msg += "파일 업로드 허용 개수를 초과했습니다.\n";
+    }
+    if (!fileVolumeCheckRes) {
+      msg += "파일의 용량이 허용 용량을 초과했습니다..\n";
+    }
+
+    if (msg) {
+      alert(msg);
+    }
     ref.current.value = "";
   }
 
@@ -377,14 +399,14 @@ function ImagePreviewArea(props) {
   const fileList = useRecoilValue(fileListState);
 
   const [previewFileList, setPreviewFileList] = useState([]);
-
+  const [curPage, setCurPage] = useState(0);
   const areaRef = useRef();
 
   const data = props.preBoard;
 
   useEffect(() => {
     const tmpList = [
-      ...fileList.map((it, index) => {
+      ...fileList.map((it) => {
         const url = URL.createObjectURL(it) + "_" + it.type.split("/")[0];
 
         return url;
@@ -392,19 +414,19 @@ function ImagePreviewArea(props) {
     ];
 
     if (props.type === "modify") {
-      const existData = data.boardMedia.map((it, index) => {
+      const existData = data.boardMedia.map((it) => {
         let extension;
 
         let url = it.split(".");
         let type = url[url.length - 1];
 
-        EXTENSION_IMAGE.forEach((it, index) => {
+        EXTENSION_IMAGE.forEach((it) => {
           if (it === type) {
             extension = "image";
           }
         });
 
-        EXTENSION_VIDEO.forEach((it, index) => {
+        EXTENSION_VIDEO.forEach((it) => {
           if (it === type) {
             extension = "video";
           }
@@ -419,19 +441,20 @@ function ImagePreviewArea(props) {
     setPreviewFileList(tmpList);
   }, [fileList]);
 
-  let lastPage = previewFileList.length - 1;
-  let curPage = 0;
+  useEffect(() => {
+    if (props.type === "modify" && areaRef.current) {
+      areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
+    }
+  }, [curPage]);
 
   function handleLeft() {
     if (curPage <= 0) return;
-    curPage--;
-    areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
+    setCurPage(curPage - 1);
   }
 
   function handleRight() {
-    if (curPage >= lastPage) return;
-    curPage++;
-    areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
+    if (curPage >= previewFileList.length - 1) return;
+    setCurPage(curPage + 1);
   }
 
   return (

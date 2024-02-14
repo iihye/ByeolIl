@@ -4,6 +4,7 @@ import { useRecoilValue } from "recoil";
 import StarReplyListItem from "./StarReplyListItem";
 import axios from "axios";
 import { IoMdRefresh } from "react-icons/io";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function StarReplyList(props) {
   const renewReply = useRecoilValue(renewReplyState);
@@ -50,15 +51,17 @@ function StarReplyList(props) {
         <div>댓글 목록</div>
         <IoMdRefresh className="my-1 hover:cursor-pointer flex" onClick={handleRefresh} />
       </div>
-      <div className="star-reply-list relative h-52 border border-white-sub rounded-xl overflow-y-scroll bg-alert-bg text-white-sub" ref={replyListRef}>
-        {data[0] ? (
-          [...data].map((reply, index) => <StarReplyListItem reply={reply} key={index} boardIndex={boardIndex} />)
-        ) : (
-          <div className="flex absolute top-0 bottom-0 left-0 right-0 justify-center items-center h-full">
-            <div>등록된 댓글이 없습니다.</div>
-          </div>
-        )}
-      </div>
+      <ScrollArea className="h-52 w-96 relative border border-white-sub rounded-xl bg-alert-bg text-white-sub p-2">
+        <div className="star-reply-list  " ref={replyListRef}>
+          {data[0] ? (
+            [...data].map((reply, index) => <StarReplyListItem reply={reply} key={index} boardIndex={boardIndex} />)
+          ) : (
+            <div className="flex absolute top-0 bottom-0 left-0 right-0 justify-center items-center h-full">
+              <div>등록된 댓글이 없습니다.</div>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
     </>
   );
 }
