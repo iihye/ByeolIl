@@ -69,7 +69,7 @@ function StarMultiReplyListItem(props) {
     return (
         <div className="star-reply-list-item ml-4 p-1">
             <div className="flex items-end">
-                <div className="text-xl">{reply.memberNickname}번 유저</div>
+                <div className="text-xl">{reply.memberNickname}</div>
                 <div className="ml-2">{printedTime}</div>
             </div>
             <div style={{ display: "flex" }}>
