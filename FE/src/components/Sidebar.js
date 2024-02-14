@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import { useVideoTexture } from "@react-three/drei";
-import { IoMdMenu } from "react-icons/io";
+import { Link, useNavigate } from "react-router-dom";\
 import * as RiIcons from "react-icons/ri";
 import * as WiIcons from "react-icons/wi";
 import * as LuIcons from "react-icons/lu";
@@ -81,7 +79,7 @@ function SidebarList(props) {
                     type: "PiIcons",
                     icon: "PiSiren",
                     name: "신고관리",
-                    path: `/space/admin/report`,
+                    path: `/space/${props.memberIndex}/report`,
                 },
             ]);
     }, [props.memberIndex]);
