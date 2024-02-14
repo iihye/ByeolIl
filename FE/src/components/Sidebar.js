@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { TfiMenu } from 'react-icons/tfi';
 import { FaUserCircle } from 'react-icons/fa';
+import { HiOutlinePencilAlt } from 'react-icons/hi';
 import * as SiIcons from 'react-icons/si';
 import * as RiIcons from 'react-icons/ri';
 import * as WiIcons from 'react-icons/wi';
@@ -44,6 +45,8 @@ function SidebarList(props) {
         sessionStorage.removeItem('auth');
         navigate('/landing');
     };
+
+    const handleNickname = () => {};
 
     useEffect(() => {
         setItems([
@@ -116,6 +119,11 @@ function SidebarList(props) {
             <div className="flex justify-left">
                 <FaUserCircle size="24" className="pr-2 text-btn-bg-hover" />
                 <h2 className="mb-2 text-btn-bg-hover">{nickname}</h2>
+                <HiOutlinePencilAlt
+                    size="24"
+                    className="pl-2"
+                    onClick={() => handleNickname}
+                />
             </div>
             {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
             {items.map((item, index) => {
