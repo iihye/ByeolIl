@@ -10,6 +10,7 @@ import {
     isFindUserOpenState,
     isFollowListOpenState,
     isMyStarListOpenState,
+    isTagSearchOpenState,
 } from "./atom";
 
 function SidebarList(props) {
@@ -18,6 +19,7 @@ function SidebarList(props) {
     const setIsFavorListOpen = useSetRecoilState(isFavorListOpenState);
     const setIsFollowListOpen = useSetRecoilState(isFollowListOpenState);
     const setIsFindUserOpen = useSetRecoilState(isFindUserOpenState);
+    const setIsTagSearchOpen = useSetRecoilState(isTagSearchOpenState);
 
     const [items, setItems] = useState([]);
     const isAdmin = sessionStorage.getItem("auth");
@@ -56,7 +58,7 @@ function SidebarList(props) {
             },
             {
                 name: "태그로 별 찾기",
-                path: `/space/${props.memberIndex}/tagSearch`,
+                path: () => setIsTagSearchOpen(true),
             },
             { name: "환경설정", path: `/space/${props.memberIndex}/settings` },
         ]);
