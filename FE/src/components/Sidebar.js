@@ -50,9 +50,15 @@ function SidebarList(props) {
     };
 
     const handleNickname = async (e) => {
-        if (e.code === 'Enter') {
+        if (e.code === 'Enter' && e.target.value !== '') {
+            e.preventDefault();
             const newName = e.target.value;
+            const nickNameRegExp = /^[가-힣a-zA-Z0-9_]{2,10}$/;
 
+            if (!nickNameRegExp.test(newName)) {
+                alert("2~10자 사이 한글, 영문, 숫자, '_' 만 입력해주세요");
+                return;
+            }
             try {
                 const response = await axios.put(
                     `${process.env.REACT_APP_API_URL}/member`,
@@ -152,7 +158,7 @@ function SidebarList(props) {
                             placeholder="변경할 닉네임 입력 후 엔터"
                             // value={nickname}
                             onChange={handleNickname}
-                            onKeyDown={(e) => handleNickname(e)}
+                            onKeyPress={(e) => handleNickname(e)}
                         />
                     </>
                 ) : (
