@@ -12,7 +12,6 @@ import {
     isStarModifyOpenState,
     renewReplyState,
 } from "components/atom";
-import { GoRocket } from "react-icons/go";
 import { useNavigate } from "react-router";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { PiSiren } from "react-icons/pi";
@@ -22,6 +21,7 @@ import { CgCloseR } from "react-icons/cg";
 import { IoMdSend } from "react-icons/io";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -219,11 +219,12 @@ function StarContent(props) {
     return (
         <div className="flex items-center">
             {data && data.boardMedia.length > 0 ? <MediaArea data={data} /> : null}
+
             <div className="star-content">
                 {/* 최상단 */}
                 <div className="star-content-top text-white-sub">
                     {/* 지정일 */}
-                    <div className="text-2xl mb-2 font-['Pre-bold']">
+                    <div className="relative text-2xl mb-2 font-['Pre-bold'] flex justify-between items-center">
                         {data ? (
                             <div>
                                 20{data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일
@@ -234,13 +235,14 @@ function StarContent(props) {
                         )}
                     </div>
                 </div>
-                <div className="star-content-content relative border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
-                    {/* 게시글 내용 */}
-                    {data ? data.boardContent : "로딩중"}
-                    <div className="absolute right-0 bottom-0 mr-2 mb-2 text-2xl duration-200 hover:text-4xl hover:text-whiteh hover:cursor-pointer">
-                        <GoRocket onClick={handleRadio} />
-                    </div>
+
+                <div className="">
+                    <ScrollArea className="star-content-content relative w-96 border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
+                        {/* 게시글 내용 */}
+                        {data ? data.boardContent : "로딩중"}
+                    </ScrollArea>
                 </div>
+
                 <div>
                     {/* 해시태그 */}
                     <div className="flex text-white-sub gap-3 mt-2">
@@ -250,7 +252,7 @@ function StarContent(props) {
                 {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
                 <div>
                     {/* 댓글 리스트 영역 */}
-                    <StarReplyList boardIndex={starIndex} />
+                    <StarReplyList boardIndex={starIndex} handleRadio={handleRadio} />
                 </div>
                 <div>
                     {/* 최하단 */}
@@ -296,7 +298,7 @@ function StarContent(props) {
 function CloseButton(props) {
     const handleClose = props.handleClose;
     return (
-        <div className="text-white-sub hover:cursor-pointer hover:text-white text-3xl" onClick={handleClose}>
+        <div className="text-white-sub hover:hover text-3xl" onClick={handleClose}>
             <CgCloseR />
         </div>
     );
@@ -304,7 +306,7 @@ function CloseButton(props) {
 function ModifyButton(props) {
     const handleModify = props.handleModify;
     return (
-        <div className="text-white-sub hover:cursor-pointer hover:text-white text-3xl" onClick={handleModify}>
+        <div className="text-white-sub hover:hover text-3xl" onClick={handleModify}>
             <TiSpannerOutline />
         </div>
     );
@@ -314,7 +316,7 @@ function DeleteButton(props) {
     const handleDelete = props.handleDelete;
 
     return (
-        <div className="text-white-sub hover:cursor-pointer hover:text-white" onClick={handleDelete}>
+        <div className="text-white-sub hover:hover" onClick={handleDelete}>
             <FaRegTrashCan />
         </div>
     );
@@ -323,7 +325,7 @@ function ReportButton(props) {
     const handleReport = props.handleReport;
 
     return (
-        <div className="text-white-sub text-3xl hover:cursor-pointer hover:text-white" onClick={handleReport}>
+        <div className="text-white-sub text-3xl hover:hover" onClick={handleReport}>
             <PiSiren />
         </div>
     );
@@ -433,7 +435,7 @@ function ReplyRegistArea(props) {
 
     return (
         <>
-            <div className="w-full flex items-center justify-between">
+            <div className="w-full flex items-center justify-between w-96">
                 <input
                     className="border my-2 p-1 px-2 mr-2 w-full bg-alert-bg text-white-sub"
                     placeholder="댓글 내용을 입력해주세요."
@@ -441,7 +443,7 @@ function ReplyRegistArea(props) {
                     onKeyDown={handleKeyDown}
                 />
                 <div
-                    className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-white hover:cursor-pointer"
+                    className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-modal-bg duration-200 hover:cursor-pointer"
                     onClick={handleRegistReply}
                 >
                     <IoMdSend />
