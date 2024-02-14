@@ -468,6 +468,9 @@ function UserSpace() {
         if (writerIndex !== loginUserId && location.state?.props) {
             setUserName(location.state.props);
         }
+        if (writerIndex === loginUserId) {
+            setUserName("");
+        }
     }, [location]);
 
     useEffect(() => {

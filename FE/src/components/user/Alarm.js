@@ -68,41 +68,41 @@ function Alarm() {
 
         fetchData();
 
-        // if (token) {
-        //     const eventSource = new EventSourcePolyfill(
-        //         `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
-        //         {
-        //             headers: {
-        //                 Authorization: `${token}`,
-        //             },
-        //             heartbeatTimeout: 30000,
-        //         }
-        //     );
+        if (token) {
+            const eventSource = new EventSourcePolyfill(
+                `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
+                {
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                    heartbeatTimeout: 30000,
+                }
+            );
 
-        //     console.log(eventSource);
+            console.log(eventSource);
 
-        //     eventSource.onmessage = (e) => {
-        //         console.log('제발1');
-        //         if (e.type === 'alarm') {
-        //             console.log('제발');
-        //         }
-        //     };
+            eventSource.onmessage = (e) => {
+                console.log('제발1');
+                if (e.type === 'alarm') {
+                    console.log('제발');
+                }
+            };
 
-        //     eventSource.addEventListener('open', function (event) {
-        //         console.log('열렸음', event);
-        //     });
-        //     eventSource.addEventListener('alarm', function (event) {
-        //         console.log('이벤트 발생', event);
-        //     });
-        //     eventSource.addEventListener('error', function (event) {
-        //         console.log('알림 에러 발생', event.target);
-        //         if (event.target.readyState === EventSource.CLOSED) {
-        //             console.log('eventsource closed');
-        //         }
-        //         eventSource.close();
-        //     });
-        //     return () => eventSource.current?.close();
-        // }
+            eventSource.addEventListener('open', function (event) {
+                console.log('열렸음', event);
+            });
+            eventSource.addEventListener('alarm', function (event) {
+                console.log('이벤트 발생', event);
+            });
+            eventSource.addEventListener('error', function (event) {
+                console.log('알림 에러 발생', event.target);
+                if (event.target.readyState === EventSource.CLOSED) {
+                    console.log('eventsource closed');
+                }
+                eventSource.close();
+            });
+            return () => eventSource.current?.close();
+        }
     }, []);
 
     useEffect(() => {
@@ -127,7 +127,10 @@ function Alarm() {
 
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-            <Card className="Alarm w-5/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+            <Card
+                className="Alarm bg-modal-bg text-white-sub px-6 py-6 rounded-component"
+                style={{ width: '480px' }}
+            >
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                         <FaRegBell className="mr-1" />
@@ -136,7 +139,7 @@ function Alarm() {
                 </CardHeader>
                 <div></div>
                 <CardContent>
-                    <ScrollArea className="h-52 font-['Pre-Light'] text-m py-1 px-1.5">
+                    <ScrollArea className="h-52 font-['Pre-Light'] text-m py-1 px-1.5 pr-5">
                         {alarmData.map((it) => {
                             switch (it.alarmType) {
                                 case 'FOLLOW':
