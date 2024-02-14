@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState, useResetRecoilState } from 'recoil';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { FaUserCircle } from 'react-icons/fa';
-import SearchBar from '../reusable/SearchBar';
-import { filterState } from 'components/atom';
-import { PiShootingStarLight } from 'react-icons/pi';
-import { TbHomeMove } from 'react-icons/tb';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaSearch } from 'react-icons/fa';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useRecoilValue, useSetRecoilState, useResetRecoilState } from "recoil";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { FaUserCircle } from "react-icons/fa";
+import SearchBar from "../reusable/SearchBar";
+import { filterState, isFindUserOpenState } from "components/atom";
+import { PiShootingStarLight } from "react-icons/pi";
+import { TbHomeMove } from "react-icons/tb";
+import { Link, useNavigate } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
+import axios from "axios";
 
 // 유저 검색 기능
 function FindUser() {
-    const [listData, setListData] = useState('');
+    const resetIsFindUserOpen = useResetRecoilState(isFindUserOpenState);
+    const [listData, setListData] = useState("");
     const filterData = useRecoilValue(filterState);
-    const userToken = sessionStorage.getItem('token') ?? '';
+    const userToken = sessionStorage.getItem("token") ?? "";
     const resetList = useResetRecoilState(filterState);
-    const navigate = useNavigate();
+
     const isEmpty = false;
 
     // API로 유저 전체 리스트를 받아와서 listData 상태 변경
@@ -45,17 +46,15 @@ function FindUser() {
         function handleClick(e) {
             e.stopPropagation();
 
-            const check = [...e.target.classList].some(
-                (it) => it === 'outside'
-            );
+            const check = [...e.target.classList].some((it) => it === "outside");
             if (check) {
-                navigate(-1);
+                resetIsFindUserOpen();
             }
         }
 
-        window.addEventListener('click', handleClick);
+        window.addEventListener("click", handleClick);
         return () => {
-            window.removeEventListener('click', handleClick);
+            window.removeEventListener("click", handleClick);
         };
     });
 
@@ -72,10 +71,7 @@ function FindUser() {
                 <CardContent>
                     <div className="searchArea flex justify-between items-center search-input w-72 mx-auto ">
                         <div className="px-2">
-                            <SearchBar
-                                filterKey="memberNickname"
-                                listItems={listData}
-                            />
+                            <SearchBar filterKey="memberNickname" listItems={listData} />
                         </div>
                         <FaSearch size="20" className="text-black-sub mx-3" />
                     </div>
@@ -85,22 +81,11 @@ function FindUser() {
                                 <div>데이터가 없습니다</div>
                             ) : (
                                 filterData.map((it) => (
-                                    <li
-                                        key={it.memberIndex}
-                                        className="flex p-2 text-lg font-['Pre-Light']"
-                                    >
-                                        <FaUserCircle
-                                            size="30"
-                                            className="pr-2 text-btn-bg-hover"
-                                        />
+                                    <li key={it.memberIndex} className="flex p-2 text-lg font-['Pre-Light']">
+                                        <FaUserCircle size="30" className="pr-2 text-btn-bg-hover" />
                                         {it.memberNickname}
-                                        <Link
-                                            to={`/space/${it.memberIndex}`}
-                                            state={{ props: it.memberNickname }}
-                                        >
-                                            <TbHomeMove className="size-7 mx-2">
-                                                이동하기
-                                            </TbHomeMove>
+                                        <Link to={`/space/${it.memberIndex}`} state={{ props: it.memberNickname }}>
+                                            <TbHomeMove className="size-7 mx-2">이동하기</TbHomeMove>
                                         </Link>
                                     </li>
                                 ))
