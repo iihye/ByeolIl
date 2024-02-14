@@ -5,7 +5,7 @@ import axios from "axios";
 import { isPwCheckOpenState } from "components/atom";
 import { useRecoilState } from "recoil";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RiLockPasswordFill } from "react-icons/ri";
+import { RiLockPasswordLine } from "react-icons/ri";
 
 // Sidebar에서 회원정보 수정 버튼 누름 -> PWCheckAlert를 먼저 가서 비밀번호 검사
 // -> 검사 통과시에 ChangeInfo에 연결. -> 소셜로그인 회원은 비밀번호 수정이 없고 닉네임 수정만 있다.
@@ -126,7 +126,7 @@ export default function ChangeInfo() {
                     >
                         <CardHeader className="flex">
                             <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
-                                <RiLockPasswordFill className="mr-1" />
+                                <RiLockPasswordLine className="mr-1" />
                                 회원정보수정
                             </CardTitle>
                         </CardHeader>
