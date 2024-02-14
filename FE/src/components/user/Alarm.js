@@ -46,7 +46,9 @@ function Alarm() {
             .post(`${process.env.REACT_APP_ALARM_URL}/alarm/check`, alarmInfo)
             .then(
                 setAlarmData((currentAlarmData) =>
-                    currentAlarmData.filter((it) => it.alarmIndex !== index)
+                    currentAlarmData
+                        .filter((it) => it.alarmIndex !== index)
+                        .reverse()
                 )
             )
             .catch((error) => console.log(error));
