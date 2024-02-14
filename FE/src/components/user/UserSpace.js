@@ -19,6 +19,7 @@ import { position, linePosition, MAX_SATR_CNT } from '../../data';
 import { useLocation } from 'react-router-dom';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { KernelSize } from 'postprocessing';
+import { useLoader } from '@react-three/fiber';
 import { constellationCheck } from 'util';
 import { PiShootingStarFill } from 'react-icons/pi';
 import swal from 'sweetalert';
