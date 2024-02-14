@@ -85,6 +85,11 @@ function StarRegist(props) {
             return;
         }
 
+        if (contentRef.current.value.length > 200) {
+            alert("내용의 길이가 200자를 초과했습니다.");
+            return;
+        }
+
         const files = [...fileList];
 
         const formData = new FormData();
@@ -196,11 +201,7 @@ function StarRegist(props) {
                             <DateArea ref={dateRef} type={type} />
                             <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
                         </div>
-                        <textarea
-                            className="bg-alert-bg rounded-lg w-full h-44 resize-none p-2 border text-white-sub"
-                            ref={contentRef}
-                            placeholder="일기 내용을 입력해주세요."
-                        />
+                        <ContentArea ref={contentRef} />
                     </div>
                     {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
                     <div className="relative">
@@ -217,6 +218,28 @@ function StarRegist(props) {
         </div>
     );
 }
+
+const ContentArea = forwardRef((props, ref) => {
+    const [contentLength, setContentLength] = useState(0);
+
+    return (
+        <>
+            <div className="relative bg-alert-bg rounded-lg w-full h-44 border text-white-sub">
+                <textarea
+                    className="w-full h-36 bg-transparent resize-none p-2 border-transparent outline-none"
+                    style={{ outlineColor: "transparent" }}
+                    ref={ref}
+                    placeholder="일기 내용을 입력해주세요."
+                    onChange={() => {
+                        setContentLength(ref.current.value.length);
+                    }}
+                />
+
+                <div className="absolute text-white-sub bottom-1 right-2">{contentLength} / 200자</div>
+            </div>
+        </>
+    );
+});
 
 function Buttons(props) {
     const fileList = useRecoilValue(fileListState);
