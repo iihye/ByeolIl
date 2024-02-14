@@ -21,6 +21,11 @@ function FindUser() {
 
     const isEmpty = false;
 
+    function handleMove(memberNickname) {
+        alert(`${memberNickname}의 우주로 이동합니다🚀`);
+        resetIsFindUserOpen(false);
+    }
+
     // API로 유저 전체 리스트를 받아와서 listData 상태 변경
     useEffect(() => {
         if (userToken === null || userToken === undefined) {
@@ -98,6 +103,9 @@ function FindUser() {
                                         <Link
                                             to={`/space/${it.memberIndex}`}
                                             state={{ props: it.memberNickname }}
+                                            onClick={() =>
+                                                handleMove(it.memberNickname)
+                                            }
                                         >
                                             <TbHomeMove className="size-7 mx-2">
                                                 이동하기
