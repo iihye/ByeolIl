@@ -270,6 +270,7 @@ const ContentArea = forwardRef((props, ref) => {
                     onChange={() => {
                         setContentLength(ref.current.value.length);
                     }}
+                    maxLength={200}
                 />
 
                 <div className="absolute text-white-sub bottom-1 right-2">
