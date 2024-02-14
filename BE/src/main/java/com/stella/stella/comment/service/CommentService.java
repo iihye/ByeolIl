@@ -46,14 +46,16 @@ public class CommentService {
                 .member(member).build();
         commentRepository.save(comment);
 
-        Alarm alarm = Alarm.builder()
-                .toMember(board.getMember())
-                .fromMember(member)
-                .alarmType(AlarmType.CMT)
-                .board(board)
-                .build();
+        if(board.getMember() != member){
+            Alarm alarm = Alarm.builder()
+                    .toMember(board.getMember())
+                    .fromMember(member)
+                    .alarmType(AlarmType.CMT)
+                    .board(board)
+                    .build();
 
-        alarmRepository.save(alarm);
+            alarmRepository.save(alarm);
+        }
     }
 
     public void removeComment(CommentDeleteRequestDto dto) {

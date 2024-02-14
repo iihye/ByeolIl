@@ -16,7 +16,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
     Optional<Member> findByMemberNickname(String nickname);
     Optional<Member> findByMemberNameAndMemberEmailAndMemberPlatform(String memberName,String memberEmail,String memberPlatform);
     Optional<Member> findByMemberIdAndMemberNameAndMemberEmailAndMemberPlatform(String memberId, String memberName,String memberEmail,String memberPlatform);
-    @Query("SELECT m FROM Member m WHERE m.memberIndex <> :memberIndex AND m.memberDeleteYN <> 'Y'")
+    @Query("SELECT m FROM Member m WHERE m.memberIndex <> :memberIndex AND m.memberDeleteYN <> 'Y' AND m.memberRole = 'USER'")
     List<Member> findAllExcept(long memberIndex);
 
 }

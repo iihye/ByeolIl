@@ -38,20 +38,22 @@ public class FollowService {
         Member fromMember = memberRepository.findByMemberIndex(followRequestDto.getFromMemberIndex())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
 
-        Follow follow = Follow.builder()
-                        .toMember(toMember)
-                        .fromMember(fromMember)
-                        .build();
+        if(toMember != fromMember) {
+            Follow follow = Follow.builder()
+                    .toMember(toMember)
+                    .fromMember(fromMember)
+                    .build();
 
-        followRepository.save(follow);
+            followRepository.save(follow);
 
-        Alarm alarm = Alarm.builder()
-                .toMember(toMember)
-                .fromMember(fromMember)
-                .alarmType(AlarmType.FOLLOW)
-                .build();
+            Alarm alarm = Alarm.builder()
+                    .toMember(toMember)
+                    .fromMember(fromMember)
+                    .alarmType(AlarmType.FOLLOW)
+                    .build();
 
-        alarmRepository.save(alarm);
+            alarmRepository.save(alarm);
+        }
     }
 
     // 팔로우 삭제
