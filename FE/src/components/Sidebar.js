@@ -4,12 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useVideoTexture } from "@react-three/drei";
 import { IoMdMenu } from "react-icons/io";
 import { useSetRecoilState } from "recoil";
-import { isChangeInfoOpenState, isFavorListOpenState, isMyStarListOpenState } from "./atom";
+import { isChangeInfoOpenState, isFavorListOpenState, isFollowListOpenState, isMyStarListOpenState } from "./atom";
 
 function SidebarList(props) {
     const setIsChangeInfoOpen = useSetRecoilState(isChangeInfoOpenState);
     const setIsMyStarListOpen = useSetRecoilState(isMyStarListOpenState);
     const setIsFavorListOpen = useSetRecoilState(isFavorListOpenState);
+    const setIsFollowListOpen = useSetRecoilState(isFollowListOpenState);
 
     const [items, setItems] = useState([]);
     const isAdmin = sessionStorage.getItem("auth");
@@ -40,7 +41,7 @@ function SidebarList(props) {
             },
             {
                 name: "팔로우/팔로워 목록",
-                path: `/space/${props.memberIndex}/follow`,
+                path: () => setIsFollowListOpen(true),
             },
             {
                 name: "다른 우주 찾기",
