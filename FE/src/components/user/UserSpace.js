@@ -136,8 +136,7 @@ function Star(props) {
         } else {
             constellationCheck.update(1, 0, lastStarIndex, props.location, false);
         }
-
-        props.setRenewConstellation(!props.renewConstellation);
+        console.log("update");
     }, [stars]);
 
     const handleClick = (e, locationNum) => {
@@ -226,7 +225,8 @@ function GroupStar(props) {
         } else if (!check) {
             setLineColor(true);
         }
-    }, [stars, renewConstellation]);
+        console.log("renew");
+    }, [stars]);
 
     // 하늘 회전
     useFrame((state, delta) => {
@@ -254,6 +254,8 @@ function GroupStar(props) {
                         setLineColor={setLineColor}
                         renewConstellation={renewConstellation}
                         setRenewConstellation={setRenewConstellation}
+                        startStarNum={startStarNum}
+                        lastStarNum={lastStarNum}
                     />
                 ))}
                 {linePosition[groupNum].map((it, index) => {
