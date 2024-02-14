@@ -62,34 +62,48 @@ function SidebarList(props) {
                     text: "2~10자 사이 한글, 영문, 숫자, '_' 만 입력해주세요",
                     icon: 'error',
                 });
-
                 return;
             }
-            try {
-                const response = await axios.put(
-                    `${process.env.REACT_APP_API_URL}/member`,
-                    {
-                        memberIndex: sessionStorage.getItem('memberIndex'),
-                        memberNickname: newName,
-                    },
-                    { headers: { token: sessionStorage.getItem('token') } }
-                );
 
-                if (response.status === 200) {
+            // 닉네임 중복 체크
+            try {
+                const response = await axios.get(
+                    `${
+                        process.env.REACT_APP_API_URL
+                    }/member/dup-check/nickname/${encodeURIComponent(newName)}`
+                );
+                // 중복 체크 로직 처리...
+                console.log(response);
+
+                // 닉네임 변경 로직
+                try {
+                    const updateResponse = await axios.put(
+                        `${process.env.REACT_APP_API_URL}/member`,
+                        {
+                            memberIndex: sessionStorage.getItem('memberIndex'),
+                            memberNickname: newName,
+                        },
+                        { headers: { token: sessionStorage.getItem('token') } }
+                    );
+
+                    if (updateResponse.status === 200) {
+                        swal({
+                            title: '닉네임 변경 완료!',
+                            icon: 'success',
+                        }).then(() => {
+                            sessionStorage.setItem('nickname', newName);
+                            setNickname(newName);
+                        });
+                    }
+                } catch (error) {
                     swal({
-                        title: '닉네임 변경 완료!',
-                        icon: 'success',
-                    }).then(() => {
-                        sessionStorage.setItem('nickname', newName);
-                        setNickname(newName);
+                        title: '닉네임 변경 실패',
+                        text: '다시 시도해주세요',
+                        icon: 'error',
                     });
                 }
             } catch (error) {
-                swal({
-                    title: '닉네임 변경 실패',
-                    text: '다시 시도해주세요',
-                    icon: 'error',
-                });
+                console.log(error);
             }
 
             setIsModifying(false);
