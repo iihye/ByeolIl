@@ -28,6 +28,7 @@
     "event-source-polyfill": "^1.0.31",
     "eventsource": "^2.0.2",
     "react": "^18.1.0",
+    "react-audio-player": "^0.17.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.1.0",
     "react-hook-form": "^7.50.1",

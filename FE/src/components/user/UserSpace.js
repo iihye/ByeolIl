@@ -83,40 +83,6 @@ function Line(props) {
     );
 }
 
-// function Space(props) {
-//     const gradientShader = {
-//         uniforms: {
-//             color1: { value: new THREE.Color(0x222222) }, // 그라디언트 시작 색상
-//             color2: { value: new THREE.Color(0x000000) }, // 그라디언트 종료 색상
-//         },
-//         vertexShader: `
-//           varying vec3 vPosition;
-//           void main() {
-//             vPosition = position;
-//             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-//           }
-//         `,
-//         fragmentShader: `
-//           uniform vec3 color1;
-//           uniform vec3 color2;
-//           varying vec3 vPosition;
-//           void main() {
-//             float ratio = (vPosition.y + 1.0) / 2.0;
-//             gl_FragColor = vec4(mix(color1, color2, ratio), 1.0);
-//           }
-//         `,
-//     };
-
-//     const meshRef = useRef();
-
-//     return (
-//         <mesh ref={meshRef} position={props.position}>
-//             <sphereGeometry args={props.size} />
-//             <shaderMaterial args={[gradientShader]} side={THREE.BackSide} />
-//         </mesh>
-//     );
-// }
-
 function Ground(props) {
     const mesh = useRef(null);
 
@@ -136,28 +102,10 @@ function Ground(props) {
         </mesh>
     );
 }
-function Sphere(props) {
-    const mesh = useRef(null);
 
-    return (
-        <mesh ref={mesh} position={props.position}>
-            <sphereGeometry args={props.size} />
-            <meshStandardMaterial
-                color={props.color}
-                side={
-                    props.type === "double"
-                        ? THREE.DoubleSide
-                        : props.type === "front"
-                        ? THREE.FrontSide
-                        : THREE.BackSide
-                }
-            />
-        </mesh>
-    );
-}
 function Space(props) {
     const mesh = useRef(null);
-    const colorMap = useLoader(THREE.TextureLoader, `${process.env.PUBLIC_URL}/image/color_texture_3.png`);
+    const colorMap = useLoader(THREE.TextureLoader, `${process.env.PUBLIC_URL}/image/color_texture_4.png`);
 
     return (
         <mesh ref={mesh} position={props.position}>
