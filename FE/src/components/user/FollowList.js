@@ -39,17 +39,23 @@ function FollowList() {
         const fetchData = async () => {
             try {
                 const [followResponse, followerResponse] = await axios.all([
-                    axios.get(`${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`, {
-                        headers: {
-                            token: loginToken,
-                        },
-                    }),
+                    axios.get(
+                        `${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`,
+                        {
+                            headers: {
+                                token: loginToken,
+                            },
+                        }
+                    ),
 
-                    axios.get(`${process.env.REACT_APP_API_URL}/follow/follower/${loginIndex}`, {
-                        headers: {
-                            token: loginToken,
-                        },
-                    }),
+                    axios.get(
+                        `${process.env.REACT_APP_API_URL}/follow/follower/${loginIndex}`,
+                        {
+                            headers: {
+                                token: loginToken,
+                            },
+                        }
+                    ),
                 ]);
 
                 setFollowData(followResponse.data.result);
@@ -66,7 +72,9 @@ function FollowList() {
         function handleClick(e) {
             e.stopPropagation();
 
-            const check = [...e.target.classList].some((it) => it === "outside");
+            const check = [...e.target.classList].some(
+                (it) => it === "outside"
+            );
             if (check) {
                 resetIsFollowListOpen();
             }
@@ -80,7 +88,7 @@ function FollowList() {
 
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-            <Card className="FollowList w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+            <Card className="FollowList w-96 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                         <AiOutlineUserAdd className="mr-1" />
@@ -106,8 +114,14 @@ function FollowList() {
                             <TabsContent key={index} value={menu.name}>
                                 <ScrollArea className="font-['Pre-Light'] text-m py-1 mb-2 h-52">
                                     {menu.content.map((user, userIndex) => (
-                                        <li key={userIndex} className="flex justify-start p-1">
-                                            <FaUserCircle size="24" className="pr-2 text-btn-bg-hover" />
+                                        <li
+                                            key={userIndex}
+                                            className="flex justify-start p-1"
+                                        >
+                                            <FaUserCircle
+                                                size="24"
+                                                className="pr-2 text-btn-bg-hover"
+                                            />
                                             <p>{user.memberName}</p>
                                         </li>
                                     ))}

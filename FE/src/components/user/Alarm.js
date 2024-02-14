@@ -36,6 +36,7 @@ function Alarm() {
     );
 
     const onClose = (index) => {
+        console.log(typeof memberIndex);
         const alarmInfo = {
             alarmIndex: index,
             memberIndex: memberIndex,
@@ -45,7 +46,9 @@ function Alarm() {
             .post(`${process.env.REACT_APP_ALARM_URL}/alarm/check`, alarmInfo)
             .then(
                 setAlarmData((currentAlarmData) =>
-                    currentAlarmData.filter((it) => it.alarmIndex !== index)
+                    currentAlarmData
+                        .filter((it) => it.alarmIndex !== index)
+                        .reverse()
                 )
             )
             .catch((error) => console.log(error));
@@ -58,7 +61,6 @@ function Alarm() {
                     `${process.env.REACT_APP_API_URL}/alarm/list/${memberIndex}`
                 )
                 .then((response) => {
-                    // console.log(response.data.result);
                     setAlarmData(response.data.result);
                 })
                 .catch((e) => console.log(e, memberIndex));
@@ -67,7 +69,7 @@ function Alarm() {
         fetchData();
 
         if (token) {
-            const eventSource = new EventSource(
+            const eventSource = new EventSourcePolyfill(
                 `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
                 {
                     headers: {
@@ -76,6 +78,15 @@ function Alarm() {
                     heartbeatTimeout: 30000,
                 }
             );
+
+            console.log(eventSource);
+
+            eventSource.onmessage = (e) => {
+                console.log('제발1');
+                if (e.type === 'alarm') {
+                    console.log('제발');
+                }
+            };
 
             eventSource.addEventListener('open', function (event) {
                 console.log('열렸음', event);
@@ -112,11 +123,14 @@ function Alarm() {
         };
     }, []);
 
-    // 알림 타입마다 다른 창이 떠야함
-    // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
+    alarmData && alarmData.reverse();
+
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-            <Card className="Alarm w-5/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+            <Card
+                className="Alarm bg-modal-bg text-white-sub px-6 py-6 rounded-component"
+                style={{ width: '480px' }}
+            >
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                         <FaRegBell className="mr-1" />
@@ -125,7 +139,7 @@ function Alarm() {
                 </CardHeader>
                 <div></div>
                 <CardContent>
-                    <ScrollArea className="h-52 font-['Pre-Light'] text-m py-1 px-1.5">
+                    <ScrollArea className="h-52 font-['Pre-Light'] text-m py-1 px-1.5 pr-5">
                         {alarmData.map((it) => {
                             switch (it.alarmType) {
                                 case 'FOLLOW':

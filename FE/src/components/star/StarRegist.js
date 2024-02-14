@@ -103,7 +103,6 @@ function StarRegist(props) {
         hashtagSet.forEach((it) => hashContent.push(it));
 
         if (type === "regist") {
-            console.log(dateRef.current.innerText);
             const data = {
                 memberIndex: writerIndex,
                 boardContent: contentRef.current.value,
@@ -159,15 +158,24 @@ function StarRegist(props) {
                 memberIndex: writerIndex,
                 boardInputDate: dateRef.current.innerText,
                 boardContent: contentRef.current.value,
-                boardMedia: [],
+                boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
             };
 
+            // Object to Blob
+            const dataDto = JSON.stringify(data);
+            let requestDtoBlob = new Blob([dataDto], {
+                type: "application/json",
+            });
+
+            formData.append("requestDto", requestDtoBlob);
+
             try {
                 await axios
-                    .put(`${process.env.REACT_APP_API_URL}/board`, data, {
+                    .put(`${process.env.REACT_APP_API_URL}/board`, formData, {
                         headers: {
                             token: sessionStorage.getItem("token"),
+                            "Content-Type": "multipart/form-data",
                         },
                     })
                     .then((response) => {
@@ -232,6 +240,7 @@ const ContentArea = forwardRef((props, ref) => {
                     onChange={() => {
                         setContentLength(ref.current.value.length);
                     }}
+                    maxLength={200}
                 />
 
                 <div className="absolute text-white-sub bottom-1 right-2">{contentLength} / 200자</div>
@@ -579,9 +588,7 @@ const AccessRangeArea = forwardRef((props, ref) => {
 
     const [selectedRange, setSelectedRange] = useState(0);
 
-    const displayRef = useRef();
-
-    const accessRangeArr = ["전체 공개", "친구 공개", "비공개"];
+    const accessRangeArr = ["전체 공개", "팔로워 공개", "비공개"];
     const accessRangeValueArr = ["OPEN", "PARTOPEN", "NOOPEN"];
 
     return (
