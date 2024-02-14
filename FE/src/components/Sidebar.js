@@ -10,8 +10,26 @@ import * as AiIcons from "react-icons/ai";
 import * as PiIcons from "react-icons/pi";
 import * as HiIcons from "react-icons/hi2";
 import * as IoIcons from "react-icons/io5";
+import { useSetRecoilState } from "recoil";
+import {
+    isChangeInfoOpenState,
+    isFavorListOpenState,
+    isFindUserOpenState,
+    isFollowListOpenState,
+    isMyStarListOpenState,
+    isSettingOpenState,
+    isTagSearchOpenState,
+} from "./atom";
 
 function SidebarList(props) {
+    const setIsChangeInfoOpen = useSetRecoilState(isChangeInfoOpenState);
+    const setIsMyStarListOpen = useSetRecoilState(isMyStarListOpenState);
+    const setIsFavorListOpen = useSetRecoilState(isFavorListOpenState);
+    const setIsFollowListOpen = useSetRecoilState(isFollowListOpenState);
+    const setIsFindUserOpen = useSetRecoilState(isFindUserOpenState);
+    const setIsTagSearchOpen = useSetRecoilState(isTagSearchOpenState);
+    const setIsSettingOpen = useSetRecoilState(isSettingOpenState);
+
     const [items, setItems] = useState([]);
     const isAdmin = sessionStorage.getItem("auth");
     const nickname = sessionStorage.getItem("nickname");
@@ -32,43 +50,43 @@ function SidebarList(props) {
                 type: "RiIcons",
                 icon: "RiLockPasswordLine",
                 name: "회원정보수정",
-                path: `/space/${props.memberIndex}/editInfo`,
+                path: () => setIsChangeInfoOpen(true),
             },
             {
                 type: "WiIcons",
                 icon: "WiStars",
                 name: "나의 별 목록",
-                path: `/space/${props.memberIndex}/starMine`,
+                path: () => setIsMyStarListOpen(true),
             },
             {
                 type: "LuIcons",
                 icon: "LuFolderHeart",
                 name: "좋아하는 별 목록",
-                path: `/space/${props.memberIndex}/starFavor`,
+                path: () => setIsFavorListOpen(true),
             },
             {
                 type: "AiIcons",
                 icon: "AiOutlineUserAdd",
                 name: "팔로우/팔로워 목록",
-                path: `/space/${props.memberIndex}/follow`,
+                path: () => setIsFollowListOpen(true),
             },
             {
                 type: "PiIcons",
                 icon: "PiShootingStarLight",
                 name: "다른 우주 찾기",
-                path: `/space/${props.memberIndex}/findUser`,
+                path: () => setIsFindUserOpen(true),
             },
             {
                 type: "HiIcons",
                 icon: "HiMiniHashtag",
                 name: "태그로 별 찾기",
-                path: `/space/${props.memberIndex}/tagSearch`,
+                path: () => setIsTagSearchOpen(true),
             },
             {
                 type: "IoIcons",
                 icon: "IoSettingsOutline",
                 name: "환경설정",
-                path: `/space/${props.memberIndex}/settings`,
+                path: () => setIsSettingOpen(true),
             },
         ]);
     }, []);
@@ -113,17 +131,13 @@ function SidebarList(props) {
                 }
 
                 return (
-                    <div
-                        className="flex justyfy-center sidebarItem mb-2"
-                        key={index}
-                    >
-                        <div className="flex justyfy-center items-center">
-                            <Link to={item.path}>
-                                {IconComponent && (
-                                    <IconComponent className="mr-2" />
-                                )}
-                                <p>{item.name}</p>
-                            </Link>
+                    <div className="flex justyfy-center sidebarItem mb-2" key={index}>
+                        <div
+                            className="flex justyfy-center items-center hover:cursor-pointer hover:text-white"
+                            onClick={item.path}
+                        >
+                            {IconComponent && <IconComponent className="mr-2" />}
+                            {item.name}
                         </div>
                     </div>
                 );
@@ -137,17 +151,13 @@ function SidebarList(props) {
 
 export default function Sidebar() {
     const [viewSideBar, setViewSideBar] = useState(false);
-    const [memberIndex, setMemberIndex] = useState(
-        sessionStorage.getItem("memberIndex")
-    );
+    const [memberIndex, setMemberIndex] = useState(Number(sessionStorage.getItem("memberIndex")));
     const [name, setName] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userData = await axios.get(
-                    `${process.env.REACT_APP_API_URL}/member/info/mine`
-                );
+                const userData = await axios.get(`${process.env.REACT_APP_API_URL}/member/info/mine`);
                 setName(userData.data.memberNickname);
             } catch (error) {
                 console.log(error);
@@ -160,25 +170,13 @@ export default function Sidebar() {
         <div className="Sidebar m-2">
             <TfiMenu
                 className="Sidebar-Menu"
-                onClick={() =>
-                    viewSideBar ? setViewSideBar(false) : setViewSideBar(true)
-                }
+                onClick={() => (viewSideBar ? setViewSideBar(false) : setViewSideBar(true))}
                 size="28"
                 color="white"
             />
-            {/* <button
-                className="bg-black hover:bg-opacity-0"
-                onClick={() =>
-                    viewSideBar ? setViewSideBar(false) : setViewSideBar(true)
-                }
-            >
-            </button> */}
+
             <div className="absolute top-10 right-2 font-['Pre-Bold']">
-                {viewSideBar ? (
-                    <SidebarList name={name} memberIndex={memberIndex} />
-                ) : (
-                    <div />
-                )}
+                {viewSideBar ? <SidebarList name={name} memberIndex={memberIndex} /> : <div />}
             </div>
         </div>
     );

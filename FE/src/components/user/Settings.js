@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { IoSettingsOutline } from 'react-icons/io5';
-import { PiRadioFill } from 'react-icons/pi';
-import { Slider } from '@/components/ui/slider';
-import { useNavigate } from 'react-router';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { IoSettingsOutline } from "react-icons/io5";
+import { PiRadioFill } from "react-icons/pi";
+import { Slider } from "@/components/ui/slider";
+import { useResetRecoilState } from "recoil";
+import { isSettingOpenState } from "components/atom";
 
 function Settings() {
-    const navigate = useNavigate();
+    const resetIsSettingOpen = useResetRecoilState(isSettingOpenState);
 
     const options = [
-        { name: '흐린', value: 'OLD' },
-        { name: '아련한', value: 'OLDER' },
-        { name: '어렴풋한', value: 'OLDEST' },
+        { name: "흐린", value: "OLD" },
+        { name: "아련한", value: "OLDER" },
+        { name: "어렴풋한", value: "OLDEST" },
     ];
 
-    const [selectedOption, setSelectedOption] = useState('');
-    const memberIndex = sessionStorage.getItem('memberIndex');
-    const userToken = sessionStorage.getItem('token');
+    const [selectedOption, setSelectedOption] = useState("");
+    const memberIndex = sessionStorage.getItem("memberIndex");
+    const userToken = sessionStorage.getItem("token");
 
     useEffect(() => {
         // 유저 정보 가져오기
@@ -27,14 +28,14 @@ function Settings() {
                     `${process.env.REACT_APP_API_URL}/member/info/mine`,
                     {
                         headers: {
-                            token: sessionStorage.getItem('token'),
+                            token: sessionStorage.getItem("token"),
                         },
                     }
                 );
 
                 setSelectedOption(response.data.memberRadioStatus);
             } catch (error) {
-                console.log('회원정보 가져오기 실패', error);
+                console.log("회원정보 가져오기 실패", error);
             }
         };
 
@@ -61,7 +62,7 @@ function Settings() {
                     }
                 )
                 .then(() => {
-                    alert('변경되었습니다.');
+                    alert("변경되었습니다.");
                 })
                 .catch((error) => {
                     console.log(error);
@@ -74,22 +75,22 @@ function Settings() {
             e.stopPropagation();
 
             const check = [...e.target.classList].some(
-                (it) => it === 'outside'
+                (it) => it === "outside"
             );
             if (check) {
-                navigate(-1);
+                resetIsSettingOpen();
             }
         }
 
-        window.addEventListener('click', handleClick);
+        window.addEventListener("click", handleClick);
         return () => {
-            window.removeEventListener('click', handleClick);
+            window.removeEventListener("click", handleClick);
         };
-    }, [navigate]);
+    }, []);
 
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-            <Card className="Settings w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+            <Card className="Settings w-96 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                         <IoSettingsOutline className="mr-1" />
@@ -99,7 +100,7 @@ function Settings() {
                 <CardContent>
                     {selectedOption ? (
                         <>
-                            {' '}
+                            {" "}
                             <div className="flex font-['Pre-bold'] mb-2">
                                 <PiRadioFill
                                     size="24"
@@ -108,7 +109,7 @@ function Settings() {
                                 라디오 수신 범위 설정
                             </div>
                             <div className="flex justify-between pl-2 pr-2 mb-2">
-                                <div className="w-1/6 mr-2 font-['Pre-bold']">
+                                <div className="w-2/6 mr-3 font-['Pre-bold'] text-right">
                                     최근
                                 </div>
                                 <Slider
@@ -118,7 +119,7 @@ function Settings() {
                                     step={1}
                                     onValueChange={handleSliderChange} // 슬라이더 값이 변경될 때 호출될 함수
                                 />
-                                <div className="w-1/6 ml-2 font-['Pre-bold']">
+                                <div className="w-2/6 ml-3 font-['Pre-bold'] text-left">
                                     과거
                                 </div>
                             </div>

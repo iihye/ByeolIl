@@ -14,17 +14,19 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useNavigate } from "react-router";
 import { HiMiniHashtag } from "react-icons/hi2";
 import { FaRegFaceSadTear } from "react-icons/fa6";
+import { useResetRecoilState } from "recoil";
+import { isTagSearchOpenState } from "components/atom";
 
 // 추후 카드 형식으로 나오게 css 변경
 // 추후 input 창 위에 tag가 올라가게 css 변경
 // 유효성 검사 다시 꼼꼼하게
 
 function StarTagSearch() {
+    const resetIsTagSearchOpen = useResetRecoilState(isTagSearchOpenState);
+
     const [tag, setTag] = useState("");
     const [tagSearchData, setTagSearchData] = useState([]);
     const [replaceTag, setReplaceTag] = useState("");
-
-    const navigate = useNavigate();
 
     const handleTag = (e) => {
         setTag(e.target.value);
@@ -44,7 +46,9 @@ function StarTagSearch() {
                 }/search?tag=${encodeURIComponent(tag)}`
             )
             .then((response) => {
-                setTagSearchData(response.data);
+                setTagSearchData(
+                    response.data.filter((item) => item.boardAccess === "OPEN")
+                );
             })
             .catch((e) => console.log(e));
     };
@@ -89,7 +93,7 @@ function StarTagSearch() {
                 (it) => it === "outside"
             );
             if (check) {
-                navigate(-1);
+                resetIsTagSearchOpen();
             }
         }
 
@@ -136,44 +140,38 @@ function StarTagSearch() {
                 </div>
                 <ScrollArea className=" h-96 overflow-auto">
                     <div className="grid grid-cols-3 justify-items-center gap-4">
-                        {tagSearchData ? (
-                            tagSearchData.length > 0 ? (
-                                tagSearchData.map((it) => (
-                                    <Card
-                                        key={it.boardIndex}
-                                        className="card-style h-80 w-64"
-                                    >
-                                        <div className="cards w-4/5 mx-auto font-['Pre-Light']">
-                                            <div className="cardInfo text-xs py-2 pl-1.5">
-                                                작성일&nbsp;
-                                                <strong>
-                                                    {it.boardInputDate}
-                                                </strong>
-                                                &nbsp; | 작성자&nbsp;
-                                                <strong>
-                                                    {it.memberNickname}
-                                                </strong>
-                                            </div>
-                                            <div className="cardContent py-2">
-                                                {it.boardContent}
-                                            </div>
-                                            <div className="cardTag flex py-2">
-                                                {it.hash.map((tag) => (
-                                                    <div>#{tag}&nbsp;</div>
-                                                ))}
-                                            </div>
+                        {tagSearchData?.length > 0 ? (
+                            tagSearchData.map((it) => (
+                                <Card
+                                    key={it.boardIndex}
+                                    className="card-style h-80 w-64"
+                                >
+                                    <div className="cards w-4/5 mx-auto font-['Pre-Light']">
+                                        <div className="cardInfo text-xs py-2 pl-1.5">
+                                            작성일&nbsp;
+                                            <strong>{it.boardInputDate}</strong>
+                                            &nbsp; | 작성자&nbsp;
+                                            <strong>{it.memberNickname}</strong>
                                         </div>
-                                    </Card>
-                                ))
-                            ) : (
-                                <div className="Card-ScrollArea-NonResult h-96 flex flex-col col-span-3 justify-center items-center">
-                                    <FaRegFaceSadTear className="mr-1" />
-                                    <div className="font-['Pre-Bold']">
-                                        일치하는 결과가 없습니다
+                                        <div className="cardContent py-2">
+                                            {it.boardContent}
+                                        </div>
+                                        <div className="cardTag flex py-2">
+                                            {it.hash.map((tag) => (
+                                                <div>#{tag}&nbsp;</div>
+                                            ))}
+                                        </div>
                                     </div>
+                                </Card>
+                            ))
+                        ) : (
+                            <div className="Card-ScrollArea-NonResult h-96 flex flex-col col-span-3 justify-center items-center">
+                                <FaRegFaceSadTear className="mr-1" />
+                                <div className="font-['Pre-Bold']">
+                                    일치하는 결과가 없습니다
                                 </div>
-                            )
-                        ) : null}
+                            </div>
+                        )}
                     </div>
                 </ScrollArea>
             </Card>

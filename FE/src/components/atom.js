@@ -1,54 +1,96 @@
-import { atom, selector } from 'recoil';
+import { atom, selector } from "recoil";
 
 export const filterState = atom({
-    key: 'filterState',
+    key: "filterState",
     default: [],
 });
 
 // 게시글 등록 모달
 export const isStarRegistOpenState = atom({
-    key: 'isStarRegistOpen',
+    key: "isStarRegistOpen",
     default: false,
 });
 
 // 게시글 수정 모달
 export const isStarModifyOpenState = atom({
-    key: 'isStarModifyOpen',
+    key: "isStarModifyOpen",
     default: false,
 });
 
 // 게시글 상세보기 모달
 export const isStarDetailOpenState = atom({
-    key: 'isStarDetailOpen',
+    key: "isStarDetailOpen",
     default: false,
 });
 
 // 게시글 삭제 알럿
 export const isDeleteAlertOpenState = atom({
-    key: 'isDeleteAlertOpen',
+    key: "isDeleteAlertOpen",
     default: false,
 });
 
 // 게시글 신고 알럿
 export const isReportAlertOpenState = atom({
-    key: 'isReportAlertOpen',
+    key: "isReportAlertOpen",
     default: false,
 });
 
 // 신고 상세보기 알럿
 export const reportModalState = atom({
-    key: 'reportModalState',
-    default: '',
+    key: "reportModalState",
+    default: "",
 });
 
 // 현재 PW 확인 알럿
 export const isPwCheckOpenState = atom({
-    key: 'isPwCheckOpenState',
+    key: "isPwCheckOpenState",
     default: true,
 });
 
 // 댓글 리렌더링 atom
 export const renewReplyState = atom({
-    key: 'renewReply',
+    key: "renewReply",
+    default: false,
+});
+
+// 회원 정보 수정
+export const isChangeInfoOpenState = atom({
+    key: "isChangeInfoOpen",
+    default: false,
+});
+
+// 나의 별 목록
+export const isMyStarListOpenState = atom({
+    key: "isMyStarListOpen",
+    default: false,
+});
+
+// 좋아하는 별 목록
+export const isFavorListOpenState = atom({
+    key: "isFavorListOpen",
+    default: false,
+});
+
+// 팔로우/팔로워 목록
+export const isFollowListOpenState = atom({
+    key: "isFollowListOpen",
+    default: false,
+});
+
+// 다른 우주 찾기
+export const isFindUserOpenState = atom({
+    key: "isFindUserOpen",
+    default: false,
+});
+
+// 태그로 별 찾기
+export const isTagSearchOpenState = atom({
+    key: "isTagSearchOpen",
+    default: false,
+});
+
+// 환경 설정
+export const isSettingOpenState = atom({
+    key: "isSettingOpen",
     default: false,
 });

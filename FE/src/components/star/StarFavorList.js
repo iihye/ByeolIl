@@ -8,7 +8,11 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { filterState, isStarDetailOpenState } from 'components/atom';
+import {
+    filterState,
+    isFavorListOpenState,
+    isStarDetailOpenState,
+} from 'components/atom';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import SearchBar from '../reusable/SearchBar';
 import { FaHeart } from 'react-icons/fa';
@@ -20,6 +24,7 @@ import { FaRegFaceSadTear } from 'react-icons/fa6';
 
 function StarFavorList() {
     const token = sessionStorage.getItem('token');
+    const resetIsFavorListOpen = useResetRecoilState(isFavorListOpenState);
     const [listData, setListData] = useState('');
     const [memberIndex, setMemberIndex] = useState(
         sessionStorage.getItem('memberIndex')
@@ -29,8 +34,6 @@ function StarFavorList() {
     );
     const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,7 +66,7 @@ function StarFavorList() {
                 (it) => it === 'outside'
             );
             if (check) {
-                navigate(-1);
+                resetIsFavorListOpen();
             }
         }
 
@@ -126,20 +129,15 @@ function StarFavorList() {
                                                 </div>
                                                 <div className="absolute bottom-0 w-10/12 mb-3">
                                                     <div className="cardTag flex py-2 ">
-                                                        {it.hash
-                                                            ? it.hash.length > 0
-                                                                ? it.hash.map(
-                                                                      (tag) => (
-                                                                          <div>
-                                                                              #
-                                                                              {
-                                                                                  tag
-                                                                              }
-                                                                              &nbsp;
-                                                                          </div>
-                                                                      )
+                                                        {it.hash?.length > 0
+                                                            ? it.hash.map(
+                                                                  (tag) => (
+                                                                      <div>
+                                                                          #{tag}
+                                                                          &nbsp;
+                                                                      </div>
                                                                   )
-                                                                : null
+                                                              )
                                                             : null}
                                                     </div>
                                                     <div className="cardLike flex justify-end">

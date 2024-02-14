@@ -1,28 +1,22 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { AiOutlineUserAdd } from 'react-icons/ai';
-import { FaUserCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router';
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { AiOutlineUserAdd } from "react-icons/ai";
+import { FaUserCircle } from "react-icons/fa";
+import { useResetRecoilState } from "recoil";
+import { isFollowListOpenState } from "components/atom";
 
 function FollowList() {
+    const resetIsFollowListOpen = useResetRecoilState(isFollowListOpenState);
+
     const [currentTab, setCurrentTab] = useState(0);
     const [followData, setFollowData] = useState([]);
     const [followerData, setFollowerData] = useState([]);
 
-    const loginIndex = sessionStorage.getItem('memberIndex');
-    const loginToken = sessionStorage.getItem('token');
-
-    const navigate = useNavigate();
+    const loginIndex = sessionStorage.getItem("memberIndex");
+    const loginToken = sessionStorage.getItem("token");
 
     const menuArr = useMemo(() => {
         // 데이터를 받은 후에 content를 설정
@@ -36,8 +30,8 @@ function FollowList() {
         }));
 
         return [
-            { name: '팔로우', content: followContent },
-            { name: '팔로워', content: followerContent },
+            { name: "팔로우", content: followContent },
+            { name: "팔로워", content: followerContent },
         ];
     }, [followData, followerData]);
 
@@ -79,22 +73,22 @@ function FollowList() {
             e.stopPropagation();
 
             const check = [...e.target.classList].some(
-                (it) => it === 'outside'
+                (it) => it === "outside"
             );
             if (check) {
-                navigate(-1);
+                resetIsFollowListOpen();
             }
         }
 
-        window.addEventListener('click', handleClick);
+        window.addEventListener("click", handleClick);
         return () => {
-            window.removeEventListener('click', handleClick);
+            window.removeEventListener("click", handleClick);
         };
     });
 
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-            <Card className="FollowList w-3/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+            <Card className="FollowList w-96 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                         <AiOutlineUserAdd className="mr-1" />
