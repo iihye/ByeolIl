@@ -20,7 +20,7 @@ function Alert(props) {
     };
 
     return (
-        <div className="alert-container bg-modal-bg w-full h-full absolute top-0 left-0 flex justify-center items-center">
+        <div className="alert-container bg-modal-outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10">
             <div className="alert w-auto h-auto p-4 bg-alert-bg rounded-xl text-white-sub shadow-xl font-['Pretendard']">
                 {alertTypes[props.type]}
             </div>

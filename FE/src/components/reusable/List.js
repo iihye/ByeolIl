@@ -82,7 +82,7 @@ function List() {
 
     // 검색 결과와 일치하는 값을 렌더링
     return (
-        <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center">
+        <div className="outside w-full h-full absolute bg-modal-outside top-0 left-0 flex justify-center items-center z-10">
             <Card className="Report w-8/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
