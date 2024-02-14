@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei";
 import * as THREE from "three";
 import axios from "axios";
@@ -83,39 +83,39 @@ function Line(props) {
     );
 }
 
-function Space(props) {
-    const gradientShader = {
-        uniforms: {
-            color1: { value: new THREE.Color(0x222222) }, // 그라디언트 시작 색상
-            color2: { value: new THREE.Color(0x000000) }, // 그라디언트 종료 색상
-        },
-        vertexShader: `
-          varying vec3 vPosition;
-          void main() {
-            vPosition = position;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `,
-        fragmentShader: `
-          uniform vec3 color1;
-          uniform vec3 color2;
-          varying vec3 vPosition;
-          void main() {
-            float ratio = (vPosition.y + 1.0) / 2.0;
-            gl_FragColor = vec4(mix(color1, color2, ratio), 1.0);
-          }
-        `,
-    };
+// function Space(props) {
+//     const gradientShader = {
+//         uniforms: {
+//             color1: { value: new THREE.Color(0x222222) }, // 그라디언트 시작 색상
+//             color2: { value: new THREE.Color(0x000000) }, // 그라디언트 종료 색상
+//         },
+//         vertexShader: `
+//           varying vec3 vPosition;
+//           void main() {
+//             vPosition = position;
+//             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+//           }
+//         `,
+//         fragmentShader: `
+//           uniform vec3 color1;
+//           uniform vec3 color2;
+//           varying vec3 vPosition;
+//           void main() {
+//             float ratio = (vPosition.y + 1.0) / 2.0;
+//             gl_FragColor = vec4(mix(color1, color2, ratio), 1.0);
+//           }
+//         `,
+//     };
 
-    const meshRef = useRef();
+//     const meshRef = useRef();
 
-    return (
-        <mesh ref={meshRef} position={props.position}>
-            <sphereGeometry args={props.size} />
-            <shaderMaterial args={[gradientShader]} side={THREE.BackSide} />
-        </mesh>
-    );
-}
+//     return (
+//         <mesh ref={meshRef} position={props.position}>
+//             <sphereGeometry args={props.size} />
+//             <shaderMaterial args={[gradientShader]} side={THREE.BackSide} />
+//         </mesh>
+//     );
+// }
 
 function Ground(props) {
     const mesh = useRef(null);
@@ -144,6 +144,26 @@ function Sphere(props) {
             <sphereGeometry args={props.size} />
             <meshStandardMaterial
                 color={props.color}
+                side={
+                    props.type === "double"
+                        ? THREE.DoubleSide
+                        : props.type === "front"
+                        ? THREE.FrontSide
+                        : THREE.BackSide
+                }
+            />
+        </mesh>
+    );
+}
+function Space(props) {
+    const mesh = useRef(null);
+    const colorMap = useLoader(THREE.TextureLoader, `${process.env.PUBLIC_URL}/image/color_texture_3.png`);
+
+    return (
+        <mesh ref={mesh} position={props.position}>
+            <sphereGeometry args={props.size} />
+            <meshStandardMaterial
+                map={colorMap}
                 side={
                     props.type === "double"
                         ? THREE.DoubleSide
@@ -219,7 +239,9 @@ function Star(props) {
         <>
             <mesh ref={mesh} position={props.position}>
                 <sphereGeometry args={props.size} />
-                <meshStandardMaterial
+                <meshPhongMaterial
+                    // emissive={"yellow"}
+                    // emissiveIntensity={0.1}
                     color={curStarState ? colors[colorCheck] : "grey"}
                     opacity={curStarState ? 1 : 0.4}
                     transparent={true}
@@ -410,8 +432,8 @@ function SceneEnvironment() {
     return (
         <>
             {/* 우주 배경 */}
-            <Sphere
-                size={[55, 48, 48, 0, Math.PI * 2, 0, (Math.PI * 3.5) / 5]}
+            <Space
+                size={[55, 500, 500, 0, Math.PI * 2, 0, (Math.PI * 3.5) / 5]}
                 position={[0, -7, 0]}
                 color={"black"}
                 type={"back"}
