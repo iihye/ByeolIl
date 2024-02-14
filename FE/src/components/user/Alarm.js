@@ -58,7 +58,6 @@ function Alarm() {
                     `${process.env.REACT_APP_API_URL}/alarm/list/${memberIndex}`
                 )
                 .then((response) => {
-                    // console.log(response.data.result);
                     setAlarmData(response.data.result);
                 })
                 .catch((e) => console.log(e, memberIndex));
@@ -67,8 +66,8 @@ function Alarm() {
         fetchData();
 
         if (token) {
-            const eventSource = new EventSource(
-                `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
+            const eventSource = new EventSourcePolyfill(
+                `${process.env.REACT_APP_ALARM_URL}/alarm/subscribe/${memberIndex}`,
                 {
                     headers: {
                         Authorization: `${token}`,
@@ -76,6 +75,15 @@ function Alarm() {
                     heartbeatTimeout: 30000,
                 }
             );
+
+            console.log(eventSource);
+
+            eventSource.onmessage = (e) => {
+                console.log('제발1');
+                if (e.type === 'alarm') {
+                    console.log('제발');
+                }
+            };
 
             eventSource.addEventListener('open', function (event) {
                 console.log('열렸음', event);
