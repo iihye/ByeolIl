@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Link, useNavigate } from 'react-router-dom';
 import base64 from 'base-64';
+import swal from 'sweetalert';
 
 function KakaoLogin() {
     console.log('/login/kakao 접근');
@@ -44,7 +45,11 @@ function KakaoLogin() {
                 }
             }
         } catch (error) {
-            alert(error.response.data.message);
+            swal({
+                title: error.response.data.message,
+                text: '아이디와 비밀번호를 확인해주세요',
+                icon: 'error',
+            });
         }
     };
 

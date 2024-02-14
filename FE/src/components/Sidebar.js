@@ -22,6 +22,7 @@ import {
     isSettingOpenState,
     isTagSearchOpenState,
 } from './atom';
+import swal from 'sweetalert';
 
 function SidebarList(props) {
     const setIsChangeInfoOpen = useSetRecoilState(isChangeInfoOpenState);
@@ -56,7 +57,12 @@ function SidebarList(props) {
             const nickNameRegExp = /^[가-힣a-zA-Z0-9_]{2,10}$/;
 
             if (!nickNameRegExp.test(newName)) {
-                alert("2~10자 사이 한글, 영문, 숫자, '_' 만 입력해주세요");
+                swal({
+                    title: `${newName}은 사용이 불가능해요`,
+                    text: "2~10자 사이 한글, 영문, 숫자, '_' 만 입력해주세요",
+                    icon: 'error',
+                });
+
                 return;
             }
             try {
@@ -70,13 +76,20 @@ function SidebarList(props) {
                 );
 
                 if (response.status === 200) {
-                    alert('닉네임 변경 완료!');
-                    sessionStorage.setItem('nickname', newName);
-                    setNickname(newName);
+                    swal({
+                        title: '닉네임 변경 완료!',
+                        icon: 'success',
+                    }).then(() => {
+                        sessionStorage.setItem('nickname', newName);
+                        setNickname(newName);
+                    });
                 }
             } catch (error) {
-                console.log('닉네임 변경 실패', error);
-                alert('닉네임 변경을 실패했습니다. 다시 시도해주세요');
+                swal({
+                    title: '닉네임 변경 실패',
+                    text: '다시 시도해주세요',
+                    icon: 'error',
+                });
             }
 
             setIsModifying(false);

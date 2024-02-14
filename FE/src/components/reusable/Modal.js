@@ -23,6 +23,7 @@ import { IoMdSend } from 'react-icons/io';
 import { FaChevronLeft } from 'react-icons/fa';
 import { FaChevronRight } from 'react-icons/fa';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import swal from 'sweetalert';
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -97,7 +98,10 @@ function StarContent(props) {
                 .catch((err) => {
                     if (err.response.status === 400) {
                         setIsDetailAlarmOpen(false);
-                        alert('삭제된 글입니다');
+                        swal({
+                            title: '삭제된 글입니다',
+                            icon: 'warning',
+                        });
                     }
                 });
         };
@@ -489,7 +493,10 @@ function ReplyRegistArea(props) {
         };
 
         if (data.commentContent === '') {
-            alert('내용을 입력해주세요.');
+            swal({
+                title: '내용을 입력해주세요',
+                icon: 'info',
+            });
             return;
         }
         await axios
@@ -590,7 +597,10 @@ function RadioContent() {
             .then((response) => {
                 console.log(response.data);
             });
-        alert('재송신 성공!');
+        swal({
+            title: '재송신 성공!',
+            icon: 'success',
+        });
         setRepostActive(true);
     }
 

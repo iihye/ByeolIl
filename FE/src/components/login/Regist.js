@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ReactComponent as KakaoLogo } from 'img/kakao-logo.svg';
+import swal from 'sweetalert';
 export default function Regist() {
     const [formOpen, setFormOpen] = useState(false);
     const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_REDIRECT_URI}&response_type=code`;
@@ -287,8 +288,11 @@ function RegistForm({
             .post(`${process.env.REACT_APP_API_URL}/member/join`, data)
             .then((response) => {
                 if (response.data.message === 'success') {
-                    alert(`${data.memberNickname}님 환영합니다😊`);
-                    navigate(-1);
+                    swal({
+                        title: '회원가입 성공!',
+                        text: `${data.memberNickname}님 환영합니다😊`,
+                        icon: 'success',
+                    }).then(() => navigate(-1));
                 }
             })
             .catch((e) => {
