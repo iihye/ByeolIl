@@ -40,14 +40,16 @@ public class MulticommentService {
 
         multicommentRepository.save(multiComment);
 
-        Alarm alarm = Alarm.builder()
-                .toMember(comment.getBoard().getMember())
-                .fromMember(member)
-                .alarmType(AlarmType.MULTCMT)
-                .board(comment.getBoard())
-                .build();
+        if(comment.getMember() != member){
+            Alarm alarm = Alarm.builder()
+                    .toMember(comment.getBoard().getMember())
+                    .fromMember(member)
+                    .alarmType(AlarmType.MULTCMT)
+                    .board(comment.getBoard())
+                    .build();
 
-        alarmRepository.save(alarm);
+            alarmRepository.save(alarm);
+        }
     }
 
     public void removeMultiComment(MulticommentDeleteRequestDto dto){
