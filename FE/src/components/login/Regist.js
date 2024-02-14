@@ -1,11 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { FaUser } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router";
-import { Button } from '@/components/ui/button';
-import { ReactComponent as KakaoLogo } from 'img/kakao-logo.svg';
+import { Button } from "@/components/ui/button";
+import { ReactComponent as KakaoLogo } from "img/kakao-logo.svg";
 export default function Regist() {
     const [formOpen, setFormOpen] = useState(false);
     const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_REDIRECT_URI}&response_type=code`;
@@ -23,7 +29,7 @@ export default function Regist() {
         <div>
             {!formOpen && (
                 <Card className="w-96 px-6 py-4 card-contain-style">
-                    <CardHeader >
+                    <CardHeader>
                         <CardTitle className="text-6xl text-center font-['Star'] py-4">
                             별일
                         </CardTitle>
@@ -31,14 +37,20 @@ export default function Regist() {
                     <CardContent className="font-['Pre-Bold'] ">
                         <div>
                             <div className="Regist">
-                                <div >
-                                    <Button onClick={() => setFormOpen(true)} className="w-full h-button my-1">
+                                <div>
+                                    <Button
+                                        onClick={() => setFormOpen(true)}
+                                        className="w-full h-button my-1"
+                                    >
                                         일반회원가입
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            window.location.assign(kakao_join_uri);
-                                        }} className="w-full h-button my-1 no-hover-effect text-kakao-label flex justify-center items-center gap-2"
+                                            window.location.assign(
+                                                kakao_join_uri
+                                            );
+                                        }}
+                                        className="w-full h-button my-1 no-hover-effect text-kakao-label flex justify-center items-center gap-2"
                                     >
                                         <KakaoLogo className="w-6 h-6 p-0.5 " />
                                         <div>카카오로 시작하기</div>
@@ -286,7 +298,7 @@ function RegistForm({
     const form = useForm();
     return (
         <div>
-            <Card className="Regist w-14/16 px-6 py-6 card-contain-style">
+            <Card className="Regist w-96 px-6 py-6 card-contain-style">
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                         <FaUser className="mr-1" />

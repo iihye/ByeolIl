@@ -3,143 +3,148 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-  button {
-    @apply bg-btn-bg rounded-button text-white-sub;
-    &:hover {
-      @apply bg-btn-bg-hover;
+        --radius: 0.5rem;
     }
-  }
 
-  input {
-    @apply rounded-input bg-transparent border-white-sub outline-none;
-  }
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
 
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  .access-list {
-    @apply p-1 border border-white-sub rounded-lg mb-2 bg-alert-bg;
-  }
-  .no-hover-effect {
-    @apply bg-kakao;
-    &:hover {
-      @apply bg-kakao;
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 210 40% 98%;
+
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 217.2 32.6% 17.5%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
     }
-  }
-  .card-contain-style {
-    @apply bg-modal-bg text-white-sub rounded-component;
-  }
+    button {
+        @apply bg-btn-bg rounded-button text-white-sub;
+        &:hover {
+            @apply bg-btn-bg-hover;
+        }
+    }
 
-  .card-style {
-    @apply bg-black-sub text-white-sub rounded-component opacity-90;
-  }
+    input {
+        @apply rounded-input bg-transparent border-white-sub outline-none;
+    }
 
-  .search-input {
-    @apply rounded-input bg-white-sub outline-none w-searchBar h-searchBar;
-  }
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
 
-  .regist-label {
-    @apply font-['Pre-Bold'] text-btn-bg-hover text-lg mb-8;
-  }
+    .hover {
+        @apply text-white duration-300 cursor-pointer;
+    }
 
-  .regist-input {
-    @apply font-['Pre-Light'] border border-white-sub focus:ring-1 focus:ring-white-sub h-input px-2;
-  }
+    .access-list {
+        @apply p-1 border border-white-sub rounded-lg mb-2 bg-alert-bg;
+    }
+    .no-hover-effect {
+        @apply bg-kakao;
+        &:hover {
+            @apply bg-kakao;
+        }
+    }
+    .card-contain-style {
+        @apply bg-modal-bg text-white-sub rounded-component;
+    }
 
-  .regist-message {
-    @apply font-['Pre-Light'] text-white-sub text-sm text-right;
-  }
+    .card-style {
+        @apply bg-black-sub text-white-sub rounded-component opacity-90;
+    }
 
-  .regist-button {
-    @apply font-['Pre-Bold']  text-white-sub text-lg;
-  }
+    .search-input {
+        @apply rounded-input bg-white-sub outline-none w-searchBar h-searchBar;
+    }
 
-  .regist-between {
-    @apply flex justify-between;
-  }
+    .regist-label {
+        @apply font-['Pre-Bold'] text-btn-bg-hover text-lg mb-8;
+    }
 
-  .find-input {
-    @apply w-full font-['Pre-Light'] border border-white-sub focus:ring-1 focus:ring-white-sub h-input px-2;
-  }
+    .regist-input {
+        @apply font-['Pre-Light'] border border-white-sub focus:ring-1 focus:ring-white-sub h-input px-2;
+    }
+
+    .regist-message {
+        @apply font-['Pre-Light'] text-white-sub text-sm text-right;
+    }
+
+    .regist-button {
+        @apply font-['Pre-Bold']  text-white-sub text-lg;
+    }
+
+    .regist-between {
+        @apply flex justify-between;
+    }
+
+    .find-input {
+        @apply w-full font-['Pre-Light'] border border-white-sub focus:ring-1 focus:ring-white-sub h-input px-2;
+    }
 }
 
 @font-face {
-  font-family: "Star";
-  src: url("./fonts/Star.ttf");
+    font-family: "Star";
+    src: url("./fonts/Star.ttf");
 }
 @font-face {
-  font-family: "Pre-Bold";
-  src: url("./fonts/Pretendard-SemiBold.woff");
+    font-family: "Pre-Bold";
+    src: url("./fonts/Pretendard-SemiBold.woff");
 }
 @font-face {
-  font-family: "Pre-Thin";
-  src: url("./fonts/Pretendard-Thin.woff");
+    font-family: "Pre-Thin";
+    src: url("./fonts/Pretendard-Thin.woff");
 }
 @font-face {
-  font-family: "Pre-Light";
-  src: url("./fonts/Pretendard-Light.woff");
+    font-family: "Pre-Light";
+    src: url("./fonts/Pretendard-Light.woff");
 }
