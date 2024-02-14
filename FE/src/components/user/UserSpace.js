@@ -124,7 +124,9 @@ function Star(props) {
         false: "red",
     };
 
-    const colorCheck = star ? (isFriend && star.boardAccess === "PARTOPEN") || star.boardAccess === "OPEN" : false;
+    const colorCheck = star
+        ? (isFriend && star.boardAccess === "PARTOPEN") || star.boardAccess === "OPEN" || writerIndex === loginUserIndex
+        : false;
 
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
