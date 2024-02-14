@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { useVideoTexture } from "@react-three/drei";
-import { IoMdMenu } from "react-icons/io";
+import { TfiMenu } from "react-icons/tfi";
+import { FaUserCircle } from "react-icons/fa";
+import * as RiIcons from "react-icons/ri";
+import * as WiIcons from "react-icons/wi";
+import * as LuIcons from "react-icons/lu";
+import * as AiIcons from "react-icons/ai";
+import * as PiIcons from "react-icons/pi";
+import * as HiIcons from "react-icons/hi2";
+import * as IoIcons from "react-icons/io5";
 
 function SidebarList(props) {
     const [items, setItems] = useState([]);
     const isAdmin = sessionStorage.getItem("auth");
+    const nickname = sessionStorage.getItem("nickname");
 
     const navigate = useNavigate();
 
@@ -21,30 +29,47 @@ function SidebarList(props) {
     useEffect(() => {
         setItems([
             {
+                type: "RiIcons",
+                icon: "RiLockPasswordLine",
                 name: "회원정보수정",
                 path: `/space/${props.memberIndex}/editInfo`,
             },
             {
+                type: "WiIcons",
+                icon: "WiStars",
                 name: "나의 별 목록",
                 path: `/space/${props.memberIndex}/starMine`,
             },
             {
+                type: "LuIcons",
+                icon: "LuFolderHeart",
                 name: "좋아하는 별 목록",
                 path: `/space/${props.memberIndex}/starFavor`,
             },
             {
+                type: "AiIcons",
+                icon: "AiOutlineUserAdd",
                 name: "팔로우/팔로워 목록",
                 path: `/space/${props.memberIndex}/follow`,
             },
             {
+                type: "PiIcons",
+                icon: "PiShootingStarLight",
                 name: "다른 우주 찾기",
                 path: `/space/${props.memberIndex}/findUser`,
             },
             {
+                type: "HiIcons",
+                icon: "HiMiniHashtag",
                 name: "태그로 별 찾기",
                 path: `/space/${props.memberIndex}/tagSearch`,
             },
-            { name: "환경설정", path: `/space/${props.memberIndex}/settings` },
+            {
+                type: "IoIcons",
+                icon: "IoSettingsOutline",
+                name: "환경설정",
+                path: `/space/${props.memberIndex}/settings`,
+            },
         ]);
     }, []);
 
@@ -52,24 +77,60 @@ function SidebarList(props) {
         if (isAdmin == "ROLE_ADMIN")
             setItems((prevItems) => [
                 ...prevItems,
-                { name: "신고관리", path: `/space/admin/report` },
+                {
+                    type: "PiIcons",
+                    icon: "PiSiren",
+                    name: "신고관리",
+                    path: `/space/${props.memberIndex}/report`,
+                },
             ]);
     }, [props.memberIndex]);
 
     return (
-        <div className="sidebarList bg-modal-bg text-white-sub p-2 rounded-xl">
-            <h2>{props.name}님의 우주</h2>
+        <div className="sidebarList bg-modal-bg text-white-sub p-3 rounded-xl">
+            <div className="flex justify-left">
+                <FaUserCircle size="24" className="pr-2 text-btn-bg-hover" />
+                <h2 className="mb-2 text-btn-bg-hover">{nickname}</h2>
+            </div>
             {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
             {items.map((item, index) => {
+                let IconComponent;
+
+                if (item.type === "RiIcons") {
+                    IconComponent = RiIcons[item.icon];
+                } else if (item.type === "WiIcons") {
+                    IconComponent = WiIcons[item.icon];
+                } else if (item.type === "LuIcons") {
+                    IconComponent = LuIcons[item.icon];
+                } else if (item.type === "AiIcons") {
+                    IconComponent = AiIcons[item.icon];
+                } else if (item.type === "PiIcons") {
+                    IconComponent = PiIcons[item.icon];
+                } else if (item.type === "HiIcons") {
+                    IconComponent = HiIcons[item.icon];
+                } else if (item.type === "IoIcons") {
+                    IconComponent = IoIcons[item.icon];
+                }
+
                 return (
-                    <div className="sidebarItem" key={index}>
-                        <Link to={item.path}>
-                            <p className="mb-3">{item.name}</p>
-                        </Link>
+                    <div
+                        className="flex justyfy-center sidebarItem mb-2"
+                        key={index}
+                    >
+                        <div className="flex justyfy-center items-center">
+                            <Link to={item.path}>
+                                {IconComponent && (
+                                    <IconComponent className="mr-2" />
+                                )}
+                                <p>{item.name}</p>
+                            </Link>
+                        </div>
                     </div>
                 );
             })}
-            <button onClick={handleLogOut}>로그아웃</button>
+            <button className="w-full" onClick={handleLogOut}>
+                로그아웃
+            </button>
         </div>
     );
 }
@@ -96,15 +157,23 @@ export default function Sidebar() {
     }, [memberIndex]);
 
     return (
-        <div className="Sidebar">
-            <button
+        <div className="Sidebar m-2">
+            <TfiMenu
+                className="Sidebar-Menu"
+                onClick={() =>
+                    viewSideBar ? setViewSideBar(false) : setViewSideBar(true)
+                }
+                size="28"
+                color="white"
+            />
+            {/* <button
+                className="bg-black hover:bg-opacity-0"
                 onClick={() =>
                     viewSideBar ? setViewSideBar(false) : setViewSideBar(true)
                 }
             >
-                =
-            </button>
-            <div className="absolute top-10 right-0 font-['Pre-Bold']">
+            </button> */}
+            <div className="absolute top-10 right-2 font-['Pre-Bold']">
                 {viewSideBar ? (
                     <SidebarList name={name} memberIndex={memberIndex} />
                 ) : (
