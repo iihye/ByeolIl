@@ -33,8 +33,11 @@ function SidebarList(props) {
     const setIsSettingOpen = useSetRecoilState(isSettingOpenState);
 
     const [items, setItems] = useState([]);
+    const [isModifying, setIsModifying] = useState(false);
+    const [nickname, setNickname] = useState(
+        sessionStorage.getItem('nickname')
+    );
     const isAdmin = sessionStorage.getItem('auth');
-    const nickname = sessionStorage.getItem('nickname');
 
     const navigate = useNavigate();
 
@@ -46,9 +49,32 @@ function SidebarList(props) {
         navigate('/landing');
     };
 
-    const handleNickname = () => {
-        console.log('와이');
-        alert('들어옴');
+    const handleNickname = async (e) => {
+        if (e.code === 'Enter') {
+            const newName = e.target.value;
+
+            try {
+                const response = await axios.put(
+                    `${process.env.REACT_APP_API_URL}/member`,
+                    {
+                        memberIndex: sessionStorage.getItem('memberIndex'),
+                        memberNickname: newName,
+                    },
+                    { headers: { token: sessionStorage.getItem('token') } }
+                );
+
+                if (response.status === 200) {
+                    alert('닉네임 변경 완료!');
+                    sessionStorage.setItem('nickname', newName);
+                    setNickname(newName);
+                }
+            } catch (error) {
+                console.log('닉네임 변경 실패', error);
+                alert('닉네임 변경을 실패했습니다. 다시 시도해주세요');
+            }
+
+            setIsModifying(false);
+        }
     };
 
     useEffect(() => {
@@ -120,14 +146,30 @@ function SidebarList(props) {
     return (
         <div className="sidebarList bg-modal-bg text-white-sub p-3 rounded-xl">
             <div className="flex justify-left">
-                <FaUserCircle size="24" className="pr-2 text-btn-bg-hover" />
-                <h2 className="mb-2 text-btn-bg-hover">{nickname}</h2>
-                <div
-                    onClick={() => handleNickname()}
-                    className="pl-2 hover:cursor-pointer hover:text-white"
-                >
-                    <HiOutlinePencilAlt size="24" />
-                </div>
+                {isModifying ? (
+                    <>
+                        <input
+                            placeholder="변경할 닉네임 입력 후 엔터"
+                            // value={nickname}
+                            onChange={handleNickname}
+                            onKeyDown={(e) => handleNickname(e)}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <FaUserCircle
+                            size="24"
+                            className="pr-2 text-btn-bg-hover"
+                        />
+                        <h2 className="mb-2 text-btn-bg-hover">{nickname}</h2>
+                        <div
+                            onClick={() => setIsModifying(true)}
+                            className="pl-2 hover:cursor-pointer hover:text-white"
+                        >
+                            <HiOutlinePencilAlt size="24" />
+                        </div>
+                    </>
+                )}
             </div>
             {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
             {items.map((item, index) => {
