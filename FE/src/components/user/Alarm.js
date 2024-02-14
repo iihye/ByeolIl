@@ -67,7 +67,7 @@ function Alarm() {
 
         if (token) {
             const eventSource = new EventSourcePolyfill(
-                `${process.env.REACT_APP_ALARM_URL}/alarm/subscribe/${memberIndex}`,
+                `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
                 {
                     headers: {
                         Authorization: `${token}`,
@@ -120,8 +120,8 @@ function Alarm() {
         };
     }, []);
 
-    // 알림 타입마다 다른 창이 떠야함
-    // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
+    alarmData && alarmData.reverse();
+
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
             <Card className="Alarm w-5/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
