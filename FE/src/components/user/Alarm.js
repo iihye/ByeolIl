@@ -7,15 +7,16 @@ import { FaUserPlus, FaComment, FaComments, FaRegBell } from 'react-icons/fa';
 import { IoCloseSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
+import { useRecoilState } from 'recoil';
+import { isAlarmDetailState } from '../atom';
 
 // 추후 에러핸들링 필요
 
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
-    const [detailModal, setDetailModal] = useState(false);
+    const [detailModal, setDetailModal] = useRecoilState(isAlarmDetailState);
     const [boardState, setBoardState] = useState('');
     const memberIndex = Number(sessionStorage.getItem('memberIndex'));
-    const token = sessionStorage.getItem('token');
     const EventSource = EventSourcePolyfill || NativeEventSource;
 
     const navigate = useNavigate();
@@ -45,7 +46,9 @@ function Alarm() {
             .post(`${process.env.REACT_APP_ALARM_URL}/alarm/check`, alarmInfo)
             .then(
                 setAlarmData((currentAlarmData) =>
-                    currentAlarmData.filter((it) => it.alarmIndex !== index)
+                    currentAlarmData
+                        .filter((it) => it.alarmIndex !== index)
+                        .reverse()
                 )
             )
             .catch((error) => console.log(error));
@@ -58,40 +61,48 @@ function Alarm() {
                     `${process.env.REACT_APP_API_URL}/alarm/list/${memberIndex}`
                 )
                 .then((response) => {
-                    // console.log(response.data.result);
                     setAlarmData(response.data.result);
                 })
-                .catch((e) => console.log(e, memberIndex));
+                .catch((e) => console.log(e));
         };
 
         fetchData();
 
-        if (token) {
-            const eventSource = new EventSource(
-                `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
-                {
-                    headers: {
-                        Authorization: `${token}`,
-                    },
-                    heartbeatTimeout: 30000,
-                }
-            );
+        // if (token) {
+        //     const eventSource = new EventSourcePolyfill(
+        //         `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
+        //         {
+        //             headers: {
+        //                 Authorization: `${token}`,
+        //             },
+        //             heartbeatTimeout: 30000,
+        //         }
+        //     );
 
-            eventSource.addEventListener('open', function (event) {
-                console.log('열렸음', event);
-            });
-            eventSource.addEventListener('alarm', function (event) {
-                console.log('이벤트 발생', event);
-            });
-            eventSource.addEventListener('error', function (event) {
-                console.log('알림 에러 발생', event.target);
-                if (event.target.readyState === EventSource.CLOSED) {
-                    console.log('eventsource closed');
-                }
-                eventSource.close();
-            });
-            return () => eventSource.current?.close();
-        }
+        //     console.log(eventSource);
+
+        //     eventSource.onmessage = (e) => {
+        //         console.log('제발1');
+        //         if (e.type === 'alarm') {
+        //             console.log('제발');
+        //         }
+        //     };
+
+        //     eventSource.addEventListener('open', function (event) {
+        //         console.log('열렸음', event);
+        //     });
+        //     eventSource.addEventListener('alarm', function (event) {
+        //         console.log('이벤트 발생', event);
+        //     });
+        //     eventSource.addEventListener('error', function (event) {
+        //         console.log('알림 에러 발생', event.target);
+        //         if (event.target.readyState === EventSource.CLOSED) {
+        //             console.log('eventsource closed');
+        //         }
+        //         eventSource.close();
+        //     });
+        //     return () => eventSource.current?.close();
+        // }
     }, []);
 
     useEffect(() => {
@@ -112,11 +123,14 @@ function Alarm() {
         };
     }, []);
 
-    // 알림 타입마다 다른 창이 떠야함
-    // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
+    alarmData && alarmData.reverse();
+
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-            <Card className="Alarm w-5/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
+            <Card
+                className="Alarm bg-modal-bg text-white-sub px-6 py-6 rounded-component"
+                style={{ width: '480px' }}
+            >
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
                         <FaRegBell className="mr-1" />
@@ -125,7 +139,7 @@ function Alarm() {
                 </CardHeader>
                 <div></div>
                 <CardContent>
-                    <ScrollArea className="h-52 font-['Pre-Light'] text-m py-1 px-1.5">
+                    <ScrollArea className="h-52 font-['Pre-Light'] text-m py-1 px-1.5 pr-5">
                         {alarmData.map((it) => {
                             switch (it.alarmType) {
                                 case 'FOLLOW':

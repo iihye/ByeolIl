@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { FaSearch } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -33,9 +40,15 @@ function StarTagSearch() {
 
     const fetchData = async (tag) => {
         await axios
-            .get(`${process.env.REACT_APP_API_URL}/search?tag=${encodeURIComponent(tag)}`)
+            .get(
+                `${
+                    process.env.REACT_APP_API_URL
+                }/search?tag=${encodeURIComponent(tag)}`
+            )
             .then((response) => {
-                setTagSearchData(response.data);
+                setTagSearchData(
+                    response.data.filter((item) => item.boardAccess === "OPEN")
+                );
             })
             .catch((e) => console.log(e));
     };
@@ -54,7 +67,9 @@ function StarTagSearch() {
 
         const specialRegExp = /[\{\}\[\]\/?.;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
 
-        const testedTag = specialRegExp.test(tag) ? tag.replace(specialRegExp, "") : tag;
+        const testedTag = specialRegExp.test(tag)
+            ? tag.replace(specialRegExp, "")
+            : tag;
 
         setReplaceTag(testedTag.replace(/\s/g, ""));
 
@@ -74,7 +89,9 @@ function StarTagSearch() {
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "outside");
+            const check = [...e.target.classList].some(
+                (it) => it === "outside"
+            );
             if (check) {
                 resetIsTagSearchOpen();
             }
@@ -98,7 +115,10 @@ function StarTagSearch() {
                 <div className="searchArea flex justify-between items-center search-input mx-auto my-3 ">
                     <div className="flex px-2 font-['Pre-Bold']">
                         {replaceTag && (
-                            <span className="text-black-sub flex items-center p-2 w-1/2" onClick={handleList}>
+                            <span
+                                className="text-black-sub flex items-center p-2 w-1/2"
+                                onClick={handleList}
+                            >
                                 #{replaceTag}
                                 <IoCloseSharp />
                             </span>
@@ -112,37 +132,46 @@ function StarTagSearch() {
                         />
                     </div>
 
-                    <FaSearch size="20" className="text-black-sub mx-3" onClick={() => activeButton()} />
+                    <FaSearch
+                        size="20"
+                        className="text-black-sub mx-3"
+                        onClick={() => activeButton()}
+                    />
                 </div>
                 <ScrollArea className=" h-96 overflow-auto">
                     <div className="grid grid-cols-3 justify-items-center gap-4">
-                        {tagSearchData ? (
-                            tagSearchData.length > 0 ? (
-                                tagSearchData.map((it) => (
-                                    <Card key={it.boardIndex} className="card-style h-80 w-64">
-                                        <div className="cards w-4/5 mx-auto font-['Pre-Light']">
-                                            <div className="cardInfo text-xs py-2 pl-1.5">
-                                                작성일&nbsp;
-                                                <strong>{it.boardInputDate}</strong>
-                                                &nbsp; | 작성자&nbsp;
-                                                <strong>{it.memberNickname}</strong>
-                                            </div>
-                                            <div className="cardContent py-2">{it.boardContent}</div>
-                                            <div className="cardTag flex py-2">
-                                                {it.hash.map((tag) => (
-                                                    <div>#{tag}&nbsp;</div>
-                                                ))}
-                                            </div>
+                        {tagSearchData?.length > 0 ? (
+                            tagSearchData.map((it) => (
+                                <Card
+                                    key={it.boardIndex}
+                                    className="card-style h-80 w-64"
+                                >
+                                    <div className="cards w-4/5 mx-auto font-['Pre-Light']">
+                                        <div className="cardInfo text-xs py-2 pl-1.5">
+                                            작성일&nbsp;
+                                            <strong>{it.boardInputDate}</strong>
+                                            &nbsp; | 작성자&nbsp;
+                                            <strong>{it.memberNickname}</strong>
                                         </div>
-                                    </Card>
-                                ))
-                            ) : (
-                                <div className="Card-ScrollArea-NonResult h-96 flex flex-col col-span-3 justify-center items-center">
-                                    <FaRegFaceSadTear className="mr-1" />
-                                    <div className="font-['Pre-Bold']">일치하는 결과가 없습니다</div>
+                                        <div className="cardContent py-2">
+                                            {it.boardContent}
+                                        </div>
+                                        <div className="cardTag flex py-2">
+                                            {it.hash.map((tag) => (
+                                                <div>#{tag}&nbsp;</div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </Card>
+                            ))
+                        ) : (
+                            <div className="Card-ScrollArea-NonResult h-96 flex flex-col col-span-3 justify-center items-center">
+                                <FaRegFaceSadTear className="mr-1" />
+                                <div className="font-['Pre-Bold']">
+                                    일치하는 결과가 없습니다
                                 </div>
-                            )
-                        ) : null}
+                            </div>
+                        )}
                     </div>
                 </ScrollArea>
             </Card>

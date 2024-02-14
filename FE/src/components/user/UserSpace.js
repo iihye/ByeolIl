@@ -6,7 +6,7 @@ import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Link, useParams } from "react-router-dom";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
-import { position, linePosition, lastStarIndex } from "../../data";
+import { position, linePosition, MAX_SATR_CNT } from "../../data";
 import { useLocation } from "react-router-dom";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
@@ -32,8 +32,8 @@ const starsState = atom({
 });
 
 // 공간 주인과 접속 유저의 친구 여부
-const isFriendState = atom({
-    key: "isFriend",
+const isFollowerState = atom({
+    key: "isFollower",
     default: true,
 });
 
@@ -83,6 +83,59 @@ function Line(props) {
     );
 }
 
+function Space(props) {
+    const gradientShader = {
+        uniforms: {
+            color1: { value: new THREE.Color(0x222222) }, // 그라디언트 시작 색상
+            color2: { value: new THREE.Color(0x000000) }, // 그라디언트 종료 색상
+        },
+        vertexShader: `
+          varying vec3 vPosition;
+          void main() {
+            vPosition = position;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 color1;
+          uniform vec3 color2;
+          varying vec3 vPosition;
+          void main() {
+            float ratio = (vPosition.y + 1.0) / 2.0;
+            gl_FragColor = vec4(mix(color1, color2, ratio), 1.0);
+          }
+        `,
+    };
+
+    const meshRef = useRef();
+
+    return (
+        <mesh ref={meshRef} position={props.position}>
+            <sphereGeometry args={props.size} />
+            <shaderMaterial args={[gradientShader]} side={THREE.BackSide} />
+        </mesh>
+    );
+}
+
+function Ground(props) {
+    const mesh = useRef(null);
+
+    return (
+        <mesh ref={mesh} position={props.position}>
+            <sphereGeometry args={props.size} />
+            <meshBasicMaterial
+                color={props.color}
+                side={
+                    props.type === "double"
+                        ? THREE.DoubleSide
+                        : props.type === "front"
+                        ? THREE.FrontSide
+                        : THREE.BackSide
+                }
+            />
+        </mesh>
+    );
+}
 function Sphere(props) {
     const mesh = useRef(null);
 
@@ -109,32 +162,33 @@ function Star(props) {
 
     const stars = useRecoilValue(starsState);
 
-    const isFriend = useRecoilValue(isFriendState);
+    const isFollowState = useRecoilValue(followState);
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
     const writerIndex = Number(params["user_id"]);
     const loginUserIndex = Number(JSON.parse(atob(sessionStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
     const colors = {
-        true: "yellow",
+        true: 0xf5ff82,
         false: "red",
     };
 
-    const star = isAddedStar.get(props.location);
-    const colorCheck = star
-        ? (isFriend && star.boardAccess === "PARTOPEN") || star.boardAccess === "OPEN" || writerIndex === loginUserIndex
-        : false;
-
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
+
+    const colorCheck = curStarState
+        ? (isFollowState && curStarState.boardAccess === "PARTOPEN") ||
+          curStarState.boardAccess === "OPEN" ||
+          writerIndex === loginUserIndex
+        : false;
 
     useEffect(() => {
         setCurStarState(isAddedStar.get(props.location));
 
         if (isAddedStar.get(props.location)) {
-            constellationCheck.update(1, 0, lastStarIndex, props.location, true);
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, true);
         } else {
-            constellationCheck.update(1, 0, lastStarIndex, props.location, false);
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, false);
         }
         console.log("update");
     }, [stars]);
@@ -149,7 +203,7 @@ function Star(props) {
             if (colorCheck) {
                 // 별 상세 정보 띄우기
                 setIsStarDetailOpen([starIndex, writerIndex]);
-            } else if (!isFriend && isAddedStar.get) {
+            } else if (!isFollowState && isAddedStar.get) {
                 // 공개된 별이 아닐 때
                 alert("비공개 별입니다");
             }
@@ -219,7 +273,7 @@ function GroupStar(props) {
 
     // 작성한 별 목록 변경 시 별자리 체크
     useEffect(() => {
-        const check = constellationCheck.query(1, 0, lastStarIndex, startStarNum, lastStarNum);
+        const check = constellationCheck.query(1, 0, MAX_SATR_CNT, startStarNum, lastStarNum);
         if (check) {
             setLineColor(false);
         } else if (!check) {
@@ -269,9 +323,7 @@ function GroupStar(props) {
 
 function SceneStars() {
     const curPage = useRecoilValue(curPageState);
-    const setStars = useSetRecoilState(starsState);
-    const setIsFriend = useSetRecoilState(isFriendState);
-    const setFollowing = useSetRecoilState(followingState);
+    const [stars, setStars] = useRecoilState(starsState);
     const setFollower = useSetRecoilState(followerState);
     const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
 
@@ -300,48 +352,9 @@ function SceneStars() {
                     .then((response) => {
                         isAddedStar.clear();
 
-                        response.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
+                        response.data.forEach((star) => isAddedStar.set(star.boardLocation % MAX_SATR_CNT, star));
 
                         setStars([...response.data]);
-                    })
-                    .then(async () => {
-                        let following = [];
-                        let follower = [];
-                        // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
-                        if (writerIndex !== loginUserId) {
-                            await axios
-                                .get(`${process.env.REACT_APP_API_URL}/follow/following/${writerIndex}`)
-                                .then((response) => {
-                                    setFollowing(response.data.result);
-                                    following = response.data.result;
-                                })
-                                .catch((e) => {
-                                    console.log(e);
-                                });
-
-                            await axios
-                                .get(`${process.env.REACT_APP_API_URL}/follow/follower/${writerIndex}`)
-                                .then((response) => {
-                                    setFollower(response.data.result);
-                                    follower = response.data.result;
-                                })
-                                .catch((e) => console.log(e));
-
-                            const followingCheck = following.some(
-                                (it) => it["memberId"] === loginUserNickname.split("@")[0]
-                            );
-                            const followerCheck = follower.some(
-                                (it) => it["memberId"] === loginUserNickname.split("@")[0]
-                            );
-
-                            setIsFollowState(followerCheck);
-
-                            if (!followingCheck) {
-                                if (!followerCheck) {
-                                    setIsFriend(false);
-                                }
-                            }
-                        }
                     })
                     .catch((e) => {
                         console.log(e);
@@ -351,6 +364,28 @@ function SceneStars() {
 
         fetchData();
     }, [curPage, isDeleteAlertOpen, writerIndex]);
+
+    useEffect(() => {
+        let follower = [];
+        // let following = [];
+
+        async function followCheck() {
+            // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
+            if (writerIndex !== loginUserId) {
+                await axios
+                    .get(`${process.env.REACT_APP_API_URL}/follow/follower/${writerIndex}`)
+                    .then((response) => {
+                        setFollower(response.data.result);
+                        follower = response.data.result;
+                    })
+                    .catch((e) => console.log(e));
+            }
+            const followerCheck = follower.some((it) => it["memberId"] === loginUserNickname);
+            setIsFollowState(followerCheck);
+        }
+
+        followCheck();
+    }, [isFollowState]);
 
     return (
         <>
@@ -366,7 +401,7 @@ function SceneLights() {
         <>
             {/* 광원 */}
             {/* <directionalLight position={[0, 0, 5]} intensity={2} /> */}
-            <ambientLight intensity={2.6} />
+            <ambientLight intensity={3} />
         </>
     );
 }
@@ -383,18 +418,18 @@ function SceneEnvironment() {
             />
 
             {/* 바닥면 */}
-            <Sphere size={[2, 48, 48, 0, Math.PI * 2]} position={[0, -2.2, 0]} color={"orange"} />
+            <Ground size={[2, 48, 48, 0, Math.PI * 2]} position={[0, -2.2, 0]} color={"orange"} />
         </>
     );
 }
 
-function UserSpace() {
+function FollowArea() {
     const params = useParams();
-    const userId = params.user_id;
+    const userId = Number(params.user_id);
     const location = useLocation();
 
     const [loginToken, setLoginToken] = useState(sessionStorage.getItem("token"));
-    const [loginIndex, setLoginIndex] = useState(sessionStorage.getItem("memberIndex"));
+    const [loginIndex, setLoginIndex] = useState(Number(sessionStorage.getItem("memberIndex")));
     const [userName, setUserName] = useState("");
     const [isFollowState, setIsFollowState] = useRecoilState(followState);
 
@@ -436,34 +471,17 @@ function UserSpace() {
         if (writerIndex !== loginUserId && location.state?.props) {
             setUserName(location.state.props);
         }
+        if (writerIndex === loginUserId) {
+            setUserName("");
+        }
     }, [location]);
 
     useEffect(() => {
         setLoginToken(loginToken);
         setLoginIndex(loginIndex);
     }, [loginToken, loginIndex]);
-
     return (
-        <div className="user-space relative">
-            <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
-                <Canvas>
-                    <EffectComposer>
-                        <Bloom intensity={0.7} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
-                    </EffectComposer>
-                    <SceneStars />
-                    <SceneLights />
-                    <SceneEnvironment />
-                    <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
-                    <PerspectiveCamera
-                        makeDefault
-                        position={[-0.01, 0, 0.1]}
-                        fov={55}
-                        zoom={1}
-                        aspect={window.innerWidth / window.innerHeight}
-                    />
-                </Canvas>
-            </div>
-
+        <>
             {userName ? (
                 <div className="absolute bottom-4 left-4 flex justify-center items-center text-white">
                     <PiShootingStarFill className="mr-1" />
@@ -487,6 +505,32 @@ function UserSpace() {
                     <button className="absolute bottom-2 left-2">라디오</button>
                 </Link>
             )}
+        </>
+    );
+}
+
+function UserSpace() {
+    return (
+        <div className="user-space relative">
+            <div id="canvas-container" style={{ height: "100vh", width: "100vw" }}>
+                <Canvas>
+                    <EffectComposer>
+                        <Bloom intensity={0.7} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
+                    </EffectComposer>
+                    <SceneStars />
+                    <SceneLights />
+                    <SceneEnvironment />
+                    <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
+                    <PerspectiveCamera
+                        makeDefault
+                        position={[-0.01, 0, 0.1]}
+                        fov={55}
+                        zoom={1}
+                        aspect={window.innerWidth / window.innerHeight}
+                    />
+                </Canvas>
+                <FollowArea />
+            </div>
         </div>
     );
 }

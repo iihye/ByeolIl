@@ -759,4 +759,4 @@ export const linePosition = [
     ],
 ];
 
-export const lastStarIndex = idx;
+export const MAX_SATR_CNT = idx;
