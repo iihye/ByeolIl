@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 import * as RiIcons from "react-icons/ri";
 import * as WiIcons from "react-icons/wi";
 import * as LuIcons from "react-icons/lu";
@@ -85,8 +86,11 @@ function SidebarList(props) {
     }, [props.memberIndex]);
 
     return (
-        <div className="sidebarList bg-modal-bg text-white-sub p-2 rounded-xl">
-            <h2 className="mb-2">{nickname}님의 우주</h2>
+        <div className="sidebarList bg-modal-bg text-white-sub p-3 m-1 rounded-xl">
+            <div className="flex justify-left">
+                <FaUserCircle size="24" className="pr-2 text-btn-bg-hover" />
+                <h2 className="mb-2 text-btn-bg-hover">{nickname}</h2>
+            </div>
             {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
             {items.map((item, index) => {
                 let IconComponent;
@@ -123,7 +127,9 @@ function SidebarList(props) {
                     </div>
                 );
             })}
-            <button onClick={handleLogOut}>로그아웃</button>
+            <button className="w-full" onClick={handleLogOut}>
+                로그아웃
+            </button>
         </div>
     );
 }
