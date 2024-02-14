@@ -25,11 +25,46 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
         <title>별일</title>
+        <style>
+            #root:not(:empty) ~ #loading {
+                display: none;
+            }
+
+            #loadingElement {
+                animation: 1s linear infinite rotateLoadingElement;
+            }
+            @keyframes rotateLoadingElement {
+                from {
+                    transform: translate(-50%, -50%) rotate(0deg);
+                }
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg);
+                }
+            }
+        </style>
     </head>
 
     <body style="margin: 0">
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root"></div>
+        <div
+            id="loading"
+            style="background-color: white; width: 100vw; height: 100vh"
+        >
+            <img
+                id="loadingElement"
+                src="image/Spin-1s-200px.gif"
+                style="position: absolute; width: 100px; top: 50%; left: 50%"
+            />
+        </div>
+        <script>
+            window.addEventListener('load', function () {
+                var loadingElement = document.getElementById('loadingElement');
+                if (loadingElement) {
+                    loadingElement.style.display = 'none';
+                }
+            });
+        </script>
         <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
