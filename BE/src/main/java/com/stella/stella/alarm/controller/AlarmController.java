@@ -4,6 +4,7 @@ import com.stella.stella.alarm.dto.AlarmDeleteRequestDto;
 import com.stella.stella.alarm.dto.AlarmListResponseDto;
 import com.stella.stella.alarm.dto.AlarmRequestDto;
 import com.stella.stella.alarm.service.AlarmService;
+import com.stella.stella.alarm.service.SseService;
 import com.stella.stella.common.dto.BasicResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api/alarm")
 public class AlarmController {
     private final AlarmService alarmService;
+    private final SseService sseService;
 
     // 알림 등록(테스트용)
     @PostMapping("/add")
@@ -64,6 +66,6 @@ public class AlarmController {
     // 알림 SSE
     @GetMapping("/subscribe/{memberIndex}")
     public SseEmitter alarmSubscribe(@PathVariable Long memberIndex){
-        return alarmService.connectAlarm(memberIndex);
+        return sseService.connectAlarm(memberIndex);
     }
 }
