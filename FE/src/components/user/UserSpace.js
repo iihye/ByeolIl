@@ -6,7 +6,7 @@ import axios from "axios";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Link, useParams } from "react-router-dom";
 import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
-import { position, linePosition, lastStarIndex } from "../../data";
+import { position, linePosition, MAX_SATR_CNT } from "../../data";
 import { useLocation } from "react-router-dom";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
@@ -132,9 +132,9 @@ function Star(props) {
         setCurStarState(isAddedStar.get(props.location));
 
         if (isAddedStar.get(props.location)) {
-            constellationCheck.update(1, 0, lastStarIndex, props.location, true);
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, true);
         } else {
-            constellationCheck.update(1, 0, lastStarIndex, props.location, false);
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, false);
         }
 
         props.setRenewConstellation(!props.renewConstellation);
@@ -220,7 +220,7 @@ function GroupStar(props) {
 
     // 작성한 별 목록 변경 시 별자리 체크
     useEffect(() => {
-        const check = constellationCheck.query(1, 0, lastStarIndex, startStarNum, lastStarNum);
+        const check = constellationCheck.query(1, 0, MAX_SATR_CNT, startStarNum, lastStarNum);
         if (check) {
             setLineColor(false);
         } else if (!check) {
@@ -298,7 +298,7 @@ function SceneStars() {
                     .then((response) => {
                         isAddedStar.clear();
 
-                        response.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
+                        response.data.forEach((star) => isAddedStar.set(star.boardLocation % MAX_SATR_CNT, star));
 
                         setStars([...response.data]);
                     })
