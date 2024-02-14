@@ -36,6 +36,7 @@ function Alarm() {
     );
 
     const onClose = (index) => {
+        console.log(typeof memberIndex);
         const alarmInfo = {
             alarmIndex: index,
             memberIndex: memberIndex,
@@ -45,7 +46,9 @@ function Alarm() {
             .post(`${process.env.REACT_APP_ALARM_URL}/alarm/check`, alarmInfo)
             .then(
                 setAlarmData((currentAlarmData) =>
-                    currentAlarmData.filter((it) => it.alarmIndex !== index)
+                    currentAlarmData
+                        .filter((it) => it.alarmIndex !== index)
+                        .reverse()
                 )
             )
             .catch((error) => console.log(error));
@@ -58,7 +61,6 @@ function Alarm() {
                     `${process.env.REACT_APP_API_URL}/alarm/list/${memberIndex}`
                 )
                 .then((response) => {
-                    // console.log(response.data.result);
                     setAlarmData(response.data.result);
                 })
                 .catch((e) => console.log(e, memberIndex));
@@ -66,32 +68,41 @@ function Alarm() {
 
         fetchData();
 
-        if (token) {
-            const eventSource = new EventSource(
-                `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
-                {
-                    headers: {
-                        Authorization: `${token}`,
-                    },
-                    heartbeatTimeout: 30000,
-                }
-            );
+        // if (token) {
+        //     const eventSource = new EventSourcePolyfill(
+        //         `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
+        //         {
+        //             headers: {
+        //                 Authorization: `${token}`,
+        //             },
+        //             heartbeatTimeout: 30000,
+        //         }
+        //     );
 
-            eventSource.addEventListener('open', function (event) {
-                console.log('열렸음', event);
-            });
-            eventSource.addEventListener('alarm', function (event) {
-                console.log('이벤트 발생', event);
-            });
-            eventSource.addEventListener('error', function (event) {
-                console.log('알림 에러 발생', event.target);
-                if (event.target.readyState === EventSource.CLOSED) {
-                    console.log('eventsource closed');
-                }
-                eventSource.close();
-            });
-            return () => eventSource.current?.close();
-        }
+        //     console.log(eventSource);
+
+        //     eventSource.onmessage = (e) => {
+        //         console.log('제발1');
+        //         if (e.type === 'alarm') {
+        //             console.log('제발');
+        //         }
+        //     };
+
+        //     eventSource.addEventListener('open', function (event) {
+        //         console.log('열렸음', event);
+        //     });
+        //     eventSource.addEventListener('alarm', function (event) {
+        //         console.log('이벤트 발생', event);
+        //     });
+        //     eventSource.addEventListener('error', function (event) {
+        //         console.log('알림 에러 발생', event.target);
+        //         if (event.target.readyState === EventSource.CLOSED) {
+        //             console.log('eventsource closed');
+        //         }
+        //         eventSource.close();
+        //     });
+        //     return () => eventSource.current?.close();
+        // }
     }, []);
 
     useEffect(() => {
@@ -112,8 +123,8 @@ function Alarm() {
         };
     }, []);
 
-    // 알림 타입마다 다른 창이 떠야함
-    // 추후 수정 - 알림 클릭시 해당 별 상세보기로 이동
+    alarmData && alarmData.reverse();
+
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
             <Card className="Alarm w-5/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
