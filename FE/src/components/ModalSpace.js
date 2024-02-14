@@ -7,10 +7,12 @@ import {
     isReportAlertOpenState,
     reportModalState,
     isChangeInfoOpenState,
+    isMyStarListOpenState,
 } from "./atom";
 import StarRegist from "./star/StarRegist";
 import StarDetail from "./star/StarDetail";
 import ChangeInfo from "./user/ChangeInfo";
+import List from "./reusable/List";
 
 function ModalSpace() {
     return (
@@ -19,8 +21,8 @@ function ModalSpace() {
             <StarDetailArea />
             <StarModifyArea />
             <ChangeInfoArea />
-            {/* <MyStarListArea />
-            <FavorListArea />
+            <MyStarListArea />
+            {/* <FavorListArea />
             <FollowListArea />
             <FindUserArea />
             <TagSearchArea />
@@ -70,5 +72,11 @@ function ChangeInfoArea() {
     const isChangeInfoOpen = useRecoilValue(isChangeInfoOpenState);
 
     return <>{isChangeInfoOpen && <ChangeInfo />}</>;
+}
+
+function MyStarListArea() {
+    const isMyStarListOpen = useRecoilValue(isMyStarListOpenState);
+
+    return <>{isMyStarListOpen && <List />}</>;
 }
 export default ModalSpace;
