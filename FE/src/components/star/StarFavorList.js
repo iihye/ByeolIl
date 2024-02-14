@@ -100,66 +100,62 @@ function StarFavorList() {
                     </div>
                     <ScrollArea className="Card-ScrollArea h-96 overflow-auto justify-center items-center">
                         <div className="grid grid-cols-3 justify-items-center gap-4">
-                            {filterData ? (
-                                filterData.length > 0 ? (
-                                    filterData.map((it) => (
-                                        <Card
-                                            key={it.boardIndex}
-                                            className="card-style h-80 w-64 relative"
-                                            onClick={() =>
-                                                setStarDetailState([
-                                                    it.boardIndex,
-                                                    it.memberIndex,
-                                                ])
-                                            }
-                                        >
-                                            <div className="cards w-4/5 mx-auto font-['Pre-Light']">
-                                                <div className="cardInfo text-xs py-2 pl-1.5">
-                                                    작성일&nbsp;
-                                                    <strong>
-                                                        {it.boardInputDate}
-                                                    </strong>
-                                                    &nbsp; | 작성자&nbsp;
-                                                    <strong>
-                                                        {it.memberNickname}
-                                                    </strong>
+                            {filterData?.length > 0 ? (
+                                filterData.map((it) => (
+                                    <Card
+                                        key={it.boardIndex}
+                                        className="card-style h-80 w-64 relative"
+                                        onClick={() =>
+                                            setStarDetailState([
+                                                it.boardIndex,
+                                                it.memberIndex,
+                                            ])
+                                        }
+                                    >
+                                        <div className="cards w-4/5 mx-auto font-['Pre-Light']">
+                                            <div className="cardInfo text-xs py-2 pl-1.5">
+                                                작성일&nbsp;
+                                                <strong>
+                                                    {it.boardInputDate}
+                                                </strong>
+                                                &nbsp; | 작성자&nbsp;
+                                                <strong>
+                                                    {it.memberNickname}
+                                                </strong>
+                                            </div>
+                                            <div className="cardContent py-2">
+                                                {it.boardContent}
+                                            </div>
+                                            <div className="absolute bottom-0 w-10/12 mb-3">
+                                                <div className="cardTag flex py-2 ">
+                                                    {it.hash?.length > 0
+                                                        ? it.hash.map((tag) => (
+                                                              <div>
+                                                                  #{tag}
+                                                                  &nbsp;
+                                                              </div>
+                                                          ))
+                                                        : null}
                                                 </div>
-                                                <div className="cardContent py-2">
-                                                    {it.boardContent}
-                                                </div>
-                                                <div className="absolute bottom-0 w-10/12 mb-3">
-                                                    <div className="cardTag flex py-2 ">
-                                                        {it.hash?.length > 0
-                                                            ? it.hash.map(
-                                                                  (tag) => (
-                                                                      <div>
-                                                                          #{tag}
-                                                                          &nbsp;
-                                                                      </div>
-                                                                  )
-                                                              )
-                                                            : null}
-                                                    </div>
-                                                    <div className="cardLike flex justify-end">
-                                                        <FaHeart
-                                                            size="24"
-                                                            className="mr-1.5"
-                                                        />
-                                                        {it.boardHeart}
-                                                    </div>
+                                                <div className="cardLike flex justify-end">
+                                                    <FaHeart
+                                                        size="24"
+                                                        className="mr-1.5"
+                                                    />
+                                                    {it.boardHeart}
                                                 </div>
                                             </div>
-                                        </Card>
-                                    ))
-                                ) : (
-                                    <div className="Card-ScrollArea-NonResult h-96 flex flex-col col-span-3 justify-center items-center">
-                                        <FaRegFaceSadTear className="mr-1" />
-                                        <div className="font-['Pre-Bold']">
-                                            일치하는 결과가 없습니다
                                         </div>
+                                    </Card>
+                                ))
+                            ) : (
+                                <div className="Card-ScrollArea-NonResult h-96 flex flex-col col-span-3 justify-center items-center">
+                                    <FaRegFaceSadTear className="mr-1" />
+                                    <div className="font-['Pre-Bold']">
+                                        일치하는 결과가 없습니다
                                     </div>
-                                )
-                            ) : null}
+                                </div>
+                            )}
                         </div>
                     </ScrollArea>
                 </CardContent>
