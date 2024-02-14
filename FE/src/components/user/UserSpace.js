@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
 import { constellationCheck } from "util";
+import { PiShootingStarFill } from "react-icons/pi";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
 const starRange = [];
@@ -112,18 +113,14 @@ function Star(props) {
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
-    // 컨텐츠 길이에 따라 밝기 or 별 크기 변화
-    const star = isAddedStar.get(props.location);
-    const sizeProp = star ? star.boardContent.length / 400 : 0;
-
     const writerIndex = Number(params["user_id"]);
     const loginUserIndex = Number(JSON.parse(atob(sessionStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
-
     const colors = {
         true: "yellow",
         false: "red",
     };
 
+    const star = isAddedStar.get(props.location);
     const colorCheck = star
         ? (isFriend && star.boardAccess === "PARTOPEN") || star.boardAccess === "OPEN" || writerIndex === loginUserIndex
         : false;
@@ -275,7 +272,6 @@ function SceneStars() {
     const writerIndex = Number(params.user_id);
     const loginUserId = Number(sessionStorage.getItem("memberIndex"));
     const loginUserNickname = sessionStorage.getItem("nickname");
-    console.log(writerIndex);
     const [isFollowState, setIsFollowState] = useRecoilState(followState);
 
     useEffect(() => {
@@ -461,14 +457,18 @@ function UserSpace() {
             </div>
 
             {userName ? (
-                <div className="absolute bottom-0 left-0 flex justify-center items-center text-white">
-                    <div className="space-name">{userName}님의 우주입니다</div>
+                <div className="absolute bottom-4 left-4 flex justify-center items-center text-white">
+                    <PiShootingStarFill className="mr-1" />
+                    <div className="space-name font-['Pre-Bold'] text-2xl mr-2 ">{userName} 의 우주</div>
                     <div>
                         {userId !== loginIndex &&
                             (isFollowState === null ? (
-                                <div>Loading</div>
+                                <div className="font-['Pre-Light']">Loading...</div>
                             ) : (
-                                <button onClick={() => handleFollow(isFollowState)}>
+                                <button
+                                    className="space-follow font-['Pre-Bold'] text-m px-3"
+                                    onClick={() => handleFollow(isFollowState)}
+                                >
                                     {isFollowState ? "언팔로우" : "팔로우"}
                                 </button>
                             ))}
