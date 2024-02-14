@@ -151,7 +151,7 @@ function StarRegist(props) {
                 memberIndex: writerIndex,
                 boardInputDate: dateRef.current.innerText,
                 boardContent: contentRef.current.value,
-                boardMedia: [],
+                boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
             };
 
