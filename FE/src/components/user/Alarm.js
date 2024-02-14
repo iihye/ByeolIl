@@ -36,6 +36,7 @@ function Alarm() {
     );
 
     const onClose = (index) => {
+        console.log(typeof memberIndex);
         const alarmInfo = {
             alarmIndex: index,
             memberIndex: memberIndex,
@@ -65,41 +66,41 @@ function Alarm() {
 
         fetchData();
 
-        if (token) {
-            const eventSource = new EventSourcePolyfill(
-                `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
-                {
-                    headers: {
-                        Authorization: `${token}`,
-                    },
-                    heartbeatTimeout: 30000,
-                }
-            );
+        // if (token) {
+        //     const eventSource = new EventSourcePolyfill(
+        //         `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
+        //         {
+        //             headers: {
+        //                 Authorization: `${token}`,
+        //             },
+        //             heartbeatTimeout: 30000,
+        //         }
+        //     );
 
-            console.log(eventSource);
+        //     console.log(eventSource);
 
-            eventSource.onmessage = (e) => {
-                console.log('제발1');
-                if (e.type === 'alarm') {
-                    console.log('제발');
-                }
-            };
+        //     eventSource.onmessage = (e) => {
+        //         console.log('제발1');
+        //         if (e.type === 'alarm') {
+        //             console.log('제발');
+        //         }
+        //     };
 
-            eventSource.addEventListener('open', function (event) {
-                console.log('열렸음', event);
-            });
-            eventSource.addEventListener('alarm', function (event) {
-                console.log('이벤트 발생', event);
-            });
-            eventSource.addEventListener('error', function (event) {
-                console.log('알림 에러 발생', event.target);
-                if (event.target.readyState === EventSource.CLOSED) {
-                    console.log('eventsource closed');
-                }
-                eventSource.close();
-            });
-            return () => eventSource.current?.close();
-        }
+        //     eventSource.addEventListener('open', function (event) {
+        //         console.log('열렸음', event);
+        //     });
+        //     eventSource.addEventListener('alarm', function (event) {
+        //         console.log('이벤트 발생', event);
+        //     });
+        //     eventSource.addEventListener('error', function (event) {
+        //         console.log('알림 에러 발생', event.target);
+        //         if (event.target.readyState === EventSource.CLOSED) {
+        //             console.log('eventsource closed');
+        //         }
+        //         eventSource.close();
+        //     });
+        //     return () => eventSource.current?.close();
+        // }
     }, []);
 
     useEffect(() => {
