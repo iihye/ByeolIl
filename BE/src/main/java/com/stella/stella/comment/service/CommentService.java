@@ -46,7 +46,7 @@ public class CommentService {
                 .member(member).build();
         commentRepository.save(comment);
 
-        if(board.getMember() != member){
+        if(board.getMember().getMemberId() != member.getMemberId()){
             Alarm alarm = Alarm.builder()
                     .toMember(board.getMember())
                     .fromMember(member)
