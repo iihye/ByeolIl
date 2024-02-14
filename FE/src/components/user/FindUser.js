@@ -46,7 +46,9 @@ function FindUser() {
         function handleClick(e) {
             e.stopPropagation();
 
-            const check = [...e.target.classList].some((it) => it === "outside");
+            const check = [...e.target.classList].some(
+                (it) => it === "outside"
+            );
             if (check) {
                 resetIsFindUserOpen();
             }
@@ -61,7 +63,7 @@ function FindUser() {
     // 검색 결과와 일치하는 유저 닉네임 렌더링
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
-            <Card className=" w-1/3 card-contain-style px-6 py-6 ">
+            <Card className=" w-96 card-contain-style px-6 py-6 ">
                 <CardHeader className="flex ">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8 ">
                         <PiShootingStarLight className="mr-1" />
@@ -71,7 +73,10 @@ function FindUser() {
                 <CardContent>
                     <div className="searchArea flex justify-between items-center search-input w-72 mx-auto ">
                         <div className="px-2">
-                            <SearchBar filterKey="memberNickname" listItems={listData} />
+                            <SearchBar
+                                filterKey="memberNickname"
+                                listItems={listData}
+                            />
                         </div>
                         <FaSearch size="20" className="text-black-sub mx-3" />
                     </div>
@@ -81,11 +86,22 @@ function FindUser() {
                                 <div>데이터가 없습니다</div>
                             ) : (
                                 filterData.map((it) => (
-                                    <li key={it.memberIndex} className="flex p-2 text-lg font-['Pre-Light']">
-                                        <FaUserCircle size="30" className="pr-2 text-btn-bg-hover" />
+                                    <li
+                                        key={it.memberIndex}
+                                        className="flex p-2 text-lg font-['Pre-Light']"
+                                    >
+                                        <FaUserCircle
+                                            size="30"
+                                            className="pr-2 text-btn-bg-hover"
+                                        />
                                         {it.memberNickname}
-                                        <Link to={`/space/${it.memberIndex}`} state={{ props: it.memberNickname }}>
-                                            <TbHomeMove className="size-7 mx-2">이동하기</TbHomeMove>
+                                        <Link
+                                            to={`/space/${it.memberIndex}`}
+                                            state={{ props: it.memberNickname }}
+                                        >
+                                            <TbHomeMove className="size-7 mx-2">
+                                                이동하기
+                                            </TbHomeMove>
                                         </Link>
                                     </li>
                                 ))
