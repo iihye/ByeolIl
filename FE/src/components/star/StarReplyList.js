@@ -48,12 +48,17 @@ function StarReplyList(props) {
 
     return (
         <>
-            <div className="flex items-center text-white-sub text-xl gap-2 mt-2 mb-1 ml-1 w-96">
-                <div>댓글 목록</div>
-                <IoMdRefresh className="my-1 hover:cursor-pointer flex" onClick={handleRefresh} />
-                <div className="flex items-center hover:hover text-white-sub">
-                    <div>라디오 송신</div>
-                    <GoRocket onClick={props.handleRadio} />
+            <div className="flex justify-between items-center text-white-sub text-xl gap-2 mt-2 mb-1 ml-1 w-96">
+                <div className="flex">
+                    <div className="mr-1">댓글 목록</div>
+                    <IoMdRefresh className="my-1 hover:cursor-pointer flex" onClick={handleRefresh} />
+                </div>
+                <div className="flex w-32 justify-center">
+                    <div className="flex items-center hover:hover text-white-sub relative overflow-hidden ">
+                        <div className="mr-2">라디오 송신</div>
+                        <GoRocket onClick={props.handleRadio} />
+                        <div className="w-full h-full absolute  bg-black-sub" style={{ right: "-8rem" }}></div>
+                    </div>
                 </div>
             </div>
             <ScrollArea className="h-52 w-96 relative border border-white-sub rounded-xl bg-alert-bg text-white-sub p-2">

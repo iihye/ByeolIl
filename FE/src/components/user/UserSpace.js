@@ -83,6 +83,40 @@ function Line(props) {
     );
 }
 
+function Space(props) {
+    const gradientShader = {
+        uniforms: {
+            color1: { value: new THREE.Color(0x222222) }, // 그라디언트 시작 색상
+            color2: { value: new THREE.Color(0x000000) }, // 그라디언트 종료 색상
+        },
+        vertexShader: `
+          varying vec3 vPosition;
+          void main() {
+            vPosition = position;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 color1;
+          uniform vec3 color2;
+          varying vec3 vPosition;
+          void main() {
+            float ratio = (vPosition.y + 1.0) / 2.0;
+            gl_FragColor = vec4(mix(color1, color2, ratio), 1.0);
+          }
+        `,
+    };
+
+    const meshRef = useRef();
+
+    return (
+        <mesh ref={meshRef} position={props.position}>
+            <sphereGeometry args={props.size} />
+            <shaderMaterial args={[gradientShader]} side={THREE.BackSide} />
+        </mesh>
+    );
+}
+
 function Sphere(props) {
     const mesh = useRef(null);
 
@@ -116,7 +150,7 @@ function Star(props) {
     const writerIndex = Number(params["user_id"]);
     const loginUserIndex = Number(JSON.parse(atob(sessionStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
     const colors = {
-        true: "yellow",
+        true: 0xf5ff82,
         false: "red",
     };
 
@@ -364,7 +398,7 @@ function SceneLights() {
         <>
             {/* 광원 */}
             {/* <directionalLight position={[0, 0, 5]} intensity={2} /> */}
-            <ambientLight intensity={2.6} />
+            <ambientLight intensity={2.8} />
         </>
     );
 }
