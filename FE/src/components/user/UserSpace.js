@@ -136,6 +136,8 @@ function Star(props) {
         } else {
             constellationCheck.update(1, 0, lastStarIndex, props.location, false);
         }
+
+        props.setRenewConstellation(!props.renewConstellation);
     }, [stars]);
 
     const handleClick = (e, locationNum) => {
@@ -201,6 +203,7 @@ function GroupStar(props) {
     const setStarLineOpacityState = useSetRecoilState(starLineOpacityState);
 
     const [lineColor, setLineColor] = useState(true);
+    const [renewConstellation, setRenewConstellation] = useState(false);
 
     const group = useRef(null);
 
@@ -223,7 +226,7 @@ function GroupStar(props) {
         } else if (!check) {
             setLineColor(true);
         }
-    }, [stars]);
+    }, [stars, renewConstellation]);
 
     // 하늘 회전
     useFrame((state, delta) => {
@@ -249,6 +252,8 @@ function GroupStar(props) {
                         position={val.slice(1, 4)}
                         location={val[0]}
                         setLineColor={setLineColor}
+                        renewConstellation={renewConstellation}
+                        setRenewConstellation={setRenewConstellation}
                     />
                 ))}
                 {linePosition[groupNum].map((it, index) => {
@@ -294,7 +299,8 @@ function SceneStars() {
                         isAddedStar.clear();
 
                         response.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
-                        setStars(response.data);
+
+                        setStars([...response.data]);
                     })
                     .then(async () => {
                         let following = [];
