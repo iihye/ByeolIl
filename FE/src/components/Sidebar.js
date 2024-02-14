@@ -86,49 +86,49 @@ function SidebarList(props) {
     useEffect(() => {
         setItems([
             {
-                type: 'PiIcons',
+                type: PiIcons,
                 icon: 'PiStarAndCrescent',
                 name: '내 우주가기',
                 path: () => navigate(`space/${props.memberIndex}`),
             },
             {
-                type: 'RiIcons',
+                type: RiIcons,
                 icon: 'RiLockPasswordLine',
                 name: '회원정보수정',
                 path: () => setIsChangeInfoOpen(true),
             },
             {
-                type: 'WiIcons',
+                type: WiIcons,
                 icon: 'WiStars',
                 name: '나의 별 목록',
                 path: () => setIsMyStarListOpen(true),
             },
             {
-                type: 'LuIcons',
+                type: LuIcons,
                 icon: 'LuFolderHeart',
                 name: '좋아하는 별 목록',
                 path: () => setIsFavorListOpen(true),
             },
             {
-                type: 'AiIcons',
+                type: AiIcons,
                 icon: 'AiOutlineUserAdd',
                 name: '팔로우/팔로워 목록',
                 path: () => setIsFollowListOpen(true),
             },
             {
-                type: 'PiIcons',
+                type: PiIcons,
                 icon: 'PiShootingStarLight',
                 name: '다른 우주 찾기',
                 path: () => setIsFindUserOpen(true),
             },
             {
-                type: 'HiIcons',
+                type: HiIcons,
                 icon: 'HiMiniHashtag',
                 name: '태그로 별 찾기',
                 path: () => setIsTagSearchOpen(true),
             },
             {
-                type: 'IoIcons',
+                type: IoIcons,
                 icon: 'IoSettingsOutline',
                 name: '환경설정',
                 path: () => setIsSettingOpen(true),
@@ -179,25 +179,8 @@ function SidebarList(props) {
             </div>
             {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
             {items.map((item, index) => {
-                let IconComponent;
-
-                if (item.type === 'RiIcons') {
-                    IconComponent = RiIcons[item.icon];
-                } else if (item.type === 'WiIcons') {
-                    IconComponent = WiIcons[item.icon];
-                } else if (item.type === 'LuIcons') {
-                    IconComponent = LuIcons[item.icon];
-                } else if (item.type === 'AiIcons') {
-                    IconComponent = AiIcons[item.icon];
-                } else if (item.type === 'PiIcons') {
-                    IconComponent = PiIcons[item.icon];
-                } else if (item.type === 'HiIcons') {
-                    IconComponent = HiIcons[item.icon];
-                } else if (item.type === 'IoIcons') {
-                    IconComponent = IoIcons[item.icon];
-                } else if (item.type === 'SiIcons') {
-                    IconComponent = SiIcons[item.icon];
-                }
+                const IconItem = item.type[item.icon];
+                const IconComponent = IconItem;
 
                 return (
                     <div
