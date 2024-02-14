@@ -1,28 +1,22 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { AiOutlineUserAdd } from 'react-icons/ai';
-import { FaUserCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router';
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { AiOutlineUserAdd } from "react-icons/ai";
+import { FaUserCircle } from "react-icons/fa";
+import { useResetRecoilState } from "recoil";
+import { isFollowListOpenState } from "components/atom";
 
 function FollowList() {
+    const resetIsFollowListOpen = useResetRecoilState(isFollowListOpenState);
+
     const [currentTab, setCurrentTab] = useState(0);
     const [followData, setFollowData] = useState([]);
     const [followerData, setFollowerData] = useState([]);
 
-    const loginIndex = sessionStorage.getItem('memberIndex');
-    const loginToken = sessionStorage.getItem('token');
-
-    const navigate = useNavigate();
+    const loginIndex = sessionStorage.getItem("memberIndex");
+    const loginToken = sessionStorage.getItem("token");
 
     const menuArr = useMemo(() => {
         // 데이터를 받은 후에 content를 설정
@@ -36,8 +30,8 @@ function FollowList() {
         }));
 
         return [
-            { name: '팔로우', content: followContent },
-            { name: '팔로워', content: followerContent },
+            { name: "팔로우", content: followContent },
+            { name: "팔로워", content: followerContent },
         ];
     }, [followData, followerData]);
 
@@ -45,23 +39,17 @@ function FollowList() {
         const fetchData = async () => {
             try {
                 const [followResponse, followerResponse] = await axios.all([
-                    axios.get(
-                        `${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`,
-                        {
-                            headers: {
-                                token: loginToken,
-                            },
-                        }
-                    ),
+                    axios.get(`${process.env.REACT_APP_API_URL}/follow/following/${loginIndex}`, {
+                        headers: {
+                            token: loginToken,
+                        },
+                    }),
 
-                    axios.get(
-                        `${process.env.REACT_APP_API_URL}/follow/follower/${loginIndex}`,
-                        {
-                            headers: {
-                                token: loginToken,
-                            },
-                        }
-                    ),
+                    axios.get(`${process.env.REACT_APP_API_URL}/follow/follower/${loginIndex}`, {
+                        headers: {
+                            token: loginToken,
+                        },
+                    }),
                 ]);
 
                 setFollowData(followResponse.data.result);
@@ -78,17 +66,15 @@ function FollowList() {
         function handleClick(e) {
             e.stopPropagation();
 
-            const check = [...e.target.classList].some(
-                (it) => it === 'outside'
-            );
+            const check = [...e.target.classList].some((it) => it === "outside");
             if (check) {
-                navigate(-1);
+                resetIsFollowListOpen();
             }
         }
 
-        window.addEventListener('click', handleClick);
+        window.addEventListener("click", handleClick);
         return () => {
-            window.removeEventListener('click', handleClick);
+            window.removeEventListener("click", handleClick);
         };
     });
 
@@ -120,14 +106,8 @@ function FollowList() {
                             <TabsContent key={index} value={menu.name}>
                                 <ScrollArea className="font-['Pre-Light'] text-m py-1 mb-2 h-52">
                                     {menu.content.map((user, userIndex) => (
-                                        <li
-                                            key={userIndex}
-                                            className="flex justify-start p-1"
-                                        >
-                                            <FaUserCircle
-                                                size="24"
-                                                className="pr-2 text-btn-bg-hover"
-                                            />
+                                        <li key={userIndex} className="flex justify-start p-1">
+                                            <FaUserCircle size="24" className="pr-2 text-btn-bg-hover" />
                                             <p>{user.memberName}</p>
                                         </li>
                                     ))}

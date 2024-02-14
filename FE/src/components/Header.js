@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import Sidebar from './Sidebar';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import Sidebar from "./Sidebar";
+import { Link, useNavigate } from "react-router-dom";
+import { FaRegBell } from "react-icons/fa";
+
 function Header() {
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem("token");
     const navigate = useNavigate();
     const [memberIndex, setMemberIndex] = useState(
-        sessionStorage.getItem('memberIndex')
+        sessionStorage.getItem("memberIndex")
     );
 
     useEffect(() => {
-        setMemberIndex(sessionStorage.getItem('memberIndex'));
+        setMemberIndex(sessionStorage.getItem("memberIndex"));
     }, [token]);
 
     return (
@@ -17,11 +19,18 @@ function Header() {
             {token ? (
                 <>
                     <nav className="sideContainer flex justify-end">
-                        <Link to={`/space/${memberIndex}/alarm`}>
-                            <button>알림창</button>
-                        </Link>
+                        <div className="m-2 mr-1">
+                            <Link to={`/space/${memberIndex}/alarm`}>
+                                {/* <button>알림창</button> */}
+                                <FaRegBell
+                                    className="Sidebar-Alarm "
+                                    size="28"
+                                    color="white"
+                                />
+                            </Link>
+                        </div>
                         <Sidebar
-                            props={sessionStorage.getItem('memberNickname')}
+                            props={sessionStorage.getItem("memberNickname")}
                         />
                     </nav>
                 </>
