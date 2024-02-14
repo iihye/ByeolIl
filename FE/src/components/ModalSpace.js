@@ -12,6 +12,7 @@ import {
     isFollowListOpenState,
     isFindUserOpenState,
     isTagSearchOpenState,
+    isSettingOpenState,
 } from "./atom";
 import StarRegist from "./star/StarRegist";
 import StarDetail from "./star/StarDetail";
@@ -21,6 +22,7 @@ import StarFavorList from "./star/StarFavorList";
 import FollowList from "./user/FollowList";
 import FindUser from "./user/FindUser";
 import StarTagSearch from "./star/StarTagSearch";
+import Settings from "./user/Settings";
 
 function ModalSpace() {
     return (
@@ -34,7 +36,7 @@ function ModalSpace() {
             <FollowListArea />
             <FindUserArea />
             <TagSearchArea />
-            {/* <SettingArea /> */}
+            <SettingArea />
         </>
     );
 }
@@ -110,5 +112,11 @@ function TagSearchArea() {
     const isTagSearchOpen = useRecoilValue(isTagSearchOpenState);
 
     return <>{isTagSearchOpen && <StarTagSearch />}</>;
+}
+
+function SettingArea() {
+    const isSettingOpen = useRecoilValue(isSettingOpenState);
+
+    return <>{isSettingOpen && <Settings />}</>;
 }
 export default ModalSpace;
