@@ -31,14 +31,14 @@ function Settings() {
                 );
 
                 setSelectedOption(response.data.memberRadioStatus);
+                const memberRadioStatus = response.data.memberRadioStatus;
 
                 // option에서 selectedOption과 일치하는 배열 index 가져오기
-                if (selectedOption) {
-                    const result = options.findIndex(
-                        (it) => it === selectedOption
-                    );
-                    setInitOption(result);
-                }
+
+                const result = options.findIndex(
+                    (it) => it === memberRadioStatus
+                );
+                setInitOption(result);
             } catch (error) {
                 console.log('회원정보 가져오기 실패', error);
             }
