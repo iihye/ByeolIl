@@ -11,9 +11,7 @@ function Settings() {
     const resetIsSettingOpen = useResetRecoilState(isSettingOpenState);
 
     const options = ["OLD", "OLDER", "OLDEST"];
-
-    const [selectedOption, setSelectedOption] = useState("");
-    const [initOption, setInitOption] = useState("");
+    const [initOption, setInitOption] = useState(null);
     const memberIndex = sessionStorage.getItem("memberIndex");
     const userToken = sessionStorage.getItem("token");
 
@@ -30,14 +28,15 @@ function Settings() {
                     }
                 );
 
-                setSelectedOption(response.data.memberRadioStatus);
                 const memberRadioStatus = response.data.memberRadioStatus;
+                console.log("라디오 상태", memberRadioStatus);
 
-                // option에서 selectedOption과 일치하는 배열 index 가져오기
+                // option에서 selectedOption과 일치하는 배열 index 가져오기 (초기값 세팅)
 
                 const result = options.findIndex(
                     (it) => it === memberRadioStatus
                 );
+
                 setInitOption(result);
             } catch (error) {
                 console.log("회원정보 가져오기 실패", error);
@@ -50,7 +49,7 @@ function Settings() {
     // 슬라이더 값에 따른 처리 함수
     const handleSliderChange = (valueArray) => {
         const sliderValue = valueArray[0]; // 슬라이더는 하나의 값만 반환
-        setSelectedOption(options[sliderValue]); // 슬라이더 값에 해당하는 옵션 선택
+        const selectedOption = options[sliderValue]; // 슬라이더 값에 해당하는 옵션 선택
 
         if (selectedOption) {
             axios
@@ -103,7 +102,7 @@ function Settings() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {initOption ? (
+                    {initOption !== null ? (
                         <>
                             <div className="flex font-['Pre-bold']">
                                 <PiRadioFill
@@ -132,7 +131,7 @@ function Settings() {
                             </div>
                         </>
                     ) : (
-                        <div>Loading</div>
+                        <div>Loading..</div>
                     )}
                 </CardContent>
             </Card>
