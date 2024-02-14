@@ -4,6 +4,7 @@ import {
     isReportAlertOpenState,
     isStarDetailOpenState,
     isPwCheckOpenState,
+    isChangeInfoOpenState,
 } from "components/atom";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
@@ -13,17 +14,9 @@ import { useNavigate } from "react-router";
 function Alert(props) {
     const alertTypes = {
         block: <Block />,
-        delete: (
-            <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />
-        ),
+        delete: <Delete boardIndex={props.boardIndex} userIndex={props.userIndex} />,
         PWCheck: <InputAlert type={props.type} />,
-        report: (
-            <InputAlert
-                type={props.type}
-                boardIndex={props.boardIndex}
-                userIndex={props.userIndex}
-            />
-        ),
+        report: <InputAlert type={props.type} boardIndex={props.boardIndex} userIndex={props.userIndex} />,
     };
 
     return (
@@ -41,15 +34,12 @@ function InputAlert(props) {
 
     const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
     const setIsPwCheckOpenState = useSetRecoilState(isPwCheckOpenState);
-
-    const navigate = useNavigate();
+    const setIsChangeInfoOpen = useSetRecoilState(isChangeInfoOpenState);
 
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some(
-                (it) => it === "alert-container"
-            );
+            const check = [...e.target.classList].some((it) => it === "alert-container");
 
             if (check) {
                 handleClose();
@@ -101,19 +91,14 @@ function InputAlert(props) {
             memberPass: inputData,
         };
         axios
-            .post(
-                `${process.env.REACT_APP_API_URL}/member/check/pass`,
-                PWData,
-                {
-                    headers: {
-                        token: sessionStorage.getItem("token"),
-                    },
-                }
-            )
+            .post(`${process.env.REACT_APP_API_URL}/member/check/pass`, PWData, {
+                headers: {
+                    token: sessionStorage.getItem("token"),
+                },
+            })
             .then((response) => {
                 // console.log(response.data);
-                if (response.data.message === "success")
-                    setIsPwCheckOpenState(false);
+                if (response.data.message === "success") setIsPwCheckOpenState(false);
                 // else alert('비밀번호가 틀렸습니다!');
             });
     };
@@ -143,7 +128,8 @@ function InputAlert(props) {
         if (props.type === "report") {
             setIsReportAlertOpen(false);
         } else if (props.type === "PWCheck") {
-            navigate(-1);
+            setIsPwCheckOpenState(false);
+            setIsChangeInfoOpen(false);
         }
     };
     // className="rounded-input bg-transparent border-white-sub outline-none"
@@ -151,13 +137,9 @@ function InputAlert(props) {
         <>
             <div className="flex-row">
                 {props.type === "report" ? (
-                    <h1 className="text-center text-3xl mb-2 font-['Pre-bold']">
-                        신고하기
-                    </h1>
+                    <h1 className="text-center text-3xl mb-2 font-['Pre-bold']">신고하기</h1>
                 ) : null}
-                <div className="text-lg text-center mb-3">
-                    {toEnter[props.type]} 입력해주세요.
-                </div>
+                <div className="text-lg text-center mb-3">{toEnter[props.type]} 입력해주세요.</div>
                 <div className="flex justify-center mb-3">
                     {props.type === "report" ? (
                         <textarea
@@ -203,9 +185,7 @@ function Delete(props) {
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some(
-                (it) => it === "alert-container"
-            );
+            const check = [...e.target.classList].some((it) => it === "alert-container");
 
             if (check) {
                 handleClose();
@@ -312,9 +292,9 @@ function Block() {
                 차단된 사용자입니다.
                 <br />
                 차단 해제일 :{" "}
-                {`${dueDate && dueDate.getFullYear()}년 ${
-                    dueDate && dueDate.getMonth() + 1
-                }월 ${dueDate && dueDate.getDate()}일`}
+                {`${dueDate && dueDate.getFullYear()}년 ${dueDate && dueDate.getMonth() + 1}월 ${
+                    dueDate && dueDate.getDate()
+                }일`}
             </div>
         </>
     );
