@@ -38,11 +38,7 @@ function AxiosInterceptor() {
                 if (res.status === 400 && res.data.message) {
                     alert(res.data.message);
                     return res;
-                } else if (
-                    res.status === 401 ||
-                    res.status === 403 ||
-                    res.status === 400
-                ) {
+                } else if (res.status === 401 || res.status === 403) {
                     sessionStorage.removeItem('memberIndex');
                     sessionStorage.removeItem('nickname');
                     sessionStorage.removeItem('token');
