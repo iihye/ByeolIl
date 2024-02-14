@@ -17,6 +17,7 @@ import { CgCloseR } from "react-icons/cg";
 import { IoMdSend } from "react-icons/io";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import AudioPlayer from "components/radio/AudioPlayer";
 import ReactAudioPlayer from "react-audio-player";
 
 // type: "radio", "star", "report"
@@ -419,8 +420,8 @@ function ReplyRegistArea(props) {
 function RadioContent() {
   const [rdata, setRdata] = useState();
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
-  const [audioData, setAudioData] = useState(null);
   const [repostActive, setRepostActive] = useState(false);
+  const [audioSrc, setAudioSrc] = useState('');
   const navigate = useNavigate();
   const fetchData = async () => {
     await axios
@@ -443,9 +444,11 @@ function RadioContent() {
 
     await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`)
     .then((response) => {
-      console.log(response.config)
-      // setAudioData(URL.createObjectURL(response)); 
-            
+      console.log(response);
+      const blob = new Blob([response.data], { type: 'audio/wav'}); // blob파일 생성.
+      console.log(blob);
+      setAudioSrc(URL.createObjectURL(blob));
+      console.log(audioSrc);
     }).catch((e) => { console.log(e) })
   }
 
@@ -457,23 +460,7 @@ function RadioContent() {
   useEffect(() => {
     // TTS 음성파일 추출 및 다운. 
     fetchDataWav();
-  },[rdata, audioData]) // rdata에 의존성 
-
-  // useEffect(() => {
-  //   const fetchAudioData = async () => {
-  //     const response = await axios.get('/audio.mp3', {
-  //       responseType: 'blob',
-  //     });
-
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       setAudioData(reader.result);
-  //     };
-  //     reader.readAsDataURL(response.data);
-  //   };
-    
-  //   fetchAudioData();
-  // }, []);
+  },[rdata]) // rdata에 의존성 
 
   function handleRepost() {
     axios
@@ -527,7 +514,6 @@ function RadioContent() {
         <div>{rdata ? rdata.boardContent : "로딩중"}</div>
       </div>
       <div>
-        <ReactAudioPlayer src={audioData} controls/>
         <button
           disabled={repostActive}
           onClick={() => {
@@ -536,6 +522,10 @@ function RadioContent() {
         >
           재송신하기
         </button>
+      </div>
+      <div>
+      <h2>오디오 플레이어</h2>
+      {audioSrc && <ReactAudioPlayer src={audioSrc} controls />}
       </div>
       <div className="reportAlert">{isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />}</div>
     </div>
