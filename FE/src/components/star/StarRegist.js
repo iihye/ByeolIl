@@ -9,7 +9,6 @@ import { MdOutlineCancel } from "react-icons/md";
 import { Calendar } from "@/components/ui/calendar";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
-import { PiSmileySadDuotone } from "react-icons/pi";
 
 const EXTENSION_IMAGE = ["png", "gif"];
 const EXTENSION_VIDEO = ["wav", "mp4"];
@@ -482,7 +481,7 @@ function ImagePreviewArea(props) {
     }, [fileList]);
 
     useEffect(() => {
-        if (props.type === "modify" && areaRef.current) {
+        if (areaRef.current) {
             areaRef.current.style.transform = `translateX(${-curPage * 32}rem)`;
         }
     }, [curPage]);
