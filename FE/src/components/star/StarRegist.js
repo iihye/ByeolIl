@@ -178,7 +178,7 @@ function StarRegist(props) {
                 boardContent: contentRef.current.value,
                 boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
-                hashContent: hashContent,
+                boardHash: hashContent,
             };
 
             // Object to Blob
@@ -632,17 +632,17 @@ function ImagePreviewArea(props) {
                                         ></img>
                                     ) : null}
                                     {it.split("_")[1] === "video" ? (
-                                        <video className="w-pic max-h-pic" src={it.split("_")[0]} controls />
+                                        <video className="w-pic max-h-pic" src={it.split("_")[0]} controls autoPlay />
                                     ) : null}
                                 </div>
                             ))}
                         </div>
                         <FaChevronLeft
-                            className="absolute left-0 h-full w-8 mx-2 text-black-sub hover:text-black"
+                            className="absolute left-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
                             onClick={handleLeft}
                         />
                         <FaChevronRight
-                            className="absolute right-0 h-full w-8 mx-2 text-black-sub hover:text-black"
+                            className="absolute right-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
                             onClick={handleRight}
                         />
                     </div>

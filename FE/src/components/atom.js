@@ -112,3 +112,14 @@ export const isGuideCommentOpenState = atom({
     key: "isGuideCommentOpen",
     default: false,
 });
+
+// 신고 상세보기
+export const isReportDetailOpenState = atom({
+    key: "isReportDetailOpen",
+    default: "",
+});
+
+export const isOpinionOpenState = atom({
+    key: "isOpinionOpen",
+    default: false,
+});
