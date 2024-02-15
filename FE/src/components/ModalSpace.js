@@ -28,7 +28,7 @@ import StarTagSearch from "./star/StarTagSearch";
 import Settings from "./user/Settings";
 import Report from "./admin/Report";
 import { GuideComment } from "./user/UserSpace";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 import swal from "sweetalert";
 
@@ -150,6 +150,35 @@ function OpinionArea() {
 function OpinionAlert() {
     const [isOpinionOpen, setIsOpinionOpen] = useRecoilState(isOpinionOpenState);
 
+    useEffect(() => {
+        function handleClick(e) {
+            e.stopPropagation();
+            const check = [...e.target.classList].some((it) => it === "outside");
+            if (check) {
+                if (input.current.value.length > 0) {
+                    swal({
+                        title: "창을 닫을까요?",
+                        text: "작성 중인 내용을 잃을 수 있어요!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            setIsOpinionOpen(false);
+                        }
+                    });
+                } else {
+                    setIsOpinionOpen(false);
+                }
+            }
+        }
+
+        window.addEventListener("click", handleClick);
+
+        return () => {
+            window.removeEventListener("click", handleClick);
+        };
+    }, []);
     const input = useRef();
     async function handleSubmit() {
         const data = {
@@ -174,7 +203,21 @@ function OpinionAlert() {
             .catch((error) => console.log(error));
     }
     function handleClose() {
-        setIsOpinionOpen(false);
+        if (input.current.value.length > 0) {
+            swal({
+                title: "창을 닫을까요?",
+                text: "작성 중인 내용을 잃을 수 있어요!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    setIsOpinionOpen(false);
+                }
+            });
+        } else {
+            setIsOpinionOpen(false);
+        }
     }
 
     return (

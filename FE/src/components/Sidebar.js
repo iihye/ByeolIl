@@ -12,6 +12,8 @@ import * as AiIcons from "react-icons/ai";
 import * as PiIcons from "react-icons/pi";
 import * as HiIcons from "react-icons/hi2";
 import * as IoIcons from "react-icons/io5";
+import * as SlICons from "react-icons/sl";
+
 import { useSetRecoilState } from "recoil";
 import {
     isChangeInfoOpenState,
@@ -169,8 +171,8 @@ function SidebarList(props) {
                 path: () => setIsChangeInfoOpen(true),
             },
             {
-                type: RiIcons,
-                icon: "RiLockPasswordLine",
+                type: SlICons,
+                icon: "SlSpeech",
                 name: "의견 보내기",
                 path: () => setIsOpinionOpen(memberIndex),
             },
@@ -219,6 +221,7 @@ function SidebarList(props) {
             {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
             {items.map((item, index) => {
                 const IconItem = item.type[item.icon];
+                console.log(IconItem);
                 const IconComponent = IconItem;
 
                 return (
