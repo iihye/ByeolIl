@@ -8,13 +8,16 @@ import { IoCloseSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 import { useRecoilState } from 'recoil';
-import { isAlarmDetailState } from '../atom';
+import { isAlarmDetailState, isStarDetailOpenState } from '../atom';
 
 // 추후 에러핸들링 필요
 
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
     const [detailModal, setDetailModal] = useRecoilState(isAlarmDetailState);
+    const [isStarDetailOpen, setIsStarDetailOpen] = useRecoilState(
+        isStarDetailOpenState
+    );
     const [boardState, setBoardState] = useState('');
     const memberIndex = Number(sessionStorage.getItem('memberIndex'));
     const EventSource = EventSourcePolyfill || NativeEventSource;
@@ -172,7 +175,10 @@ function Alarm() {
                                             <div
                                                 className="flex"
                                                 onClick={() =>
-                                                    ModalOpen(it.boardIndex)
+                                                    setIsStarDetailOpen([
+                                                        it.boardIndex,
+                                                        -2,
+                                                    ])
                                                 }
                                             >
                                                 <FaComment
@@ -190,7 +196,7 @@ function Alarm() {
                                             {detailModal &&
                                                 boardState ===
                                                     it.boardIndex && (
-                                                    <div>
+                                                    <div className="fixed top-0 bottom-0 right-0 left-0">
                                                         {
                                                             <StarDetail
                                                                 starIndex={
@@ -211,7 +217,10 @@ function Alarm() {
                                             <div
                                                 className="flex"
                                                 onClick={() =>
-                                                    ModalOpen(it.boardIndex)
+                                                    setIsStarDetailOpen([
+                                                        it.boardIndex,
+                                                        -2,
+                                                    ])
                                                 }
                                             >
                                                 <FaComments
