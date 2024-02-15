@@ -774,6 +774,7 @@ export const constellationInfo = [
     "마차부",
     "황소",
     "안드로메다",
+    "페가수스",
     "삼각형",
     "양",
     "쌍둥이",
@@ -784,7 +785,6 @@ export const constellationInfo = [
     "북쪽 왕관",
     "목동",
     "사자",
-    "페가수스",
 ];
 console.log(position);
 export const EXTENSION_IMAGE = new Set(["png", "gif"]);
