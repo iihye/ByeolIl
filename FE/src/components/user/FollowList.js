@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { AiOutlineUserAdd } from "react-icons/ai";
-import { FaUserCircle } from "react-icons/fa";
-import { useResetRecoilState } from "recoil";
-import { isFollowListOpenState } from "components/atom";
+import React, { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { AiOutlineUserAdd } from 'react-icons/ai';
+import { FaUserCircle } from 'react-icons/fa';
+import { TbHomeMove } from 'react-icons/tb';
+import { useResetRecoilState } from 'recoil';
+import { isFollowListOpenState } from 'components/atom';
+import { Link } from 'react-router-dom';
 
 function FollowList() {
     const resetIsFollowListOpen = useResetRecoilState(isFollowListOpenState);
@@ -15,23 +17,25 @@ function FollowList() {
     const [followData, setFollowData] = useState([]);
     const [followerData, setFollowerData] = useState([]);
 
-    const loginIndex = sessionStorage.getItem("memberIndex");
-    const loginToken = sessionStorage.getItem("token");
+    const loginIndex = sessionStorage.getItem('memberIndex');
+    const loginToken = sessionStorage.getItem('token');
 
     const menuArr = useMemo(() => {
         // 데이터를 받은 후에 content를 설정
         const followContent = followData.map((it) => ({
             memberName: it.memberName,
-            memberIndex: it.memberId,
+            memberId: it.memberId,
+            memberIndex: it.memberIndex,
         }));
         const followerContent = followerData.map((it) => ({
             memberName: it.memberName,
-            memberIndex: it.memberId,
+            memberId: it.memberId,
+            memberIndex: it.memberIndex,
         }));
 
         return [
-            { name: "팔로우", content: followContent },
-            { name: "팔로워", content: followerContent },
+            { name: '팔로우', content: followContent },
+            { name: '팔로워', content: followerContent },
         ];
     }, [followData, followerData]);
 
@@ -60,6 +64,7 @@ function FollowList() {
 
                 setFollowData(followResponse.data.result);
                 setFollowerData(followerResponse.data.result);
+                console.log(followResponse.data.result);
             } catch (error) {
                 console.error(error);
             }
@@ -73,16 +78,16 @@ function FollowList() {
             e.stopPropagation();
 
             const check = [...e.target.classList].some(
-                (it) => it === "outside"
+                (it) => it === 'outside'
             );
             if (check) {
                 resetIsFollowListOpen();
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     });
 
@@ -123,6 +128,13 @@ function FollowList() {
                                                 className="pr-2 text-btn-bg-hover"
                                             />
                                             <p>{user.memberName}</p>
+                                            <Link
+                                                to={`/space/${user.memberIndex}`}
+                                            >
+                                                <TbHomeMove className="size-7 mx-2">
+                                                    이동하기
+                                                </TbHomeMove>
+                                            </Link>
                                         </li>
                                     ))}
                                 </ScrollArea>
