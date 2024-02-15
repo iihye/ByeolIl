@@ -178,7 +178,7 @@ function StarRegist(props) {
                 boardContent: contentRef.current.value,
                 boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
-                hashContent: hashContent,
+                boardHash: hashContent,
             };
 
             // Object to Blob
