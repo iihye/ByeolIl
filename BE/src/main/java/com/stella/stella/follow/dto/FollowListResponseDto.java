@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowListResponseDto {
+    Long memberIndex;
     String memberId;
     String memberName;
 }
