@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
 
 export const filterState = atom({
     key: "filterState",
@@ -33,6 +33,12 @@ export const isDeleteAlertOpenState = atom({
 export const isReportAlertOpenState = atom({
     key: "isReportAlertOpen",
     default: false,
+});
+
+// 신고 상세보기 알럿
+export const reportModalState = atom({
+    key: "reportModalState",
+    default: "",
 });
 
 // 현재 PW 확인 알럿
@@ -98,6 +104,12 @@ export const isAlarmDetailState = atom({
 // 신고목록
 export const isReportOpenState = atom({
     key: "isReportOpen",
+    default: false,
+});
+
+// 게시글 없는 유저 알림말
+export const isGuideCommentOpenState = atom({
+    key: "isGuideCommentOpen",
     default: false,
 });
 
