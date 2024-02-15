@@ -14,6 +14,8 @@ public class ReportResponseDto {
     private Long boardIndex;
     private Long memberIndex;
     private String memberNickname;
+    private Long banMemberIndex;
+    private String banMemberNickName;
     private String reportContent;
     private String reportRegdate;
 }

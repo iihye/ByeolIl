@@ -54,6 +54,8 @@ public class ReportService {
                     .boardIndex(r.getBoard().getBoardIndex())
                     .memberIndex(r.getMember().getMemberIndex())
                     .memberNickname(r.getMember().getMemberNickname())
+                    .banMemberIndex(r.getBoard().getMember().getMemberIndex())
+                    .banMemberNickName(r.getBoard().getMember().getMemberNickname())
                     .build());
         }
         return list;
