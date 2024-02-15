@@ -49,6 +49,7 @@ public class SecurityConfig {
 								.requestMatchers("/api/search/**").permitAll()
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 								.requestMatchers("/api/media/**").permitAll()
+								.requestMatchers("/api/opinion/**").permitAll()
 								.anyRequest().authenticated()
 
 				)
