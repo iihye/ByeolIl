@@ -185,7 +185,7 @@ function StarRegist(props) {
                         isAddedStar.set(star.boardLocation, star)
                     );
                     setStars(res.data);
-                    handleClose();
+                    setIsStarRegistOpen(false);
                 } else {
                     swal({
                         title: '게시글 작성에 실패했어요',
@@ -224,6 +224,10 @@ function StarRegist(props) {
                     })
                     .then((response) => {
                         if (response.status === 200) {
+                            swal({
+                                title: '게시글 수정 성공!',
+                                icon: 'success',
+                            });
                             setIsStarDetailOpen([boardIndex, writerIndex]);
                             setIsStarModifyOpen(false);
                         }
