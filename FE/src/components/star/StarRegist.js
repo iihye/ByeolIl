@@ -632,7 +632,7 @@ function ImagePreviewArea(props) {
                                         ></img>
                                     ) : null}
                                     {it.split("_")[1] === "video" ? (
-                                        <video className="w-pic max-h-pic" src={it.split("_")[0]} controls />
+                                        <video className="w-pic max-h-pic" src={it.split("_")[0]} controls autoPlay />
                                     ) : null}
                                 </div>
                             ))}
