@@ -346,6 +346,7 @@ function SceneStars() {
     const [stars, setStars] = useRecoilState(starsState);
     const setFollower = useSetRecoilState(followerState);
     const setIsGuideCommentOpen = useSetRecoilState(isGuideCommentOpenState);
+    const [renewLine, setRenewLine] = useRecoilState(renewLineState);
     const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
 
     const params = useParams();
@@ -384,6 +385,7 @@ function SceneStars() {
                         });
 
                         setStars([...response.data]);
+                        setRenewLine(!renewLine);
                     })
                     .catch((e) => {
                         console.log(e);
