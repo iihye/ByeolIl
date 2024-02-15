@@ -18,16 +18,10 @@ function Alarm() {
     const [isStarDetailOpen, setIsStarDetailOpen] = useRecoilState(
         isStarDetailOpenState
     );
-    const [boardState, setBoardState] = useState('');
     const memberIndex = Number(sessionStorage.getItem('memberIndex'));
     const EventSource = EventSourcePolyfill || NativeEventSource;
 
     const navigate = useNavigate();
-
-    const ModalOpen = (boardIndex) => {
-        setDetailModal(true);
-        setBoardState(boardIndex);
-    };
 
     const CloseButton = ({ onClose, alarmIndex }) => (
         <div className="alarmClose">
@@ -70,42 +64,6 @@ function Alarm() {
         };
 
         fetchData();
-
-        // if (token) {
-        //     const eventSource = new EventSourcePolyfill(
-        //         `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
-        //         {
-        //             headers: {
-        //                 Authorization: `${token}`,
-        //             },
-        //             heartbeatTimeout: 30000,
-        //         }
-        //     );
-
-        //     console.log(eventSource);
-
-        //     eventSource.onmessage = (e) => {
-        //         console.log('제발1');
-        //         if (e.type === 'alarm') {
-        //             console.log('제발');
-        //         }
-        //     };
-
-        //     eventSource.addEventListener('open', function (event) {
-        //         console.log('열렸음', event);
-        //     });
-        //     eventSource.addEventListener('alarm', function (event) {
-        //         console.log('이벤트 발생', event);
-        //     });
-        //     eventSource.addEventListener('error', function (event) {
-        //         console.log('알림 에러 발생', event.target);
-        //         if (event.target.readyState === EventSource.CLOSED) {
-        //             console.log('eventsource closed');
-        //         }
-        //         eventSource.close();
-        //     });
-        //     return () => eventSource.current?.close();
-        // }
     }, []);
 
     useEffect(() => {
@@ -193,19 +151,6 @@ function Alarm() {
                                                 alarmIndex={it.alarmIndex}
                                                 className="mr-1"
                                             />
-                                            {detailModal &&
-                                                boardState ===
-                                                    it.boardIndex && (
-                                                    <div className="fixed top-0 bottom-0 right-0 left-0">
-                                                        {
-                                                            <StarDetail
-                                                                starIndex={
-                                                                    it.boardIndex
-                                                                }
-                                                            />
-                                                        }
-                                                    </div>
-                                                )}
                                         </div>
                                     );
                                 case 'MULTCMT':

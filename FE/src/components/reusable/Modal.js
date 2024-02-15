@@ -12,7 +12,7 @@ import {
     isStarModifyOpenState,
     renewReplyState,
     isAlarmDetailState,
-    reportModalState,
+    isReportDetailOpenState,
 } from "components/atom";
 import { useNavigate } from "react-router";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
@@ -30,7 +30,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaRadio } from "react-icons/fa6";
 import { FaRegFaceSadTear } from "react-icons/fa6";
 import { RiCloseFill } from "react-icons/ri";
-
 // type: "radio", "star", "report"
 function Modal(props) {
     const type = props.type;
@@ -58,7 +57,7 @@ function StarContent(props) {
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
     const setIsDetailAlarmOpen = useSetRecoilState(isAlarmDetailState);
-    const setReportModalState = useSetRecoilState(reportModalState);
+    const setReportModalState = useSetRecoilState(isReportDetailOpenState);
 
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
@@ -76,7 +75,6 @@ function StarContent(props) {
 
     // 글 조회 / 수정시 내용 갱신
     useEffect(() => {
-        console.log("Fetch");
         const fetchData = async (starIndex) => {
             await axios
                 .get(
@@ -559,7 +557,7 @@ function ReplyRegistArea(props) {
                     onKeyDown={handleKeyDown}
                 />
                 <div
-                    className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-modal-bg duration-200 hover:cursor-pointer"
+                    className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub duration-200 hover:cursor-pointer"
                     onClick={handleRegistReply}
                 >
                     <IoMdSend />

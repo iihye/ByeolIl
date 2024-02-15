@@ -35,12 +35,6 @@ export const isReportAlertOpenState = atom({
     default: false,
 });
 
-// 신고 상세보기 알럿
-export const reportModalState = atom({
-    key: 'reportModalState',
-    default: '',
-});
-
 // 현재 PW 확인 알럿
 export const isPwCheckOpenState = atom({
     key: 'isPwCheckOpenState',
@@ -105,4 +99,10 @@ export const isAlarmDetailState = atom({
 export const isReportOpenState = atom({
     key: 'isReportOpen',
     default: false,
+});
+
+// 신고 상세보기
+export const isReportDetailOpenState = atom({
+    key: 'isReportDetailOpen',
+    default: '',
 });
