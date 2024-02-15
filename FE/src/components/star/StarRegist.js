@@ -638,11 +638,11 @@ function ImagePreviewArea(props) {
                             ))}
                         </div>
                         <FaChevronLeft
-                            className="absolute left-0 h-full w-8 mx-2 text-black-sub hover:text-black"
+                            className="absolute left-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
                             onClick={handleLeft}
                         />
                         <FaChevronRight
-                            className="absolute right-0 h-full w-8 mx-2 text-black-sub hover:text-black"
+                            className="absolute right-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
                             onClick={handleRight}
                         />
                     </div>
