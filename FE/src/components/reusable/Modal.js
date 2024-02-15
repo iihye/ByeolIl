@@ -96,6 +96,7 @@ function StarContent(props) {
                     } else {
                         setIsLike(false);
                     }
+                    console.log(response.data);
                     setData(response.data);
                 })
                 .catch((err) => {
