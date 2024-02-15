@@ -20,12 +20,13 @@ export default function Regist() {
 
     const location = useLocation();
     const { social_id, social_platform } = location.state || {}; // state가 undefined인 경우를 대비한 기본값 설정
-    useEffect(() => {
+    useEffect(() => { 
         // 리스너 설치해서 인증성공시, 동작하도록해야할까..
         if (social_id) {
             setFormOpen(true); // social_id가 있으면 formOpen을 true로 설정
         }
-    }, [data]);
+    }, []);
+   
     return (
         <div>
             {!formOpen && (
@@ -72,38 +73,14 @@ export default function Regist() {
                 />
             )}
         </div>
-
-        // <div className="Regist">
-        //   {!formOpen && (
-        //     <div className="modal">
-        //       <button onClick={() => setFormOpen(true)}>일반회원가입</button>
-        //       <button
-        //         onClick={() => {
-        //           window.location.assign(kakao_join_uri);
-        //         }}
-        //       >
-        //         카카오
-        //       </button>
-        //       <a>네이버</a>
-        //       <a>구글</a>
-        //       <a>깃헙</a>
-        //     </div>
-        //   )}
-        //   {formOpen && <RegistForm social_id={social_id} social_platform={social_platform}/>}
-
-        // </div>
     );
 }
-//  처음들어왔을때, 모달창을 통해서 일반과 소셜중 선택 가능하게해야한다. = <Regist/>는 모달창
-//  소셜 회원가입을 선택시, 모달창이 하나더 뜨면서 선택한 소셜로그인 인증을 진행 = <Regist/>에서 모달창으로 띄운다.
-//  소셜인증이 성공해서 데이터를 받았거나, 일반회원가입 버튼을 눌렀을때, RegistForm이 교체로 렌더링 되면서 자연스럽게 모달창이 길어진다.
-//  소셜인증을 했다면, 필요한 데이터들은 미리 채워져서 RegistForm에서 수정이 비활성화 되게끔해야한다.
-//  이후에 회원가입버튼 누를시, 그사람의 회원가입 플랫폼(origin/ kakao/ naver/google/github)을 스트링으로 보내주어야함.
 
 function RegistForm({
     social_id: social_id,
     social_platform: social_platform,
 }) {
+    
     const navigate = useNavigate();
     // 초기값 - 아이디, 닉네임, 비밀번호, 비밀번호확인, 이메일, 생년월일
     const id = useRef('');
@@ -300,6 +277,14 @@ function RegistForm({
             });
     };
     const form = useForm();
+    useEffect(() => {
+        if(social_id){
+            setIsId(true);
+            setIsPassword(true);
+            setIsPasswordConfirm(true);
+        }
+    },[])
+
     return (
         <div>
             <Card className="Regist w-96 px-6 py-6 card-contain-style">
