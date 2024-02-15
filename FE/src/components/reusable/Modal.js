@@ -12,7 +12,7 @@ import {
     isStarModifyOpenState,
     renewReplyState,
     isAlarmDetailState,
-    reportModalState,
+    isReportDetailOpenState,
 } from 'components/atom';
 import { useNavigate } from 'react-router';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
@@ -54,7 +54,7 @@ function StarContent(props) {
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
     const setIsDetailAlarmOpen = useSetRecoilState(isAlarmDetailState);
-    const setReportModalState = useSetRecoilState(reportModalState);
+    const setReportModalState = useSetRecoilState(isReportDetailOpenState);
 
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
@@ -596,12 +596,19 @@ function RadioContent() {
 
     const fetchDataWav = async () => {
         if (!rdata) return; // rdata가 null일 때는 메소드를 종료
-        
-        await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`, {responseType: 'blob'})
-        .then((response)=>{
-            const blobUrl = URL.createObjectURL(response.data);
-            setAudioSrc(blobUrl);
-        }).catch((e)=>{console.log(e)});
+
+        await axios
+            .get(
+                `${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`,
+                { responseType: 'blob' }
+            )
+            .then((response) => {
+                const blobUrl = URL.createObjectURL(response.data);
+                setAudioSrc(blobUrl);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
     };
 
     useEffect(() => {
