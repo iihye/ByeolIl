@@ -24,6 +24,7 @@
     "base-64": "^1.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "crypto-js": "^4.2.0",
     "date-fns": "^3.3.1",
     "event-source-polyfill": "^1.0.31",
     "eventsource": "^2.0.2",
