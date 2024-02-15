@@ -13,7 +13,7 @@ function ReportDetail(reportInfo) {
     return (
         <Modal
             type={'report'}
-            reportInfo={reportInfo}
+            reportInfo={reportInfo.reportContent}
             starIndex={reportInfo.boardIndex}
         />
     );

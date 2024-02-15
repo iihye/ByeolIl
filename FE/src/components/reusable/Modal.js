@@ -72,7 +72,6 @@ function StarContent(props) {
 
     // 글 조회 / 수정시 내용 갱신
     useEffect(() => {
-        console.log('Fetch');
         const fetchData = async (starIndex) => {
             await axios
                 .get(
@@ -555,7 +554,7 @@ function ReplyRegistArea(props) {
                     onKeyDown={handleKeyDown}
                 />
                 <div
-                    className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-modal-bg duration-200 hover:cursor-pointer"
+                    className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub duration-200 hover:cursor-pointer"
                     onClick={handleRegistReply}
                 >
                     <IoMdSend />

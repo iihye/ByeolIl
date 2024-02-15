@@ -93,8 +93,6 @@ function Report() {
                     (res) => res.data.boardContent
                 );
 
-                console.log(reportData);
-
                 const newBoardIndex = reportData.map((res) => res.boardIndex);
 
                 setBoardContent(newBoardContent);
