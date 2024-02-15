@@ -1,59 +1,70 @@
-import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei";
-import * as THREE from "three";
-import axios from "axios";
-import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { Link, useParams } from "react-router-dom";
-import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
-import { position, linePosition, MAX_SATR_CNT } from "../../data";
-import { useLocation } from "react-router-dom";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import { KernelSize } from "postprocessing";
-import { constellationCheck } from "util";
-import { PiShootingStarFill } from "react-icons/pi";
+import { useEffect, useRef, useState } from 'react';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera, Stats } from '@react-three/drei';
+import * as THREE from 'three';
+import axios from 'axios';
+import {
+    atom,
+    useRecoilState,
+    useRecoilValue,
+    useSetRecoilState,
+} from 'recoil';
+import { Link, useParams } from 'react-router-dom';
+import {
+    isDeleteAlertOpenState,
+    isStarDetailOpenState,
+    isStarRegistOpenState,
+} from 'components/atom';
+import { position, linePosition, MAX_SATR_CNT } from '../../data';
+import { useLocation } from 'react-router-dom';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { KernelSize } from 'postprocessing';
+import { constellationCheck } from 'util';
+import { PiShootingStarFill } from 'react-icons/pi';
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
 const starRange = [];
-position.forEach((element, index) => starRange.push([element[0][0], element[element.length - 1][0]]));
+position.forEach((element, index) =>
+    starRange.push([element[0][0], element[element.length - 1][0]])
+);
 
 ///////////////////////////////// ↓ atoms
 
 // 현재 페이지
 const curPageState = atom({
-    key: "curPage",
+    key: 'curPage',
     default: 0,
 });
 
 // 현재 페이지에서 작성된 별 목록
 const starsState = atom({
-    key: "stars",
+    key: 'stars',
     default: [],
 });
 
 // 공간 주인과 접속 유저의 팔로워 여부
 const isFollowerState = atom({
-    key: "isFollower",
+    key: 'isFollower',
     default: true,
 });
 
 const followingState = atom({
-    key: "following",
+    key: 'following',
     default: [],
 });
 
 const followerState = atom({
-    key: "follower",
+    key: 'follower',
     default: [],
 });
 
 const starLineOpacityState = atom({
-    key: "starLineOpacity",
+    key: 'starLineOpacity',
     default: -1,
 });
 
 const followState = atom({
-    key: "followState",
+    key: 'followState',
     default: null,
 });
 
@@ -92,9 +103,9 @@ function Ground(props) {
             <meshBasicMaterial
                 color={props.color}
                 side={
-                    props.type === "double"
+                    props.type === 'double'
                         ? THREE.DoubleSide
-                        : props.type === "front"
+                        : props.type === 'front'
                         ? THREE.FrontSide
                         : THREE.BackSide
                 }
@@ -105,7 +116,10 @@ function Ground(props) {
 
 function Space(props) {
     const mesh = useRef(null);
-    const colorMap = useLoader(THREE.TextureLoader, `${process.env.PUBLIC_URL}/image/color_texture_4.png`);
+    const colorMap = useLoader(
+        THREE.TextureLoader,
+        `${process.env.PUBLIC_URL}/image/color_texture_4.png`
+    );
 
     return (
         <mesh ref={mesh} position={props.position}>
@@ -113,9 +127,9 @@ function Space(props) {
             <meshStandardMaterial
                 map={colorMap}
                 side={
-                    props.type === "double"
+                    props.type === 'double'
                         ? THREE.DoubleSide
-                        : props.type === "front"
+                        : props.type === 'front'
                         ? THREE.FrontSide
                         : THREE.BackSide
                 }
@@ -134,19 +148,23 @@ function Star(props) {
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
 
-    const writerIndex = Number(params["user_id"]);
-    const loginUserIndex = Number(JSON.parse(atob(sessionStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
+    const writerIndex = Number(params['user_id']);
+    const loginUserIndex = Number(
+        JSON.parse(
+            atob(sessionStorage.getItem('token').split(' ')[1].split('.')[1])
+        ).sub
+    );
     const colors = {
         true: 0xf5ff82,
-        false: "red",
+        false: 'red',
     };
 
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
 
     const colorCheck = curStarState
-        ? (isFollower && curStarState.boardAccess === "PARTOPEN") ||
-          curStarState.boardAccess === "OPEN" ||
+        ? (isFollower && curStarState.boardAccess === 'PARTOPEN') ||
+          curStarState.boardAccess === 'OPEN' ||
           writerIndex === loginUserIndex
         : false;
 
@@ -164,7 +182,9 @@ function Star(props) {
         e.stopPropagation();
         console.log(locationNum);
 
-        const starIndex = isAddedStar.get(locationNum) ? isAddedStar.get(locationNum).boardIndex : null;
+        const starIndex = isAddedStar.get(locationNum)
+            ? isAddedStar.get(locationNum).boardIndex
+            : null;
 
         if (locationNum === 208) {
             console.log(isAddedStar);
@@ -176,7 +196,7 @@ function Star(props) {
                 setIsStarDetailOpen([starIndex, writerIndex]);
             } else {
                 // 공개된 별이 아닐 때
-                alert("비공개 별입니다");
+                alert('비공개 별입니다');
             }
         } else {
             // 별 등록 모달 띄우기
@@ -193,12 +213,16 @@ function Star(props) {
                 <meshPhongMaterial
                     // emissive={"yellow"}
                     // emissiveIntensity={0.1}
-                    color={curStarState ? colors[colorCheck] : "grey"}
+                    color={curStarState ? colors[colorCheck] : 'grey'}
                     opacity={curStarState ? 1 : 0.4}
                     transparent={true}
                 />
             </mesh>
-            <StarSurround position={props.position} location={props.location} handleClick={handleClick} />
+            <StarSurround
+                position={props.position}
+                location={props.location}
+                handleClick={handleClick}
+            />
         </>
     );
 }
@@ -246,7 +270,13 @@ function GroupStar(props) {
 
     // 작성한 별 목록 변경 시 별자리 체크
     useEffect(() => {
-        const check = constellationCheck.query(1, 0, MAX_SATR_CNT, startStarNum, lastStarNum);
+        const check = constellationCheck.query(
+            1,
+            0,
+            MAX_SATR_CNT,
+            startStarNum,
+            lastStarNum
+        );
         console.log(check, lastStarNum - startStarNum + 1);
         console.log(constellationCheck.tree);
         if (check === lastStarNum - startStarNum + 1) {
@@ -271,7 +301,11 @@ function GroupStar(props) {
 
     return (
         <>
-            <group ref={group} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
+            <group
+                ref={group}
+                onPointerEnter={handlePointerEnter}
+                onPointerLeave={handlePointerLeave}
+            >
                 {props.position.map((val, index) => (
                     <Star
                         key={index}
@@ -288,7 +322,14 @@ function GroupStar(props) {
                 ))}
                 {linePosition[groupNum].map((it, index) => {
                     const pos = it.map((it) => new THREE.Vector3(...it));
-                    return <Line key={index} points={pos} lineColor={lineColor} groupNum={groupNum} />;
+                    return (
+                        <Line
+                            key={index}
+                            points={pos}
+                            lineColor={lineColor}
+                            groupNum={groupNum}
+                        />
+                    );
                 })}
             </group>
         </>
@@ -304,8 +345,8 @@ function SceneStars() {
 
     const params = useParams();
     const writerIndex = Number(params.user_id);
-    const loginUserId = Number(sessionStorage.getItem("memberIndex"));
-    const loginUserNickname = sessionStorage.getItem("nickname");
+    const loginUserId = Number(sessionStorage.getItem('memberIndex'));
+    const loginUserNickname = sessionStorage.getItem('nickname');
     const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
 
     useEffect(() => {
@@ -316,19 +357,25 @@ function SceneStars() {
 
             if (!isDeleteAlertOpen) {
                 await axios
-                    .get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
-                        header: {
-                            token: sessionStorage.getItem("token") ?? "",
-                        },
-                        params: {
-                            page: curPage ?? 0,
-                        },
-                    })
+                    .get(
+                        `${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`,
+                        {
+                            header: {
+                                token: sessionStorage.getItem('token') ?? '',
+                            },
+                            params: {
+                                page: curPage ?? 0,
+                            },
+                        }
+                    )
                     .then((response) => {
                         isAddedStar.clear();
 
                         response.data.forEach((star) => {
-                            isAddedStar.set(star.boardLocation % MAX_SATR_CNT, star);
+                            isAddedStar.set(
+                                star.boardLocation % MAX_SATR_CNT,
+                                star
+                            );
                             console.log(isAddedStar.get(208 % MAX_SATR_CNT));
                         });
 
@@ -350,14 +397,18 @@ function SceneStars() {
             // 공간 주인과 로그인 유저가 다를 때, 팔로잉 관계 체크 (게시물 팔로잉 공개 확인위해)
             if (writerIndex !== loginUserId) {
                 await axios
-                    .get(`${process.env.REACT_APP_API_URL}/follow/follower/${writerIndex}`)
+                    .get(
+                        `${process.env.REACT_APP_API_URL}/follow/follower/${writerIndex}`
+                    )
                     .then((response) => {
                         setFollower(response.data.result);
                         follower = response.data.result;
                     })
                     .catch((e) => console.log(e));
 
-                const followerCheck = follower.some((it) => it["memberName"] === loginUserNickname);
+                const followerCheck = follower.some(
+                    (it) => it['memberName'] === loginUserNickname
+                );
 
                 setIsFollower(followerCheck);
             }
@@ -369,7 +420,9 @@ function SceneStars() {
     return (
         <>
             {position.map((val, index) => {
-                return <GroupStar key={index} groupNum={index} position={val} />;
+                return (
+                    <GroupStar key={index} groupNum={index} position={val} />
+                );
             })}
         </>
     );
@@ -392,12 +445,16 @@ function SceneEnvironment() {
             <Space
                 size={[55, 500, 500, 0, Math.PI * 2, 0, (Math.PI * 3.5) / 5]}
                 position={[0, -7, 0]}
-                color={"black"}
-                type={"back"}
+                color={'black'}
+                type={'back'}
             />
 
             {/* 바닥면 */}
-            <Ground size={[2, 48, 48, 0, Math.PI * 2]} position={[0, -2.2, 0]} color={"orange"} />
+            <Ground
+                size={[2, 48, 48, 0, Math.PI * 2]}
+                position={[0, -2.2, 0]}
+                color={'orange'}
+            />
         </>
     );
 }
@@ -407,9 +464,13 @@ function FollowArea() {
     const userId = Number(params.user_id);
     const location = useLocation();
 
-    const [loginToken, setLoginToken] = useState(sessionStorage.getItem("token"));
-    const [loginIndex, setLoginIndex] = useState(Number(sessionStorage.getItem("memberIndex")));
-    const [userName, setUserName] = useState("");
+    const [loginToken, setLoginToken] = useState(
+        sessionStorage.getItem('token')
+    );
+    const [loginIndex, setLoginIndex] = useState(
+        Number(sessionStorage.getItem('memberIndex'))
+    );
+    const [userName, setUserName] = useState('');
     const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
 
     const handleFollow = (isFollower) => {
@@ -435,23 +496,27 @@ function FollowArea() {
         } else if (!isFollower) {
             // 팔로우 api 호출
             axios
-                .post(`${process.env.REACT_APP_API_URL}/follow/following`, relationData, {
-                    headers: {
-                        token: loginToken,
-                    },
-                })
+                .post(
+                    `${process.env.REACT_APP_API_URL}/follow/following`,
+                    relationData,
+                    {
+                        headers: {
+                            token: loginToken,
+                        },
+                    }
+                )
                 .then(() => setIsFollower(true));
         }
     };
 
     useEffect(() => {
         const writerIndex = Number(params.user_id);
-        const loginUserId = Number(sessionStorage.getItem("memberIndex"));
+        const loginUserId = Number(sessionStorage.getItem('memberIndex'));
         if (writerIndex !== loginUserId && location.state?.props) {
             setUserName(location.state.props);
         }
         if (writerIndex === loginUserId) {
-            setUserName("");
+            setUserName('');
         }
     }, [location]);
 
@@ -464,23 +529,29 @@ function FollowArea() {
             {userName ? (
                 <div className="absolute bottom-4 left-4 flex justify-center items-center text-white">
                     <PiShootingStarFill className="mr-1" />
-                    <div className="space-name font-['Pre-Bold'] text-2xl mr-2 ">{userName} 의 우주</div>
+                    <div className="space-name font-['Pre-Bold'] text-2xl mr-2 ">
+                        {userName} 우주
+                    </div>
                     <div>
                         {userId !== loginIndex &&
                             (isFollower === null ? (
-                                <div className="font-['Pre-Light']">Loading...</div>
+                                <div className="font-['Pre-Light']">
+                                    Loading...
+                                </div>
                             ) : (
                                 <button
                                     className="space-follow font-['Pre-Bold'] text-m px-3"
                                     onClick={() => handleFollow(isFollower)}
                                 >
-                                    {isFollower ? "언팔로우" : "팔로우"}
+                                    {isFollower ? '언팔로우' : '팔로우'}
                                 </button>
                             ))}
                     </div>
                 </div>
             ) : (
-                <Link to={`/space/${sessionStorage.getItem("memberIndex")}/radio`}>
+                <Link
+                    to={`/space/${sessionStorage.getItem('memberIndex')}/radio`}
+                >
                     <button className="absolute bottom-2 left-2">라디오</button>
                 </Link>
             )}
@@ -491,15 +562,28 @@ function FollowArea() {
 function UserSpace() {
     return (
         <div className="user-space relative">
-            <div id="canvas-container" className="w-full h-full" style={{ height: "100vh", width: "100vw" }}>
+            <div
+                id="canvas-container"
+                className="w-full h-full"
+                style={{ height: '100vh', width: '100vw' }}
+            >
                 <Canvas>
                     <EffectComposer>
-                        <Bloom intensity={0.7} luminanceThreshold={0.5} kernelSize={KernelSize.VERY_LARGE} />
+                        <Bloom
+                            intensity={0.7}
+                            luminanceThreshold={0.5}
+                            kernelSize={KernelSize.VERY_LARGE}
+                        />
                     </EffectComposer>
                     <SceneStars />
                     <SceneLights />
                     <SceneEnvironment />
-                    <OrbitControls dampingFactor={0.15} target={[0, 0, 0]} rotateSpeed={-0.15} enableZoom={true} />
+                    <OrbitControls
+                        dampingFactor={0.15}
+                        target={[0, 0, 0]}
+                        rotateSpeed={-0.15}
+                        enableZoom={true}
+                    />
                     <PerspectiveCamera
                         makeDefault
                         position={[-0.01, 0, 0.1]}
