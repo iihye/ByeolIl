@@ -269,6 +269,10 @@ function StarRegist(props) {
 const ContentArea = forwardRef((props, ref) => {
     const [contentLength, setContentLength] = useState(0);
 
+    useEffect(() => {
+        setContentLength(ref.current.value.length);
+    }, []);
+
     return (
         <>
             <div className="relative bg-alert-bg rounded-lg w-full h-44 border text-white-sub">
@@ -317,6 +321,7 @@ function Buttons(props) {
 
 const FileUploadArea = forwardRef((props, ref) => {
     const [fileList, setFileList] = useRecoilState(fileListState);
+    const preBoard = props.preBoard;
 
     useEffect(() => {
         return () => {
@@ -369,6 +374,7 @@ const FileUploadArea = forwardRef((props, ref) => {
     }
 
     function handleFileChange(e) {
+        // fileMap :
         const fileMap = new Map();
         [...fileList].forEach((it) => fileMap.set(it.name, it));
         [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
@@ -383,9 +389,32 @@ const FileUploadArea = forwardRef((props, ref) => {
         const imageFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image");
         const videoFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video");
 
+        let imageFileCnt = imageFileList.length;
+        let videoFileCnt = videoFileList.length;
+
+        if (preBoard) {
+            preBoard.boardMedia.forEach((it) => {
+                const url = it.split(".");
+                const type = url[url.length - 1];
+
+                EXTENSION_IMAGE.forEach((it) => {
+                    if (it === type) {
+                        imageFileCnt++;
+                    }
+                });
+
+                EXTENSION_VIDEO.forEach((it) => {
+                    if (it === type) {
+                        videoFileCnt++;
+                    }
+                });
+            });
+        }
+        console.log(imageFileCnt, videoFileCnt);
+
         // 파일 유효성 체크
         const fileTypeCheckRes = uploadFileList.every((it) => fileTypeCheck(it));
-        const fileCntCheckRes = limitFileCnt(e, imageFileList.length, videoFileList.length);
+        const fileCntCheckRes = limitFileCnt(e, imageFileCnt, videoFileCnt);
         const fileVolumeCheckRes = limitFileVolume(e, imageFileList, videoFileList);
 
         if (fileCntCheckRes && fileVolumeCheckRes && fileTypeCheckRes) {
