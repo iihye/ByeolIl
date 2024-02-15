@@ -441,37 +441,42 @@ function RadioContent() {
   const fetchDataWav = async () => {
     if (!rdata) return;   // rdata가 null일 때는 메소드를 종료
 
-    await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`)
-    .then((response) => {
-      console.log(response);
-      const blob = new Blob([response.data], { type: 'audio/wav'}); // blob파일 생성.
-      console.log(blob);
-      blobToDataURL(blob);
-      // setAudioSrc(URL.createObjectURL(blob));
-    }).catch((e) => { console.log(e) })
+    const res = await fetch(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+    });
+    console.log(res);
+    const wavFile = await res.blob();
+    console.log
+    setAudioSrc(URL.createObjectURL(wavFile));
+    // await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`)
+    // .then((response) => {
+    //   console.log(response);
+    //   const blob = new Blob([response.data], { type: 'audio/wav'}); // blob파일 생성.
+    //   console.log(blob);
+    //   blobToDataURL(blob);
+    //   // setAudioSrc(URL.createObjectURL(blob));
+    // }).catch((e) => { console.log(e) })
   }
-
-  function blobToDataURL(blob) {
-    var reader = new FileReader();
-    reader.onload = function() {
-      var dataURL = reader.result;
-      setAudioSrc(dataURL);
-    };
-    reader.readAsDataURL(blob);
-  }
-  useEffect(() => {
-    console.log(audioSrc);
-  }, [audioSrc])
-
+ // blob  파일을 data Url로 바꿔주는 함수.
+  //   
+  
   useEffect(() => {
     // 최초1회 데이터를 수신한다.
     fetchData();
   }, []);
-
+  
   useEffect(() => {
     // TTS 음성파일 추출 및 다운. 
-    fetchDataWav();
+    // fetchDataWav();
+    setAudioSrc(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`);
   },[rdata]) // rdata에 의존성 
+  
+  useEffect(() => {
+    console.log(audioSrc);
+  }, [audioSrc]);
 
   function handleRepost() {
     axios
@@ -536,7 +541,7 @@ function RadioContent() {
       </div>
       <div>
       <h2>오디오 플레이어</h2>
-      {audioSrc && <ReactAudioPlayer src={audioSrc} controls />}
+      {audioSrc && <audio src={audioSrc} controls ></audio>}
       </div>
       <div className="reportAlert">{isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />}</div>
     </div>
