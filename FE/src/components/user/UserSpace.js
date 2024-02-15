@@ -557,7 +557,7 @@ function UserSpace() {
                 <div className="absolute bottom-4 left-4 flex justify-center items-center text-white">
                     <PiShootingStarFill className="mr-1" />
                     <div className="space-name font-['Pre-Bold'] text-2xl mr-2 ">
-                        {userName} 의 우주
+                        {userName} 우주
                     </div>
                     <div>
                         {userId !== loginIndex &&
