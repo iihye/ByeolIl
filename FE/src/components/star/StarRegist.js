@@ -462,7 +462,7 @@ function FileList() {
         const extension = nameArray[nameArray.length - 1];
 
         let fileName = "";
-        for (let i = 0; i < Math.min(it.name.length - (extension.length + 1), 25); i++) {
+        for (let i = 0; i < Math.min(it.name.length - (extension.length + 1), 20); i++) {
             fileName += it.name[i];
         }
 
