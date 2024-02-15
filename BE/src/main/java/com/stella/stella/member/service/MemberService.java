@@ -7,6 +7,7 @@ import com.stella.stella.board.repository.BoardRepository;
 import com.stella.stella.board.service.BoardService;
 import com.stella.stella.common.Jwt.JwtTokenProvider;
 import com.stella.stella.common.Jwt.TokenInfo;
+import com.stella.stella.common.email.Aes256;
 import com.stella.stella.common.email.EmailSender;
 import com.stella.stella.member.dto.MemberFindPassDto;
 import com.stella.stella.member.dto.MemberJoinRequestDto;
@@ -48,6 +49,7 @@ public class MemberService {
     private final EmailSender emailSender;
     private final BoardService boardService;
     private final BoardRepository boardRepository;
+    private final Aes256 aes256;
 
     @Value("${social.url}")
     private String redirectUrl;
@@ -64,7 +66,7 @@ public class MemberService {
 
     @Transactional
     public String login(String memberId, String memberPass, String memberPlatform) throws Exception {
-        log.info("pass={}",memberPass);
+        log.info("pass={}", memberPass);
         // 0. memberId와 memeberPlatform으로 memberIndex(PK) 검색
         Member accessMember = memberRepository.findByMemberIdAndMemberPassAndMemberPlatform(memberId, memberPass, memberPlatform)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
@@ -108,8 +110,8 @@ public class MemberService {
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestAPIKey);
 
-        params.add("redirect_uri", redirectUrl+url);
-//        params.add("redirect_uri", "http://localhost:3000"+url);
+//        params.add("redirect_uri", redirectUrl+url);
+        params.add("redirect_uri", "http://localhost:3000" + url);
         params.add("code", code);
 
         // Set http entity
@@ -323,6 +325,7 @@ public class MemberService {
                 content = "Stella에서 보낸 이메일 인증용 코드입니다.<br>아래의 인증번호를 입력해 주세요.<br><br>코드: ";
                 result = emailSender.generateCode();
                 emailSender.sendMail(email, title, content + result);
+                result = aes256.encrypt(result);
                 break;
             case "find_pass":
                 title = "Stella에서 생성한 임시 비밀번호입니다.";
