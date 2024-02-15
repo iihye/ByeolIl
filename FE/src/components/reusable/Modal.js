@@ -420,131 +420,123 @@ function RadioContent() {
   const [rdata, setRdata] = useState();
   const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
   const [repostActive, setRepostActive] = useState(false);
-  const [audioSrc, setAudioSrc] = useState('');
+  const [audioSrc, setAudioSrc] = useState("");
   const navigate = useNavigate();
   const fetchData = async () => {
-    await axios
-      .get(`${process.env.REACT_APP_API_URL}/radio/${sessionStorage.getItem("memberIndex")}`, {
-        headers: {
-          token: sessionStorage.getItem("token") ?? "",
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        setRdata(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      await axios
+          .get(`${process.env.REACT_APP_API_URL}/radio/${sessionStorage.getItem("memberIndex")}`, {
+              headers: {
+                  token: sessionStorage.getItem("token") ?? "",
+              },
+          })
+          .then((response) => {
+              console.log(response.data);
+              setRdata(response.data);
+          })
+          .catch((e) => {
+              console.log(e);
+          });
   };
 
   const fetchDataWav = async () => {
-    if (!rdata) return;   // rdata가 null일 때는 메소드를 종료
+      if (!rdata) return; // rdata가 null일 때는 메소드를 종료
 
-    const res = await fetch(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`, {
-      method: "GET",
-      headers: {
-          "Content-Type": "application/json",
-      },
-    });
-    console.log(res);
-    const wavFile = await res.blob();
-    console.log
-    setAudioSrc(URL.createObjectURL(wavFile));
-    // await axios.get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`)
-    // .then((response) => {
-    //   console.log(response);
-    //   const blob = new Blob([response.data], { type: 'audio/wav'}); // blob파일 생성.
-    //   console.log(blob);
-    //   blobToDataURL(blob);
-    //   // setAudioSrc(URL.createObjectURL(blob));
-    // }).catch((e) => { console.log(e) })
-  }
- // blob  파일을 data Url로 바꿔주는 함수.
-  //   
-  
+      try {
+          const res = await fetch(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`, {
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          });
+          const radioBlob = await res.blob();
+          setAudioSrc(URL.createObjectURL(radioBlob));
+      } catch (error) {
+          console.log(error);
+      }
+  };
+
   useEffect(() => {
-    // 최초1회 데이터를 수신한다.
-    fetchData();
+      // 최초1회 데이터를 수신한다.
+      fetchData();
   }, []);
-  
+
   useEffect(() => {
-    // TTS 음성파일 추출 및 다운. 
-    // fetchDataWav();
-    setAudioSrc(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`);
-  },[rdata]) // rdata에 의존성 
-  
-  useEffect(() => {
-    console.log(audioSrc);
-  }, [audioSrc]);
+      // TTS 음성파일 추출 및 다운.
+      fetchDataWav();
+  }, [rdata]); // rdata에 의존성
 
   function handleRepost() {
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}/radio/toss`,
-        {
-          memberIndex: rdata.fromMemberIndex,
-          boardIndex: rdata.boardIndex,
-        },
-        {
-          headers: {
-            token: sessionStorage.getItem("token") ?? "",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data);
-      });
-    alert("재송신 성공!");
-    setRepostActive(true);
+      axios
+          .post(
+              `${process.env.REACT_APP_API_URL}/radio/toss`,
+              {
+                  memberIndex: rdata.fromMemberIndex,
+                  boardIndex: rdata.boardIndex,
+              },
+              {
+                  headers: {
+                      token: sessionStorage.getItem("token") ?? "",
+                  },
+              }
+          )
+          .then((response) => {
+              console.log(response.data);
+          });
+      alert("재송신 성공!");
+      setRepostActive(true);
   }
 
   return (
-    <div>
       <div>
-        {/*라디오 모달 상단 헤더 */}
-        {rdata ? (
           <div>
-            20{rdata.boardInputDate.split(".")[0]}년 {rdata.boardInputDate.split(".")[1]}월 {rdata.boardInputDate.split(".")[2]}일
+              {/*라디오 모달 상단 헤더 */}
+              {rdata ? (
+                  <div>
+                      20{rdata.boardInputDate.split(".")[0]}년 {rdata.boardInputDate.split(".")[1]}월{" "}
+                      {rdata.boardInputDate.split(".")[2]}일
+                  </div>
+              ) : (
+                  "로딩중"
+              )}
+              <button
+                  onClick={() => {
+                      setIsReportAlertOpen(true);
+                  }}
+              >
+                  REPORT
+              </button>
+              <button
+                  onClick={() => {
+                      navigate(-1);
+                  }}
+              >
+                  CLOSE
+              </button>
           </div>
-        ) : (
-          "로딩중"
-        )}
-        <button
-          onClick={() => {
-            setIsReportAlertOpen(true);
-          }}
-        >
-          REPORT
-        </button>
-        <button
-          onClick={() => {
-            navigate(-1);
-          }}
-        >
-          CLOSE
-        </button>
+          <div>
+              {/*라디오 내용 */}
+              <div>{rdata ? rdata.boardContent : "로딩중"}</div>
+          </div>
+          <div>
+              <button
+                  disabled={repostActive}
+                  onClick={() => {
+                      handleRepost();
+                  }}
+              >
+                  재송신하기
+              </button>
+          </div>
+          <div>
+              <h2>오디오 플레이어</h2>
+              {audioSrc && <audio src={audioSrc} controls/>}
+          </div>
+          <div className="reportAlert">
+              {isReportAlertOpen && (
+                  <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />
+              )}
+          </div>
       </div>
-      <div>
-        {/*라디오 내용 */}
-        <div>{rdata ? rdata.boardContent : "로딩중"}</div>
-      </div>
-      <div>
-        <button
-          disabled={repostActive}
-          onClick={() => {
-            handleRepost();
-          }}
-        >
-          재송신하기
-        </button>
-      </div>
-      <div>
-      <h2>오디오 플레이어</h2>
-      {audioSrc && <audio src={audioSrc} controls ></audio>}
-      </div>
-      <div className="reportAlert">{isReportAlertOpen && <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />}</div>
-    </div>
   );
 }
 
