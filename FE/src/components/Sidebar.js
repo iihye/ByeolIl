@@ -129,12 +129,6 @@ function SidebarList(props) {
                 path: () => navigate(`space/${props.memberIndex}`),
             },
             {
-                type: RiIcons,
-                icon: 'RiLockPasswordLine',
-                name: '회원정보수정',
-                path: () => setIsChangeInfoOpen(true),
-            },
-            {
                 type: WiIcons,
                 icon: 'WiStars',
                 name: '나의 별 목록',
@@ -145,6 +139,12 @@ function SidebarList(props) {
                 icon: 'LuFolderHeart',
                 name: '좋아하는 별 목록',
                 path: () => setIsFavorListOpen(true),
+            },
+            {
+                type: HiIcons,
+                icon: 'HiMiniHashtag',
+                name: '태그로 별 찾기',
+                path: () => setIsTagSearchOpen(true),
             },
             {
                 type: AiIcons,
@@ -159,16 +159,16 @@ function SidebarList(props) {
                 path: () => setIsFindUserOpen(true),
             },
             {
-                type: HiIcons,
-                icon: 'HiMiniHashtag',
-                name: '태그로 별 찾기',
-                path: () => setIsTagSearchOpen(true),
-            },
-            {
                 type: IoIcons,
                 icon: 'IoSettingsOutline',
                 name: '환경설정',
                 path: () => setIsSettingOpen(true),
+            },
+            {
+                type: RiIcons,
+                icon: 'RiLockPasswordLine',
+                name: '회원정보수정',
+                path: () => setIsChangeInfoOpen(true),
             },
         ]);
     }, []);

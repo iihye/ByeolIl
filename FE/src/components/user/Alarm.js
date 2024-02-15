@@ -43,7 +43,7 @@ function Alarm() {
         };
 
         axios
-            .post(`${process.env.REACT_APP_ALARM_URL}/alarm/check`, alarmInfo)
+            .post(`${process.env.REACT_APP_API_URL}/alarm/check`, alarmInfo)
             .then(
                 setAlarmData((currentAlarmData) =>
                     currentAlarmData
