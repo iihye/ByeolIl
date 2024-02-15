@@ -3,7 +3,11 @@ import { MAX_SATR_CNT } from "./data.js";
 const treeHeight = Math.ceil(Math.log(MAX_SATR_CNT) / Math.log(2));
 const treeSize = 1 << (treeHeight + 1);
 
-const tree = Array(treeSize).fill(0);
+let tree = Array(treeSize).fill(0);
+
+function treeReset() {
+    tree = Array(treeSize).fill(0);
+}
 
 function update(node, start, end, index, value) {
     if (index < start || end < index) {
@@ -40,5 +44,6 @@ function query(node, start, end, left, right) {
 export const constellationCheck = {
     update,
     query,
+    treeReset,
     tree,
 };
