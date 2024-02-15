@@ -104,5 +104,5 @@ export const isReportOpenState = atom({
 // 신고 상세보기
 export const isReportDetailOpenState = atom({
     key: 'isReportDetailOpen',
-    default: ' ',
+    default: '',
 });

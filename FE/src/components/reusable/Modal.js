@@ -70,6 +70,9 @@ function StarContent(props) {
     const writerIndex = props.userIndex;
     const location = props.location;
 
+    console.log('props', props);
+    console.log('여기', reportInfo);
+
     // 글 조회 / 수정시 내용 갱신
     useEffect(() => {
         const fetchData = async (starIndex) => {
