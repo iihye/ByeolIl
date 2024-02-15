@@ -39,6 +39,8 @@ function SidebarList(props) {
         sessionStorage.getItem('nickname')
     );
     const isAdmin = sessionStorage.getItem('auth');
+    const token = sessionStorage.getItem('token');
+    const memberIndex = sessionStorage.getItem('memberIndex');
 
     const navigate = useNavigate();
 
@@ -51,7 +53,11 @@ function SidebarList(props) {
     };
 
     const handleNickname = async (e) => {
-        if (e.code === 'Enter' && e.target.value !== '') {
+        if (e.code === 'Enter') {
+            if (e.target.value === '') {
+                setIsModifying(false);
+                return;
+            }
             e.preventDefault();
             const newName = e.target.value;
             const nickNameRegExp = /^[가-힣a-zA-Z0-9_]{2,10}$/;
@@ -70,42 +76,46 @@ function SidebarList(props) {
                 const response = await axios.get(
                     `${
                         process.env.REACT_APP_API_URL
-                    }/member/dup-check/nickname/${encodeURIComponent(newName)}`
+                    }/member/dup-check/nickname?nickname=${encodeURIComponent(
+                        newName
+                    )}`
                 );
-                // 중복 체크 로직 처리...
-                console.log(response);
 
-                // 닉네임 변경 로직
-                try {
-                    const updateResponse = await axios.put(
-                        `${process.env.REACT_APP_API_URL}/member`,
-                        {
-                            memberIndex: sessionStorage.getItem('memberIndex'),
-                            memberNickname: newName,
-                        },
-                        { headers: { token: sessionStorage.getItem('token') } }
-                    );
+                if (response.data.message === '사용 가능한 닉네임입니다.') {
+                    // 닉네임 변경 로직
+                    try {
+                        const updateResponse = await axios.put(
+                            `${process.env.REACT_APP_API_URL}/member`,
+                            {
+                                memberIndex: memberIndex,
+                                memberNickname: newName,
+                            },
+                            { headers: { token: token } }
+                        );
 
-                    if (updateResponse.status === 200) {
+                        if (updateResponse.status === 200) {
+                            swal({
+                                title: '닉네임 변경 완료!',
+                                icon: 'success',
+                            }).then(() => {
+                                sessionStorage.setItem('nickname', newName);
+                                setNickname(newName);
+                            });
+                        }
+                    } catch (error) {
                         swal({
-                            title: '닉네임 변경 완료!',
-                            icon: 'success',
-                        }).then(() => {
-                            sessionStorage.setItem('nickname', newName);
-                            setNickname(newName);
+                            title: '닉네임 변경 실패',
+                            text: '다시 시도해주세요',
+                            icon: 'error',
                         });
                     }
-                } catch (error) {
+                } else {
                     swal({
-                        title: '닉네임 변경 실패',
-                        text: '다시 시도해주세요',
+                        title: `중복된 닉네임이에요`,
                         icon: 'error',
                     });
                 }
-            } catch (error) {
-                console.log(error);
-            }
-
+            } catch (error) {}
             setIsModifying(false);
         }
     };
