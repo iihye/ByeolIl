@@ -698,7 +698,7 @@ function RadioContent() {
                                             handleRepost();
                                         }}
                                     >
-                                        다른 사람에게 전달하기
+                                        {!repostActive ? "다른 사람에게 전달하기" : "전달 완료!"}
                                     </button>
                                 </div>
                             </div>
