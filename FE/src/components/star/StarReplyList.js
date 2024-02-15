@@ -55,8 +55,10 @@ function StarReplyList(props) {
                 </div>
                 <div className="flex w-32 justify-center">
                     <div className="flex items-center hover:hover text-white-sub relative overflow-hidden ">
-                        <div className="mr-2">라디오 송신</div>
-                        <GoRocket onClick={props.handleRadio} />
+                        <div className="flex items-center" onClick={props.handleRadio}>
+                            <div className="mr-2">라디오 송신</div>
+                            <GoRocket />
+                        </div>
                         <div className="w-full h-full absolute  bg-black-sub" style={{ right: "-8rem" }}></div>
                     </div>
                 </div>

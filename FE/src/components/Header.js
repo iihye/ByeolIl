@@ -34,16 +34,7 @@ function Header() {
                         />
                     </nav>
                 </>
-            ) : (
-                <div>
-                    <Link to="/landing/login">
-                        <button>로그인</button>
-                    </Link>
-                    {/* <Link to="/landing/regist">
-            <button>회원가입</button>
-          </Link>  */}
-                </div>
-            )}
+            ) : null}
         </div>
     );
 }

@@ -2,7 +2,7 @@
 // import video from "../video/background2.mp4"
 import video from '../video/background3.mp4';
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useResetRecoilState } from 'recoil';
 import {
     isChangeInfoOpenState,
@@ -13,6 +13,7 @@ import {
     isSettingOpenState,
     isTagSearchOpenState,
 } from 'components/atom';
+import { Button } from '@/components/ui/button';
 
 export default function LandingPage() {
     const resetIsChangeInfoOpen = useResetRecoilState(isChangeInfoOpenState);
@@ -57,9 +58,14 @@ export default function LandingPage() {
             </div>
             <div className="content absolute">
                 {!isOpen && (
-                    <h1 className="text-white text-6xl text-center font-['Star'] py-4">
-                        별일
-                    </h1>
+                    <div className="font-['Pre-Bold'] w-56">
+                        <h1 className="text-white text-6xl text-center font-['Star'] py-4">
+                            별일
+                        </h1>
+                        <Link to="/landing/login">
+                            <Button className="w-full h-button my-1">시작하기</Button>
+                        </Link>
+                    </div>
                 )}
                 <Outlet />
             </div>
