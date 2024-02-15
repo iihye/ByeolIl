@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import {
     isStarRegistOpenState,
     isStarModifyOpenState,
@@ -16,21 +16,23 @@ import {
     isReportOpenState,
     isGuideCommentOpenState,
     isOpinionOpenState,
-} from "./atom";
-import StarRegist from "./star/StarRegist";
-import StarDetail from "./star/StarDetail";
-import ChangeInfo from "./user/ChangeInfo";
-import List from "./reusable/List";
-import StarFavorList from "./star/StarFavorList";
-import FollowList from "./user/FollowList";
-import FindUser from "./user/FindUser";
-import StarTagSearch from "./star/StarTagSearch";
-import Settings from "./user/Settings";
-import Report from "./admin/Report";
-import { GuideComment } from "./user/UserSpace";
-import { useEffect, useRef } from "react";
-import axios from "axios";
-import swal from "sweetalert";
+    isAlarmOpenState,
+} from './atom';
+import StarRegist from './star/StarRegist';
+import StarDetail from './star/StarDetail';
+import ChangeInfo from './user/ChangeInfo';
+import List from './reusable/List';
+import StarFavorList from './star/StarFavorList';
+import FollowList from './user/FollowList';
+import FindUser from './user/FindUser';
+import StarTagSearch from './star/StarTagSearch';
+import Settings from './user/Settings';
+import Report from './admin/Report';
+import Alarm from './user/Alarm';
+import { GuideComment } from './user/UserSpace';
+import { useEffect, useRef } from 'react';
+import axios from 'axios';
+import swal from 'sweetalert';
 
 function ModalSpace() {
     return (
@@ -48,6 +50,7 @@ function ModalSpace() {
             <ReportArea />
             {/* <GuideCommentArea /> */}
             <OpinionArea />
+            <AlarmArea />
         </>
     );
 }
@@ -58,7 +61,11 @@ function StarRegistArea() {
     return (
         <>
             {isStarRegistOpen && (
-                <StarRegist type={"regist"} location={isStarRegistOpen[0]} writerIndex={isStarRegistOpen[1]} />
+                <StarRegist
+                    type={'regist'}
+                    location={isStarRegistOpen[0]}
+                    writerIndex={isStarRegistOpen[1]}
+                />
             )}
         </>
     );
@@ -72,7 +79,7 @@ function StarModifyArea() {
         <>
             {isStarModifyOpen && (
                 <StarRegist
-                    type={"modify"}
+                    type={'modify'}
                     preBoard={isStarModifyOpen[0]}
                     boardIndex={isStarModifyOpen[1]}
                     location={isStarModifyOpen[2]}
@@ -86,7 +93,16 @@ function StarModifyArea() {
 function StarDetailArea() {
     const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
-    return <>{isStarDetailOpen && <StarDetail starIndex={isStarDetailOpen[0]} userIndex={isStarDetailOpen[1]} />}</>;
+    return (
+        <>
+            {isStarDetailOpen && (
+                <StarDetail
+                    starIndex={isStarDetailOpen[0]}
+                    userIndex={isStarDetailOpen[1]}
+                />
+            )}
+        </>
+    );
 }
 
 function ChangeInfoArea() {
@@ -136,6 +152,11 @@ function ReportArea() {
     return <>{isReportOpen && <Report />}</>;
 }
 
+function AlarmArea() {
+    const isAlarmOpen = useRecoilValue(isAlarmOpenState);
+    return <>{isAlarmOpen && <Alarm />}</>;
+}
+
 // function GuideCommentArea() {
 //     const isGuideCommentOpen = useRecoilValue(isGuideCommentOpenState);
 //     return <>{isGuideCommentOpen && <GuideComment />}</>;
@@ -148,18 +169,21 @@ function OpinionArea() {
 }
 
 function OpinionAlert() {
-    const [isOpinionOpen, setIsOpinionOpen] = useRecoilState(isOpinionOpenState);
+    const [isOpinionOpen, setIsOpinionOpen] =
+        useRecoilState(isOpinionOpenState);
 
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "outside");
+            const check = [...e.target.classList].some(
+                (it) => it === 'outside'
+            );
             if (check) {
                 if (input.current.value.length > 0) {
                     swal({
-                        title: "창을 닫을까요?",
-                        text: "작성 중인 내용을 잃을 수 있어요!",
-                        icon: "warning",
+                        title: '창을 닫을까요?',
+                        text: '작성 중인 내용을 잃을 수 있어요!',
+                        icon: 'warning',
                         buttons: true,
                         dangerMode: true,
                     }).then((willDelete) => {
@@ -173,10 +197,10 @@ function OpinionAlert() {
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
 
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     }, []);
     const input = useRef();
@@ -189,15 +213,15 @@ function OpinionAlert() {
         await axios
             .post(`${process.env.REACT_APP_API_URL}/opinion/add`, data, {
                 headers: {
-                    token: sessionStorage.getItem("token"),
+                    token: sessionStorage.getItem('token'),
                 },
             })
             .then((response) => {
                 console.log(response);
                 swal({
-                    title: "의견 전송 완료",
-                    text: "소중한 의견 감사드립니다!",
-                    icon: "success",
+                    title: '의견 전송 완료',
+                    text: '소중한 의견 감사드립니다!',
+                    icon: 'success',
                 }).then(() => setIsOpinionOpen(false));
             })
             .catch((error) => console.log(error));
@@ -205,9 +229,9 @@ function OpinionAlert() {
     function handleClose() {
         if (input.current.value.length > 0) {
             swal({
-                title: "창을 닫을까요?",
-                text: "작성 중인 내용을 잃을 수 있어요!",
-                icon: "warning",
+                title: '창을 닫을까요?',
+                text: '작성 중인 내용을 잃을 수 있어요!',
+                icon: 'warning',
                 buttons: true,
                 dangerMode: true,
             }).then((willDelete) => {
@@ -224,7 +248,9 @@ function OpinionAlert() {
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
             <div className="w-auto h-auto p-4 bg-alert-bg rounded-xl text-white-sub shadow-xl font-['Pretendard'] text-center">
                 <div>의견 보내기</div>
-                <div className="text-lg text-center mb-3">"별일" 서비스는 어떠신가요?</div>
+                <div className="text-lg text-center mb-3">
+                    "별일" 서비스는 어떠신가요?
+                </div>
                 <div className="flex justify-center mb-3">
                     <textarea
                         className="bg-transparent rounded-lg p-2 h-28 w-80 resize-none border border-gray-300"

@@ -527,11 +527,9 @@ function FollowArea() {
         const writerIndex = Number(params.user_id);
         const loginUserId = Number(sessionStorage.getItem('memberIndex'));
         if (writerIndex !== loginUserId && location.state?.props) {
-            console.log(location.state.props);
             setUserName(location.state.props);
         }
         if (writerIndex === loginUserId) {
-            console.log('뭐임');
             setUserName('');
         }
     }, [location]);
