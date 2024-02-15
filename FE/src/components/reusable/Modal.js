@@ -730,7 +730,7 @@ function RadioContent() {
                                 </div>
 
                                 <div className="Radio-Content border border-white-sub p-2 h-44 mb-4">
-                                    rdata.boardContent
+                                    {rdata.boardContent}
                                 </div>
 
                                 {/* <button

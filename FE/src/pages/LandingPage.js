@@ -15,6 +15,7 @@ import {
 } from 'components/atom';
 import { Button } from '@/components/ui/button';
 
+
 export default function LandingPage() {
     const resetIsChangeInfoOpen = useResetRecoilState(isChangeInfoOpenState);
     const resetIsMyStarListOpen = useResetRecoilState(isMyStarListOpenState);
@@ -45,7 +46,7 @@ export default function LandingPage() {
     }, []);
 
     return (
-        <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden">
+        <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden bg-black">
             <div>
                 <video
                     autoPlay
@@ -61,7 +62,7 @@ export default function LandingPage() {
                     <div className="font-['Pre-Bold'] w-56">
                         <h1 className="text-white text-6xl text-center font-['Star'] py-4">
                             별일
-                        </h1>
+                        </h1>   
                         <Link to="/landing/login">
                             <Button className="w-full h-button my-1">시작하기</Button>
                         </Link>

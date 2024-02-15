@@ -553,14 +553,14 @@ function FollowArea() {
                 <Link
                     to={`/space/${sessionStorage.getItem("memberIndex")}/radio`}
                 >
-                    {/* <FaRadio
-                        className="Footer-Radio absolute top-2 right-20 mr-2"
+                    <FaRadio
+                        className="Footer-Radio absolute top-2 right-20 z-10 mr-2"
                         size="28"
                         color="white"
-                    /> */}
-                    <button className="absolute bottom-2 left-2">라디오</button>
+                    />
                 </Link>
             )}
+            {/* <button className="absolute bottom-2 left-2">라디오</button> */}
         </>
     );
 }
