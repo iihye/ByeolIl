@@ -7,8 +7,12 @@ import { FaUserPlus, FaComment, FaComments, FaRegBell } from 'react-icons/fa';
 import { IoCloseSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
-import { useRecoilState } from 'recoil';
-import { isAlarmDetailState, isStarDetailOpenState } from '../atom';
+import { useRecoilState, useResetRecoilState } from 'recoil';
+import {
+    isAlarmDetailState,
+    isStarDetailOpenState,
+    isAlarmOpenState,
+} from '../atom';
 
 // 추후 에러핸들링 필요
 
@@ -18,6 +22,7 @@ function Alarm() {
     const [isStarDetailOpen, setIsStarDetailOpen] = useRecoilState(
         isStarDetailOpenState
     );
+    const resetIsFavorListOpen = useResetRecoilState(isAlarmOpenState);
     const memberIndex = Number(sessionStorage.getItem('memberIndex'));
     const EventSource = EventSourcePolyfill || NativeEventSource;
 
@@ -73,7 +78,7 @@ function Alarm() {
                 (it) => it === 'outside'
             );
             if (check) {
-                navigate(-1);
+                resetIsFavorListOpen();
             }
         }
 

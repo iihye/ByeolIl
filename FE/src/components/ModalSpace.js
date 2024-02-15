@@ -17,6 +17,7 @@ import {
     isGuideCommentOpenState,
     isOpinionOpenState,
     isConstellationInfoOpenState,
+    isAlarmOpenState,
 } from "./atom";
 import StarRegist from "./star/StarRegist";
 import StarDetail from "./star/StarDetail";
@@ -33,6 +34,8 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import swal from "sweetalert";
 import { constellationInfo } from "data";
+import Alarm from "./user/Alarm";
+
 function ModalSpace() {
     return (
         <>
@@ -149,6 +152,11 @@ function SettingArea() {
 function ReportArea() {
     const isReportOpen = useRecoilValue(isReportOpenState);
     return <>{isReportOpen && <Report />}</>;
+}
+
+function AlarmArea() {
+    const isAlarmOpen = useRecoilValue(isAlarmOpenState);
+    return <>{isAlarmOpen && <Alarm />}</>;
 }
 
 // function GuideCommentArea() {
