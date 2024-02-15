@@ -759,6 +759,34 @@ export const linePosition = [
     ],
 ];
 
+export const constellationInfo = [
+    "작은곰",
+    "케페우스",
+    "카시오페이아",
+    "기린",
+    "용",
+    "페르세우스",
+    "큰곰",
+    "살쾡이",
+    "헤라클래스",
+    "백조",
+    "도마뱀",
+    "마차부",
+    "황소",
+    "안드로메다",
+    "삼각형",
+    "양",
+    "쌍둥이",
+    "게",
+    "거문고",
+    "작은사자",
+    "사냥개",
+    "북쪽 왕관",
+    "목동",
+    "사자",
+    "페가수스",
+];
+console.log(position);
 export const EXTENSION_IMAGE = new Set(["png", "gif"]);
 export const EXTENSION_VIDEO = new Set(["wav", "mp4"]);
 

@@ -119,7 +119,14 @@ export const isReportDetailOpenState = atom({
     default: "",
 });
 
+// 의견 보내기
 export const isOpinionOpenState = atom({
     key: "isOpinionOpen",
+    default: false,
+});
+
+// 별자리 정보
+export const isConstellationInfoOpenState = atom({
+    key: "isConstellationInfoOpen",
     default: false,
 });

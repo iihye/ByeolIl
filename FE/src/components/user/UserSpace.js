@@ -12,6 +12,7 @@ import {
 } from "recoil";
 import { Link, useParams } from "react-router-dom";
 import {
+    isConstellationInfoOpenState,
     isDeleteAlertOpenState,
     isGuideCommentOpenState,
     isStarDetailOpenState,
@@ -79,12 +80,14 @@ const renewLineState = atom({
 
 ///////////////////////////////// ↑ atoms
 
+const starArr = Array(MAX_SATR_CNT).fill(null);
+
 // isAddedStar : starLocation : starInfo
 const isAddedStar = new Map();
 
 function Line(props) {
     const starLineOpacity = useRecoilValue(starLineOpacityState);
-    const renewLine = useRecoilValue(renewLineState);
+    const stars = useRecoilValue(starsState);
     const groupNum = props.groupNum;
 
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
@@ -181,9 +184,9 @@ function Star(props) {
         setCurStarState(isAddedStar.get(props.location));
 
         if (isAddedStar.get(props.location)) {
-            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 1);
+            starArr[props.location] = isAddedStar.get(props.location);
         } else {
-            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 0);
+            starArr[props.location] = null;
         }
     }, [stars]);
 
@@ -257,8 +260,10 @@ function StarSurround(props) {
 function GroupStar(props) {
     const stars = useRecoilValue(starsState);
 
-    const [renewLine, setRenewLine] = useRecoilState(renewLineState);
     const setStarLineOpacityState = useSetRecoilState(starLineOpacityState);
+    const setIsConstellationOpen = useSetRecoilState(
+        isConstellationInfoOpenState
+    );
     const [lineColor, setLineColor] = useState(true);
     const [renewConstellation, setRenewConstellation] = useState(false);
 
@@ -276,25 +281,15 @@ function GroupStar(props) {
     }
 
     // 작성한 별 목록 변경 시 별자리 체크
-    let a = 0;
     useEffect(() => {
-        const check = constellationCheck.query(
-            1,
-            0,
-            MAX_SATR_CNT,
-            startStarNum,
-            lastStarNum
-        );
-        a = check;
+        const check2 = starArr.slice(startStarNum, lastStarNum + 1);
+        const check3 = check2.every((it) => it !== null);
 
-        if (check === lastStarNum - startStarNum + 1) {
-            let tmp = false;
-            setLineColor(tmp);
-        } else if (check !== lastStarNum - startStarNum + 1) {
-            let tmp = true;
-            setLineColor(tmp);
+        if (check3) {
+            setLineColor(false);
+        } else {
+            setLineColor(true);
         }
-        // setRenewLine(!renewLine);
     }, [stars]);
 
     // 하늘 회전
@@ -304,10 +299,12 @@ function GroupStar(props) {
 
     function handlePointerEnter() {
         setStarLineOpacityState(groupNum);
+        setIsConstellationOpen(groupNum);
     }
 
     function handlePointerLeave() {
         setStarLineOpacityState(-1);
+        setIsConstellationOpen(false);
     }
 
     return (
@@ -351,7 +348,6 @@ function SceneStars() {
     const [stars, setStars] = useRecoilState(starsState);
     const setFollower = useSetRecoilState(followerState);
     const setIsGuideCommentOpen = useSetRecoilState(isGuideCommentOpenState);
-    const [renewLine, setRenewLine] = useRecoilState(renewLineState);
     const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
 
     const params = useParams();
@@ -365,6 +361,8 @@ function SceneStars() {
             // 게시글 리스트 불러오기
 
             setIsFollower(null);
+
+            constellationCheck.treeReset();
 
             if (!isDeleteAlertOpen) {
                 await axios
@@ -389,8 +387,15 @@ function SceneStars() {
                             );
                         });
 
+                        starArr.forEach((it, index) => {
+                            if (isAddedStar.get(index)) {
+                                starArr[index] = it;
+                            } else {
+                                starArr[index] = null;
+                            }
+                        });
+
                         setStars([...response.data]);
-                        setRenewLine(!renewLine);
                     })
                     .catch((e) => {
                         console.log(e);
@@ -531,7 +536,6 @@ function FollowArea() {
             setUserName(location.state.props);
         }
         if (writerIndex === loginUserId) {
-            console.log("뭐임");
             setUserName("");
         }
     }, [location]);
