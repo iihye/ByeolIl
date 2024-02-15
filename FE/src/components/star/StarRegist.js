@@ -59,6 +59,7 @@ function StarRegist(props) {
         function handleClick(e) {
             e.stopPropagation();
             const check = [...e.target.classList].some((it) => it === "star-regist-container");
+
             if (check) {
                 handleClose();
             }
@@ -66,7 +67,7 @@ function StarRegist(props) {
 
         function handleKeydown(e) {
             if (e.key === "Escape") {
-                setIsStarRegistOpen(false);
+                handleClose();
             }
         }
 
@@ -210,9 +211,21 @@ function StarRegist(props) {
 
     function handleClose() {
         if (type === "regist") {
-            setIsStarRegistOpen(false);
+            if (contentRef.current.value.trim().length === 0) {
+                setIsStarRegistOpen(false);
+            } else {
+                if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
+                    setIsStarRegistOpen(false);
+                }
+            }
         } else if (type === "modify") {
-            setIsStarModifyOpen(false);
+            if (contentRef.current.value.trim().length === 0) {
+                setIsStarModifyOpen(false);
+            } else {
+                if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
+                    setIsStarModifyOpen(false);
+                }
+            }
         }
     }
 
@@ -454,8 +467,8 @@ function FileList() {
     return (
         <div className="text-left w-full h-full ml-3">
             {fileList.map((it, index) => (
-                <div className="flex items-center" key={index}>
-                    <div>- {it.name}</div>
+                <div className="flex items-center overflow-hidden" key={index}>
+                    <div className="w-96">- {it.name}</div>
                     <div
                         className="ml-1 mt-1 hover:cursor-pointer text-red-500 hover:text-red-400"
                         onClick={(e) => handleClick(e, index)}
