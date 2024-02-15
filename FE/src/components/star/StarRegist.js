@@ -1,8 +1,21 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
-import { isAddedStar, starsState, curPageState } from "components/user/UserSpace";
-import { isStarDetailOpenState, isStarRegistOpenState, isStarModifyOpenState } from "components/atom";
+import {
+    isAddedStar,
+    starsState,
+    curPageState,
+} from "components/user/UserSpace";
+import {
+    isStarDetailOpenState,
+    isStarRegistOpenState,
+    isStarModifyOpenState,
+} from "components/atom";
 import axios from "axios";
-import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+    atom,
+    useRecoilState,
+    useRecoilValue,
+    useSetRecoilState,
+} from "recoil";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaFileImage, FaRegFileImage } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
@@ -56,7 +69,9 @@ function StarRegist(props) {
 
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "star-regist-container");
+            const check = [...e.target.classList].some(
+                (it) => it === "star-regist-container"
+            );
 
             if (check) {
                 handleClose();
@@ -134,12 +149,16 @@ function StarRegist(props) {
             formData.append("requestDto", requestDtoBlob);
 
             try {
-                const response = await axios.post(`${process.env.REACT_APP_API_URL}/board`, formData, {
-                    header: {
-                        token: sessionStorage.getItem("token"),
-                        "Content-Type": "multipart/form-data",
-                    },
-                });
+                const response = await axios.post(
+                    `${process.env.REACT_APP_API_URL}/board`,
+                    formData,
+                    {
+                        header: {
+                            token: sessionStorage.getItem("token"),
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
 
                 if (response.status === 200) {
                     swal({
@@ -147,17 +166,22 @@ function StarRegist(props) {
                         icon: "success",
                     });
 
-                    const res = await axios.get(`${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`, {
-                        header: {
-                            token: sessionStorage.getItem("token") ?? "",
-                        },
-                        params: {
-                            page: curPage ?? 0,
-                        },
-                    });
+                    const res = await axios.get(
+                        `${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`,
+                        {
+                            header: {
+                                token: sessionStorage.getItem("token") ?? "",
+                            },
+                            params: {
+                                page: curPage ?? 0,
+                            },
+                        }
+                    );
 
                     isAddedStar.clear();
-                    res.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
+                    res.data.forEach((star) =>
+                        isAddedStar.set(star.boardLocation, star)
+                    );
                     setStars(res.data);
                     handleClose(false);
                 } else {
@@ -265,13 +289,24 @@ function StarRegist(props) {
                     <div className="star-regist-middle w-96">
                         <div className="flex justify-between items-center mb-2">
                             <DateArea ref={dateRef} type={type} />
-                            <AccessRangeArea ref={accessRangeRef} preBoard={preBoard} />
+                            <AccessRangeArea
+                                ref={accessRangeRef}
+                                preBoard={preBoard}
+                            />
                         </div>
                         <ContentArea ref={contentRef} />
                     </div>
-                    <HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />
+                    <HashtagArea
+                        hashtagSet={hashtagSet}
+                        preBoard={preBoard}
+                        type={type}
+                    />
                     <div className="relative">
-                        <FileUploadArea ref={fileRef} type={type} preBoard={preBoard} />
+                        <FileUploadArea
+                            ref={fileRef}
+                            type={type}
+                            preBoard={preBoard}
+                        />
                         <Buttons
                             buttonValue={buttonValue}
                             type={type}
@@ -306,7 +341,9 @@ const ContentArea = forwardRef((props, ref) => {
                     maxLength={200}
                 />
 
-                <div className="absolute text-white-sub bottom-1 right-2">{contentLength} / 200자</div>
+                <div className="absolute text-white-sub bottom-1 right-2">
+                    {contentLength} / 200자
+                </div>
             </div>
         </>
     );
@@ -351,7 +388,10 @@ const FileUploadArea = forwardRef((props, ref) => {
     function limitFileCnt(e, imageFileCnt, videoFileCnt) {
         const [maxImageCnt, maxVideoCnt] = [5, 1];
 
-        const [remainImageFileCnt, remainVideoFileCnt] = [maxImageCnt - imageFileCnt, maxVideoCnt - videoFileCnt];
+        const [remainImageFileCnt, remainVideoFileCnt] = [
+            maxImageCnt - imageFileCnt,
+            maxVideoCnt - videoFileCnt,
+        ];
 
         let msg = "";
         if (remainImageFileCnt < 0) {
@@ -378,8 +418,12 @@ const FileUploadArea = forwardRef((props, ref) => {
         const imageLimit = 1024 ** 2 * 5; // 5MB
         const videoLimit = 1024 ** 2 * 100; // 100MB
 
-        const imageSizeCheck = [...imageFileList].some((it) => it.size > imageLimit);
-        const videoSizeCheck = [...videoFileList].some((it) => it.size > videoLimit);
+        const imageSizeCheck = [...imageFileList].some(
+            (it) => it.size > imageLimit
+        );
+        const videoSizeCheck = [...videoFileList].some(
+            (it) => it.size > videoLimit
+        );
 
         if (imageSizeCheck || videoSizeCheck) {
             return false;
@@ -405,8 +449,12 @@ const FileUploadArea = forwardRef((props, ref) => {
 
         const uploadFileList = [...fileMap.values()];
 
-        const imageFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image");
-        const videoFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video");
+        const imageFileList = [...uploadFileList].filter(
+            (it) => it.type.split("/")[0] === "image"
+        );
+        const videoFileList = [...uploadFileList].filter(
+            (it) => it.type.split("/")[0] === "video"
+        );
 
         let imageFileCnt = imageFileList.length;
         let videoFileCnt = videoFileList.length;
@@ -432,9 +480,15 @@ const FileUploadArea = forwardRef((props, ref) => {
         console.log(imageFileCnt, videoFileCnt);
 
         // 파일 유효성 체크
-        const fileTypeCheckRes = uploadFileList.every((it) => fileTypeCheck(it));
+        const fileTypeCheckRes = uploadFileList.every((it) =>
+            fileTypeCheck(it)
+        );
         const fileCntCheckRes = limitFileCnt(e, imageFileCnt, videoFileCnt);
-        const fileVolumeCheckRes = limitFileVolume(e, imageFileList, videoFileList);
+        const fileVolumeCheckRes = limitFileVolume(
+            e,
+            imageFileList,
+            videoFileList
+        );
 
         if (fileCntCheckRes && fileVolumeCheckRes && fileTypeCheckRes) {
             setFileList([...uploadFileList]);
@@ -485,7 +539,10 @@ const FileUploadArea = forwardRef((props, ref) => {
                     onChange={handleFileChange}
                     ref={ref}
                 />
-                <label className="text-white-sub flex items-center  hover:text-white hover:cursor-pointer" for="file">
+                <label
+                    className="text-white-sub flex items-center  hover:text-white hover:cursor-pointer"
+                    for="file"
+                >
                     <FaRegFileImage />
                     <div className="ml-1">파일 첨부</div>
                 </label>
@@ -499,7 +556,9 @@ const FileUploadArea = forwardRef((props, ref) => {
                 {fileList.length === 0 ? (
                     <div className="hover:text-white">
                         <FaFileImage className="w-full text-5xl" />
-                        <div className="text-lg mt-2 text-center">드래그하여 파일을 업로드해주세요.</div>
+                        <div className="text-lg mt-2 text-center">
+                            드래그하여 파일을 업로드해주세요.
+                        </div>
                         <div>이미지 파일 5개 / 영상 파일 1개</div>
                     </div>
                 ) : (
@@ -517,7 +576,11 @@ function FileList() {
         const extension = nameArray[nameArray.length - 1];
 
         let fileName = "";
-        for (let i = 0; i < Math.min(it.name.length - (extension.length + 1), 20); i++) {
+        for (
+            let i = 0;
+            i < Math.min(it.name.length - (extension.length + 1), 20);
+            i++
+        ) {
             fileName += it.name[i];
         }
 
@@ -569,7 +632,8 @@ function ImagePreviewArea(props) {
     useEffect(() => {
         const tmpList = [
             ...fileList.map((it) => {
-                const url = URL.createObjectURL(it) + "_" + it.type.split("/")[0];
+                const url =
+                    URL.createObjectURL(it) + "_" + it.type.split("/")[0];
 
                 return url;
             }),
@@ -620,9 +684,15 @@ function ImagePreviewArea(props) {
             {fileList.length > 0 || (data && data.boardMedia.length > 0) ? (
                 <div className="flex items-center top-12 rounded right-full p-5 mr-6 h-full bg-modal-bg">
                     <div className="flex relative overflow-hidden items-center w-pic">
-                        <div className="flex items-center h-pic transition-all" ref={areaRef}>
+                        <div
+                            className="flex items-center h-pic transition-all"
+                            ref={areaRef}
+                        >
                             {previewFileList.map((it, index) => (
-                                <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
+                                <div
+                                    className="w-pic h-pic bg-black-sub flex items-center"
+                                    key={index}
+                                >
                                     {it.split("_")[1] === "image" ? (
                                         <img
                                             className="w-pic max-h-pic"
@@ -632,7 +702,12 @@ function ImagePreviewArea(props) {
                                         ></img>
                                     ) : null}
                                     {it.split("_")[1] === "video" ? (
-                                        <video className="w-pic max-h-pic" src={it.split("_")[0]} controls autoPlay />
+                                        <video
+                                            className="w-pic max-h-pic"
+                                            src={it.split("_")[0]}
+                                            controls
+                                            autoPlay
+                                        />
                                     ) : null}
                                 </div>
                             ))}
@@ -672,18 +747,23 @@ const DateArea = forwardRef((props, ref) => {
 
     return (
         <div className="text-white-sub text-2xl mb-1 relative">
-            <div onClick={handleCalander} className="flex items-center  hover:text-white hover:cursor-pointer">
+            <div
+                onClick={handleCalander}
+                className="flex items-center  hover:text-white hover:cursor-pointer"
+            >
                 <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
-                <div className="hidden" ref={ref}>{`${year}-${month >= 10 ? month : "0" + month}-${
-                    day >= 10 ? day : "0" + day
-                }`}</div>
+                <div className="hidden" ref={ref}>{`${year}-${
+                    month >= 10 ? month : "0" + month
+                }-${day >= 10 ? day : "0" + day}`}</div>
                 <div>
                     <HiOutlinePencilSquare />
                 </div>
             </div>
             {isCalendarOpen && (
                 <Calendar
-                    className={"absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"}
+                    className={
+                        "absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"
+                    }
                     mode="single"
                     selected={date}
                     onSelect={setDate}

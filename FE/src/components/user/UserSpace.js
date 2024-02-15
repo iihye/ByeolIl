@@ -614,7 +614,7 @@ function UserSpace() {
                 <Canvas>
                     <EffectComposer>
                         <Bloom
-                            intensity={0.7}
+                            intensity={0.9}
                             luminanceThreshold={0.5}
                             kernelSize={KernelSize.VERY_LARGE}
                         />

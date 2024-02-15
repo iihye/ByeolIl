@@ -787,7 +787,17 @@ export const constellationInfo = [
     "사자",
 ];
 console.log(position);
-export const EXTENSION_IMAGE = new Set(["png", "gif"]);
-export const EXTENSION_VIDEO = new Set(["wav", "mp4"]);
+export const EXTENSION_IMAGE = new Set([
+    "png",
+    "gif",
+    "jpg",
+    "bmp",
+    "jpeg",
+    "ppm",
+    "pgm",
+    "pbm",
+    "pnm",
+]);
+export const EXTENSION_VIDEO = new Set(["wav", "mp4", "mov", "wmv", "avi"]);
 
 export const MAX_SATR_CNT = idx;
