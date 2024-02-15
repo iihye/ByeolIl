@@ -8,23 +8,20 @@ import { IoCloseSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 import { useRecoilState } from 'recoil';
-import { isAlarmDetailState } from '../atom';
+import { isAlarmDetailState, isStarDetailOpenState } from '../atom';
 
 // 추후 에러핸들링 필요
 
 function Alarm() {
     const [alarmData, setAlarmData] = useState([]);
     const [detailModal, setDetailModal] = useRecoilState(isAlarmDetailState);
-    const [boardState, setBoardState] = useState('');
+    const [isStarDetailOpen, setIsStarDetailOpen] = useRecoilState(
+        isStarDetailOpenState
+    );
     const memberIndex = Number(sessionStorage.getItem('memberIndex'));
     const EventSource = EventSourcePolyfill || NativeEventSource;
 
     const navigate = useNavigate();
-
-    const ModalOpen = (boardIndex) => {
-        setDetailModal(true);
-        setBoardState(boardIndex);
-    };
 
     const CloseButton = ({ onClose, alarmIndex }) => (
         <div className="alarmClose">
@@ -67,42 +64,6 @@ function Alarm() {
         };
 
         fetchData();
-
-        // if (token) {
-        //     const eventSource = new EventSourcePolyfill(
-        //         `${process.env.REACT_APP_API_URL}/alarm/subscribe/${memberIndex}`,
-        //         {
-        //             headers: {
-        //                 Authorization: `${token}`,
-        //             },
-        //             heartbeatTimeout: 30000,
-        //         }
-        //     );
-
-        //     console.log(eventSource);
-
-        //     eventSource.onmessage = (e) => {
-        //         console.log('제발1');
-        //         if (e.type === 'alarm') {
-        //             console.log('제발');
-        //         }
-        //     };
-
-        //     eventSource.addEventListener('open', function (event) {
-        //         console.log('열렸음', event);
-        //     });
-        //     eventSource.addEventListener('alarm', function (event) {
-        //         console.log('이벤트 발생', event);
-        //     });
-        //     eventSource.addEventListener('error', function (event) {
-        //         console.log('알림 에러 발생', event.target);
-        //         if (event.target.readyState === EventSource.CLOSED) {
-        //             console.log('eventsource closed');
-        //         }
-        //         eventSource.close();
-        //     });
-        //     return () => eventSource.current?.close();
-        // }
     }, []);
 
     useEffect(() => {
@@ -172,7 +133,10 @@ function Alarm() {
                                             <div
                                                 className="flex"
                                                 onClick={() =>
-                                                    ModalOpen(it.boardIndex)
+                                                    setIsStarDetailOpen([
+                                                        it.boardIndex,
+                                                        -2,
+                                                    ])
                                                 }
                                             >
                                                 <FaComment
@@ -187,19 +151,6 @@ function Alarm() {
                                                 alarmIndex={it.alarmIndex}
                                                 className="mr-1"
                                             />
-                                            {detailModal &&
-                                                boardState ===
-                                                    it.boardIndex && (
-                                                    <div>
-                                                        {
-                                                            <StarDetail
-                                                                starIndex={
-                                                                    it.boardIndex
-                                                                }
-                                                            />
-                                                        }
-                                                    </div>
-                                                )}
                                         </div>
                                     );
                                 case 'MULTCMT':
@@ -211,7 +162,10 @@ function Alarm() {
                                             <div
                                                 className="flex"
                                                 onClick={() =>
-                                                    ModalOpen(it.boardIndex)
+                                                    setIsStarDetailOpen([
+                                                        it.boardIndex,
+                                                        -2,
+                                                    ])
                                                 }
                                             >
                                                 <FaComments

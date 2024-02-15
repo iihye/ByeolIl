@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
     Card,
     CardContent,
@@ -7,15 +7,15 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { FaSearch } from "react-icons/fa";
-import { IoCloseSharp } from "react-icons/io5";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useNavigate } from "react-router";
-import { HiMiniHashtag } from "react-icons/hi2";
-import { FaRegFaceSadTear } from "react-icons/fa6";
-import { useResetRecoilState } from "recoil";
-import { isTagSearchOpenState } from "components/atom";
+} from '@/components/ui/card';
+import { FaSearch } from 'react-icons/fa';
+import { IoCloseSharp } from 'react-icons/io5';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useNavigate } from 'react-router';
+import { HiMiniHashtag } from 'react-icons/hi2';
+import { FaRegFaceSadTear } from 'react-icons/fa6';
+import { useResetRecoilState } from 'recoil';
+import { isTagSearchOpenState } from 'components/atom';
 
 // 추후 카드 형식으로 나오게 css 변경
 // 추후 input 창 위에 tag가 올라가게 css 변경
@@ -24,18 +24,18 @@ import { isTagSearchOpenState } from "components/atom";
 function StarTagSearch() {
     const resetIsTagSearchOpen = useResetRecoilState(isTagSearchOpenState);
 
-    const [tag, setTag] = useState("");
+    const [tag, setTag] = useState('');
     const [tagSearchData, setTagSearchData] = useState([]);
-    const [replaceTag, setReplaceTag] = useState("");
+    const [replaceTag, setReplaceTag] = useState('');
 
     const handleTag = (e) => {
         setTag(e.target.value);
     };
 
     const handleList = () => {
-        setTag(" ");
+        setTag(' ');
         setTagSearchData([]);
-        setReplaceTag("");
+        setReplaceTag('');
     };
 
     const fetchData = async (tag) => {
@@ -47,38 +47,38 @@ function StarTagSearch() {
             )
             .then((response) => {
                 setTagSearchData(
-                    response.data.filter((item) => item.boardAccess === "OPEN")
+                    response.data.filter((item) => item.boardAccess === 'OPEN')
                 );
             })
             .catch((e) => console.log(e));
     };
 
     const activeSearch = (e) => {
-        if (e.key === "Enter") {
+        if (e.key === 'Enter') {
             e.preventDefault();
             activeButton();
-        } else if (e.key === "Backspace") {
+        } else if (e.key === 'Backspace') {
             handleList();
         }
     };
 
     const activeButton = () => {
-        if (tag === "") return;
+        if (tag === '') return;
 
         const specialRegExp = /[\{\}\[\]\/?.;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
 
         const testedTag = specialRegExp.test(tag)
-            ? tag.replace(specialRegExp, "")
+            ? tag.replace(specialRegExp, '')
             : tag;
 
-        setReplaceTag(testedTag.replace(/\s/g, ""));
+        setReplaceTag(testedTag.replace(/\s/g, ''));
 
         // 해시태그 모양 만들어주기
-        setTag(" ");
+        setTag(' ');
     };
 
     useEffect(() => {
-        if (replaceTag !== "") {
+        if (replaceTag !== '') {
             fetchData(replaceTag);
 
             const reverseData = [...tagSearchData].reverse();
@@ -90,16 +90,16 @@ function StarTagSearch() {
         function handleClick(e) {
             e.stopPropagation();
             const check = [...e.target.classList].some(
-                (it) => it === "outside"
+                (it) => it === 'outside'
             );
             if (check) {
                 resetIsTagSearchOpen();
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     });
 
@@ -157,9 +157,7 @@ function StarTagSearch() {
                                             {it.boardContent}
                                         </div>
                                         <div className="cardTag flex py-2">
-                                            {it.hash.map((tag) => (
-                                                <div>#{tag}&nbsp;</div>
-                                            ))}
+                                            {it.hash.map((tag) => `#${tag} `)}
                                         </div>
                                     </div>
                                 </Card>
