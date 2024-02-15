@@ -14,7 +14,6 @@ import {
     isTagSearchOpenState,
 } from 'components/atom';
 import { Button } from '@/components/ui/button';
-import StarfieldAnimation from "react-starfield-animation";
 
 
 export default function LandingPage() {
@@ -49,21 +48,14 @@ export default function LandingPage() {
     return (
         <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden bg-black">
             <div>
-                {/* <video
+                <video
                     autoPlay
                     loop
                     muted
                     className="absolute top-0 left-0 w-full h-full object-cover"
                 >
                     <source src={video} type="video/mp4"></source>
-                </video> */}
-                <StarfieldAnimation 
-                className="absolute top-0 left-0 w-full h-full object-cover"
-                numParticles={800}
-                particleSpeed={0}
-                dx={0.000000001} // x speed of stars in px/frame, default 0.05
-                dy={0.000000001}
-                />
+                </video>
             </div>
             <div className="content absolute">
                 {!isOpen && (
