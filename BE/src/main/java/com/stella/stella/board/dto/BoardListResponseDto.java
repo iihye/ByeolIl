@@ -32,7 +32,7 @@ public class BoardListResponseDto {
         for (Board b : list) {
             dtoList.add(BoardListResponseDto.builder()
                     .boardIndex(b.getBoardIndex())
-                    .memberIndex(memberIndex)
+                    .memberIndex(b.getMember().getMemberIndex())
                     .memberNickname(b.getMember().getMemberNickname())
                     .boardRegTime(b.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
                     .boardUpdateDate(b.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
