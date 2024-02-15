@@ -196,6 +196,7 @@ function SidebarList(props) {
                             // value={nickname}
                             onChange={handleNickname}
                             onKeyPress={(e) => handleNickname(e)}
+                            className="mb-2"
                         />
                     </>
                 ) : (
