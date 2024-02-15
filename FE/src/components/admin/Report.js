@@ -51,8 +51,11 @@ function Report() {
                         },
                     }
                 )
-                .then((response) => {
-                    alert(`7일 간 차단하였습니다🚨`);
+                .then(() => {
+                    swal({
+                        title: '7일 간 차단하였습니다🚨',
+                        icon: 'warning',
+                    });
                 });
         });
     };
@@ -87,6 +90,8 @@ function Report() {
                 const newBoardContent = responses.map(
                     (res) => res.data.boardContent
                 );
+
+                console.log(reportData);
 
                 const newBoardIndex = reportData.map((res) => res.boardIndex);
 
@@ -153,12 +158,15 @@ function Report() {
                         <TableHeader>
                             <TableRow className="font-['Pre-Bold'] bg-white text-m ">
                                 <TableHead className="text-center w-2/12">
-                                    닉네임
+                                    신고자
+                                </TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    작성자
                                 </TableHead>
                                 <TableHead className="text-center">
                                     신고내용
                                 </TableHead>
-                                <TableHead className="text-center w-2/12">
+                                <TableHead className="text-center w-1/12">
                                     신고일
                                 </TableHead>
                                 <TableHead className="text-center w-2/12">
@@ -192,11 +200,13 @@ function Report() {
                                                 <TableCell className="text-center w-2/12">
                                                     {it.memberNickname}
                                                 </TableCell>
-                                                {/* <TableCell>{boardContent[index]}</TableCell> */}
+                                                <TableCell className="text-center w-2/12">
+                                                    {it.banMemberNickName}
+                                                </TableCell>
                                                 <TableCell>
                                                     {it.reportContent}
                                                 </TableCell>
-                                                <TableCell className="text-center w-2/12">
+                                                <TableCell className="text-center w-1/12">
                                                     {it.reportRegdate}
                                                 </TableCell>
                                                 <TableCell className="text-center w-2/12">
@@ -204,7 +214,7 @@ function Report() {
                                                         className="bg-modal-bg w-3/5"
                                                         onClick={() => {
                                                             handleBan(
-                                                                it.memberIndex
+                                                                it.banMemberIndex
                                                             );
                                                         }}
                                                     >
