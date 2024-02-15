@@ -53,6 +53,7 @@ function ModalSpace() {
             {/* <GuideCommentArea /> */}
             <OpinionArea />
             <ConstellationInfoArea />
+            <AlarmArea />
         </>
     );
 }

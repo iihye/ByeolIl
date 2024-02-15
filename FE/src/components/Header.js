@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import Sidebar from './Sidebar';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaRegBell } from 'react-icons/fa';
-import { useSetRecoilState, useResetRecoilState, useRecoilValue } from 'recoil';
-import { isAlarmOpenState } from './atom';
+import React, { useEffect, useState } from "react";
+import Sidebar from "./Sidebar";
+import { Link, useNavigate } from "react-router-dom";
+import { FaRegBell } from "react-icons/fa";
+import { useSetRecoilState, useResetRecoilState, useRecoilValue } from "recoil";
+import { isAlarmOpenState } from "./atom";
 
 function Header() {
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem("token");
     const navigate = useNavigate();
     const [memberIndex, setMemberIndex] = useState(
-        sessionStorage.getItem('memberIndex')
+        sessionStorage.getItem("memberIndex")
     );
     const setAlarmOpenState = useSetRecoilState(isAlarmOpenState);
 
     useEffect(() => {
-        setMemberIndex(sessionStorage.getItem('memberIndex'));
+        setMemberIndex(sessionStorage.getItem("memberIndex"));
     }, [token]);
 
     return (
@@ -27,11 +27,13 @@ function Header() {
                                 className="Sidebar-Alarm "
                                 size="28"
                                 color="white"
-                                onClick={() => setAlarmOpenState(true)}
+                                onClick={() => {
+                                    setAlarmOpenState(true);
+                                }}
                             />
                         </div>
                         <Sidebar
-                            props={sessionStorage.getItem('memberNickname')}
+                            props={sessionStorage.getItem("memberNickname")}
                         />
                     </nav>
                 </>
