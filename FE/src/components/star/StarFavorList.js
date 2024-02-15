@@ -26,6 +26,7 @@ function StarFavorList() {
     const token = sessionStorage.getItem('token');
     const resetIsFavorListOpen = useResetRecoilState(isFavorListOpenState);
     const [listData, setListData] = useState('');
+    const [followingList, setFollowingList] = useState([]);
     const [memberIndex, setMemberIndex] = useState(
         sessionStorage.getItem('memberIndex')
     );
@@ -34,6 +35,24 @@ function StarFavorList() {
     );
     const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
+
+    useEffect(() => {
+        const getFollowList = async () => {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_URL}/follow/following/${memberIndex}`,
+                {
+                    headers: {
+                        token: token,
+                    },
+                }
+            );
+            const memberIndexes =
+                response && response.data.result.map((it) => it.memberIndex);
+            setFollowingList(memberIndexes);
+        };
+
+        getFollowList();
+    }, [token, memberIndex]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,9 +65,15 @@ function StarFavorList() {
                         },
                     }
                 );
+
                 resetList();
                 setListData(
-                    response.data.filter((item) => item.boardAccess === 'OPEN')
+                    response.data.filter(
+                        (item) =>
+                            item.boardAccess === 'OPEN' ||
+                            (followingList.includes(item.memberIndex) &&
+                                item.boardAccess === 'PARTOPEN')
+                    )
                 );
             } catch (error) {
                 console.log(error);
@@ -56,7 +81,7 @@ function StarFavorList() {
         };
 
         fetchData();
-    }, [token, memberIndex]);
+    }, [followingList]);
 
     useEffect(() => {
         function handleClick(e) {
