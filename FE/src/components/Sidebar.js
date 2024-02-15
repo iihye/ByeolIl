@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import { TfiMenu } from "react-icons/tfi";
-import { FaUserCircle } from "react-icons/fa";
-import { HiOutlinePencilAlt } from "react-icons/hi";
-import * as SiIcons from "react-icons/si";
-import * as RiIcons from "react-icons/ri";
-import * as WiIcons from "react-icons/wi";
-import * as LuIcons from "react-icons/lu";
-import * as AiIcons from "react-icons/ai";
-import * as PiIcons from "react-icons/pi";
-import * as HiIcons from "react-icons/hi2";
-import * as IoIcons from "react-icons/io5";
-import * as SlICons from "react-icons/sl";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+import { TfiMenu } from 'react-icons/tfi';
+import { FaUserCircle } from 'react-icons/fa';
+import { HiOutlinePencilAlt } from 'react-icons/hi';
+import * as SiIcons from 'react-icons/si';
+import * as RiIcons from 'react-icons/ri';
+import * as WiIcons from 'react-icons/wi';
+import * as LuIcons from 'react-icons/lu';
+import * as AiIcons from 'react-icons/ai';
+import * as PiIcons from 'react-icons/pi';
+import * as HiIcons from 'react-icons/hi2';
+import * as IoIcons from 'react-icons/io5';
+import * as SlICons from 'react-icons/sl';
 
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState } from 'recoil';
 import {
     isChangeInfoOpenState,
     isFavorListOpenState,
@@ -25,8 +25,8 @@ import {
     isTagSearchOpenState,
     isReportOpenState,
     isOpinionOpenState,
-} from "./atom";
-import swal from "sweetalert";
+} from './atom';
+import swal from 'sweetalert';
 
 function SidebarList(props) {
     const setIsChangeInfoOpen = useSetRecoilState(isChangeInfoOpenState);
@@ -42,25 +42,25 @@ function SidebarList(props) {
     const [items, setItems] = useState([]);
     const [isModifying, setIsModifying] = useState(false);
     const [nickname, setNickname] = useState(
-        sessionStorage.getItem("nickname")
+        sessionStorage.getItem('nickname')
     );
-    const isAdmin = sessionStorage.getItem("auth");
-    const token = sessionStorage.getItem("token");
-    const memberIndex = Number(sessionStorage.getItem("memberIndex"));
+    const isAdmin = sessionStorage.getItem('auth');
+    const token = sessionStorage.getItem('token');
+    const memberIndex = Number(sessionStorage.getItem('memberIndex'));
 
     const navigate = useNavigate();
 
     const handleLogOut = () => {
-        sessionStorage.removeItem("memberIndex");
-        sessionStorage.removeItem("nickname");
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("auth");
-        navigate("/landing");
+        sessionStorage.removeItem('memberIndex');
+        sessionStorage.removeItem('nickname');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('auth');
+        navigate('/landing');
     };
 
     const handleNickname = async (e) => {
-        if (e.code === "Enter") {
-            if (e.target.value === "") {
+        if (e.code === 'Enter') {
+            if (e.target.value === '') {
                 setIsModifying(false);
                 return;
             }
@@ -72,7 +72,7 @@ function SidebarList(props) {
                 swal({
                     title: `${newName}은 사용이 불가능해요`,
                     text: "2~10자 사이 한글, 영문, 숫자, '_' 만 입력해주세요",
-                    icon: "error",
+                    icon: 'error',
                 });
                 return;
             }
@@ -87,7 +87,7 @@ function SidebarList(props) {
                     )}`
                 );
 
-                if (response.data.message === "사용 가능한 닉네임입니다.") {
+                if (response.data.message === '사용 가능한 닉네임입니다.') {
                     // 닉네임 변경 로직
                     try {
                         const updateResponse = await axios.put(
@@ -101,24 +101,24 @@ function SidebarList(props) {
 
                         if (updateResponse.status === 200) {
                             swal({
-                                title: "닉네임 변경 완료!",
-                                icon: "success",
+                                title: '닉네임 변경 완료!',
+                                icon: 'success',
                             }).then(() => {
-                                sessionStorage.setItem("nickname", newName);
+                                sessionStorage.setItem('nickname', newName);
                                 setNickname(newName);
                             });
                         }
                     } catch (error) {
                         swal({
-                            title: "닉네임 변경 실패",
-                            text: "다시 시도해주세요",
-                            icon: "error",
+                            title: '닉네임 변경 실패',
+                            text: '다시 시도해주세요',
+                            icon: 'error',
                         });
                     }
                 } else {
                     swal({
                         title: `중복된 닉네임이에요`,
-                        icon: "error",
+                        icon: 'error',
                     });
                 }
             } catch (error) {}
@@ -129,7 +129,7 @@ function SidebarList(props) {
     function goMySpace() {
         swal({
             title: `나의 우주로 이동합니다🚀`,
-            icon: "success",
+            icon: 'success',
         }).then(() => navigate(`space/${props.memberIndex}`));
     }
 
@@ -137,69 +137,69 @@ function SidebarList(props) {
         setItems([
             {
                 type: PiIcons,
-                icon: "PiStarAndCrescent",
-                name: "내 우주가기",
+                icon: 'PiStarAndCrescent',
+                name: '내 우주가기',
                 path: goMySpace,
             },
             {
                 type: WiIcons,
-                icon: "WiStars",
-                name: "나의 별 목록",
+                icon: 'WiStars',
+                name: '나의 별 목록',
                 path: () => setIsMyStarListOpen(true),
             },
             {
                 type: LuIcons,
-                icon: "LuFolderHeart",
-                name: "좋아하는 별 목록",
+                icon: 'LuFolderHeart',
+                name: '좋아하는 별 목록',
                 path: () => setIsFavorListOpen(true),
             },
             {
                 type: HiIcons,
-                icon: "HiMiniHashtag",
-                name: "태그로 별 찾기",
+                icon: 'HiMiniHashtag',
+                name: '태그로 별 찾기',
                 path: () => setIsTagSearchOpen(true),
             },
             {
                 type: AiIcons,
-                icon: "AiOutlineUserAdd",
-                name: "팔로우/팔로워 목록",
+                icon: 'AiOutlineUserAdd',
+                name: '팔로우/팔로워 목록',
                 path: () => setIsFollowListOpen(true),
             },
             {
                 type: PiIcons,
-                icon: "PiShootingStarLight",
-                name: "다른 우주 찾기",
+                icon: 'PiShootingStarLight',
+                name: '다른 우주 찾기',
                 path: () => setIsFindUserOpen(true),
             },
             {
                 type: IoIcons,
-                icon: "IoSettingsOutline",
-                name: "환경설정",
+                icon: 'IoSettingsOutline',
+                name: '환경설정',
                 path: () => setIsSettingOpen(true),
             },
             {
                 type: RiIcons,
-                icon: "RiLockPasswordLine",
-                name: "회원정보수정",
+                icon: 'RiLockPasswordLine',
+                name: '회원정보수정',
                 path: () => setIsChangeInfoOpen(true),
             },
             {
                 type: SlICons,
-                icon: "SlSpeech",
-                name: "의견 보내기",
+                icon: 'SlSpeech',
+                name: '의견 보내기',
                 path: () => setIsOpinionOpen(memberIndex),
             },
         ]);
     }, []);
 
     useEffect(() => {
-        if (isAdmin == "ROLE_ADMIN")
+        if (isAdmin == 'ROLE_ADMIN')
             setItems((prevItems) => [
                 ...prevItems,
                 {
                     type: PiIcons,
-                    icon: "PiSiren",
-                    name: "신고관리",
+                    icon: 'PiSiren',
+                    name: '신고관리',
                     path: () => setIsReportOpen(true),
                 },
             ]);
@@ -237,7 +237,6 @@ function SidebarList(props) {
             {/* 땡땡님의 우주 옆에 연필 아이콘(닉네임 수정 모달창으로 이동) */}
             {items.map((item, index) => {
                 const IconItem = item.type[item.icon];
-                console.log(IconItem);
                 const IconComponent = IconItem;
 
                 return (
@@ -267,9 +266,9 @@ function SidebarList(props) {
 export default function Sidebar() {
     const [viewSideBar, setViewSideBar] = useState(false);
     const [memberIndex, setMemberIndex] = useState(
-        Number(sessionStorage.getItem("memberIndex"))
+        Number(sessionStorage.getItem('memberIndex'))
     );
-    const [name, setName] = useState("");
+    const [name, setName] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
