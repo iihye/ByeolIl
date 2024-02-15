@@ -10,9 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 import swal from "sweetalert";
-
-const EXTENSION_IMAGE = ["png", "gif"];
-const EXTENSION_VIDEO = ["wav", "mp4"];
+import { EXTENSION_IMAGE, EXTENSION_VIDEO } from "data";
 
 const fileListState = atom({
     key: "fileList",
@@ -527,17 +525,13 @@ function ImagePreviewArea(props) {
                 let url = it.split(".");
                 let type = url[url.length - 1];
 
-                EXTENSION_IMAGE.forEach((it) => {
-                    if (it === type) {
-                        extension = "image";
-                    }
-                });
+                if (EXTENSION_IMAGE.has(type)) {
+                    extension = "image";
+                }
 
-                EXTENSION_VIDEO.forEach((it) => {
-                    if (it === type) {
-                        extension = "video";
-                    }
-                });
+                if (EXTENSION_VIDEO.has(type)) {
+                    extension = "video";
+                }
 
                 return it + "_" + extension;
             });

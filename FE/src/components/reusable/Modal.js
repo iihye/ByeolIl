@@ -24,6 +24,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import swal from "sweetalert";
+import { EXTENSION_IMAGE, EXTENSION_VIDEO } from "data";
 
 // type: "radio", "star", "report"
 function Modal(props) {
@@ -387,11 +388,27 @@ function MediaArea(props) {
             <div className="flex relative overflow-hidden items-center w-pic">
                 <div className="flex items-center h-pic transition-all" ref={areaRef}>
                     {data &&
-                        data.boardMedia.map((it, index) => (
-                            <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
-                                <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
-                            </div>
-                        ))}
+                        data.boardMedia.map((it, index) => {
+                            const arr = it.split(".");
+                            const type = arr[arr.length - 1];
+
+                            return (
+                                <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
+                                    {EXTENSION_IMAGE.has(type) ? (
+                                        <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
+                                    ) : null}
+                                    {EXTENSION_VIDEO.has(type) ? (
+                                        <video
+                                            className="w-pic max-h-pic"
+                                            src={it}
+                                            key={index}
+                                            alt="it"
+                                            controls
+                                        ></video>
+                                    ) : null}
+                                </div>
+                            );
+                        })}
                 </div>
                 <FaChevronLeft
                     className="absolute left-0 h-full w-8 mx-2 text-black-sub hover:text-black"

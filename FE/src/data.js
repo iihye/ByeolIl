@@ -759,4 +759,7 @@ export const linePosition = [
     ],
 ];
 
+export const EXTENSION_IMAGE = new Set(["png", "gif"]);
+export const EXTENSION_VIDEO = new Set(["wav", "mp4"]);
+
 export const MAX_SATR_CNT = idx;
