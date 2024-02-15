@@ -110,8 +110,8 @@ public class MemberService {
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestAPIKey);
 
-//        params.add("redirect_uri", redirectUrl+url);
-        params.add("redirect_uri", "http://localhost:3000" + url);
+        params.add("redirect_uri", redirectUrl+url);
+//        params.add("redirect_uri", "http://localhost:3000" + url);
         params.add("code", code);
 
         // Set http entity
