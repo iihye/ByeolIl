@@ -154,9 +154,9 @@ function Star(props) {
         setCurStarState(isAddedStar.get(props.location));
 
         if (isAddedStar.get(props.location)) {
-            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, true);
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 1);
         } else {
-            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, false);
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 0);
         }
     }, [stars]);
 
@@ -247,9 +247,11 @@ function GroupStar(props) {
     // 작성한 별 목록 변경 시 별자리 체크
     useEffect(() => {
         const check = constellationCheck.query(1, 0, MAX_SATR_CNT, startStarNum, lastStarNum);
-        if (check) {
+        console.log(check, lastStarNum - startStarNum + 1);
+        console.log(constellationCheck.tree);
+        if (check === lastStarNum - startStarNum + 1) {
             setLineColor(false);
-        } else if (!check) {
+        } else if (check !== lastStarNum - startStarNum + 1) {
             setLineColor(true);
         }
     }, [stars]);
