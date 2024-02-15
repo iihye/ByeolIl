@@ -588,27 +588,37 @@ function RadioContent() {
     }, [rdata]);
 
     function handleRepost() {
-        axios
-            .post(
-                `${process.env.REACT_APP_API_URL}/radio/toss`,
-                {
-                    memberIndex: rdata.fromMemberIndex,
-                    boardIndex: rdata.boardIndex,
-                },
-                {
-                    headers: {
-                        token: sessionStorage.getItem("token") ?? "",
-                    },
-                }
-            )
-            .then((response) => {
-                console.log(response.data);
-            });
         swal({
-            title: "다른 사람에게 전달했어요!",
-            icon: "success",
+            title: "라디오 전송",
+            text: "해당 라디오 내용을 다른 유저에게도 공유해볼까요?",
+            icon: "info",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                axios
+                    .post(
+                        `${process.env.REACT_APP_API_URL}/radio/toss`,
+                        {
+                            memberIndex: rdata.fromMemberIndex,
+                            boardIndex: rdata.boardIndex,
+                        },
+                        {
+                            headers: {
+                                token: sessionStorage.getItem("token") ?? "",
+                            },
+                        }
+                    )
+                    .then((response) => {
+                        console.log(response.data);
+                    });
+                swal({
+                    title: "다른 사람에게 전달했어요!",
+                    icon: "success",
+                });
+                setRepostActive(true);
+            }
         });
-        setRepostActive(true);
     }
 
     return (
