@@ -73,7 +73,7 @@ const followState = atom({
 });
 
 const renewLineState = atom({
-    key: "renewLine",
+    key: 'renewLine',
     default: false,
 });
 
@@ -220,13 +220,7 @@ function Star(props) {
             <mesh ref={mesh} position={props.position}>
                 <sphereGeometry args={props.size} />
                 <meshPhongMaterial
-<<<<<<< HEAD
-                    color={curStarState ? colors[colorCheck] : "grey"}
-=======
-                    // emissive={"yellow"}
-                    // emissiveIntensity={0.1}
                     color={curStarState ? colors[colorCheck] : 'grey'}
->>>>>>> feature-FE/like
                     opacity={curStarState ? 1 : 0.4}
                     transparent={true}
                 />
