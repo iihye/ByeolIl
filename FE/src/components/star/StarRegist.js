@@ -160,7 +160,7 @@ function StarRegist(props) {
                     isAddedStar.clear();
                     res.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
                     setStars(res.data);
-                    handleClose();
+                    handleClose(false);
                 } else {
                     swal({
                         title: "게시글 작성에 실패했어요",
@@ -201,7 +201,7 @@ function StarRegist(props) {
                     .then((response) => {
                         if (response.status === 200) {
                             setIsStarDetailOpen([boardIndex, writerIndex]);
-                            handleClose();
+                            handleClose(false);
                         }
                     });
             } catch (error) {
@@ -210,22 +210,30 @@ function StarRegist(props) {
         }
     };
 
-    function handleClose() {
-        if (type === "regist") {
-            if (contentRef.current.value.trim().length === 0) {
-                setIsStarRegistOpen(false);
-            } else {
-                if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
+    function handleClose(check) {
+        if (check) {
+            if (type === "regist") {
+                if (contentRef.current.value.trim().length === 0) {
                     setIsStarRegistOpen(false);
+                } else {
+                    if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
+                        setIsStarRegistOpen(false);
+                    }
+                }
+            } else if (type === "modify") {
+                if (contentRef.current.value.trim().length === 0) {
+                    setIsStarModifyOpen(false);
+                } else {
+                    if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
+                        setIsStarModifyOpen(false);
+                    }
                 }
             }
-        } else if (type === "modify") {
-            if (contentRef.current.value.trim().length === 0) {
+        } else if (!check) {
+            if (type === "regist") {
+                setIsStarRegistOpen(false);
+            } else if (type === "modify") {
                 setIsStarModifyOpen(false);
-            } else {
-                if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
-                    setIsStarModifyOpen(false);
-                }
             }
         }
     }
@@ -249,7 +257,7 @@ function StarRegist(props) {
                             buttonValue={buttonValue}
                             type={type}
                             handleRegist={handleRegist}
-                            handleClose={handleClose}
+                            handleClose={() => handleClose(true)}
                         />
                     </div>
                 </div>
@@ -345,7 +353,6 @@ const FileUploadArea = forwardRef((props, ref) => {
     function limitFileVolume(e, imageFileList, videoFileList) {
         const imageLimit = 1024 ** 2 * 5; // 5MB
         const videoLimit = 1024 ** 2 * 100; // 100MB
-        console.log(imageFileList, videoFileList);
 
         const imageSizeCheck = [...imageFileList].some((it) => it.size > imageLimit);
         const videoSizeCheck = [...videoFileList].some((it) => it.size > videoLimit);
@@ -458,12 +465,11 @@ const FileUploadArea = forwardRef((props, ref) => {
 function FileList() {
     const [fileList, setFileList] = useRecoilState(fileListState);
     const fileNames = fileList.map((it) => {
-        console.log(it);
         const nameArray = it.name.split(".");
         const extension = nameArray[nameArray.length - 1];
 
         let fileName = "";
-        for (let i = 0; i < Math.min(it.name.length - (extension.length + 1), 25); i++) {
+        for (let i = 0; i < Math.min(it.name.length - (extension.length + 1), 20); i++) {
             fileName += it.name[i];
         }
 
