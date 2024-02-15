@@ -96,7 +96,12 @@ function InputAlert(props) {
 
                 setIsReportAlertOpen(false);
             })
-            .catch((e) => console.log(e));
+            .catch((e) =>
+                swal({
+                    title: '이미 신고한 글입니다',
+                    icon: 'info',
+                })
+            );
     };
 
     const handlePWChange = (inputData) => {
