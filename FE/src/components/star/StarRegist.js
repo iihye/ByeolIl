@@ -201,6 +201,10 @@ function StarRegist(props) {
                     })
                     .then((response) => {
                         if (response.status === 200) {
+                            swal({
+                                title: "게시글 수정 성공!",
+                                icon: "success",
+                            });
                             setIsStarDetailOpen([boardIndex, writerIndex]);
                             handleClose(false);
                         }
