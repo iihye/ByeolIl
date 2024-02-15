@@ -47,6 +47,7 @@ function StarFavorList() {
                     }
                 );
                 resetList();
+                console.log(response.data);
                 setListData(
                     response.data.filter((item) => item.boardAccess === 'OPEN')
                 );
