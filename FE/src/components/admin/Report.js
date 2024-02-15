@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReportDetail from './ReportDetail';
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { reportModalState, isReportOpenState } from 'components/atom';
+import { isReportOpenState, isReportDetailOpenState } from 'components/atom';
 import {
     Card,
     CardContent,
@@ -31,7 +31,9 @@ function Report() {
     const [reportData, setReportData] = useState([]);
     const [boardContent, setBoardContent] = useState([]); // 게시글에서 boardContent만 뽑아옴
     const [boardIndex, setBoardIndex] = useState([]); // 게시글에서 boardIndex만 뽑아옴
-    const [reportModal, setReportModal] = useRecoilState(reportModalState); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
+    const [isReportDetailOpen, setIsReportDetailOpen] = useRecoilState(
+        isReportDetailOpenState
+    ); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
     const setIsReportOpen = useResetRecoilState(isReportOpenState);
 
     const token = sessionStorage.getItem('token');
@@ -90,8 +92,6 @@ function Report() {
                 const newBoardContent = responses.map(
                     (res) => res.data.boardContent
                 );
-
-                console.log(reportData);
 
                 const newBoardIndex = reportData.map((res) => res.boardIndex);
 
@@ -185,14 +185,6 @@ function Report() {
                                 boardContent.length > 0 ? (
                                     reportData.map((it, index) => (
                                         <>
-                                            {reportModal === it.boardIndex && (
-                                                <ReportDetail
-                                                    boardIndex={it.boardIndex}
-                                                    reportContent={
-                                                        it.reportContent
-                                                    }
-                                                />
-                                            )}
                                             <TableRow
                                                 className="font-['Pre-Light']"
                                                 key={it.reportIndex}
@@ -225,8 +217,11 @@ function Report() {
                                                     <button
                                                         className="bg-modal-bg w-6/12"
                                                         onClick={() =>
-                                                            setReportModal(
-                                                                it.boardIndex
+                                                            setIsReportDetailOpen(
+                                                                [
+                                                                    it.boardIndex,
+                                                                    it.reportContent,
+                                                                ]
                                                             )
                                                         }
                                                     >

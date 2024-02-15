@@ -38,6 +38,7 @@ function App() {
         <div className="App">
             <Header />
             <Routes>
+                <Route path="*" element={<ErrorPage />} />
                 <Route path="/regist/kakao" element={<KakaoRegist />}></Route>
                 <Route path="/login/kakao" element={<KakaoLogin />}></Route>
                 <Route path="/landing" element={<LandingPage />}>
@@ -49,7 +50,6 @@ function App() {
                 <Route path="/space/:user_id" element={<MainPage />}>
                     <Route path="alarm" element={<Alarm />} />
                     <Route path="radio" element={<Radio />} />
-                    <Route path="*" element={<ErrorPage />} />
                 </Route>
             </Routes>
         </div>

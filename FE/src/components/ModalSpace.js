@@ -14,6 +14,7 @@ import {
     isTagSearchOpenState,
     isSettingOpenState,
     isReportOpenState,
+    isReportDetailOpenState,
 } from './atom';
 import StarRegist from './star/StarRegist';
 import StarDetail from './star/StarDetail';
@@ -25,6 +26,7 @@ import FindUser from './user/FindUser';
 import StarTagSearch from './star/StarTagSearch';
 import Settings from './user/Settings';
 import Report from './admin/Report';
+import ReportDetail from './admin/ReportDetail';
 
 function ModalSpace() {
     return (
@@ -40,6 +42,7 @@ function ModalSpace() {
             <TagSearchArea />
             <SettingArea />
             <ReportArea />
+            <ReportDetailArea />
         </>
     );
 }
@@ -139,6 +142,20 @@ function SettingArea() {
 function ReportArea() {
     const isReportOpen = useRecoilValue(isReportOpenState);
     return <>{isReportOpen && <Report />}</>;
+}
+
+function ReportDetailArea() {
+    const isReportDetailOpen = useRecoilValue(isReportDetailOpenState);
+    return (
+        <>
+            {isReportDetailOpen && (
+                <ReportDetail
+                    boardIndex={isReportDetailOpen[0]}
+                    reportContent={isReportDetailOpen[1]}
+                />
+            )}
+        </>
+    );
 }
 
 export default ModalSpace;
