@@ -14,6 +14,8 @@ import {
     isTagSearchOpenState,
 } from 'components/atom';
 import { Button } from '@/components/ui/button';
+import StarfieldAnimation from "react-starfield-animation";
+
 
 export default function LandingPage() {
     const resetIsChangeInfoOpen = useResetRecoilState(isChangeInfoOpenState);
@@ -45,23 +47,30 @@ export default function LandingPage() {
     }, []);
 
     return (
-        <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden">
+        <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden bg-black">
             <div>
-                <video
+                {/* <video
                     autoPlay
                     loop
                     muted
                     className="absolute top-0 left-0 w-full h-full object-cover"
                 >
                     <source src={video} type="video/mp4"></source>
-                </video>
+                </video> */}
+                <StarfieldAnimation 
+                className="absolute top-0 left-0 w-full h-full object-cover"
+                numParticles={800}
+                particleSpeed={0}
+                dx={0.000000001} // x speed of stars in px/frame, default 0.05
+                dy={0.000000001}
+                />
             </div>
             <div className="content absolute">
                 {!isOpen && (
                     <div className="font-['Pre-Bold'] w-56">
                         <h1 className="text-white text-6xl text-center font-['Star'] py-4">
                             별일
-                        </h1>
+                        </h1>   
                         <Link to="/landing/login">
                             <Button className="w-full h-button my-1">시작하기</Button>
                         </Link>
