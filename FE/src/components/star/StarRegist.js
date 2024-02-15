@@ -80,7 +80,8 @@ function StarRegist(props) {
         };
     }, []);
 
-    const handleRegist = async (fileList, accessRange) => {
+    const handleRegist = async (event, fileList, accessRange) => {
+        event.stopPropagation();
         if (contentRef.current.value.trim() === "") {
             swal({
                 title: "공백을 입력했어요!",
@@ -216,17 +217,33 @@ function StarRegist(props) {
                 if (contentRef.current.value.trim().length === 0) {
                     setIsStarRegistOpen(false);
                 } else {
-                    if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
-                        setIsStarRegistOpen(false);
-                    }
+                    swal({
+                        title: "창을 닫을까요?",
+                        text: "작성중인 게시글이 지워집니다!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            setIsStarRegistOpen(false);
+                        }
+                    });
                 }
             } else if (type === "modify") {
                 if (contentRef.current.value.trim().length === 0) {
                     setIsStarModifyOpen(false);
                 } else {
-                    if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
-                        setIsStarModifyOpen(false);
-                    }
+                    swal({
+                        title: "창을 닫을까요?",
+                        text: "작성중인 게시글이 지워집니다!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            setIsStarModifyOpen(false);
+                        }
+                    });
                 }
             }
         } else if (!check) {
@@ -239,7 +256,7 @@ function StarRegist(props) {
     }
 
     return (
-        <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside">
+        <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside z-23">
             <div className="star-regist bg-modal-bg text-black-sub flex rounded p-3 w-fit">
                 <ImagePreviewArea preBoard={preBoard} type={type} />
                 <div>
@@ -306,8 +323,8 @@ function Buttons(props) {
         <div className="flex absolute right-0 top-0">
             <button
                 className="h-8 w-14 px-2 shadow-md"
-                onClick={() => {
-                    handleRegist(fileList, accessRange);
+                onClick={(e) => {
+                    handleRegist(e, fileList, accessRange);
                 }}
             >
                 {buttonValue[type]}
