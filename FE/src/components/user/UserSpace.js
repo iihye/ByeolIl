@@ -415,6 +415,7 @@ function SceneStars() {
             const followerCheck = follower.some(
                 (it) => it['memberId'] === loginUserNickname
             );
+
             setIsFollowState(followerCheck);
         }
 
