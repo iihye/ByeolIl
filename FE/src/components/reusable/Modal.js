@@ -103,6 +103,7 @@ function StarContent(props) {
                     if (err.response.status === 400) {
                         setReportModalState(false);
                         setIsDetailAlarmOpen(false);
+                        setIsStarDetailOpen(false);
                         swal({
                             title: '삭제된 글입니다',
                             icon: 'warning',
