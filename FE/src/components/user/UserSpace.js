@@ -3,9 +3,14 @@ import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei";
 import * as THREE from "three";
 import axios from "axios";
-import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { atom, useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { Link, useParams } from "react-router-dom";
-import { isDeleteAlertOpenState, isStarDetailOpenState, isStarRegistOpenState } from "components/atom";
+import {
+    isDeleteAlertOpenState,
+    isGuideCommentOpenState,
+    isStarDetailOpenState,
+    isStarRegistOpenState,
+} from "components/atom";
 import { position, linePosition, MAX_SATR_CNT } from "../../data";
 import { useLocation } from "react-router-dom";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
@@ -57,6 +62,11 @@ const followState = atom({
     default: null,
 });
 
+const lineColorState = atom({
+    key: "lineColorState",
+    default: false,
+});
+
 ///////////////////////////////// ↑ atoms
 
 // isAddedStar : starLocation : starInfo
@@ -64,7 +74,7 @@ const isAddedStar = new Map();
 
 function Line(props) {
     const starLineOpacity = useRecoilValue(starLineOpacityState);
-
+    console.log(props.lineColor);
     const groupNum = props.groupNum;
 
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
@@ -153,6 +163,7 @@ function Star(props) {
     useEffect(() => {
         setCurStarState(isAddedStar.get(props.location));
 
+        console.log("stars 변화 감지");
         if (isAddedStar.get(props.location)) {
             constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 1);
         } else {
@@ -187,8 +198,6 @@ function Star(props) {
             <mesh ref={mesh} position={props.position}>
                 <sphereGeometry args={props.size} />
                 <meshPhongMaterial
-                    // emissive={"yellow"}
-                    // emissiveIntensity={0.1}
                     color={curStarState ? colors[colorCheck] : "grey"}
                     opacity={curStarState ? 1 : 0.4}
                     transparent={true}
@@ -223,7 +232,6 @@ function GroupStar(props) {
     const stars = useRecoilValue(starsState);
 
     const setStarLineOpacityState = useSetRecoilState(starLineOpacityState);
-
     const [lineColor, setLineColor] = useState(true);
     const [renewConstellation, setRenewConstellation] = useState(false);
 
@@ -241,13 +249,17 @@ function GroupStar(props) {
     }
 
     // 작성한 별 목록 변경 시 별자리 체크
+    let a = 0;
     useEffect(() => {
         const check = constellationCheck.query(1, 0, MAX_SATR_CNT, startStarNum, lastStarNum);
-
+        a = check;
+        console.log(check === lastStarNum - startStarNum + 1);
         if (check === lastStarNum - startStarNum + 1) {
-            setLineColor(false);
+            let tmp = false;
+            setLineColor(tmp);
         } else if (check !== lastStarNum - startStarNum + 1) {
-            setLineColor(true);
+            let tmp = true;
+            setLineColor(tmp);
         }
     }, [stars]);
 
@@ -266,7 +278,14 @@ function GroupStar(props) {
 
     return (
         <>
-            <group ref={group} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
+            <group
+                ref={group}
+                onPointerEnter={handlePointerEnter}
+                onPointerLeave={handlePointerLeave}
+                onClick={() => {
+                    console.log(lastStarNum - startStarNum + 1, a);
+                }}
+            >
                 {props.position.map((val, index) => (
                     <Star
                         key={index}
@@ -274,7 +293,6 @@ function GroupStar(props) {
                         positions={position}
                         position={val.slice(1, 4)}
                         location={val[0]}
-                        setLineColor={setLineColor}
                         renewConstellation={renewConstellation}
                         setRenewConstellation={setRenewConstellation}
                         startStarNum={startStarNum}
@@ -283,7 +301,7 @@ function GroupStar(props) {
                 ))}
                 {linePosition[groupNum].map((it, index) => {
                     const pos = it.map((it) => new THREE.Vector3(...it));
-                    return <Line key={index} points={pos} lineColor={lineColor} groupNum={groupNum} />;
+                    return <Line key={index} points={pos} groupNum={groupNum} lineColor={lineColor} />;
                 })}
             </group>
         </>
@@ -294,7 +312,7 @@ function SceneStars() {
     const curPage = useRecoilValue(curPageState);
     const [stars, setStars] = useRecoilState(starsState);
     const setFollower = useSetRecoilState(followerState);
-    const setFollowing = useSetRecoilState(followingState);
+    const setIsGuideCommentOpen = useSetRecoilState(isGuideCommentOpenState);
     const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
 
     const params = useParams();
@@ -335,6 +353,10 @@ function SceneStars() {
         };
 
         fetchData();
+
+        if (stars.length === 0 && writerIndex === loginUserId) {
+            setIsGuideCommentOpen(true);
+        }
     }, [curPage, isDeleteAlertOpen, writerIndex]);
 
     useEffect(() => {
@@ -479,6 +501,25 @@ function FollowArea() {
                 </Link>
             )}
         </>
+    );
+}
+
+export function GuideComment() {
+    const resetIsGuideCommentOpen = useResetRecoilState(isGuideCommentOpenState);
+
+    useEffect(() => {
+        function guideClose() {
+            resetIsGuideCommentOpen();
+        }
+
+        setTimeout(guideClose, 4000);
+    }, []);
+    return (
+        <div className="guide-comment-container relative w-full h-full">
+            <div className="guide-comment absolute top-0 left-0 right-0 bottom-0 p-2 bg-alert-bg">
+                <div>희미한 별을 눌러 일기를 작성해보아요!</div>
+            </div>
+        </div>
     );
 }
 
