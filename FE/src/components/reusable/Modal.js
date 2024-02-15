@@ -37,15 +37,23 @@ function Modal(props) {
     return (
         <div className="modal-container absolute bg-modal-outside top-0 left-0 flex justify-center items-center w-full h-full z-20">
             <div className="modal bg-modal-bg rounded-lg p-3 w-fit font-['Pre-bold']">
-                {type === "radio" ? <RadioContent /> : <StarContent {...props} />}
+                {type === "radio" ? (
+                    <RadioContent />
+                ) : (
+                    <StarContent {...props} />
+                )}
             </div>
         </div>
     );
 }
 
 function StarContent(props) {
-    const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(isDeleteAlertOpenState);
-    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
+    const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useRecoilState(
+        isDeleteAlertOpenState
+    );
+    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(
+        isReportAlertOpenState
+    );
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
     const setIsDetailAlarmOpen = useSetRecoilState(isAlarmDetailState);
@@ -69,15 +77,20 @@ function StarContent(props) {
     useEffect(() => {
         const fetchData = async (starIndex) => {
             await axios
-                .get(`${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`, {
-                    headers: {
-                        token: sessionStorage.getItem("token") ?? "",
-                    },
-                })
+                .get(
+                    `${process.env.REACT_APP_API_URL}/board/${starIndex}/${loginUserIndex}`,
+                    {
+                        headers: {
+                            token: sessionStorage.getItem("token") ?? "",
+                        },
+                    }
+                )
                 .then((response) => {
                     const data = response.data;
                     data.boardInputDate = data.boardInputDate.split(".");
-                    data.boardUpdateDate = data.boardUpdateDate.split(" ")[0].split(".");
+                    data.boardUpdateDate = data.boardUpdateDate
+                        .split(" ")[0]
+                        .split(".");
 
                     const likeState = response.data.boardLike;
                     if (likeState) {
@@ -106,7 +119,9 @@ function StarContent(props) {
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "modal-container");
+            const check = [...e.target.classList].some(
+                (it) => it === "modal-container"
+            );
             if (check) {
                 handleClose();
             }
@@ -158,11 +173,15 @@ function StarContent(props) {
         };
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/board/like`, data, {
-                headers: {
-                    token: sessionStorage.getItem("token"),
-                },
-            });
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_URL}/board/like`,
+                data,
+                {
+                    headers: {
+                        token: sessionStorage.getItem("token"),
+                    },
+                }
+            );
 
             if (response.request.status === 200) {
                 setIsLike(true);
@@ -227,8 +246,8 @@ function StarContent(props) {
             })
             .then(() =>
                 swal({
-                    title: '라디오 전송 성공!',
-                    icon: 'success',
+                    title: "라디오 전송 성공!",
+                    icon: "success",
                 })
             )
             .catch((error) => console.log(error));
@@ -236,7 +255,9 @@ function StarContent(props) {
 
     return (
         <div className="flex items-center">
-            {data && data.boardMedia.length > 0 ? <MediaArea data={data} /> : null}
+            {data && data.boardMedia.length > 0 ? (
+                <MediaArea data={data} />
+            ) : null}
 
             <div className="star-content">
                 {/* 최상단 */}
@@ -245,7 +266,9 @@ function StarContent(props) {
                     <div className="relative text-2xl mb-2 font-['Pre-bold'] flex justify-between items-center">
                         {data ? (
                             <div>
-                                20{data.boardInputDate[0]}년 {data.boardInputDate[1]}월 {data.boardInputDate[2]}일
+                                20{data.boardInputDate[0]}년{" "}
+                                {data.boardInputDate[1]}월{" "}
+                                {data.boardInputDate[2]}일
                                 <span className="text-lg">의 기록</span>
                             </div>
                         ) : (
@@ -264,20 +287,35 @@ function StarContent(props) {
                 <div>
                     {/* 해시태그 */}
                     <div className="flex text-white-sub gap-3 mt-2">
-                        {data ? data.hashContent.map((i, idx) => <div key={idx}># {i}</div>) : "로딩중"}
+                        {data
+                            ? data.hashContent.map((i, idx) => (
+                                  <div key={idx}># {i}</div>
+                              ))
+                            : "로딩중"}
                     </div>
                 </div>
-                {type === "report" ? <div>{reportInfo && reportInfo.reportContent}</div> : null}
+                {type === "report" ? (
+                    <div>{reportInfo && reportInfo.reportContent}</div>
+                ) : null}
                 <div>
                     {/* 댓글 리스트 영역 */}
-                    <StarReplyList boardIndex={starIndex} handleRadio={handleRadio} />
+                    <StarReplyList
+                        boardIndex={starIndex}
+                        handleRadio={handleRadio}
+                        isWriter={isWriter}
+                    />
                 </div>
                 <div>
                     {/* 최하단 */}
                     {type === "star" ? (
                         <>
                             {/* 댓글 작성 영역 */}
-                            {isLogin() && <ReplyRegistArea starIndex={starIndex} loginUserIndex={loginUserIndex} />}
+                            {isLogin() && (
+                                <ReplyRegistArea
+                                    starIndex={starIndex}
+                                    loginUserIndex={loginUserIndex}
+                                />
+                            )}
                         </>
                     ) : null}
                     <div className="flex justify-between items-center text-2xl">
@@ -292,8 +330,12 @@ function StarContent(props) {
                                     <ReportButton handleReport={handleReport} />
                                     {isWriter() && (
                                         <>
-                                            <DeleteButton handleDelete={handleDelete} />
-                                            <ModifyButton handleModify={handleModify} />
+                                            <DeleteButton
+                                                handleDelete={handleDelete}
+                                            />
+                                            <ModifyButton
+                                                handleModify={handleModify}
+                                            />
                                         </>
                                     )}
                                 </>
@@ -306,8 +348,18 @@ function StarContent(props) {
                 </div>
             </div>
             <div className="alert">
-                {isDeleteAlertOpen && <StarDeleteAlert boardIndex={starIndex} userIndex={loginUserIndex} />}
-                {isReportAlertOpen && <StarReportAlert boardIndex={starIndex} userIndex={loginUserIndex} />}
+                {isDeleteAlertOpen && (
+                    <StarDeleteAlert
+                        boardIndex={starIndex}
+                        userIndex={loginUserIndex}
+                    />
+                )}
+                {isReportAlertOpen && (
+                    <StarReportAlert
+                        boardIndex={starIndex}
+                        userIndex={loginUserIndex}
+                    />
+                )}
             </div>
         </div>
     );
@@ -316,7 +368,10 @@ function StarContent(props) {
 function CloseButton(props) {
     const handleClose = props.handleClose;
     return (
-        <div className="text-white-sub hover:hover text-3xl" onClick={handleClose}>
+        <div
+            className="text-white-sub hover:hover text-3xl"
+            onClick={handleClose}
+        >
             <CgCloseR />
         </div>
     );
@@ -324,7 +379,10 @@ function CloseButton(props) {
 function ModifyButton(props) {
     const handleModify = props.handleModify;
     return (
-        <div className="text-white-sub hover:hover text-3xl" onClick={handleModify}>
+        <div
+            className="text-white-sub hover:hover text-3xl"
+            onClick={handleModify}
+        >
             <TiSpannerOutline />
         </div>
     );
@@ -343,7 +401,10 @@ function ReportButton(props) {
     const handleReport = props.handleReport;
 
     return (
-        <div className="text-white-sub text-3xl hover:hover" onClick={handleReport}>
+        <div
+            className="text-white-sub text-3xl hover:hover"
+            onClick={handleReport}
+        >
             <PiSiren />
         </div>
     );
@@ -356,11 +417,17 @@ function LikeButtons(props) {
     return (
         <>
             {!isLike ? (
-                <div className="hover:cursor-pointer text-white-sub hover:text-white" onClick={handleLike}>
+                <div
+                    className="hover:cursor-pointer text-white-sub hover:text-white"
+                    onClick={handleLike}
+                >
                     <FaRegHeart />
                 </div>
             ) : (
-                <div className="hover:cursor-pointer text-white-sub hover:text-white" onClick={handleDislike}>
+                <div
+                    className="hover:cursor-pointer text-white-sub hover:text-white"
+                    onClick={handleDislike}
+                >
                     <FaHeart />
                 </div>
             )}
@@ -388,22 +455,35 @@ function MediaArea(props) {
     }
 
     useEffect(() => {
-        areaRef.current.style.transform = `translateX(${-Math.min(curPage, lastPage) * 32}rem)`;
+        areaRef.current.style.transform = `translateX(${
+            -Math.min(curPage, lastPage) * 32
+        }rem)`;
     }, [curPage]);
 
     return (
         <div className="flex items-center top-12 rounded right-full p-5 mr-6 h-full bg-modal-bg">
             <div className="flex relative overflow-hidden items-center w-pic">
-                <div className="flex items-center h-pic transition-all" ref={areaRef}>
+                <div
+                    className="flex items-center h-pic transition-all"
+                    ref={areaRef}
+                >
                     {data &&
                         data.boardMedia.map((it, index) => {
                             const arr = it.split(".");
                             const type = arr[arr.length - 1];
 
                             return (
-                                <div className="w-pic h-pic bg-black-sub flex items-center" key={index}>
+                                <div
+                                    className="w-pic h-pic bg-black-sub flex items-center"
+                                    key={index}
+                                >
                                     {EXTENSION_IMAGE.has(type) ? (
-                                        <img className="w-pic max-h-pic" src={it} key={index} alt="it"></img>
+                                        <img
+                                            className="w-pic max-h-pic"
+                                            src={it}
+                                            key={index}
+                                            alt="it"
+                                        ></img>
                                     ) : null}
                                     {EXTENSION_VIDEO.has(type) ? (
                                         <video
@@ -495,17 +575,24 @@ function ReplyRegistArea(props) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function RadioContent() {
     const [rdata, setRdata] = useState();
-    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
+    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(
+        isReportAlertOpenState
+    );
     const [repostActive, setRepostActive] = useState(false);
     const [audioSrc, setAudioSrc] = useState("");
     const navigate = useNavigate();
     const fetchData = async () => {
         await axios
-            .get(`${process.env.REACT_APP_API_URL}/radio/${sessionStorage.getItem("memberIndex")}`, {
-                headers: {
-                    token: sessionStorage.getItem("token") ?? "",
-                },
-            })
+            .get(
+                `${
+                    process.env.REACT_APP_API_URL
+                }/radio/${sessionStorage.getItem("memberIndex")}`,
+                {
+                    headers: {
+                        token: sessionStorage.getItem("token") ?? "",
+                    },
+                }
+            )
             .then((response) => {
                 console.log(response.data);
                 setRdata(response.data);
@@ -519,9 +606,12 @@ function RadioContent() {
         if (!rdata) return; // rdata가 null일 때는 메소드를 종료
 
         await axios
-            .get(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`, {
-                responseType: "blob",
-            })
+            .get(
+                `${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`,
+                {
+                    responseType: "blob",
+                }
+            )
             .then((response) => {
                 const blobUrl = URL.createObjectURL(response.data);
                 setAudioSrc(blobUrl);
@@ -563,7 +653,9 @@ function RadioContent() {
     useEffect(() => {
         function handleClick(e) {
             e.stopPropagation();
-            const check = [...e.target.classList].some((it) => it === "outside");
+            const check = [...e.target.classList].some(
+                (it) => it === "outside"
+            );
 
             if (check) {
                 if (rdata) {
@@ -656,7 +748,10 @@ function RadioContent() {
                         </div>
 
                         <div className="flex justify-end items-center">
-                            <div className="Radio-Report text-white-sub text-3xl hover:hover" onClick={handleClose}>
+                            <div
+                                className="Radio-Report text-white-sub text-3xl hover:hover"
+                                onClick={handleClose}
+                            >
                                 <RiCloseFill />
                             </div>
                         </div>
@@ -670,8 +765,10 @@ function RadioContent() {
                             <div>
                                 <div className="Radio-Header flex justyfy-between items-center w-full">
                                     <div className="Radio-Date flex justify-start items-center flex-grow relative text-2xl mb-2 font-['Pre-bold']">
-                                        20{rdata.boardInputDate.split(".")[0]}년 {rdata.boardInputDate.split(".")[1]}월{" "}
-                                        {rdata.boardInputDate.split(".")[2]}일 작성된 별
+                                        20{rdata.boardInputDate.split(".")[0]}년{" "}
+                                        {rdata.boardInputDate.split(".")[1]}월{" "}
+                                        {rdata.boardInputDate.split(".")[2]}일
+                                        작성된 별
                                     </div>
                                     <div
                                         className="Radio-Report flex justify-end items-center  text-white-sub text-3xl hover:hover"
@@ -703,7 +800,13 @@ function RadioContent() {
                                 </button> */}
 
                                 <div className="Radio-Player w-full mb-4">
-                                    {audioSrc && <audio className="w-full" src={audioSrc} controls />}
+                                    {audioSrc && (
+                                        <audio
+                                            className="w-full"
+                                            src={audioSrc}
+                                            controls
+                                        />
+                                    )}
                                 </div>
                                 <div>
                                     <button
@@ -713,21 +816,29 @@ function RadioContent() {
                                             handleRepost();
                                         }}
                                     >
-                                        {!repostActive ? "다른 사람에게 전달하기" : "전달 완료!"}
+                                        {!repostActive
+                                            ? "다른 사람에게 전달하기"
+                                            : "전달 완료!"}
                                     </button>
                                 </div>
                             </div>
                         ) : (
                             <div className="Card-ScrollArea-NonResult h-96 flex flex-col col-span-3 justify-center items-center">
                                 <FaRegFaceSadTear className="mr-1" />
-                                <div className="font-['Pre-Bold']">수신할 음성이 없어요</div>
+                                <div className="font-['Pre-Bold']">
+                                    수신할 음성이 없어요
+                                </div>
                             </div>
                         )}
                     </div>
 
                     <div className="reportAlert">
                         {isReportAlertOpen && (
-                            <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />
+                            <Alert
+                                type={"report"}
+                                boardIndex={rdata.boardIndex}
+                                userIndex={rdata.fromMemberIndex}
+                            />
                         )}
                     </div>
                 </CardContent>

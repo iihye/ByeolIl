@@ -14,6 +14,7 @@ function StarReplyList(props) {
 
     const replyListRef = useRef();
 
+    const isWriter = props.isWriter;
     const boardIndex = props.boardIndex;
 
     useEffect(() => {
@@ -51,15 +52,27 @@ function StarReplyList(props) {
             <div className="flex justify-between items-center text-white-sub text-xl gap-2 mt-2 mb-1 ml-1 w-96">
                 <div className="flex">
                     <div className="mr-1">댓글 목록</div>
-                    <IoMdRefresh className="my-1 hover:cursor-pointer flex" onClick={handleRefresh} />
+                    <IoMdRefresh
+                        className="my-1 hover:cursor-pointer flex"
+                        onClick={handleRefresh}
+                    />
                 </div>
                 <div className="flex w-32 justify-center">
                     <div className="flex items-center hover:hover text-white-sub relative overflow-hidden ">
-                        <div className="flex items-center" onClick={props.handleRadio}>
-                            <div className="mr-2">라디오 송신</div>
-                            <GoRocket />
-                        </div>
-                        <div className="w-full h-full absolute  bg-black-sub" style={{ right: "-8rem" }}></div>
+                        {isWriter() ? (
+                            <div
+                                className="flex items-center"
+                                onClick={props.handleRadio}
+                            >
+                                <div className="mr-2">라디오 송신</div>
+                                <GoRocket />
+                            </div>
+                        ) : null}
+
+                        <div
+                            className="w-full h-full absolute  bg-black-sub"
+                            style={{ right: "-8rem" }}
+                        ></div>
                     </div>
                 </div>
             </div>
@@ -67,7 +80,11 @@ function StarReplyList(props) {
                 <div className="star-reply-list  " ref={replyListRef}>
                     {data[0] ? (
                         [...data].map((reply, index) => (
-                            <StarReplyListItem reply={reply} key={index} boardIndex={boardIndex} />
+                            <StarReplyListItem
+                                reply={reply}
+                                key={index}
+                                boardIndex={boardIndex}
+                            />
                         ))
                     ) : (
                         <div className="flex absolute top-0 bottom-0 left-0 right-0 justify-center items-center h-full">
