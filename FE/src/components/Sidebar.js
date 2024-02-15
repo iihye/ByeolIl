@@ -41,7 +41,9 @@ function SidebarList(props) {
 
     const [items, setItems] = useState([]);
     const [isModifying, setIsModifying] = useState(false);
-    const [nickname, setNickname] = useState(sessionStorage.getItem("nickname"));
+    const [nickname, setNickname] = useState(
+        sessionStorage.getItem("nickname")
+    );
     const isAdmin = sessionStorage.getItem("auth");
     const token = sessionStorage.getItem("token");
     const memberIndex = Number(sessionStorage.getItem("memberIndex"));
@@ -78,7 +80,11 @@ function SidebarList(props) {
             // 닉네임 중복 체크
             try {
                 const response = await axios.get(
-                    `${process.env.REACT_APP_API_URL}/member/dup-check/nickname?nickname=${encodeURIComponent(newName)}`
+                    `${
+                        process.env.REACT_APP_API_URL
+                    }/member/dup-check/nickname?nickname=${encodeURIComponent(
+                        newName
+                    )}`
                 );
 
                 if (response.data.message === "사용 가능한 닉네임입니다.") {
@@ -120,13 +126,20 @@ function SidebarList(props) {
         }
     };
 
+    function goMySpace() {
+        swal({
+            title: `나의 우주로 이동합니다🚀`,
+            icon: "success",
+        }).then(() => navigate(`space/${props.memberIndex}`));
+    }
+
     useEffect(() => {
         setItems([
             {
                 type: PiIcons,
                 icon: "PiStarAndCrescent",
                 name: "내 우주가기",
-                path: () => navigate(`space/${props.memberIndex}`),
+                path: goMySpace,
             },
             {
                 type: WiIcons,
@@ -207,7 +220,10 @@ function SidebarList(props) {
                     </>
                 ) : (
                     <>
-                        <FaUserCircle size="24" className="pr-2 text-btn-bg-hover" />
+                        <FaUserCircle
+                            size="24"
+                            className="pr-2 text-btn-bg-hover"
+                        />
                         <h2 className="mb-2 text-btn-bg-hover">{nickname}</h2>
                         <div
                             onClick={() => setIsModifying(true)}
@@ -225,12 +241,17 @@ function SidebarList(props) {
                 const IconComponent = IconItem;
 
                 return (
-                    <div className="flex justyfy-center sidebarItem mb-2" key={index}>
+                    <div
+                        className="flex justyfy-center sidebarItem mb-2"
+                        key={index}
+                    >
                         <div
                             className="flex justyfy-center items-center hover:cursor-pointer hover:text-white"
                             onClick={item.path}
                         >
-                            {IconComponent && <IconComponent className="mr-2" />}
+                            {IconComponent && (
+                                <IconComponent className="mr-2" />
+                            )}
                             {item.name}
                         </div>
                     </div>
@@ -245,13 +266,17 @@ function SidebarList(props) {
 
 export default function Sidebar() {
     const [viewSideBar, setViewSideBar] = useState(false);
-    const [memberIndex, setMemberIndex] = useState(Number(sessionStorage.getItem("memberIndex")));
+    const [memberIndex, setMemberIndex] = useState(
+        Number(sessionStorage.getItem("memberIndex"))
+    );
     const [name, setName] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userData = await axios.get(`${process.env.REACT_APP_API_URL}/member/info/mine`);
+                const userData = await axios.get(
+                    `${process.env.REACT_APP_API_URL}/member/info/mine`
+                );
                 setName(userData.data.memberNickname);
             } catch (error) {
                 console.log(error);
@@ -264,13 +289,19 @@ export default function Sidebar() {
         <div className="Sidebar m-2">
             <TfiMenu
                 className="Sidebar-Menu"
-                onClick={() => (viewSideBar ? setViewSideBar(false) : setViewSideBar(true))}
+                onClick={() =>
+                    viewSideBar ? setViewSideBar(false) : setViewSideBar(true)
+                }
                 size="28"
                 color="white"
             />
 
             <div className="absolute top-10 right-2 font-['Pre-Bold']">
-                {viewSideBar ? <SidebarList name={name} memberIndex={memberIndex} /> : <div />}
+                {viewSideBar ? (
+                    <SidebarList name={name} memberIndex={memberIndex} />
+                ) : (
+                    <div />
+                )}
             </div>
         </div>
     );
