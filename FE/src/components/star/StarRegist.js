@@ -456,6 +456,24 @@ const FileUploadArea = forwardRef((props, ref) => {
 
 function FileList() {
     const [fileList, setFileList] = useRecoilState(fileListState);
+    const fileNames = fileList.map((it) => {
+        console.log(it);
+        const nameArray = it.name.split(".");
+        const extension = nameArray[nameArray.length - 1];
+
+        let fileName = "";
+        for (let i = 0; i < Math.min(it.name.length - (extension.length + 1), 25); i++) {
+            fileName += it.name[i];
+        }
+
+        if (fileName.length < it.name.length - (extension.length + 1)) {
+            fileName += "...";
+        }
+
+        fileName += `.${extension}`;
+
+        return fileName;
+    });
 
     function handleClick(e, index) {
         e.stopPropagation();
@@ -465,10 +483,13 @@ function FileList() {
         setFileList(tmp);
     }
     return (
-        <div className="text-left w-full h-full ml-3">
-            {fileList.map((it, index) => (
-                <div className="flex items-center overflow-hidden" key={index}>
-                    <div className="w-96">- {it.name}</div>
+        <div className="text-left w-full h-full px-2 py-x ">
+            {fileNames.map((it, index) => (
+                <div className="flex  items-center " key={index}>
+                    <div className=" flex ">
+                        <div>- </div>
+                        <div>{it}</div>{" "}
+                    </div>
                     <div
                         className="ml-1 mt-1 hover:cursor-pointer text-red-500 hover:text-red-400"
                         onClick={(e) => handleClick(e, index)}
