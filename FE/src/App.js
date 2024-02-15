@@ -48,7 +48,6 @@ function App() {
                 </Route>
                 <Route path="/space/:user_id" element={<MainPage />}>
                     <Route path="alarm" element={<Alarm />} />
-                    <Route path="report" element={<Report />}></Route>
                     <Route path="radio" element={<Radio />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>

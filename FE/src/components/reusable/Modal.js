@@ -12,6 +12,7 @@ import {
     isStarModifyOpenState,
     renewReplyState,
     isAlarmDetailState,
+    reportModalState,
 } from 'components/atom';
 import { useNavigate } from 'react-router';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
@@ -52,6 +53,7 @@ function StarContent(props) {
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
     const setIsDetailAlarmOpen = useSetRecoilState(isAlarmDetailState);
+    const setReportModalState = useSetRecoilState(reportModalState);
 
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
@@ -125,7 +127,7 @@ function StarContent(props) {
             setIsReportAlertOpen(false);
             setIsStarModifyOpen(false);
             setIsStarDetailOpen(false);
-            // setReportModal('');
+            setReportModalState(false);
         };
         function handleKeydown(e) {
             if (e.key === 'Escape') {
@@ -205,17 +207,13 @@ function StarContent(props) {
             });
     };
 
-    const handleBlock = () => {
-        /* 정말 차단할까요 alert 띄우기 */
-    };
-
     const handleClose = () => {
         /* 모달 닫기 */
         setIsDeleteAlertOpen(false);
         setIsReportAlertOpen(false);
         setIsStarModifyOpen(false);
         setIsStarDetailOpen(false);
-        // setReportModal('');
+        setReportModalState(false);
     };
 
     /* 게시글 작성자 체크*/
@@ -330,7 +328,7 @@ function StarContent(props) {
                                     )}
                                 </>
                             ) : (
-                                <button onClick={handleBlock}>차단</button>
+                                <></>
                             )}
                         </div>
                         <CloseButton handleClose={handleClose} />

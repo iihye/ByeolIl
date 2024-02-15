@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReportDetail from './ReportDetail';
-import { useRecoilState } from 'recoil';
-import { reportModalState } from 'components/atom';
+import { useRecoilState, useResetRecoilState } from 'recoil';
+import { reportModalState, isReportOpenState } from 'components/atom';
 import {
     Card,
     CardContent,
@@ -23,6 +23,7 @@ import {
 import { PiSiren } from 'react-icons/pi';
 import { useNavigate } from 'react-router';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import swal from 'sweetalert';
 
 function Report() {
     const navigate = useNavigate();
@@ -31,12 +32,16 @@ function Report() {
     const [boardContent, setBoardContent] = useState([]); // 게시글에서 boardContent만 뽑아옴
     const [boardIndex, setBoardIndex] = useState([]); // 게시글에서 boardIndex만 뽑아옴
     const [reportModal, setReportModal] = useRecoilState(reportModalState); // 항목 클릭시 기존 컴포넌트 위에 모달창 띄움
+    const setIsReportOpen = useResetRecoilState(isReportOpenState);
 
     const token = sessionStorage.getItem('token');
 
     // 로그인 차단
     const handleBan = (memberIndex) => {
-        if (window.confirm('정말로 차단하시겠습니까?')) {
+        swal({
+            title: '정말로 차단하시겠습니까?',
+            icon: 'warning',
+        }).then(() => {
             axios
                 .put(
                     `${process.env.REACT_APP_API_URL}/member/ban?index=${memberIndex}`,
@@ -49,7 +54,7 @@ function Report() {
                 .then((response) => {
                     alert(`7일 간 차단하였습니다🚨`);
                 });
-        }
+        });
     };
 
     useEffect(() => {
@@ -114,6 +119,24 @@ function Report() {
             window.removeEventListener('click', handleClick);
         };
     });
+
+    useEffect(() => {
+        function handleClick(e) {
+            e.stopPropagation();
+
+            const check = [...e.target.classList].some(
+                (it) => it === 'outside'
+            );
+            if (check) {
+                setIsReportOpen();
+            }
+        }
+
+        window.addEventListener('click', handleClick);
+        return () => {
+            window.removeEventListener('click', handleClick);
+        };
+    }, []);
 
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
