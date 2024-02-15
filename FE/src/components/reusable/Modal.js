@@ -225,7 +225,12 @@ function StarContent(props) {
                     token: sessionStorage.getItem("token"),
                 },
             })
-            .then((response) => console.log(response))
+            .then(() =>
+                swal({
+                    title: '라디오 전송 성공!',
+                    icon: 'success',
+                })
+            )
             .catch((error) => console.log(error));
     }
 
