@@ -179,6 +179,7 @@ function StarRegist(props) {
                 boardContent: contentRef.current.value,
                 boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
+                hashContent: hashContent,
             };
 
             // Object to Blob
@@ -241,7 +242,7 @@ function StarRegist(props) {
                         </div>
                         <ContentArea ref={contentRef} />
                     </div>
-                    {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
+                    <HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />
                     <div className="relative">
                         <FileUploadArea ref={fileRef} type={type} preBoard={preBoard} />
                         <Buttons
@@ -738,7 +739,7 @@ const HashtagArea = (props) => {
                         <span>{it}</span>
                     </div>
                 ))}
-                {props.type === "regist" && hashtagList.length < 10 && (
+                {hashtagList.length < 10 && (
                     <div className="flex items-center h-6 text-white-sub">
                         <span className="text-white-sub mr-1 text-xl">#</span>
                         <input
@@ -747,6 +748,7 @@ const HashtagArea = (props) => {
                             type="text"
                             onKeyDown={handleKeyDown}
                             placeholder="해시태그 10자 이하"
+                            maxLength={10}
                         ></input>
                     </div>
                 )}
