@@ -598,6 +598,39 @@ function UserSpace() {
                 </Canvas>
                 <FollowArea />
             </div>
+<<<<<<< HEAD
+=======
+
+            {userName ? (
+                <div className="absolute bottom-4 left-4 flex justify-center items-center text-white">
+                    <PiShootingStarFill className="mr-1" />
+                    <div className="space-name font-['Pre-Bold'] text-2xl mr-2 ">
+                        {userName} 우주
+                    </div>
+                    <div>
+                        {userId !== loginIndex &&
+                            (isFollowState === null ? (
+                                <div className="font-['Pre-Light']">
+                                    Loading...
+                                </div>
+                            ) : (
+                                <button
+                                    className="space-follow font-['Pre-Bold'] text-m px-3"
+                                    onClick={() => handleFollow(isFollowState)}
+                                >
+                                    {isFollowState ? '언팔로우' : '팔로우'}
+                                </button>
+                            ))}
+                    </div>
+                </div>
+            ) : (
+                <Link
+                    to={`/space/${sessionStorage.getItem('memberIndex')}/radio`}
+                >
+                    <button className="absolute bottom-2 left-2">라디오</button>
+                </Link>
+            )}
+>>>>>>> feature-FE/findUser
         </div>
     );
 }
