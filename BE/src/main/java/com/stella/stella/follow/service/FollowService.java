@@ -75,7 +75,7 @@ public class FollowService {
         for(Follow follow : follows){
             FollowListResponseDto f = FollowListResponseDto.builder()
                     .memberId(follow.getToMember().getMemberId())
-                    .memberName(follow.getToMember().getMemberName())
+                    .memberName(follow.getToMember().getMemberNickname())
                     .build();
             followListResponseDtos.add(f);
         }
@@ -94,7 +94,7 @@ public class FollowService {
         for(Follow follow : follows){
             FollowListResponseDto f = FollowListResponseDto.builder()
                     .memberId(follow.getFromMember().getMemberId())
-                    .memberName(follow.getFromMember().getMemberName())
+                    .memberName(follow.getFromMember().getMemberNickname())
                     .build();
             followListResponseDtos.add(f);
         }
