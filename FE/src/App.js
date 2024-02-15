@@ -47,14 +47,7 @@ function App() {
                     <Route path="findPw" element={<FindPW />} />
                 </Route>
                 <Route path="/space/:user_id" element={<MainPage />}>
-                    <Route path="editInfo" element={<ChangeInfo />} />
-                    <Route path="starMine" element={<List />} />
-                    <Route path="starFavor" element={<StarFavorList />} />
-                    <Route path="follow" element={<FollowList />} />
-                    <Route path="findUser" element={<FindUser />} />
                     <Route path="alarm" element={<Alarm />} />
-                    <Route path="tagSearch" element={<StarTagSearch />} />
-                    <Route path="settings" element={<Settings />}></Route>
                     <Route path="report" element={<Report />}></Route>
                     <Route path="radio" element={<Radio />} />
                     <Route path="*" element={<ErrorPage />} />

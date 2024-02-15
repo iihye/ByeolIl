@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
-import StarMultiReplyList from './StarMultiReplyList';
-import axios from 'axios';
-import { useRecoilState } from 'recoil';
-import { renewReplyState } from 'components/atom';
-import { FaDeleteLeft } from 'react-icons/fa6';
+import { useEffect, useRef, useState } from "react";
+import StarMultiReplyList from "./StarMultiReplyList";
+import axios from "axios";
+import { useRecoilState } from "recoil";
+import { renewReplyState } from "components/atom";
+import { FaDeleteLeft } from "react-icons/fa6";
+import { IoArrowForwardCircle } from "react-icons/io5";
 
 function StarReplyListItem(props) {
-    console.log('asf');
     const [renewReply, setRenewReply] = useRecoilState(renewReplyState);
 
     const [multiReply, setMultiReply] = useState(false);
@@ -14,41 +14,38 @@ function StarReplyListItem(props) {
     const now = new Date();
     const commentIndex = props.reply.commentIndex;
     const writerIndex = props.reply.memberIndex;
+    const writerNickname = props.reply.memberNickname;
     const commentRegDate = props.reply.commentRegdate;
     const commentContent = props.reply.commentContent;
     const multiComments = props.reply.multiComments;
     const boardIndex = props.boardIndex;
-    const loginUserIndex = Number(
-        JSON.parse(
-            atob(sessionStorage.getItem('token').split(' ')[1].split('.')[1])
-        ).sub
-    );
+
+    const loginUserIndex = Number(JSON.parse(atob(sessionStorage.getItem("token").split(" ")[1].split(".")[1])).sub);
     const [printedDate, setPrintedDate] = useState();
 
     useEffect(() => {
         timeCheck();
-    }, []);
+    }, [props]);
 
     function timeCheck() {
-        const ymd = commentRegDate.splice(0, 3).join(',');
-        const hm = commentRegDate.splice(0, 2).join(':');
+        if (commentRegDate.length !== 7) return;
+        const ymd = commentRegDate.splice(0, 3).join(",");
+        const hm = commentRegDate.splice(0, 2).join(":");
 
-        const regTime = new Date(ymd + ' ' + hm);
+        const regTime = new Date(ymd + " " + hm);
         const diff = 1000 * 60;
         const timeDiff = Math.round((now - regTime) / diff);
 
-        let returnDate = `${regTime.getFullYear()}년 ${
-            regTime.getMonth() + 1
-        }월 ${regTime.getDate()}일`;
+        let returnDate = `${regTime.getFullYear()}년 ${regTime.getMonth() + 1}월 ${regTime.getDate()}일`;
 
         if (timeDiff === 0) {
-            returnDate = '방금 전';
+            returnDate = "방금 전";
         } else if (timeDiff < 60) {
             returnDate = `${timeDiff}분 전`;
         } else if (timeDiff < 1440) {
             returnDate = `${Math.round(timeDiff / 60)}시간 전`;
         }
-
+        console.log(returnDate);
         setPrintedDate(returnDate);
     }
 
@@ -65,35 +62,29 @@ function StarReplyListItem(props) {
         await axios
             .delete(`${process.env.REACT_APP_API_URL}/comment`, {
                 header: {
-                    token: sessionStorage.getItem('token'),
+                    token: sessionStorage.getItem("token"),
                 },
 
                 data: data,
             })
             .then((response) => {
-                if (response.data.map.response === 'success') {
+                if (response.data.map.response === "success") {
                     setRenewReply(!renewReply);
                 }
             });
     };
 
     return (
-        <div
-            className="star-reply-list-item"
-            style={{ border: '1px solid black', margin: '5px' }}
-        >
+        <div className="star-reply-list-item py-1 ml-1">
             <div className="flex items-end">
-                <div className="text-xl">{commentIndex}번 유저</div>
+                <div className="text-xl font-['Pre-bold']">{writerNickname}</div>
                 <div className="ml-2">{printedDate}</div>
             </div>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: "flex" }}>
                 <div>{commentContent}</div>
                 <div className="flex items-center">
                     {isWriter() ? (
-                        <div
-                            className="ml-2 text-lg hover:cursor-pointer text-red-300"
-                            onClick={handleDelete}
-                        >
+                        <div className="ml-2 text-lg hover:cursor-pointer text-red-300" onClick={handleDelete}>
                             <FaDeleteLeft />
                         </div>
                     ) : null}
@@ -101,7 +92,7 @@ function StarReplyListItem(props) {
             </div>
             {!multiReply && (
                 <div
-                    className="text-sm hover:cursor-pointer"
+                    className="multi-comment-area text-xs hover:cursor-pointer"
                     onClick={() => {
                         setMultiReply(true);
                     }}
@@ -109,14 +100,8 @@ function StarReplyListItem(props) {
                     답글달기
                 </div>
             )}
+            {multiReply && <MultiReplyInput setMultiReply={setMultiReply} loginUserIndex={loginUserIndex} {...props} />}
             <StarMultiReplyList multiReplyList={multiComments} />
-            {multiReply && (
-                <MultiReplyInput
-                    setMultiReply={setMultiReply}
-                    loginUserIndex={loginUserIndex}
-                    {...props}
-                />
-            )}
         </div>
     );
 }
@@ -131,9 +116,23 @@ function MultiReplyInput(props) {
     const setMultiReply = props.setMultiReply;
     const loginUserIndex = props.loginUserIndex;
 
-    const handleMultiReplyQuit = () => {
+    useEffect(() => {
+        function handleClick(e) {
+            const check = [...e.target.classList].some((it) => it === "multi-comment-area");
+            if (!check) {
+                handleMultiReplyQuit();
+            }
+        }
+        window.addEventListener("click", handleClick);
+
+        return () => {
+            window.removeEventListener("click", handleClick);
+        };
+    }, []);
+
+    function handleMultiReplyQuit() {
         setMultiReply(false);
-    };
+    }
 
     const handleMultiReplySubmit = async () => {
         const data = {
@@ -146,11 +145,11 @@ function MultiReplyInput(props) {
         await axios
             .post(`${process.env.REACT_APP_API_URL}/multicomment`, data, {
                 headers: {
-                    token: sessionStorage.getItem('token'),
+                    token: sessionStorage.getItem("token"),
                 },
             })
             .then((response) => {
-                if (response.data.map.response === 'success') {
+                if (response.data.map.response === "success") {
                     console.log(renewReply);
                     setMultiReply(false);
                     setRenewReply(!renewReply);
@@ -160,22 +159,17 @@ function MultiReplyInput(props) {
     };
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === "Enter") {
             handleMultiReplySubmit();
         }
     };
 
     return (
-        <div>
-            └ <input ref={input} onKeyDown={handleKeyDown} />
+        <div className="multi-comment-area flex items-center text-lg ">
+            <div className="multi-comment-area mr-2">└</div>
+            <input ref={input} onKeyDown={handleKeyDown} className="multi-comment-area w-full border-b rounded-none mr-3" />
             <button
-                onClick={() => {
-                    handleMultiReplyQuit();
-                }}
-            >
-                취소
-            </button>
-            <button
+                className="multi-comment-area w-16 ml-1"
                 onClick={() => {
                     handleMultiReplySubmit();
                 }}

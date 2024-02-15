@@ -52,3 +52,51 @@ export const renewReplyState = atom({
     key: 'renewReply',
     default: false,
 });
+
+// 회원 정보 수정
+export const isChangeInfoOpenState = atom({
+    key: 'isChangeInfoOpen',
+    default: false,
+});
+
+// 나의 별 목록
+export const isMyStarListOpenState = atom({
+    key: 'isMyStarListOpen',
+    default: false,
+});
+
+// 좋아하는 별 목록
+export const isFavorListOpenState = atom({
+    key: 'isFavorListOpen',
+    default: false,
+});
+
+// 팔로우/팔로워 목록
+export const isFollowListOpenState = atom({
+    key: 'isFollowListOpen',
+    default: false,
+});
+
+// 다른 우주 찾기
+export const isFindUserOpenState = atom({
+    key: 'isFindUserOpen',
+    default: false,
+});
+
+// 태그로 별 찾기
+export const isTagSearchOpenState = atom({
+    key: 'isTagSearchOpen',
+    default: false,
+});
+
+// 환경 설정
+export const isSettingOpenState = atom({
+    key: 'isSettingOpen',
+    default: false,
+});
+
+// 알림 상세보기
+export const isAlarmDetailState = atom({
+    key: 'isAlarmDeatil',
+    default: false,
+});

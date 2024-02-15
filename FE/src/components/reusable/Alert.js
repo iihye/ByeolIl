@@ -4,10 +4,12 @@ import {
     isReportAlertOpenState,
     isStarDetailOpenState,
     isPwCheckOpenState,
+    isChangeInfoOpenState,
 } from 'components/atom';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 import { useNavigate } from 'react-router';
+import swal from 'sweetalert';
 
 // type: 'report', 'PWCheck', 'delete', 'block'
 function Alert(props) {
@@ -27,7 +29,7 @@ function Alert(props) {
     };
 
     return (
-        <div className="alert-container bg-modal-bg w-full h-full absolute top-0 left-0 flex justify-center items-center">
+        <div className="alert-container bg-modal-outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10">
             <div className="alert w-auto h-auto p-4 bg-alert-bg rounded-xl text-white-sub shadow-xl font-['Pretendard']">
                 {alertTypes[props.type]}
             </div>
@@ -41,8 +43,7 @@ function InputAlert(props) {
 
     const setIsReportAlertOpen = useSetRecoilState(isReportAlertOpenState);
     const setIsPwCheckOpenState = useSetRecoilState(isPwCheckOpenState);
-
-    const navigate = useNavigate();
+    const setIsChangeInfoOpen = useSetRecoilState(isChangeInfoOpenState);
 
     useEffect(() => {
         function handleClick(e) {
@@ -87,8 +88,13 @@ function InputAlert(props) {
                     token: sessionStorage.getItem('token'),
                 },
             })
-            .then((response) => {
-                console.log(response.data.message);
+            .then(() => {
+                swal({
+                    title: '신고가 접수되었습니다🚨',
+                    icon: 'warning',
+                });
+
+                setIsReportAlertOpen(false);
             })
             .catch((e) => console.log(e));
     };
@@ -109,10 +115,10 @@ function InputAlert(props) {
                 }
             )
             .then((response) => {
-                console.log(response.data);
+                // console.log(response.data);
                 if (response.data.message === 'success')
                     setIsPwCheckOpenState(false);
-                else alert('비밀번호가 틀렸습니다!');
+                // else alert('비밀번호가 틀렸습니다!');
             });
     };
 
@@ -126,7 +132,10 @@ function InputAlert(props) {
         const inputData = input.current.value;
 
         if (!emptyCheck(inputData)) {
-            alert(`${toEnter[props.type]} 입력해주세요!`);
+            swal({
+                title: `${toEnter[props.type]} 입력해주세요!`,
+                icon: 'warning',
+            });
             return;
         }
 
@@ -141,7 +150,8 @@ function InputAlert(props) {
         if (props.type === 'report') {
             setIsReportAlertOpen(false);
         } else if (props.type === 'PWCheck') {
-            navigate(-1);
+            setIsPwCheckOpenState(false);
+            setIsChangeInfoOpen(false);
         }
     };
     // className="rounded-input bg-transparent border-white-sub outline-none"
@@ -159,7 +169,8 @@ function InputAlert(props) {
                 <div className="flex justify-center mb-3">
                     {props.type === 'report' ? (
                         <textarea
-                            className="bg-transparent rounded-lg  p-2 h-28 resize-none"
+                            className="bg-transparent rounded-lg p-2 h-28 w-80 resize-none border border-gray-300"
+                            maxLength="80"
                             ref={input}
                         />
                     ) : (

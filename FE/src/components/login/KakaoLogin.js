@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Link, useNavigate } from 'react-router-dom';
 import base64 from 'base-64';
+import swal from 'sweetalert';
 
 function KakaoLogin() {
     console.log('/login/kakao 접근');
@@ -38,13 +39,17 @@ function KakaoLogin() {
                     sessionStorage.getItem(`token`)
                 );
                 console.log('memberIndex: ', dec.sub);
-                getUserIndex();
+                await getUserIndex();
                 if (dec.sub) {
                     navigate(`/space/${dec.sub}`);
                 }
             }
         } catch (error) {
-            alert(error.response.data.message);
+            swal({
+                title: error.response.data.message,
+                text: '아이디와 비밀번호를 확인해주세요',
+                icon: 'error',
+            });
         }
     };
 
@@ -68,7 +73,6 @@ function KakaoLogin() {
     useEffect(() => {
         if (!location.search) return;
         getKakaoToken();
-        getUserIndex();
     }, []);
 }
 

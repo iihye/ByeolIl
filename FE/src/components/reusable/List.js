@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
-import { filterState } from 'components/atom';
+import { filterState, isMyStarListOpenState } from 'components/atom';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { isStarDetailOpenState } from 'components/atom';
 import axios from 'axios';
@@ -24,18 +24,21 @@ import {
 } from '@/components/ui/table';
 import { WiStars } from 'react-icons/wi';
 import { useNavigate } from 'react-router';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function List() {
-    const [listData, setListData] = useState('');
     const resetList = useResetRecoilState(filterState);
+    const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
+    const setIsMyStarListOpen = useSetRecoilState(isMyStarListOpenState);
+
     const filterData = useRecoilValue(filterState);
+    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
+
+    const [listData, setListData] = useState('');
     const [memberIndex, setMemberIndex] = useState(
         Number(sessionStorage.getItem('memberIndex'))
     );
-    const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
-    const isStarDetailOpen = useRecoilValue(isStarDetailOpenState);
 
-    const navigate = useNavigate();
     const token = sessionStorage.getItem('token') ?? '';
 
     useEffect(() => {
@@ -97,7 +100,7 @@ function List() {
                 (it) => it === 'outside'
             );
             if (check) {
-                navigate(-1);
+                setIsMyStarListOpen(false);
             }
         }
 
@@ -109,7 +112,7 @@ function List() {
 
     // 검색 결과와 일치하는 값을 렌더링
     return (
-        <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center">
+        <div className="outside w-full h-full absolute bg-modal-outside top-0 left-0 flex justify-center items-center z-10">
             <Card className="Report w-8/12 bg-modal-bg text-white-sub px-6 py-6 rounded-component">
                 <CardHeader className="flex">
                     <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
@@ -120,63 +123,64 @@ function List() {
                 <div></div>
                 <CardContent>
                     <Table className="Star-List">
-                        <TableHeader>
+                        <TableHeader className="sticky top-0 bg-secondary">
                             <TableRow className="font-['Pre-Bold'] bg-white text-m ">
-                                <TableHead className="text-center w-3/12">
-                                    일기 등록일
-                                </TableHead>
                                 <TableHead className="text-center w-2/12">
-                                    지정일
+                                    일기 날짜
                                 </TableHead>
                                 <TableHead className="text-center">
                                     일기 내용
                                 </TableHead>
-                                <TableHead></TableHead>
+                                <TableHead className="text-center w-2/12">
+                                    일기 삭제
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
-                            {filterData &&
-                                filterData.map((it) => (
-                                    <>
-                                        <TableRow
-                                            className="font-['Pre-Light'] text-center"
-                                            key={it.boardIndex}
-                                        >
-                                            <TableCell>
-                                                {it.boardRegTime}
-                                            </TableCell>
-                                            <TableCell>
-                                                {it.boardInputDate}
-                                            </TableCell>
-                                            <TableCell
-                                                onClick={() =>
-                                                    onDetail(
-                                                        it.boardIndex,
-                                                        it.memberIndex
-                                                    )
-                                                }
+                    </Table>
+                    <ScrollArea className="h-96 ">
+                        <Table>
+                            <TableBody>
+                                {filterData &&
+                                    filterData.map((it) => (
+                                        <>
+                                            <TableRow
+                                                className="font-['Pre-Light']"
+                                                key={it.boardIndex}
                                             >
-                                                {it.boardContent}
-                                            </TableCell>
-                                            <TableCell>
-                                                <button
+                                                <TableCell className="text-center w-2/12">
+                                                    {it.boardInputDate}
+                                                </TableCell>
+                                                <TableCell
+                                                    className="text-center"
                                                     onClick={() =>
-                                                        deleteStar(
+                                                        onDetail(
                                                             it.boardIndex,
                                                             it.memberIndex
                                                         )
                                                     }
-                                                    className="bg-modal-bg w-6/12"
                                                 >
-                                                    X
-                                                </button>
-                                            </TableCell>
-                                        </TableRow>
-                                    </>
-                                ))}
-                            <TableRow></TableRow>
-                        </TableBody>
-                    </Table>
+                                                    {it.boardContent}
+                                                </TableCell>
+                                                <TableCell className="text-center w-2/12">
+                                                    <button
+                                                        onClick={() =>
+                                                            deleteStar(
+                                                                it.boardIndex,
+                                                                it.memberIndex
+                                                            )
+                                                        }
+                                                        className="bg-modal-bg w-6/12"
+                                                    >
+                                                        X
+                                                    </button>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
+                                    ))}
+                                <TableRow></TableRow>
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
                 </CardContent>
                 <SearchBar filterKey="boardContent" listItems={listData} />
             </Card>

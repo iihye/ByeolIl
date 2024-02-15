@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert';
 
 function AxiosInterceptor() {
     const navigate = useNavigate();
@@ -8,7 +9,6 @@ function AxiosInterceptor() {
     useEffect(() => {
         const reqInterceptor = axios.interceptors.request.use(
             (config) => {
-                console.log('요청');
                 const token = sessionStorage.getItem('token');
                 if (token) {
                     config.headers['Authorization'] = `${token}`;
@@ -30,16 +30,43 @@ function AxiosInterceptor() {
             },
             (error) => {
                 const res = error.response;
+
+                if (!res) {
+                    swal({
+                        title: '네트워크 에러 발생',
+                        text: '관리자에게 문의하세요',
+                        icon: 'error',
+                    });
+
+                    return res;
+                }
+
                 if (res.status === 400 && res.data.message) {
-                    alert(res.data.message);
+                    swal({
+                        title: res.data.message,
+                        icon: 'error',
+                    });
+
                     return res;
                 } else if (res.status === 401 || res.status === 403) {
-                    alert('재로그인이 필요해요');
-                    navigate('/landing/login');
+                    sessionStorage.removeItem('memberIndex');
+                    sessionStorage.removeItem('nickname');
+                    sessionStorage.removeItem('token');
+                    sessionStorage.removeItem('auth');
+                    swal({
+                        title: '재로그인이 필요해요',
+                        icon: 'info',
+                    }).then(() => {
+                        navigate('/landing/login');
+                    });
                 } else if (res.status === 404) {
                     return navigate('/not-found');
                 } else if (res.status === 500) {
-                    alert('서버에 문제가 있어요 잠시 기다려주세요!');
+                    swal({
+                        title: '서버에 문제가 있어요',
+                        text: '잠시 기다려주세요!',
+                        icon: 'error',
+                    });
                 }
                 return Promise.reject(error);
             }

@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { replace } from 'stylis';
+import swal from 'sweetalert';
 
 const kakaoLoginLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI}&response_type=code&prompt=login`;
 
@@ -79,6 +81,10 @@ function Login() {
                 );
 
                 if (response.status === 200) {
+                    swal({
+                        title: '로그인 성공!',
+                        icon: 'success',
+                    });
                     const token = `Bearer ${response.headers.accesstoken}`;
 
                     sessionStorage.setItem('token', token);
@@ -94,7 +100,7 @@ function Login() {
                     sessionStorage.setItem('memberIndex', dec.sub);
                     getUserIndex();
                     if (dec.sub) {
-                        navigate(`/space/${dec.sub}`);
+                        navigate(`/space/${dec.sub}`, { replace: true });
                     }
                 }
             } catch (error) {}
@@ -141,7 +147,7 @@ function Login() {
             <Card className="w-96 px-6 h-login card-contain-style">
                 <CardHeader>
                     <CardTitle className="text-6xl text-center font-['Star'] py-4">
-                        별 일
+                        별일
                     </CardTitle>
                     <CardDescription className="font-['Pre-Bold'] text-2xl mb-8">
                         로그인
