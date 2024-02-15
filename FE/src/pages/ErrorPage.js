@@ -1,9 +1,21 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-export default function ErrorPage() {
-    
+function ErrorPage() {
     return (
-        <h1>페이지를 표시 할 수 없습니다.</h1>
-        // 에러 내용
-    )
+        <div className="flex flex-col items-center justify-center h-screen text-center">
+            <h1 className="text-9xl font-bold">404</h1>
+            <p className="text-2xl mt-4">
+                Oops! The page you're looking for doesn't exist.
+            </p>
+            <Link
+                to={`/space/${sessionStorage.getItem('memberIndex')}`}
+                className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+                Go Home
+            </Link>
+        </div>
+    );
 }
+
+export default ErrorPage;

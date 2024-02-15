@@ -10,7 +10,6 @@ import Modal from '../reusable/Modal';
  * @returns
  */
 function ReportDetail(reportInfo) {
-    console.log('리포트인포', reportInfo);
     return (
         <Modal
             type={'report'}
