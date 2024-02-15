@@ -21,6 +21,7 @@ import {
     isMyStarListOpenState,
     isSettingOpenState,
     isTagSearchOpenState,
+    isReportOpenState,
 } from './atom';
 import swal from 'sweetalert';
 
@@ -32,6 +33,7 @@ function SidebarList(props) {
     const setIsFindUserOpen = useSetRecoilState(isFindUserOpenState);
     const setIsTagSearchOpen = useSetRecoilState(isTagSearchOpenState);
     const setIsSettingOpen = useSetRecoilState(isSettingOpenState);
+    const setIsReportOpen = useSetRecoilState(isReportOpenState);
 
     const [items, setItems] = useState([]);
     const [isModifying, setIsModifying] = useState(false);
@@ -178,10 +180,10 @@ function SidebarList(props) {
             setItems((prevItems) => [
                 ...prevItems,
                 {
-                    type: 'PiIcons',
+                    type: PiIcons,
                     icon: 'PiSiren',
                     name: '신고관리',
-                    path: `/space/${props.memberIndex}/report`,
+                    path: () => setIsReportOpen(true),
                 },
             ]);
     }, [props.memberIndex]);
