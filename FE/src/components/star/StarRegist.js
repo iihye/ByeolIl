@@ -80,7 +80,8 @@ function StarRegist(props) {
         };
     }, []);
 
-    const handleRegist = async (fileList, accessRange) => {
+    const handleRegist = async (event, fileList, accessRange) => {
+        event.stopPropagation();
         if (contentRef.current.value.trim() === "") {
             swal({
                 title: "공백을 입력했어요!",
@@ -160,7 +161,7 @@ function StarRegist(props) {
                     isAddedStar.clear();
                     res.data.forEach((star) => isAddedStar.set(star.boardLocation, star));
                     setStars(res.data);
-                    handleClose();
+                    handleClose(false);
                 } else {
                     swal({
                         title: "게시글 작성에 실패했어요",
@@ -179,6 +180,7 @@ function StarRegist(props) {
                 boardContent: contentRef.current.value,
                 boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
+                hashContent: hashContent,
             };
 
             // Object to Blob
@@ -199,8 +201,12 @@ function StarRegist(props) {
                     })
                     .then((response) => {
                         if (response.status === 200) {
+                            swal({
+                                title: "게시글 수정 성공!",
+                                icon: "success",
+                            });
                             setIsStarDetailOpen([boardIndex, writerIndex]);
-                            handleClose();
+                            handleClose(false);
                         }
                     });
             } catch (error) {
@@ -209,28 +215,52 @@ function StarRegist(props) {
         }
     };
 
-    function handleClose() {
-        if (type === "regist") {
-            if (contentRef.current.value.trim().length === 0) {
-                setIsStarRegistOpen(false);
-            } else {
-                if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
+    function handleClose(check) {
+        if (check) {
+            if (type === "regist") {
+                if (contentRef.current.value.trim().length === 0) {
                     setIsStarRegistOpen(false);
+                } else {
+                    swal({
+                        title: "창을 닫을까요?",
+                        text: "작성중인 게시글이 지워집니다!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            setIsStarRegistOpen(false);
+                        }
+                    });
+                }
+            } else if (type === "modify") {
+                if (contentRef.current.value.trim().length === 0) {
+                    setIsStarModifyOpen(false);
+                } else {
+                    swal({
+                        title: "창을 닫을까요?",
+                        text: "작성중인 게시글이 지워집니다!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            setIsStarModifyOpen(false);
+                        }
+                    });
                 }
             }
-        } else if (type === "modify") {
-            if (contentRef.current.value.trim().length === 0) {
+        } else if (!check) {
+            if (type === "regist") {
+                setIsStarRegistOpen(false);
+            } else if (type === "modify") {
                 setIsStarModifyOpen(false);
-            } else {
-                if (window.confirm("작성중인 게시글이 지워집니다. 창을 닫을까요?")) {
-                    setIsStarModifyOpen(false);
-                }
             }
         }
     }
 
     return (
-        <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside">
+        <div className="star-regist-container absolute flex justify-center top-0 left-0 w-full h-full items-center font-['Pretendard'] bg-modal-outside z-23">
             <div className="star-regist bg-modal-bg text-black-sub flex rounded p-3 w-fit">
                 <ImagePreviewArea preBoard={preBoard} type={type} />
                 <div>
@@ -241,14 +271,14 @@ function StarRegist(props) {
                         </div>
                         <ContentArea ref={contentRef} />
                     </div>
-                    {<HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />}
+                    <HashtagArea hashtagSet={hashtagSet} preBoard={preBoard} type={type} />
                     <div className="relative">
                         <FileUploadArea ref={fileRef} type={type} preBoard={preBoard} />
                         <Buttons
                             buttonValue={buttonValue}
                             type={type}
                             handleRegist={handleRegist}
-                            handleClose={handleClose}
+                            handleClose={() => handleClose(true)}
                         />
                     </div>
                 </div>
@@ -259,6 +289,10 @@ function StarRegist(props) {
 
 const ContentArea = forwardRef((props, ref) => {
     const [contentLength, setContentLength] = useState(0);
+
+    useEffect(() => {
+        setContentLength(ref.current.value.length);
+    }, []);
 
     return (
         <>
@@ -293,8 +327,8 @@ function Buttons(props) {
         <div className="flex absolute right-0 top-0">
             <button
                 className="h-8 w-14 px-2 shadow-md"
-                onClick={() => {
-                    handleRegist(fileList, accessRange);
+                onClick={(e) => {
+                    handleRegist(e, fileList, accessRange);
                 }}
             >
                 {buttonValue[type]}
@@ -308,6 +342,7 @@ function Buttons(props) {
 
 const FileUploadArea = forwardRef((props, ref) => {
     const [fileList, setFileList] = useRecoilState(fileListState);
+    const preBoard = props.preBoard;
 
     useEffect(() => {
         return () => {
@@ -344,7 +379,6 @@ const FileUploadArea = forwardRef((props, ref) => {
     function limitFileVolume(e, imageFileList, videoFileList) {
         const imageLimit = 1024 ** 2 * 5; // 5MB
         const videoLimit = 1024 ** 2 * 100; // 100MB
-        console.log(imageFileList, videoFileList);
 
         const imageSizeCheck = [...imageFileList].some((it) => it.size > imageLimit);
         const videoSizeCheck = [...videoFileList].some((it) => it.size > videoLimit);
@@ -361,6 +395,7 @@ const FileUploadArea = forwardRef((props, ref) => {
     }
 
     function handleFileChange(e) {
+        // fileMap :
         const fileMap = new Map();
         [...fileList].forEach((it) => fileMap.set(it.name, it));
         [...ref.current.files].forEach((it) => fileMap.set(it.name, it));
@@ -375,9 +410,32 @@ const FileUploadArea = forwardRef((props, ref) => {
         const imageFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "image");
         const videoFileList = [...uploadFileList].filter((it) => it.type.split("/")[0] === "video");
 
+        let imageFileCnt = imageFileList.length;
+        let videoFileCnt = videoFileList.length;
+
+        if (preBoard) {
+            preBoard.boardMedia.forEach((it) => {
+                const url = it.split(".");
+                const type = url[url.length - 1];
+
+                EXTENSION_IMAGE.forEach((it) => {
+                    if (it === type) {
+                        imageFileCnt++;
+                    }
+                });
+
+                EXTENSION_VIDEO.forEach((it) => {
+                    if (it === type) {
+                        videoFileCnt++;
+                    }
+                });
+            });
+        }
+        console.log(imageFileCnt, videoFileCnt);
+
         // 파일 유효성 체크
         const fileTypeCheckRes = uploadFileList.every((it) => fileTypeCheck(it));
-        const fileCntCheckRes = limitFileCnt(e, imageFileList.length, videoFileList.length);
+        const fileCntCheckRes = limitFileCnt(e, imageFileCnt, videoFileCnt);
         const fileVolumeCheckRes = limitFileVolume(e, imageFileList, videoFileList);
 
         if (fileCntCheckRes && fileVolumeCheckRes && fileTypeCheckRes) {
@@ -457,12 +515,11 @@ const FileUploadArea = forwardRef((props, ref) => {
 function FileList() {
     const [fileList, setFileList] = useRecoilState(fileListState);
     const fileNames = fileList.map((it) => {
-        console.log(it);
         const nameArray = it.name.split(".");
         const extension = nameArray[nameArray.length - 1];
 
         let fileName = "";
-        for (let i = 0; i < Math.min(it.name.length - (extension.length + 1), 25); i++) {
+        for (let i = 0; i < Math.min(it.name.length - (extension.length + 1), 20); i++) {
             fileName += it.name[i];
         }
 
@@ -738,7 +795,7 @@ const HashtagArea = (props) => {
                         <span>{it}</span>
                     </div>
                 ))}
-                {props.type === "regist" && hashtagList.length < 10 && (
+                {hashtagList.length < 10 && (
                     <div className="flex items-center h-6 text-white-sub">
                         <span className="text-white-sub mr-1 text-xl">#</span>
                         <input
@@ -747,6 +804,7 @@ const HashtagArea = (props) => {
                             type="text"
                             onKeyDown={handleKeyDown}
                             placeholder="해시태그 10자 이하"
+                            maxLength={10}
                         ></input>
                     </div>
                 )}

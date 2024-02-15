@@ -13,6 +13,8 @@ import { useLocation, useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ReactComponent as KakaoLogo } from 'img/kakao-logo.svg';
 import swal from 'sweetalert';
+import cryptoJs from 'crypto-js';
+
 export default function Regist() {
     const [formOpen, setFormOpen] = useState(false);
     const kakao_join_uri = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_JOIN_REDIRECT_URI}&response_type=code`;
@@ -113,6 +115,17 @@ function RegistForm({
 
     // 인증코드
     const [AUTH_CODE, setAUTH_CODE] = useState('');
+    // 인증코드 암호화 관련 함수
+    const secretKey =`${process.env.REACT_APP_AES256_SECRET_KEY}` // 32자리 비밀키
+    const iv = `${process.env.REACT_APP_AES256_IV}` // 16자리 iv
+    const decrypt = (encryptedText) => {
+        const decipher = cryptoJs.AES.decrypt(encryptedText, cryptoJs.enc.Utf8.parse(secretKey), {
+            iv: cryptoJs.enc.Utf8.parse(iv),
+            padding: cryptoJs.pad.Pkcs7,
+            mode: cryptoJs.mode.CBC,
+        })
+        return decipher.toString(cryptoJs.enc.Utf8);
+    }
 
     const onChangeId = () => {
         const idRegExp = /^[a-z0-9]{4,20}$/;
@@ -206,11 +219,11 @@ function RegistForm({
     };
     // 인증번호 일치 검사
     const onChangeAuthCode = () => {
-        if (authCode.current.value !== AUTH_CODE) {
-            setAuthMessage('인증번호를 다시 입력해주세요');
+        if (authCode.current.value !== decrypt(AUTH_CODE)) {
+            setAuthMessage("인증번호를 다시 입력해주세요");
             setIsAuthCode(false);
         } else {
-            setAuthMessage('인증되었어요');
+            setAuthMessage("인증되었어요");
             setIsAuthCode(true);
         }
     };

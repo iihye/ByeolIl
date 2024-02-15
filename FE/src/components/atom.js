@@ -100,3 +100,9 @@ export const isAlarmDetailState = atom({
     key: 'isAlarmDeatil',
     default: false,
 });
+
+// 신고목록
+export const isReportOpenState = atom({
+    key: 'isReportOpen',
+    default: false,
+});

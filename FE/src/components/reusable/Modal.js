@@ -12,6 +12,7 @@ import {
     isStarModifyOpenState,
     renewReplyState,
     isAlarmDetailState,
+    reportModalState,
 } from 'components/atom';
 import { useNavigate } from 'react-router';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
@@ -52,6 +53,7 @@ function StarContent(props) {
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
     const setIsDetailAlarmOpen = useSetRecoilState(isAlarmDetailState);
+    const setReportModalState = useSetRecoilState(reportModalState);
 
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
@@ -125,7 +127,7 @@ function StarContent(props) {
             setIsReportAlertOpen(false);
             setIsStarModifyOpen(false);
             setIsStarDetailOpen(false);
-            // setReportModal('');
+            setReportModalState(false);
         };
         function handleKeydown(e) {
             if (e.key === 'Escape') {
@@ -205,17 +207,13 @@ function StarContent(props) {
             });
     };
 
-    const handleBlock = () => {
-        /* 정말 차단할까요 alert 띄우기 */
-    };
-
     const handleClose = () => {
         /* 모달 닫기 */
         setIsDeleteAlertOpen(false);
         setIsReportAlertOpen(false);
         setIsStarModifyOpen(false);
         setIsStarDetailOpen(false);
-        // setReportModal('');
+        setReportModalState(false);
     };
 
     /* 게시글 작성자 체크*/
@@ -330,7 +328,7 @@ function StarContent(props) {
                                     )}
                                 </>
                             ) : (
-                                <button onClick={handleBlock}>차단</button>
+                                <></>
                             )}
                         </div>
                         <CloseButton handleClose={handleClose} />
@@ -544,24 +542,17 @@ function ReplyRegistArea(props) {
 
 function RadioContent() {
     const [rdata, setRdata] = useState();
-    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(
-        isReportAlertOpenState
-    );
+    const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(isReportAlertOpenState);
     const [repostActive, setRepostActive] = useState(false);
-    const [audioSrc, setAudioSrc] = useState('');
+    const [audioSrc, setAudioSrc] = useState("");
     const navigate = useNavigate();
     const fetchData = async () => {
         await axios
-            .get(
-                `${
-                    process.env.REACT_APP_API_URL
-                }/radio/${sessionStorage.getItem('memberIndex')}`,
-                {
-                    headers: {
-                        token: sessionStorage.getItem('token') ?? '',
-                    },
-                }
-            )
+            .get(`${process.env.REACT_APP_API_URL}/radio/${sessionStorage.getItem("memberIndex")}`, {
+                headers: {
+                    token: sessionStorage.getItem("token") ?? "",
+                },
+            })
             .then((response) => {
                 console.log(response.data);
                 setRdata(response.data);
@@ -574,38 +565,19 @@ function RadioContent() {
     const fetchDataWav = async () => {
         if (!rdata) return; // rdata가 null일 때는 메소드를 종료
 
-        // const res = await fetch(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`, {
-        //     method: "GET",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        // });
-        // console.log(res);
-        // const wavFile = await res.blob();
-        // setAudioSrc(URL.createObjectURL(wavFile));
-
-        await axios
-            .get(
-                `${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
-            .then((response) => {
-                const blob = new Blob([response], { type: 'audio/wav' });
-                console.log(response);
-                setAudioSrc(URL.createObjectURL(blob));
-            })
-            .catch((e) => {
-                console.log(e);
+        try {
+            const res = await fetch(`${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
+            const radioBlob = await res.blob();
+            setAudioSrc(URL.createObjectURL(radioBlob));
+        } catch (error) {
+            console.log(error);
+        }
     };
-
-    useEffect(() => {
-        console.log(audioSrc);
-    }, [audioSrc]);
 
     useEffect(() => {
         // 최초1회 데이터를 수신한다.
@@ -627,31 +599,28 @@ function RadioContent() {
                 },
                 {
                     headers: {
-                        token: sessionStorage.getItem('token') ?? '',
+                        token: sessionStorage.getItem("token") ?? "",
                     },
                 }
             )
             .then((response) => {
                 console.log(response.data);
             });
-        swal({
-            title: '재송신 성공!',
-            icon: 'success',
-        });
+        alert("재송신 성공!");
         setRepostActive(true);
     }
 
     return (
         <div>
-            <div>
+            <div className='text-white'>
+                {/*라디오 모달 상단 헤더 */}
                 {rdata ? (
                     <div>
-                        20{rdata.boardInputDate.split('.')[0]}년{' '}
-                        {rdata.boardInputDate.split('.')[1]}월{' '}
-                        {rdata.boardInputDate.split('.')[2]}일
+                        20{rdata.boardInputDate.split(".")[0]}년 {rdata.boardInputDate.split(".")[1]}월{" "}
+                        {rdata.boardInputDate.split(".")[2]}일
                     </div>
                 ) : (
-                    '로딩중'
+                    "로딩중"
                 )}
                 <button
                     onClick={() => {
@@ -668,8 +637,9 @@ function RadioContent() {
                     CLOSE
                 </button>
             </div>
-            <div>
-                <div>{rdata ? rdata.boardContent : '로딩중'}</div>
+            <div className='text-white'>
+                {/*라디오 내용 */}
+                <div>{rdata ? rdata.boardContent : "로딩중"}</div>
             </div>
             <div>
                 <button
@@ -683,19 +653,14 @@ function RadioContent() {
             </div>
             <div>
                 <h2>오디오 플레이어</h2>
-                {rdata && <audio src={audioSrc} controls></audio>}
+                {audioSrc && <audio src={audioSrc} controls />}
             </div>
             <div className="reportAlert">
                 {isReportAlertOpen && (
-                    <Alert
-                        type={'report'}
-                        boardIndex={rdata.boardIndex}
-                        userIndex={rdata.fromMemberIndex}
-                    />
+                    <Alert type={"report"} boardIndex={rdata.boardIndex} userIndex={rdata.fromMemberIndex} />
                 )}
             </div>
         </div>
     );
 }
-
 export default Modal;
