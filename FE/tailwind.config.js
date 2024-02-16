@@ -127,6 +127,11 @@ module.exports = {
                     from: { opacity: 0 },
                     to: { opacity: 1 },
                 },
+                "fade-out": {
+                    "0%": { opacity: 1 },
+                    "75%": { opacity: 1 },
+                    "100%": { opacity: 0 },
+                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
@@ -134,6 +139,7 @@ module.exports = {
                 "slide-out": "slide-out 0.4s ease-in-out",
                 "fade-in": "fade-in 0.3s ease-in-out",
                 "fade-in-l": "fade-in 0.8s ease-in-out",
+                "fade-out": "fade-out 4s ease-in-out",
             },
         },
     },
