@@ -109,6 +109,4 @@ git clone https://lab.ssafy.com/s10-webmobile2-sub2/S10P12B209.git
 #### 라디오 
 ![tts](./asset/tts.gif)
 ![radio](./asset/익명별일기.png)
-#### 악성 유저 차단과 게시글 신고
-![ban](./asset/차단.gif)
-![report](./asset/신고.gif)
+
