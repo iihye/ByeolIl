@@ -160,7 +160,7 @@ function List() {
                                                         )
                                                     }
                                                 >
-                                                    {it.boardContent}
+                                                     {it.boardContent.substring(0,20).concat(it.boardContent.length > 20 ? "..." : "")}
                                                 </TableCell>
                                                 <TableCell className="text-center w-2/12">
                                                     <button
