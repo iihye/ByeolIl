@@ -48,7 +48,7 @@ function App() {
                 </Route>
                 <Route path="/space/:user_id" element={<MainPage />}>
                     <Route path="radio" element={<Radio />} />
-                </Route>{' '}
+                </Route>
                 <Route path="*" element={<ErrorPage />} />
             </Routes>
         </div>

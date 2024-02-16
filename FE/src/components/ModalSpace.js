@@ -3,9 +3,7 @@ import {
     isStarRegistOpenState,
     isStarModifyOpenState,
     isStarDetailOpenState,
-    isDeleteAlertOpenState,
-    isReportAlertOpenState,
-    reportModalState,
+    isReportDetailOpenState,
     isChangeInfoOpenState,
     isMyStarListOpenState,
     isFavorListOpenState,
@@ -14,10 +12,10 @@ import {
     isTagSearchOpenState,
     isSettingOpenState,
     isReportOpenState,
-    isGuideCommentOpenState,
     isOpinionOpenState,
     isConstellationInfoOpenState,
     isAlarmOpenState,
+    isGuideCommentOpenState,
 } from "./atom";
 import StarRegist from "./star/StarRegist";
 import StarDetail from "./star/StarDetail";
@@ -29,6 +27,7 @@ import FindUser from "./user/FindUser";
 import StarTagSearch from "./star/StarTagSearch";
 import Settings from "./user/Settings";
 import Report from "./admin/Report";
+import ReportDetail from "./admin/ReportDetail";
 import { GuideComment } from "./user/UserSpace";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
@@ -50,7 +49,8 @@ function ModalSpace() {
             <TagSearchArea />
             <SettingArea />
             <ReportArea />
-            {/* <GuideCommentArea /> */}
+            <ReportDetailArea />
+            <GuideCommentArea />
             <OpinionArea />
             <ConstellationInfoArea />
             <AlarmArea />
@@ -155,15 +155,29 @@ function ReportArea() {
     return <>{isReportOpen && <Report />}</>;
 }
 
+function ReportDetailArea() {
+    const isReportDetailOpen = useRecoilValue(isReportDetailOpenState);
+    return (
+        <>
+            {isReportDetailOpen && (
+                <ReportDetail
+                    boardIndex={isReportDetailOpen[0]}
+                    reportContent={isReportDetailOpen[1]}
+                />
+            )}
+        </>
+    );
+}
+
 function AlarmArea() {
     const isAlarmOpen = useRecoilValue(isAlarmOpenState);
     return <>{isAlarmOpen && <Alarm />}</>;
 }
 
-// function GuideCommentArea() {
-//     const isGuideCommentOpen = useRecoilValue(isGuideCommentOpenState);
-//     return <>{isGuideCommentOpen && <GuideComment />}</>;
-// }
+function GuideCommentArea() {
+    const isGuideCommentOpen = useRecoilValue(isGuideCommentOpenState);
+    return <>{isGuideCommentOpen && <GuideComment />}</>;
+}
 
 function OpinionArea() {
     const isOpinionOpen = useRecoilValue(isOpinionOpenState);
@@ -300,14 +314,14 @@ function ConstellationInfoArea() {
     return (
         <div className="absolute bottom-10 left-0 w-full h-fit  text-white-sub  flex justify-center items-center animate-fade-in font-['Star'] text-4xl">
             <div
-                className={`transition-all duration-300 ${
+                className={`transition-all  duration-300 ${
                     isConstellationInfoOpen !== false
                         ? "opacity-100"
                         : "opacity-0"
                 }`}
                 ref={ref}
             >
-                {name + " 자리"}
+                {isConstellationInfoOpen !== false ? name + " 자리" : null}
             </div>
         </div>
     );

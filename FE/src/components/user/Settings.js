@@ -30,7 +30,6 @@ function Settings() {
                 );
 
                 const memberRadioStatus = response.data.memberRadioStatus;
-                console.log('라디오 상태', memberRadioStatus);
 
                 // option에서 selectedOption과 일치하는 배열 index 가져오기 (초기값 세팅)
 

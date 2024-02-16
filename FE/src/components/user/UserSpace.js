@@ -582,26 +582,26 @@ function FollowArea() {
     );
 }
 
-// export function GuideComment() {
-//     const resetIsGuideCommentOpen = useResetRecoilState(
-//         isGuideCommentOpenState
-//     );
+export function GuideComment() {
+    const resetIsGuideCommentOpen = useResetRecoilState(
+        isGuideCommentOpenState
+    );
 
-//     useEffect(() => {
-//         function guideClose() {
-//             resetIsGuideCommentOpen();
-//         }
+    useEffect(() => {
+        function guideClose() {
+            resetIsGuideCommentOpen();
+        }
 
-//         setTimeout(guideClose, 4000);
-//     }, []);
-//     return (
-//         <div className="guide-comment-container relative w-full h-full">
-//             <div className="guide-comment absolute top-0 left-0 right-0 bottom-0 p-2 bg-alert-bg">
-//                 <div>희미한 별을 눌러 일기를 작성해보아요!</div>
-//             </div>
-//         </div>
-//     );
-// }
+        setTimeout(guideClose, 4000);
+    }, []);
+    return (
+        <div className="guide-comment-container  font-['Star'] absolute bottom-32 justify-center w-full flex ">
+            <div className="guide-comment p-2 text-white-sub text-4xl animate-fade-in animate-fade-out">
+                <div>희미한 별을 눌러 일기를 작성하고 별자리를 이어보아요!</div>
+            </div>
+        </div>
+    );
+}
 
 function UserSpace() {
     return (
@@ -626,7 +626,7 @@ function UserSpace() {
                         dampingFactor={0.15}
                         target={[0, 0, 0]}
                         rotateSpeed={-0.15}
-                        enableZoom={true}
+                        enableZoom={false}
                     />
                     <PerspectiveCamera
                         makeDefault
