@@ -292,7 +292,7 @@ function ConstellationInfoArea() {
     const ref = useRef();
 
     useEffect(() => {
-        if (isConstellationInfoOpen) {
+        if (isConstellationInfoOpen !== false) {
             setName(constellationInfo[isConstellationInfoOpen]);
         }
     }, [isConstellationInfoOpen]);
@@ -301,7 +301,9 @@ function ConstellationInfoArea() {
         <div className="absolute bottom-10 left-0 w-full h-fit  text-white-sub  flex justify-center items-center animate-fade-in font-['Star'] text-4xl">
             <div
                 className={`transition-all duration-300 ${
-                    isConstellationInfoOpen ? "opacity-100" : "opacity-0"
+                    isConstellationInfoOpen !== false
+                        ? "opacity-100"
+                        : "opacity-0"
                 }`}
                 ref={ref}
             >
