@@ -14,11 +14,10 @@ import swal from 'sweetalert';
 // + 닉네임수정은 메인화면에서 "OO님의 우주" 옆에 수정 아이콘을 눌러서 바로 수정이 되는 기능도
 
 export default function ChangeInfo() {
-    // const isPwCheckOpen = useRecoilValue(isPwCheckOpenState);
     const [isPwCheckOpen, setIsPwCheckOpen] =
         useRecoilState(isPwCheckOpenState);
     const setIsChangeInfoOpen = useSetRecoilState(isChangeInfoOpenState);
-    console.log(isPwCheckOpen);
+
     const navigate = useNavigate();
 
     // 패스워드, 패스워드확인
@@ -89,7 +88,6 @@ export default function ChangeInfo() {
                     },
                 })
                 .then(() => {
-                    // console.log(response.data);
                     swal({
                         title: '회원탈퇴 처리가 완료되었습니다',
                         icon: 'success',

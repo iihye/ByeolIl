@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import StarDetail from 'components/star/StarDetail';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FaUserPlus, FaComment, FaComments, FaRegBell } from 'react-icons/fa';

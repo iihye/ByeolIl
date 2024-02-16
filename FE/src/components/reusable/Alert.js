@@ -295,15 +295,6 @@ function Block() {
     const [dueDate, setDueDate] = useState('');
 
     useEffect(() => {
-        // const fetchData = async () => {
-        //   await axios
-        //     .get(`${process.env.REACT_APP_API_URL}/`)
-        //     .then((response) => {
-        //       setUserData(response.data);
-        //     })
-        //     .catch((e) => console.log(e));
-        // };
-        //   fetchData();
         const date = new Date(userData.memberBanDate);
         setDueDate(new Date(date.setDate(date.getDate() + 7)));
     }, []);
