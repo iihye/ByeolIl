@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { TfiMenu } from 'react-icons/tfi';
 import { FaUserCircle } from 'react-icons/fa';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
-import * as SiIcons from 'react-icons/si';
 import * as RiIcons from 'react-icons/ri';
 import * as WiIcons from 'react-icons/wi';
 import * as LuIcons from 'react-icons/lu';

@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { renewReplyState } from "components/atom";
-import { useRecoilValue } from "recoil";
-import StarReplyListItem from "./StarReplyListItem";
-import axios from "axios";
-import { IoMdRefresh } from "react-icons/io";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { GoRocket } from "react-icons/go";
+import { useEffect, useRef, useState } from 'react';
+import { renewReplyState } from 'components/atom';
+import { useRecoilValue } from 'recoil';
+import StarReplyListItem from './StarReplyListItem';
+import axios from 'axios';
+import { IoMdRefresh } from 'react-icons/io';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { GoRocket } from 'react-icons/go';
 
 function StarReplyList(props) {
     const renewReply = useRecoilValue(renewReplyState);
@@ -26,7 +26,7 @@ function StarReplyList(props) {
                         top: 0,
                         left: 0,
                     });
-                    console.log(res.data);
+
                     setData(res.data.reverse());
                 })
                 .catch((error) => console.log(error));
@@ -71,7 +71,7 @@ function StarReplyList(props) {
 
                         <div
                             className="w-full h-full absolute  bg-black-sub"
-                            style={{ right: "-8rem" }}
+                            style={{ right: '-8rem' }}
                         ></div>
                     </div>
                 </div>

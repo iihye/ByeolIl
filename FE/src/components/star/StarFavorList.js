@@ -101,8 +101,6 @@ function StarFavorList() {
         };
     });
 
-    console.log(filterData);
-
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center bg-modal-outside z-10">
             <Card className=" w-cardContainer card-contain-style px-6 py-6 ">

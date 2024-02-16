@@ -1,11 +1,9 @@
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import {
     isStarRegistOpenState,
     isStarModifyOpenState,
     isStarDetailOpenState,
-    isDeleteAlertOpenState,
-    isReportAlertOpenState,
-    reportModalState,
+    isReportDetailOpenState,
     isChangeInfoOpenState,
     isMyStarListOpenState,
     isFavorListOpenState,
@@ -14,27 +12,27 @@ import {
     isTagSearchOpenState,
     isSettingOpenState,
     isReportOpenState,
-    isGuideCommentOpenState,
     isOpinionOpenState,
     isConstellationInfoOpenState,
     isAlarmOpenState,
-} from "./atom";
-import StarRegist from "./star/StarRegist";
-import StarDetail from "./star/StarDetail";
-import ChangeInfo from "./user/ChangeInfo";
-import List from "./reusable/List";
-import StarFavorList from "./star/StarFavorList";
-import FollowList from "./user/FollowList";
-import FindUser from "./user/FindUser";
-import StarTagSearch from "./star/StarTagSearch";
-import Settings from "./user/Settings";
-import Report from "./admin/Report";
-import { GuideComment } from "./user/UserSpace";
-import { useEffect, useRef, useState } from "react";
-import axios from "axios";
-import swal from "sweetalert";
-import { constellationInfo } from "data";
-import Alarm from "./user/Alarm";
+} from './atom';
+import StarRegist from './star/StarRegist';
+import StarDetail from './star/StarDetail';
+import ChangeInfo from './user/ChangeInfo';
+import List from './reusable/List';
+import StarFavorList from './star/StarFavorList';
+import FollowList from './user/FollowList';
+import FindUser from './user/FindUser';
+import StarTagSearch from './star/StarTagSearch';
+import Settings from './user/Settings';
+import Report from './admin/Report';
+import ReportDetail from './admin/ReportDetail';
+import { GuideComment } from './user/UserSpace';
+import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
+import swal from 'sweetalert';
+import { constellationInfo } from 'data';
+import Alarm from './user/Alarm';
 
 function ModalSpace() {
     return (
@@ -50,6 +48,7 @@ function ModalSpace() {
             <TagSearchArea />
             <SettingArea />
             <ReportArea />
+            <ReportDetailArea />
             {/* <GuideCommentArea /> */}
             <OpinionArea />
             <ConstellationInfoArea />
@@ -65,7 +64,7 @@ function StarRegistArea() {
         <>
             {isStarRegistOpen && (
                 <StarRegist
-                    type={"regist"}
+                    type={'regist'}
                     location={isStarRegistOpen[0]}
                     writerIndex={isStarRegistOpen[1]}
                 />
@@ -82,7 +81,7 @@ function StarModifyArea() {
         <>
             {isStarModifyOpen && (
                 <StarRegist
-                    type={"modify"}
+                    type={'modify'}
                     preBoard={isStarModifyOpen[0]}
                     boardIndex={isStarModifyOpen[1]}
                     location={isStarModifyOpen[2]}
@@ -155,6 +154,20 @@ function ReportArea() {
     return <>{isReportOpen && <Report />}</>;
 }
 
+function ReportDetailArea() {
+    const isReportDetailOpen = useRecoilValue(isReportDetailOpenState);
+    return (
+        <>
+            {isReportDetailOpen && (
+                <ReportDetail
+                    boardIndex={isReportDetailOpen[0]}
+                    reportContent={isReportDetailOpen[1]}
+                />
+            )}
+        </>
+    );
+}
+
 function AlarmArea() {
     const isAlarmOpen = useRecoilValue(isAlarmOpenState);
     return <>{isAlarmOpen && <Alarm />}</>;
@@ -179,14 +192,14 @@ function OpinionAlert() {
         function handleClick(e) {
             e.stopPropagation();
             const check = [...e.target.classList].some(
-                (it) => it === "outside"
+                (it) => it === 'outside'
             );
             if (check) {
                 if (input.current.value.length > 0) {
                     swal({
-                        title: "창을 닫을까요?",
-                        text: "작성 중인 내용을 잃을 수 있어요!",
-                        icon: "warning",
+                        title: '창을 닫을까요?',
+                        text: '작성 중인 내용을 잃을 수 있어요!',
+                        icon: 'warning',
                         buttons: true,
                         dangerMode: true,
                     }).then((willDelete) => {
@@ -200,10 +213,10 @@ function OpinionAlert() {
             }
         }
 
-        window.addEventListener("click", handleClick);
+        window.addEventListener('click', handleClick);
 
         return () => {
-            window.removeEventListener("click", handleClick);
+            window.removeEventListener('click', handleClick);
         };
     }, []);
     const input = useRef();
@@ -216,15 +229,15 @@ function OpinionAlert() {
         await axios
             .post(`${process.env.REACT_APP_API_URL}/opinion/add`, data, {
                 headers: {
-                    token: sessionStorage.getItem("token"),
+                    token: sessionStorage.getItem('token'),
                 },
             })
             .then((response) => {
                 console.log(response);
                 swal({
-                    title: "의견 전송 완료",
-                    text: "소중한 의견 감사드립니다!",
-                    icon: "success",
+                    title: '의견 전송 완료',
+                    text: '소중한 의견 감사드립니다!',
+                    icon: 'success',
                 }).then(() => setIsOpinionOpen(false));
             })
             .catch((error) => console.log(error));
@@ -232,9 +245,9 @@ function OpinionAlert() {
     function handleClose() {
         if (input.current.value.length > 0) {
             swal({
-                title: "창을 닫을까요?",
-                text: "작성 중인 내용을 잃을 수 있어요!",
-                icon: "warning",
+                title: '창을 닫을까요?',
+                text: '작성 중인 내용을 잃을 수 있어요!',
+                icon: 'warning',
                 buttons: true,
                 dangerMode: true,
             }).then((willDelete) => {
@@ -302,12 +315,12 @@ function ConstellationInfoArea() {
             <div
                 className={`transition-all duration-300 ${
                     isConstellationInfoOpen !== false
-                        ? "opacity-100"
-                        : "opacity-0"
+                        ? 'opacity-100'
+                        : 'opacity-0'
                 }`}
                 ref={ref}
             >
-                {name + " 자리"}
+                {name + ' 자리'}
             </div>
         </div>
     );

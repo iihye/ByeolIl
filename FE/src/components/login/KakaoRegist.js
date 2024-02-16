@@ -5,20 +5,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 
 function KakaoRegist() {
-    console.log('/regist/kakao접근');
     const navigate = useNavigate();
     const location = useLocation();
     const params = new URL(document.URL).searchParams;
     const code = params.get('code');
-
-    console.log('code: ', code);
 
     const getKakaoToken = async () => {
         try {
             const response = await axios.get(
                 `${process.env.REACT_APP_API_URL}/member/join/kakao?code=${code}`
             );
-            console.log('response: ', response);
             if (response.status == 200) {
                 navigate('/landing/regist', {
                     state: {
