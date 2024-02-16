@@ -96,7 +96,7 @@ public class RadioService {
             LocalDateTime st = LocalDateTime.now();
             LocalDateTime ed = LocalDateTime.now();
             switch (radioStatus){
-                case OLD :
+                case OLD
                     st= st.minusMonths(3);
                     ed= ed.minusMonths(6);
                     break;
