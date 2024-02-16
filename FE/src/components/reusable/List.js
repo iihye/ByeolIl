@@ -25,6 +25,7 @@ import {
 import { WiStars } from 'react-icons/wi';
 import { useNavigate } from 'react-router';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { FaSearch } from 'react-icons/fa';
 
 function List() {
     const resetList = useResetRecoilState(filterState);
@@ -182,7 +183,15 @@ function List() {
                         </Table>
                     </ScrollArea>
                 </CardContent>
-                <SearchBar filterKey="boardContent" listItems={listData} />
+                <div className="searchArea flex justify-between items-center search-input w-96 mt-2 mr-2 left-0 ml-auto">
+                    <div className="px-2">
+                        <SearchBar
+                            filterKey="boardContent"
+                            listItems={listData}
+                        />
+                    </div>
+                    <FaSearch size="20" className="text-black-sub mx-3" />
+                </div>
             </Card>
         </div>
     );
