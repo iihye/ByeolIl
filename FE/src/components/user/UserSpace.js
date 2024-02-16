@@ -595,8 +595,8 @@ export function GuideComment() {
         setTimeout(guideClose, 4000);
     }, []);
     return (
-        <div className="guide-comment-container absolute bottom-32 justify-center w-full flex ">
-            <div className="guide-comment  p-2  font-['Star'] text-white-sub text-5xl animate-fade-in animate-fade-out">
+        <div className="guide-comment-container  font-['Star'] absolute bottom-32 justify-center w-full flex ">
+            <div className="guide-comment p-2 text-white-sub text-4xl animate-fade-in animate-fade-out">
                 <div>희미한 별을 눌러 일기를 작성하고 별자리를 이어보아요!</div>
             </div>
         </div>
