@@ -103,7 +103,6 @@ git clone https://lab.ssafy.com/s10-webmobile2-sub2/S10P12B209.git
 
 #### 메인화면
 ![main](./asset/3d우주.gif)
-![blender](./asset/blender.png)
 ![360](./asset/360도.gif)
 #### 라디오 
 ![tts](./asset/tts.gif)
