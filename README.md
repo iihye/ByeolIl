@@ -104,6 +104,8 @@ git clone https://lab.ssafy.com/s10-webmobile2-sub2/S10P12B209.git
 #### 메인화면
 ![main](./asset/3d우주.gif)
 ![360](./asset/360도.gif)
+#### 다른 사람의 우주 여행
+![우주구경](./asset/우주구경.gif)
 #### 라디오 
 ![tts](./asset/tts.gif)
 ![radio](./asset/익명별일기.png)
