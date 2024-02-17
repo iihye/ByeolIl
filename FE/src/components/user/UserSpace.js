@@ -68,16 +68,6 @@ const starLineOpacityState = atom({
     default: -1,
 });
 
-const followState = atom({
-    key: "followState",
-    default: null,
-});
-
-const renewLineState = atom({
-    key: "renewLine",
-    default: false,
-});
-
 ///////////////////////////////// ↑ atoms
 
 const starArr = Array(MAX_SATR_CNT).fill(null);
@@ -87,9 +77,8 @@ const isAddedStar = new Map();
 
 function Line(props) {
     const starLineOpacity = useRecoilValue(starLineOpacityState);
-    const stars = useRecoilValue(starsState);
-    const groupNum = props.groupNum;
 
+    const groupNum = props.groupNum;
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
     return (
@@ -151,14 +140,14 @@ function Space(props) {
 }
 
 function Star(props) {
-    const params = useParams();
-    const mesh = useRef(null);
-
     const stars = useRecoilValue(starsState);
-
     const isFollower = useRecoilValue(isFollowerState);
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+
+    const params = useParams();
+
+    const mesh = useRef(null);
 
     const writerIndex = Number(params["user_id"]);
     const loginUserIndex = Number(
@@ -259,11 +248,11 @@ function StarSurround(props) {
 
 function GroupStar(props) {
     const stars = useRecoilValue(starsState);
-
     const setStarLineOpacityState = useSetRecoilState(starLineOpacityState);
     const setIsConstellationOpen = useSetRecoilState(
         isConstellationInfoOpenState
     );
+
     const [lineColor, setLineColor] = useState(true);
     const [renewConstellation, setRenewConstellation] = useState(false);
 
@@ -344,17 +333,17 @@ function GroupStar(props) {
 }
 
 function SceneStars() {
-    const curPage = useRecoilValue(curPageState);
     const [stars, setStars] = useRecoilState(starsState);
+    const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
+    const curPage = useRecoilValue(curPageState);
+    const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
     const setFollower = useSetRecoilState(followerState);
     const setIsGuideCommentOpen = useSetRecoilState(isGuideCommentOpenState);
-    const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
 
     const params = useParams();
     const writerIndex = Number(params.user_id);
     const loginUserId = Number(sessionStorage.getItem("memberIndex"));
     const loginUserNickname = sessionStorage.getItem("nickname");
-    const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -480,8 +469,10 @@ function SceneEnvironment() {
 
 function FollowArea() {
     const params = useParams();
-    const userId = Number(params.user_id);
+
     const location = useLocation();
+
+    const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
 
     const [loginToken, setLoginToken] = useState(
         sessionStorage.getItem("token")
@@ -490,7 +481,8 @@ function FollowArea() {
         Number(sessionStorage.getItem("memberIndex"))
     );
     const [userName, setUserName] = useState("");
-    const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
+
+    const userId = Number(params.user_id);
 
     const handleFollow = (isFollower) => {
         const relationData = {
@@ -594,6 +586,7 @@ export function GuideComment() {
 
         setTimeout(guideClose, 4000);
     }, []);
+
     return (
         <div className="guide-comment-container  font-['Star'] absolute bottom-32 justify-center w-full flex ">
             <div className="guide-comment p-2 text-white-sub text-4xl animate-fade-in animate-fade-out">
