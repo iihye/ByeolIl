@@ -8,7 +8,8 @@ import { FaUserCircle } from 'react-icons/fa';
 import { TbHomeMove } from 'react-icons/tb';
 import { useResetRecoilState } from 'recoil';
 import { isFollowListOpenState } from 'components/atom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import swal from 'sweetalert';
 
 function FollowList() {
     const resetIsFollowListOpen = useResetRecoilState(isFollowListOpenState);
@@ -19,6 +20,16 @@ function FollowList() {
 
     const loginIndex = sessionStorage.getItem('memberIndex');
     const loginToken = sessionStorage.getItem('token');
+    const navigate = useNavigate();
+
+    const handleMove = (memberNickname) => {
+        swal({
+            title: `${memberNickname}의 우주로 이동합니다🚀`,
+            icon: 'success',
+        }).then(() => {
+            resetIsFollowListOpen(false);
+        });
+    };
 
     const menuArr = useMemo(() => {
         // 데이터를 받은 후에 content를 설정
@@ -64,7 +75,6 @@ function FollowList() {
 
                 setFollowData(followResponse.data.result);
                 setFollowerData(followerResponse.data.result);
-                console.log(followResponse.data.result);
             } catch (error) {
                 console.error(error);
             }
@@ -130,6 +140,12 @@ function FollowList() {
                                             <p>{user.memberName}</p>
                                             <Link
                                                 to={`/space/${user.memberIndex}`}
+                                                state={{
+                                                    props: user.memberName,
+                                                }}
+                                                onClick={() =>
+                                                    handleMove(user.memberName)
+                                                }
                                             >
                                                 <TbHomeMove className="size-7 mx-2">
                                                     이동하기

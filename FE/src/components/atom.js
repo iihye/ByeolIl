@@ -1,4 +1,4 @@
-import { atom, selector } from 'recoil';
+import { atom } from 'recoil';
 
 export const filterState = atom({
     key: 'filterState',
@@ -104,5 +104,34 @@ export const isAlarmDetailState = atom({
 // 신고목록
 export const isReportOpenState = atom({
     key: 'isReportOpen',
+    default: false,
+});
+
+// 게시글 없는 유저 알림말
+export const isGuideCommentOpenState = atom({
+    key: 'isGuideCommentOpen',
+    default: false,
+});
+
+// 신고 상세보기
+export const isReportDetailOpenState = atom({
+    key: 'isReportDetailOpen',
+    default: '',
+});
+
+// 의견 보내기
+export const isOpinionOpenState = atom({
+    key: 'isOpinionOpen',
+    default: false,
+});
+
+export const isAlarmOpenState = atom({
+    key: 'isAlarmOpen',
+    default: false,
+});
+
+// 별자리 정보
+export const isConstellationInfoOpenState = atom({
+    key: "isConstellationInfoOpen",
     default: false,
 });

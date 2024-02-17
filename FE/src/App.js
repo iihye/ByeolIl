@@ -47,10 +47,9 @@ function App() {
                     <Route path="findPw" element={<FindPW />} />
                 </Route>
                 <Route path="/space/:user_id" element={<MainPage />}>
-                    <Route path="alarm" element={<Alarm />} />
                     <Route path="radio" element={<Radio />} />
-                    <Route path="*" element={<ErrorPage />} />
                 </Route>
+                <Route path="*" element={<ErrorPage />} />
             </Routes>
         </div>
     );

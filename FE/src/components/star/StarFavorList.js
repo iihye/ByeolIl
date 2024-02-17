@@ -26,6 +26,7 @@ function StarFavorList() {
     const token = sessionStorage.getItem('token');
     const resetIsFavorListOpen = useResetRecoilState(isFavorListOpenState);
     const [listData, setListData] = useState('');
+    const [followingList, setFollowingList] = useState([]);
     const [memberIndex, setMemberIndex] = useState(
         sessionStorage.getItem('memberIndex')
     );
@@ -34,6 +35,24 @@ function StarFavorList() {
     );
     const resetList = useResetRecoilState(filterState);
     const filterData = useRecoilValue(filterState);
+
+    useEffect(() => {
+        const getFollowList = async () => {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_URL}/follow/following/${memberIndex}`,
+                {
+                    headers: {
+                        token: token,
+                    },
+                }
+            );
+            const memberIndexes =
+                response && response.data.result.map((it) => it.memberIndex);
+            setFollowingList(memberIndexes);
+        };
+
+        getFollowList();
+    }, [token, memberIndex]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,9 +65,15 @@ function StarFavorList() {
                         },
                     }
                 );
+
                 resetList();
                 setListData(
-                    response.data.filter((item) => item.boardAccess === 'OPEN')
+                    response.data.filter(
+                        (item) =>
+                            item.boardAccess === 'OPEN' ||
+                            (followingList.includes(item.memberIndex) &&
+                                item.boardAccess === 'PARTOPEN')
+                    )
                 );
             } catch (error) {
                 console.log(error);
@@ -56,7 +81,7 @@ function StarFavorList() {
         };
 
         fetchData();
-    }, [token, memberIndex]);
+    }, [followingList]);
 
     useEffect(() => {
         function handleClick(e) {
@@ -75,8 +100,6 @@ function StarFavorList() {
             window.removeEventListener('click', handleClick);
         };
     });
-
-    console.log(filterData);
 
     return (
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center bg-modal-outside z-10">
@@ -127,14 +150,12 @@ function StarFavorList() {
                                                 {it.boardContent}
                                             </div>
                                             <div className="absolute bottom-0 w-10/12 mb-3">
-                                                <div className="cardTag flex py-2 ">
+                                                <div className="cardTag flex py-2">
                                                     {it.hash?.length > 0
-                                                        ? it.hash.map((tag) => (
-                                                              <div>
-                                                                  #{tag}
-                                                                  &nbsp;
-                                                              </div>
-                                                          ))
+                                                        ? it.hash.map(
+                                                              (tag) =>
+                                                                  `#${tag} `
+                                                          )
                                                         : null}
                                                 </div>
                                                 <div className="cardLike flex justify-end">

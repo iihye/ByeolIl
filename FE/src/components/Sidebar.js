@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { TfiMenu } from 'react-icons/tfi';
 import { FaUserCircle } from 'react-icons/fa';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
-import * as SiIcons from 'react-icons/si';
 import * as RiIcons from 'react-icons/ri';
 import * as WiIcons from 'react-icons/wi';
 import * as LuIcons from 'react-icons/lu';
@@ -12,6 +11,8 @@ import * as AiIcons from 'react-icons/ai';
 import * as PiIcons from 'react-icons/pi';
 import * as HiIcons from 'react-icons/hi2';
 import * as IoIcons from 'react-icons/io5';
+import * as SlICons from 'react-icons/sl';
+
 import { useSetRecoilState } from 'recoil';
 import {
     isChangeInfoOpenState,
@@ -22,6 +23,7 @@ import {
     isSettingOpenState,
     isTagSearchOpenState,
     isReportOpenState,
+    isOpinionOpenState,
 } from './atom';
 import swal from 'sweetalert';
 
@@ -34,6 +36,7 @@ function SidebarList(props) {
     const setIsTagSearchOpen = useSetRecoilState(isTagSearchOpenState);
     const setIsSettingOpen = useSetRecoilState(isSettingOpenState);
     const setIsReportOpen = useSetRecoilState(isReportOpenState);
+    const setIsOpinionOpen = useSetRecoilState(isOpinionOpenState);
 
     const [items, setItems] = useState([]);
     const [isModifying, setIsModifying] = useState(false);
@@ -42,7 +45,7 @@ function SidebarList(props) {
     );
     const isAdmin = sessionStorage.getItem('auth');
     const token = sessionStorage.getItem('token');
-    const memberIndex = sessionStorage.getItem('memberIndex');
+    const memberIndex = Number(sessionStorage.getItem('memberIndex'));
 
     const navigate = useNavigate();
 
@@ -122,13 +125,20 @@ function SidebarList(props) {
         }
     };
 
+    function goMySpace() {
+        swal({
+            title: `나의 우주로 이동합니다🚀`,
+            icon: 'success',
+        }).then(() => navigate(`space/${props.memberIndex}`));
+    }
+
     useEffect(() => {
         setItems([
             {
                 type: PiIcons,
                 icon: 'PiStarAndCrescent',
                 name: '내 우주가기',
-                path: () => navigate(`space/${props.memberIndex}`),
+                path: goMySpace,
             },
             {
                 type: WiIcons,
@@ -171,6 +181,12 @@ function SidebarList(props) {
                 icon: 'RiLockPasswordLine',
                 name: '회원정보수정',
                 path: () => setIsChangeInfoOpen(true),
+            },
+            {
+                type: SlICons,
+                icon: 'SlSpeech',
+                name: '의견 보내기',
+                path: () => setIsOpinionOpen(memberIndex),
             },
         ]);
     }, []);

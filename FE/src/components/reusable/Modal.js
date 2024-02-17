@@ -12,7 +12,6 @@ import {
     isStarModifyOpenState,
     renewReplyState,
     isAlarmDetailState,
-    reportModalState,
     isReportDetailOpenState,
 } from "components/atom";
 import { useNavigate } from "react-router";
@@ -58,7 +57,7 @@ function StarContent(props) {
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarModifyOpen = useSetRecoilState(isStarModifyOpenState);
     const setIsDetailAlarmOpen = useSetRecoilState(isAlarmDetailState);
-    const setReportModalState = useSetRecoilState(reportModalState);
+    const setReportModalState = useSetRecoilState(isReportDetailOpenState);
 
     const [data, setData] = useState(null);
     const [likeData, setLikeData] = useState([]);
@@ -76,7 +75,6 @@ function StarContent(props) {
 
     // 글 조회 / 수정시 내용 갱신
     useEffect(() => {
-        console.log("Fetch");
         const fetchData = async (starIndex) => {
             await axios
                 .get(
@@ -100,11 +98,14 @@ function StarContent(props) {
                     } else {
                         setIsLike(false);
                     }
+
                     setData(response.data);
                 })
                 .catch((err) => {
                     if (err.response.status === 400) {
+                        setReportModalState(false);
                         setIsDetailAlarmOpen(false);
+                        setIsStarDetailOpen(false);
                         swal({
                             title: "삭제된 글입니다",
                             icon: "warning",
@@ -301,6 +302,7 @@ function StarContent(props) {
                     <StarReplyList
                         boardIndex={starIndex}
                         handleRadio={handleRadio}
+                        isWriter={isWriter}
                     />
                 </div>
                 <div>
@@ -564,7 +566,7 @@ function ReplyRegistArea(props) {
                     onKeyDown={handleKeyDown}
                 />
                 <div
-                    className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub hover:text-modal-bg duration-200 hover:cursor-pointer"
+                    className="text-white-sub text-xl w-8 p-2 text-start rounded hover:text-modal-bg hover:bg-white-sub duration-200 hover:cursor-pointer"
                     onClick={handleRegistReply}
                 >
                     <IoMdSend />
@@ -573,7 +575,7 @@ function ReplyRegistArea(props) {
         </>
     );
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function RadioContent() {
     const [rdata, setRdata] = useState();
     const [isReportAlertOpen, setIsReportAlertOpen] = useRecoilState(
@@ -595,7 +597,6 @@ function RadioContent() {
                 }
             )
             .then((response) => {
-                console.log(response.data);
                 setRdata(response.data);
             })
             .catch((e) => {
@@ -668,7 +669,6 @@ function RadioContent() {
                         dangerMode: true,
                     }).then((willDelete) => {
                         if (willDelete) {
-                            console.log("!!");
                             navigate(-1);
                         }
                     });
@@ -686,22 +686,6 @@ function RadioContent() {
     }, [rdata]);
 
     function handleRepost() {
-        axios
-            .post(
-                `${process.env.REACT_APP_API_URL}/radio/toss`,
-                {
-                    memberIndex: rdata.fromMemberIndex,
-                    boardIndex: rdata.boardIndex,
-                },
-                {
-                    headers: {
-                        token: sessionStorage.getItem("token") ?? "",
-                    },
-                }
-            )
-            .then((response) => {
-                console.log(response.data);
-            });
         swal({
             title: "라디오 전송",
             text: "해당 라디오 내용을 다른 유저에게도 공유해볼까요?",
@@ -723,9 +707,7 @@ function RadioContent() {
                             },
                         }
                     )
-                    .then((response) => {
-                        console.log(response.data);
-                    });
+                    .then((response) => {});
                 swal({
                     title: "다른 사람에게 전달했어요!",
                     icon: "success",
@@ -733,10 +715,25 @@ function RadioContent() {
                 setRepostActive(true);
             }
         });
-        setRepostActive(true);
     }
 
     return (
+        // <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
+        //     <Card
+        //         className="Alarm bg-modal-bg text-white-sub px-6 py-6 rounded-component"
+        //         style={{ width: '480px' }}
+        //     >
+        //         <CardHeader className="flex">
+        //             <CardTitle className="flex justify-start items-center font-['Pre-Bold'] text-2xl mb-8">
+        //                 <FaRegBell className="mr-1" />
+        //                 알림
+        //             </CardTitle>
+        //         </CardHeader>
+        //         <div></div>
+        //         <CardContent>
+
+        //         </CardContent>
+        //         </div>
         <div className="outside w-full h-full absolute top-0 left-0 flex justify-center items-center z-10 bg-modal-outside">
             <Card
                 className="Alarm bg-modal-bg text-white-sub px-6 py-6 rounded-component hover:w-20"

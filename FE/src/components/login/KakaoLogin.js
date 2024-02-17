@@ -6,13 +6,10 @@ import base64 from 'base-64';
 import swal from 'sweetalert';
 
 function KakaoLogin() {
-    console.log('/login/kakao 접근');
     const navigate = useNavigate();
     const location = useLocation();
     const params = new URL(document.URL).searchParams;
     const code = params.get('code');
-
-    console.log('code: ', code);
 
     const getKakaoToken = async () => {
         try {
@@ -21,7 +18,6 @@ function KakaoLogin() {
             );
             if (response.status == 200) {
                 const token = `Bearer ${response.headers.accesstoken}`;
-                console.log('token: ', token);
 
                 sessionStorage.setItem('token', token);
 
@@ -34,11 +30,7 @@ function KakaoLogin() {
                 let dec = JSON.parse(base64.decode(payload));
                 sessionStorage.setItem('auth', dec.auth);
                 sessionStorage.setItem('memberIndex', dec.sub);
-                console.log(
-                    'localStrgetoken:',
-                    sessionStorage.getItem(`token`)
-                );
-                console.log('memberIndex: ', dec.sub);
+
                 await getUserIndex();
                 if (dec.sub) {
                     navigate(`/space/${dec.sub}`);
@@ -63,7 +55,7 @@ function KakaoLogin() {
                     },
                 }
             );
-            console.log(response);
+
             sessionStorage.setItem('nickname', response.data.memberNickname);
         } catch (error) {
             console.log('회원정보 가져오기 실패', error);

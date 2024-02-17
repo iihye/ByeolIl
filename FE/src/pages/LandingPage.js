@@ -28,7 +28,6 @@ export default function LandingPage() {
     const location = useLocation();
 
     useEffect(() => {
-        console.log(location.pathname.split('/').length === 3);
         if (location.pathname.split('/').length > 2) setIsOpen(true);
         else setIsOpen(false);
     }, [location]);
@@ -45,7 +44,7 @@ export default function LandingPage() {
     }, []);
 
     return (
-        <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden">
+        <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden bg-black">
             <div>
                 <video
                     autoPlay
@@ -63,7 +62,9 @@ export default function LandingPage() {
                             별일
                         </h1>
                         <Link to="/landing/login">
-                            <Button className="w-full h-button my-1">시작하기</Button>
+                            <Button className="w-full h-button my-1">
+                                시작하기
+                            </Button>
                         </Link>
                     </div>
                 )}

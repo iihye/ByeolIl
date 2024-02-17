@@ -22,13 +22,13 @@ export default function Regist() {
 
     const location = useLocation();
     const { social_id, social_platform } = location.state || {}; // state가 undefined인 경우를 대비한 기본값 설정
-    useEffect(() => { 
+    useEffect(() => {
         // 리스너 설치해서 인증성공시, 동작하도록해야할까..
         if (social_id) {
             setFormOpen(true); // social_id가 있으면 formOpen을 true로 설정
         }
     }, []);
-   
+
     return (
         <div>
             {!formOpen && (
@@ -82,7 +82,6 @@ function RegistForm({
     social_id: social_id,
     social_platform: social_platform,
 }) {
-    
     const navigate = useNavigate();
     // 초기값 - 아이디, 닉네임, 비밀번호, 비밀번호확인, 이메일, 생년월일
     const id = useRef('');
@@ -116,16 +115,20 @@ function RegistForm({
     // 인증코드
     const [AUTH_CODE, setAUTH_CODE] = useState('');
     // 인증코드 암호화 관련 함수
-    const secretKey =`${process.env.REACT_APP_AES256_SECRET_KEY}` // 32자리 비밀키
-    const iv = `${process.env.REACT_APP_AES256_IV}` // 16자리 iv
+    const secretKey = `${process.env.REACT_APP_AES256_SECRET_KEY}`; // 32자리 비밀키
+    const iv = `${process.env.REACT_APP_AES256_IV}`; // 16자리 iv
     const decrypt = (encryptedText) => {
-        const decipher = cryptoJs.AES.decrypt(encryptedText, cryptoJs.enc.Utf8.parse(secretKey), {
-            iv: cryptoJs.enc.Utf8.parse(iv),
-            padding: cryptoJs.pad.Pkcs7,
-            mode: cryptoJs.mode.CBC,
-        })
+        const decipher = cryptoJs.AES.decrypt(
+            encryptedText,
+            cryptoJs.enc.Utf8.parse(secretKey),
+            {
+                iv: cryptoJs.enc.Utf8.parse(iv),
+                padding: cryptoJs.pad.Pkcs7,
+                mode: cryptoJs.mode.CBC,
+            }
+        );
         return decipher.toString(cryptoJs.enc.Utf8);
-    }
+    };
 
     const onChangeId = () => {
         const idRegExp = /^[a-z0-9]{4,20}$/;
@@ -220,10 +223,10 @@ function RegistForm({
     // 인증번호 일치 검사
     const onChangeAuthCode = () => {
         if (authCode.current.value !== decrypt(AUTH_CODE)) {
-            setAuthMessage("인증번호를 다시 입력해주세요");
+            setAuthMessage('인증번호를 다시 입력해주세요');
             setIsAuthCode(false);
         } else {
-            setAuthMessage("인증되었어요");
+            setAuthMessage('인증되었어요');
             setIsAuthCode(true);
         }
     };
@@ -254,7 +257,6 @@ function RegistForm({
                 `${process.env.REACT_APP_API_URL}/member/check/email?email=${email.current.value}`
             )
             .then((response) => {
-                console.log(response.data.code);
                 setAUTH_CODE(response.data.code);
             });
     };
@@ -291,12 +293,12 @@ function RegistForm({
     };
     const form = useForm();
     useEffect(() => {
-        if(social_id){
+        if (social_id) {
             setIsId(true);
             setIsPassword(true);
             setIsPasswordConfirm(true);
         }
-    },[])
+    }, []);
 
     return (
         <div>
