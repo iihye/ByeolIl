@@ -1,38 +1,38 @@
-import { useEffect, useRef, useState, forwardRef } from 'react';
+import { useEffect, useRef, useState, forwardRef } from "react";
 import {
     isAddedStar,
     starsState,
     curPageState,
-} from 'components/user/UserSpace';
+} from "components/user/UserSpace";
 import {
     isStarDetailOpenState,
     isStarRegistOpenState,
     isStarModifyOpenState,
-} from 'components/atom';
-import axios from 'axios';
+} from "components/atom";
+import axios from "axios";
 import {
     atom,
     useRecoilState,
     useRecoilValue,
     useSetRecoilState,
-} from 'recoil';
-import { HiOutlinePencilSquare } from 'react-icons/hi2';
-import { FaFileImage, FaRegFileImage } from 'react-icons/fa';
-import { MdOutlineCancel } from 'react-icons/md';
-import { Calendar } from '@/components/ui/calendar';
-import { FaChevronLeft } from 'react-icons/fa';
-import { FaChevronRight } from 'react-icons/fa';
-import swal from 'sweetalert';
-import { EXTENSION_IMAGE, EXTENSION_VIDEO } from 'data';
+} from "recoil";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { FaFileImage, FaRegFileImage } from "react-icons/fa";
+import { MdOutlineCancel } from "react-icons/md";
+import { Calendar } from "@/components/ui/calendar";
+import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
+import swal from "sweetalert";
+import { EXTENSION_IMAGE, EXTENSION_VIDEO } from "data";
 
 const fileListState = atom({
-    key: 'fileList',
+    key: "fileList",
     default: [],
 });
 
 const accessRangeState = atom({
-    key: 'accessRange',
-    default: 'OPEN',
+    key: "accessRange",
+    default: "OPEN",
 });
 
 function StarRegist(props) {
@@ -56,21 +56,21 @@ function StarRegist(props) {
     const MAX_STAR_CNT = 209;
 
     const buttonValue = {
-        regist: '등록',
-        modify: '수정',
+        regist: "등록",
+        modify: "수정",
     };
 
     const hashtagSet = new Set();
 
     useEffect(() => {
-        if (type === 'modify') {
+        if (type === "modify") {
             contentRef.current.value = preBoard.boardContent;
         }
 
         function handleClick(e) {
             e.stopPropagation();
             const check = [...e.target.classList].some(
-                (it) => it === 'star-regist-container'
+                (it) => it === "star-regist-container"
             );
 
             if (check) {
@@ -79,27 +79,27 @@ function StarRegist(props) {
         }
 
         function handleKeydown(e) {
-            if (e.key === 'Escape') {
+            if (e.key === "Escape") {
                 handleClose();
             }
         }
 
-        window.addEventListener('click', handleClick);
-        window.addEventListener('keydown', handleKeydown);
+        window.addEventListener("click", handleClick);
+        window.addEventListener("keydown", handleKeydown);
 
         return () => {
-            window.removeEventListener('click', handleClick);
-            window.removeEventListener('keydown', handleKeydown);
+            window.removeEventListener("click", handleClick);
+            window.removeEventListener("keydown", handleKeydown);
         };
     }, []);
 
     const handleRegist = async (event, fileList, accessRange) => {
         event.stopPropagation();
-        if (contentRef.current.value.trim() === '') {
+        if (contentRef.current.value.trim() === "") {
             swal({
-                title: '공백을 입력했어요!',
-                text: '공백 제거 후 다시 시도해주세요',
-                icon: 'warning',
+                title: "공백을 입력했어요!",
+                text: "공백 제거 후 다시 시도해주세요",
+                icon: "warning",
             });
 
             return;
@@ -107,9 +107,9 @@ function StarRegist(props) {
 
         if (contentRef.current.value.length > 200) {
             swal({
-                title: '내용의 길이가 200자를 초과했습니다!',
-                text: '200자 미만의 글만 등록할 수 있어요.',
-                icon: 'warning',
+                title: "내용의 길이가 200자를 초과했습니다!",
+                text: "200자 미만의 글만 등록할 수 있어요.",
+                icon: "warning",
             });
 
             return;
@@ -121,14 +121,14 @@ function StarRegist(props) {
 
         // 파일 담기
         for (let i = 0; i < files.length; i++) {
-            formData.append('files', files[i]);
+            formData.append("files", files[i]);
         }
 
         // 해쉬태그 데이터 Set -> Array
         const hashContent = [];
         hashtagSet.forEach((it) => hashContent.push(it));
 
-        if (type === 'regist') {
+        if (type === "regist") {
             const data = {
                 memberIndex: writerIndex,
                 boardContent: contentRef.current.value,
@@ -136,17 +136,17 @@ function StarRegist(props) {
                 mediaContent: [],
                 boardLocation: curPage * MAX_STAR_CNT + location,
                 boardAccess: accessRange,
-                boardDeleteYN: 'N',
+                boardDeleteYN: "N",
                 hashContent: hashContent,
             };
 
             // Object to Blob
             const dataDto = JSON.stringify(data);
             let requestDtoBlob = new Blob([dataDto], {
-                type: 'application/json',
+                type: "application/json",
             });
 
-            formData.append('requestDto', requestDtoBlob);
+            formData.append("requestDto", requestDtoBlob);
 
             try {
                 const response = await axios.post(
@@ -154,23 +154,23 @@ function StarRegist(props) {
                     formData,
                     {
                         header: {
-                            token: sessionStorage.getItem('token'),
-                            'Content-Type': 'multipart/form-data',
+                            token: sessionStorage.getItem("token"),
+                            "Content-Type": "multipart/form-data",
                         },
                     }
                 );
 
                 if (response.status === 200) {
                     swal({
-                        title: '게시글 작성 성공!',
-                        icon: 'success',
+                        title: "게시글 작성 성공!",
+                        icon: "success",
                     });
 
                     const res = await axios.get(
                         `${process.env.REACT_APP_API_URL}/board/star/${writerIndex}`,
                         {
                             header: {
-                                token: sessionStorage.getItem('token') ?? '',
+                                token: sessionStorage.getItem("token") ?? "",
                             },
                             params: {
                                 page: curPage ?? 0,
@@ -186,15 +186,15 @@ function StarRegist(props) {
                     handleClose(false);
                 } else {
                     swal({
-                        title: '게시글 작성에 실패했어요',
-                        text: '잠시 후 다시 시도해주세요',
-                        icon: 'error',
+                        title: "게시글 작성에 실패했어요",
+                        text: "잠시 후 다시 시도해주세요",
+                        icon: "error",
                     });
                 }
             } catch (error) {
                 console.log(error);
             }
-        } else if (type === 'modify') {
+        } else if (type === "modify") {
             const data = {
                 boardIndex: boardIndex,
                 memberIndex: writerIndex,
@@ -202,30 +202,31 @@ function StarRegist(props) {
                 boardContent: contentRef.current.value,
                 boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
-                boardHash: hashContent,
+                // boardHash: preBoard.boardHash.concat([...hashContent]),
+                boardHash: preBoard.hashContent.concat([...hashContent]),
             };
 
             // Object to Blob
             const dataDto = JSON.stringify(data);
             let requestDtoBlob = new Blob([dataDto], {
-                type: 'application/json',
+                type: "application/json",
             });
 
-            formData.append('requestDto', requestDtoBlob);
+            formData.append("requestDto", requestDtoBlob);
 
             try {
                 await axios
                     .put(`${process.env.REACT_APP_API_URL}/board`, formData, {
                         headers: {
-                            token: sessionStorage.getItem('token'),
-                            'Content-Type': 'multipart/form-data',
+                            token: sessionStorage.getItem("token"),
+                            "Content-Type": "multipart/form-data",
                         },
                     })
                     .then((response) => {
                         if (response.status === 200) {
                             swal({
-                                title: '게시글 수정 성공!',
-                                icon: 'success',
+                                title: "게시글 수정 성공!",
+                                icon: "success",
                             });
                             setIsStarDetailOpen([boardIndex, writerIndex]);
                             handleClose(false);
@@ -239,14 +240,14 @@ function StarRegist(props) {
 
     function handleClose(check) {
         if (check) {
-            if (type === 'regist') {
+            if (type === "regist") {
                 if (contentRef.current.value.trim().length === 0) {
                     setIsStarRegistOpen(false);
                 } else {
                     swal({
-                        title: '창을 닫을까요?',
-                        text: '작성중인 게시글이 지워집니다!',
-                        icon: 'warning',
+                        title: "창을 닫을까요?",
+                        text: "작성중인 게시글이 지워집니다!",
+                        icon: "warning",
                         buttons: true,
                         dangerMode: true,
                     }).then((willDelete) => {
@@ -255,14 +256,14 @@ function StarRegist(props) {
                         }
                     });
                 }
-            } else if (type === 'modify') {
+            } else if (type === "modify") {
                 if (contentRef.current.value.trim().length === 0) {
                     setIsStarModifyOpen(false);
                 } else {
                     swal({
-                        title: '창을 닫을까요?',
-                        text: '작성중인 게시글이 지워집니다!',
-                        icon: 'warning',
+                        title: "창을 닫을까요?",
+                        text: "작성중인 게시글이 지워집니다!",
+                        icon: "warning",
                         buttons: true,
                         dangerMode: true,
                     }).then((willDelete) => {
@@ -273,9 +274,9 @@ function StarRegist(props) {
                 }
             }
         } else if (!check) {
-            if (type === 'regist') {
+            if (type === "regist") {
                 setIsStarRegistOpen(false);
-            } else if (type === 'modify') {
+            } else if (type === "modify") {
                 setIsStarModifyOpen(false);
             }
         }
@@ -332,7 +333,7 @@ const ContentArea = forwardRef((props, ref) => {
             <div className="relative bg-alert-bg rounded-lg w-full h-44 border text-white-sub">
                 <textarea
                     className="w-full h-36 bg-transparent resize-none p-2 border-transparent outline-none"
-                    style={{ outlineColor: 'transparent' }}
+                    style={{ outlineColor: "transparent" }}
                     ref={ref}
                     placeholder="일기 내용을 입력해주세요."
                     onChange={() => {
@@ -393,19 +394,19 @@ const FileUploadArea = forwardRef((props, ref) => {
             maxVideoCnt - videoFileCnt,
         ];
 
-        let msg = '';
+        let msg = "";
         if (remainImageFileCnt < 0) {
-            msg += '이미지 파일은 최대 5개 까지 첨부 가능합니다.\n';
+            msg += "이미지 파일은 최대 5개 까지 첨부 가능합니다.\n";
         }
 
         if (remainVideoFileCnt < 0) {
-            msg += '비디오 파일은 최대 1개 까지 첨부 가능합니다.';
+            msg += "비디오 파일은 최대 1개 까지 첨부 가능합니다.";
         }
 
-        if (msg !== '') {
+        if (msg !== "") {
             swal({
                 title: msg,
-                icon: 'error',
+                icon: "error",
             });
 
             // IE에서 호환성 문제 있음
@@ -432,8 +433,8 @@ const FileUploadArea = forwardRef((props, ref) => {
     }
 
     function fileTypeCheck(file) {
-        const type = file.type.split('/')[0];
-        return type === 'image' || type === 'video';
+        const type = file.type.split("/")[0];
+        return type === "image" || type === "video";
     }
 
     function handleFileChange(e) {
@@ -450,10 +451,10 @@ const FileUploadArea = forwardRef((props, ref) => {
         const uploadFileList = [...fileMap.values()];
 
         const imageFileList = [...uploadFileList].filter(
-            (it) => it.type.split('/')[0] === 'image'
+            (it) => it.type.split("/")[0] === "image"
         );
         const videoFileList = [...uploadFileList].filter(
-            (it) => it.type.split('/')[0] === 'video'
+            (it) => it.type.split("/")[0] === "video"
         );
 
         let imageFileCnt = imageFileList.length;
@@ -461,7 +462,7 @@ const FileUploadArea = forwardRef((props, ref) => {
 
         if (preBoard) {
             preBoard.boardMedia.forEach((it) => {
-                const url = it.split('.');
+                const url = it.split(".");
                 const type = url[url.length - 1];
 
                 EXTENSION_IMAGE.forEach((it) => {
@@ -493,25 +494,25 @@ const FileUploadArea = forwardRef((props, ref) => {
             setFileList([...uploadFileList]);
         }
 
-        let msg = '';
+        let msg = "";
 
         if (!fileTypeCheckRes) {
-            msg += '이미지, 비디오 파일만 업로드 가능합니다.\n';
+            msg += "이미지, 비디오 파일만 업로드 가능합니다.\n";
         }
         if (!fileCntCheckRes) {
-            msg += '파일 업로드 허용 개수를 초과했습니다.\n';
+            msg += "파일 업로드 허용 개수를 초과했습니다.\n";
         }
         if (!fileVolumeCheckRes) {
-            msg += '파일의 용량이 허용 용량을 초과했습니다..\n';
+            msg += "파일의 용량이 허용 용량을 초과했습니다..\n";
         }
 
         if (msg) {
             swal({
                 title: msg,
-                icon: 'success',
+                icon: "success",
             });
         }
-        ref.current.value = '';
+        ref.current.value = "";
     }
 
     function handleDragOver(e) {
@@ -571,10 +572,10 @@ const FileUploadArea = forwardRef((props, ref) => {
 function FileList() {
     const [fileList, setFileList] = useRecoilState(fileListState);
     const fileNames = fileList.map((it) => {
-        const nameArray = it.name.split('.');
+        const nameArray = it.name.split(".");
         const extension = nameArray[nameArray.length - 1];
 
-        let fileName = '';
+        let fileName = "";
         for (
             let i = 0;
             i < Math.min(it.name.length - (extension.length + 1), 20);
@@ -584,7 +585,7 @@ function FileList() {
         }
 
         if (fileName.length < it.name.length - (extension.length + 1)) {
-            fileName += '...';
+            fileName += "...";
         }
 
         fileName += `.${extension}`;
@@ -605,7 +606,7 @@ function FileList() {
                 <div className="flex  items-center " key={index}>
                     <div className=" flex ">
                         <div>- </div>
-                        <div>{it}</div>{' '}
+                        <div>{it}</div>{" "}
                     </div>
                     <div
                         className="ml-1 mt-1 hover:cursor-pointer text-red-500 hover:text-red-400"
@@ -632,28 +633,28 @@ function ImagePreviewArea(props) {
         const tmpList = [
             ...fileList.map((it) => {
                 const url =
-                    URL.createObjectURL(it) + '_' + it.type.split('/')[0];
+                    URL.createObjectURL(it) + "_" + it.type.split("/")[0];
 
                 return url;
             }),
         ];
 
-        if (props.type === 'modify') {
+        if (props.type === "modify") {
             const existData = data.boardMedia.map((it) => {
                 let extension;
 
-                let url = it.split('.');
+                let url = it.split(".");
                 let type = url[url.length - 1];
 
                 if (EXTENSION_IMAGE.has(type)) {
-                    extension = 'image';
+                    extension = "image";
                 }
 
                 if (EXTENSION_VIDEO.has(type)) {
-                    extension = 'video';
+                    extension = "video";
                 }
 
-                return it + '_' + extension;
+                return it + "_" + extension;
             });
 
             tmpList.splice(tmpList.length - 1, 0, ...existData);
@@ -692,31 +693,30 @@ function ImagePreviewArea(props) {
                                     className="w-pic h-pic bg-black-sub flex items-center"
                                     key={index}
                                 >
-                                    {it.split('_')[1] === 'image' ? (
+                                    {it.split("_")[1] === "image" ? (
                                         <img
                                             className="w-pic max-h-pic"
-                                            src={it.split('_')[0]}
+                                            src={it.split("_")[0]}
                                             key={index}
                                             alt="it"
                                         ></img>
                                     ) : null}
-                                    {it.split('_')[1] === 'video' ? (
+                                    {it.split("_")[1] === "video" ? (
                                         <video
                                             className="w-pic max-h-pic"
-                                            src={it.split('_')[0]}
+                                            src={it.split("_")[0]}
                                             controls
-                                            autoPlay
                                         />
                                     ) : null}
                                 </div>
                             ))}
                         </div>
                         <FaChevronLeft
-                            className="absolute left-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
+                            className="absolute left-0 h-full w-8 mx-2 text-black-sub hover:text-black"
                             onClick={handleLeft}
                         />
                         <FaChevronRight
-                            className="absolute right-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
+                            className="absolute right-0 h-full w-8 mx-2 text-black-sub hover:text-black"
                             onClick={handleRight}
                         />
                     </div>
@@ -752,8 +752,8 @@ const DateArea = forwardRef((props, ref) => {
             >
                 <div className="mr-1">{`${year}년 ${month}월 ${day}일`}</div>
                 <div className="hidden" ref={ref}>{`${year}-${
-                    month >= 10 ? month : '0' + month
-                }-${day >= 10 ? day : '0' + day}`}</div>
+                    month >= 10 ? month : "0" + month
+                }-${day >= 10 ? day : "0" + day}`}</div>
                 <div>
                     <HiOutlinePencilSquare />
                 </div>
@@ -761,7 +761,7 @@ const DateArea = forwardRef((props, ref) => {
             {isCalendarOpen && (
                 <Calendar
                     className={
-                        'absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10'
+                        "absolute p-1 top-10 bg-black-sub border border-white-sub rounded z-10"
                     }
                     mode="single"
                     selected={date}
@@ -777,8 +777,8 @@ const AccessRangeArea = forwardRef((props, ref) => {
 
     const [selectedRange, setSelectedRange] = useState(0);
 
-    const accessRangeArr = ['전체 공개', '팔로워 공개', '비공개'];
-    const accessRangeValueArr = ['OPEN', 'PARTOPEN', 'NOOPEN'];
+    const accessRangeArr = ["전체 공개", "팔로워 공개", "비공개"];
+    const accessRangeValueArr = ["OPEN", "PARTOPEN", "NOOPEN"];
 
     return (
         <div
@@ -812,14 +812,14 @@ const HashtagArea = (props) => {
     }, []);
 
     const handleKeyDown = (e) => {
-        if (e.code === 'Enter' || e.code === 'Space') {
+        if (e.code === "Enter" || e.code === "Space") {
             // 한글 문자 두번씩 입력되는 오류 방지하기 위해 추가
             if (e.nativeEvent.isComposing) return;
 
             if (input.current.value.length > 10) {
                 swal({
-                    title: '해시태그의 길이는 10자를 초과할 수 없습니다.',
-                    icon: 'info',
+                    title: "해시태그의 길이는 10자를 초과할 수 없습니다.",
+                    icon: "info",
                 });
                 return;
             }
@@ -829,7 +829,7 @@ const HashtagArea = (props) => {
             input.current.value = null;
 
             // 공백 해시태그 추가 방지
-            if (value === '') return;
+            if (value === "") return;
 
             // Set에 저장되어 있는지 체크
             if (!props.hashtagSet.has(value)) {
