@@ -12,6 +12,8 @@ import {
     isTagSearchOpenState,
 } from 'components/atom';
 import { Button } from '@/components/ui/button';
+import styled, { keyframes } from "styled-components";
+
 
 export default function LandingPage() {
     const resetIsChangeInfoOpen = useResetRecoilState(isChangeInfoOpenState);
@@ -26,7 +28,7 @@ export default function LandingPage() {
     const location = useLocation();
     //스크롤페이지 상태관리
     const [isInViewport, setIsInViewport] = useState(false);
-    const ref = useRef<HTMLDivElement | null>(null);
+    const ref = useRef(null);
 
     useEffect(() => {
         if (location.pathname.split('/').length > 2) setIsOpen(true);
@@ -68,9 +70,9 @@ export default function LandingPage() {
         };
       }, []);
       
-    return (
-        <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden bg-black">
-            <Container>
+    return (<>
+        <Container>
+            <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden">
                 <div>
                     <video
                         autoPlay
@@ -96,10 +98,35 @@ export default function LandingPage() {
                     )}
                     <Outlet />
                 </div>
-            /</Container>
-            <Container className={isInViewport ? "frame-in" : ""} ref={ref}>
-                <h1>안녕하세요</h1>
+            </div>
             </Container>
-        </div>
+            <Container className={`{isInViewport ? "frame-in" : ""} bg-indigo-950`} ref={ref}>
+                <h1 className="text-white text-6xl text-center font-['Star'] py-4">안녕하세요</h1>
+            </Container>
+            </>
     );
 }
+
+const frameInAnimation = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  100%{
+    opacity: 1;
+    transform: translateX(0%);
+  }
+`;
+
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  &.frame-in {
+    animation: ${frameInAnimation} 2s forwards;
+  }
+`;
