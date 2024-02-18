@@ -17,6 +17,7 @@ module.exports = {
         },
         extend: {
             colors: {
+                "loading-bg": "rgba(4, 13, 38, 1)",
                 "modal-bg": "rgba(28, 32, 42, 0.8)",
                 "alert-bg": "rgba(28, 32, 42, 0.95)",
                 "modal-line": "rgba(121,121,155,1)",
@@ -132,6 +133,12 @@ module.exports = {
                     "75%": { opacity: 1 },
                     "100%": { opacity: 0 },
                 },
+                "fade-in-out": {
+                    "0%": { opacity: 0 },
+                    "20%": { opacity: 1 },
+                    "40%": { opacity: 1 },
+                    "100%": { opacity: 0 },
+                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
@@ -140,6 +147,7 @@ module.exports = {
                 "fade-in": "fade-in 0.3s ease-in-out",
                 "fade-in-l": "fade-in 0.8s ease-in-out",
                 "fade-out": "fade-out 4s ease-in-out",
+                "fade-in-out": "fade-in-out 2s",
             },
         },
     },
