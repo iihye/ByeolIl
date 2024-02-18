@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface RadioRepository extends JpaRepository<Radio, Long>, RadioCustomRepository {
 
     @Modifying
-    @Query(value = "select r from Radio r where r.board.boardIndex = :boardIndex")
-    Iterable<Radio> findByBoardBoardIndexList(@Param("BoardIndex")Long boardIndex);
+    @Query(value = "select r from Radio r where r.board.boardIndex = :BoardIndex")
+    Iterable<Radio> findByBoardBoardIndexList(@Param("BoardIndex")Long BoardIndex);
 
     @Modifying
     @Query(value = "delete from Radio r where r in :radios")
