@@ -16,6 +16,7 @@ import {
     isConstellationInfoOpenState,
     isAlarmOpenState,
     isGuideCommentOpenState,
+    isSpaceMoveState,
 } from "./atom";
 import StarRegist from "./star/StarRegist";
 import StarDetail from "./star/StarDetail";
@@ -34,6 +35,8 @@ import axios from "axios";
 import swal from "sweetalert";
 import { constellationInfo } from "data";
 import Alarm from "./user/Alarm";
+import { useNavigate } from "react-router-dom";
+import { IoPlanetOutline } from "react-icons/io5";
 
 function ModalSpace() {
     return (
@@ -54,6 +57,7 @@ function ModalSpace() {
             <OpinionArea />
             <ConstellationInfoArea />
             <AlarmArea />
+            <SpaceMoveArea />
         </>
     );
 }
@@ -326,4 +330,65 @@ function ConstellationInfoArea() {
         </div>
     );
 }
+
+function SpaceMoveArea() {
+    const isSpaceMove = useRecoilValue(isSpaceMoveState);
+
+    return (
+        <>
+            {isSpaceMove && (
+                <LoadingSpaceMove
+                    memberIndex={isSpaceMove[0]}
+                    memberNickname={isSpaceMove[1]}
+                />
+            )}
+        </>
+    );
+}
+
+function LoadingSpaceMove({ ...props }) {
+    const resetIsSpaceMove = useResetRecoilState(isSpaceMoveState);
+    const navigate = useNavigate();
+    const pointRef = useRef([]);
+
+    const points = [".", ".", "."];
+
+    useEffect(() => {
+        navigate(`/space/${props.memberIndex}`, {
+            state: { props: props.memberNickname },
+        });
+
+        for (let i = 0; i < pointRef.current.length; i++) {
+            setTimeout(() => {
+                pointRef.current[i].style.opacity = 1;
+            }, i * 600);
+        }
+
+        setTimeout(resetIsSpaceMove, 2000);
+    }, []);
+
+    return (
+        <div className="fixed top-0 left-0 animate-fade-in-out opacity-0 bg-gradient-to-b from-black via-loading-bg to-black w-full h-full z-10 flex justify-center items-center p-10">
+            <div className="font-['Star'] w-full h-full border border-white-sub  rounded-xl text-white-sub text-5xl flex justify-center items-center text-center">
+                <div className="mr-3">
+                    <IoPlanetOutline />
+                </div>
+                <div>
+                    우 주 이 동 중
+                    {points.map((it, index) => (
+                        <span
+                            className="opacity-0 ml-1"
+                            ref={(element) =>
+                                (pointRef.current[index] = element)
+                            }
+                        >
+                            {it}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default ModalSpace;

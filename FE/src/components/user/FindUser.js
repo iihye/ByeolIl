@@ -1,35 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState, useResetRecoilState } from 'recoil';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { FaUserCircle } from 'react-icons/fa';
-import SearchBar from '../reusable/SearchBar';
-import { filterState, isFindUserOpenState } from 'components/atom';
-import { PiShootingStarLight } from 'react-icons/pi';
-import { TbHomeMove } from 'react-icons/tb';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaSearch } from 'react-icons/fa';
-import axios from 'axios';
-import swal from 'sweetalert';
-import { FaRegFaceSadTear } from 'react-icons/fa6';
+import React, { useEffect, useState } from "react";
+import { useRecoilValue, useSetRecoilState, useResetRecoilState } from "recoil";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { FaUserCircle } from "react-icons/fa";
+import SearchBar from "../reusable/SearchBar";
+import {
+    filterState,
+    isFindUserOpenState,
+    isSpaceMoveState,
+} from "components/atom";
+import { PiShootingStarLight } from "react-icons/pi";
+import { TbHomeMove } from "react-icons/tb";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
+import axios from "axios";
+import swal from "sweetalert";
+import { FaRegFaceSadTear } from "react-icons/fa6";
 
 // 유저 검색 기능
 function FindUser() {
+    const params = useParams();
     const resetIsFindUserOpen = useResetRecoilState(isFindUserOpenState);
-    const [listData, setListData] = useState('');
+    const [listData, setListData] = useState("");
     const filterData = useRecoilValue(filterState);
-    const userToken = sessionStorage.getItem('token') ?? '';
+    const userToken = sessionStorage.getItem("token") ?? "";
     const resetList = useResetRecoilState(filterState);
+    const setIsSpaceMove = useSetRecoilState(isSpaceMoveState);
 
     const isEmpty = false;
 
-    function handleMove(memberNickname) {
-        swal({
-            title: `${memberNickname}의 우주로 이동합니다🚀`,
-            icon: 'success',
-        });
-
-        resetIsFindUserOpen(false);
+    function handleMove(memberIndex, memberNickname) {
+        if (memberIndex !== Number(params["user_id"])) {
+            setIsSpaceMove([memberIndex, memberNickname]);
+            resetIsFindUserOpen(false);
+        }
     }
 
     // API로 유저 전체 리스트를 받아와서 listData 상태 변경
@@ -58,16 +62,16 @@ function FindUser() {
             e.stopPropagation();
 
             const check = [...e.target.classList].some(
-                (it) => it === 'outside'
+                (it) => it === "outside"
             );
             if (check) {
                 resetIsFindUserOpen();
             }
         }
 
-        window.addEventListener('click', handleClick);
+        window.addEventListener("click", handleClick);
         return () => {
-            window.removeEventListener('click', handleClick);
+            window.removeEventListener("click", handleClick);
         };
     });
 
@@ -111,17 +115,21 @@ function FindUser() {
                                             className="pr-2 text-btn-bg-hover"
                                         />
                                         {it.memberNickname}
-                                        <Link
-                                            to={`/space/${it.memberIndex}`}
-                                            state={{ props: it.memberNickname }}
+                                        <button
+                                            // to={`/space/${it.memberIndex}`}
+                                            // state={{ props: it.memberNickname }}
+                                            className="hover:cursor-pointer bg-transparent hover:bg-transparent"
                                             onClick={() =>
-                                                handleMove(it.memberNickname)
+                                                handleMove(
+                                                    it.memberIndex,
+                                                    it.memberNickname
+                                                )
                                             }
                                         >
                                             <TbHomeMove className="size-7 mx-2">
                                                 이동하기
                                             </TbHomeMove>
-                                        </Link>
+                                        </button>
                                     </li>
                                 ))
                             )}

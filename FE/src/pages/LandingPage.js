@@ -1,9 +1,9 @@
 // import video from "../video/background1.mp4"
 // import video from "../video/background2.mp4"
-import video from '../video/background3.mp4';
-import { useEffect, useState } from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
-import { useResetRecoilState } from 'recoil';
+import video from "../video/background3.mp4";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation, Link } from "react-router-dom";
+import { useResetRecoilState } from "recoil";
 import {
     isChangeInfoOpenState,
     isFavorListOpenState,
@@ -12,8 +12,8 @@ import {
     isMyStarListOpenState,
     isSettingOpenState,
     isTagSearchOpenState,
-} from 'components/atom';
-import { Button } from '@/components/ui/button';
+} from "components/atom";
+import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
     const resetIsChangeInfoOpen = useResetRecoilState(isChangeInfoOpenState);
@@ -28,7 +28,7 @@ export default function LandingPage() {
     const location = useLocation();
 
     useEffect(() => {
-        if (location.pathname.split('/').length > 2) setIsOpen(true);
+        if (location.pathname.split("/").length > 2) setIsOpen(true);
         else setIsOpen(false);
     }, [location]);
 
