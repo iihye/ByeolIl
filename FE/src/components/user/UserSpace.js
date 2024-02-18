@@ -84,23 +84,21 @@ function Line(props) {
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
     return (
-        <>
-            <line geometry={lineGeometry}>
-                <lineBasicMaterial
-                    attach="material"
-                    ref={lineRef}
-                    transparent={true}
-                    opacity={
-                        !props.lineColor
-                            ? 1
-                            : starLineOpacity === groupNum
-                            ? 0.05
-                            : 0.01
-                    }
-                    color={0xced6ff}
-                />
-            </line>
-        </>
+        <line geometry={lineGeometry}>
+            <lineBasicMaterial
+                attach="material"
+                ref={lineRef}
+                transparent={true}
+                opacity={
+                    !props.lineColor
+                        ? 1
+                        : starLineOpacity === groupNum
+                        ? 0.05
+                        : 0.01
+                }
+                color={0xced6ff}
+            />
+        </line>
     );
 }
 
@@ -306,38 +304,36 @@ function GroupStar(props) {
     }
 
     return (
-        <>
-            <group
-                ref={group}
-                onPointerEnter={handlePointerEnter}
-                onPointerLeave={handlePointerLeave}
-            >
-                {props.position.map((val, index) => (
-                    <Star
+        <group
+            ref={group}
+            onPointerEnter={handlePointerEnter}
+            onPointerLeave={handlePointerLeave}
+        >
+            {props.position.map((val, index) => (
+                <Star
+                    key={index}
+                    size={[0.17, 32, 32]}
+                    positions={position}
+                    position={val.slice(1, 4)}
+                    location={val[0]}
+                    renewConstellation={renewConstellation}
+                    setRenewConstellation={setRenewConstellation}
+                    startStarNum={startStarNum}
+                    lastStarNum={lastStarNum}
+                />
+            ))}
+            {linePosition[groupNum].map((it, index) => {
+                const pos = it.map((it) => new THREE.Vector3(...it));
+                return (
+                    <Line
                         key={index}
-                        size={[0.17, 32, 32]}
-                        positions={position}
-                        position={val.slice(1, 4)}
-                        location={val[0]}
-                        renewConstellation={renewConstellation}
-                        setRenewConstellation={setRenewConstellation}
-                        startStarNum={startStarNum}
-                        lastStarNum={lastStarNum}
+                        points={pos}
+                        groupNum={groupNum}
+                        lineColor={lineColor}
                     />
-                ))}
-                {linePosition[groupNum].map((it, index) => {
-                    const pos = it.map((it) => new THREE.Vector3(...it));
-                    return (
-                        <Line
-                            key={index}
-                            points={pos}
-                            groupNum={groupNum}
-                            lineColor={lineColor}
-                        />
-                    );
-                })}
-            </group>
-        </>
+                );
+            })}
+        </group>
     );
 }
 
@@ -629,6 +625,7 @@ function UserSpace() {
                         target={[0, 0, 0]}
                         rotateSpeed={-0.15}
                         enableZoom={false}
+                        minPolarAngle={(1.9 / 4) * Math.PI}
                     />
                     <PerspectiveCamera
                         makeDefault
