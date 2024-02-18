@@ -38,7 +38,7 @@ public class FollowService {
         Member fromMember = memberRepository.findByMemberIndex(followRequestDto.getFromMemberIndex())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.MEMBER_INVALID));
 
-        if(toMember.getMemberId() != fromMember.getMemberId()) {
+        if(!toMember.getMemberId().equals(fromMember.getMemberId())) {
             Follow follow = Follow.builder()
                     .toMember(toMember)
                     .fromMember(fromMember)

@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -18,11 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class RadioController {
 
     private final RadioService radioService;
+    private final String messageSuccess = "success";
 
     @PostMapping
     public ResponseEntity<ResultResponseDto> radioAdd(@RequestBody  RadioCreateRequestDto radioCreateRequestDto){
         HttpStatus status = HttpStatus.OK;
-        String message = "success";
+        String message = messageSuccess;
         try {
             radioService.addRadio(radioCreateRequestDto);
         } catch (NullPointerException e) {
@@ -38,7 +38,7 @@ public class RadioController {
     @GetMapping("/{memberIndex}")
     public ResponseEntity<RadioResponseDto> radioDetails(@PathVariable Long memberIndex){
         HttpStatus status = HttpStatus.OK;
-        String message = "success";
+        String message = messageSuccess;
         RadioResponseDto radioResponseDto =null;
         try {
             radioResponseDto =  radioService.findRadio(memberIndex);
@@ -55,7 +55,7 @@ public class RadioController {
     @PostMapping("/toss")
     public ResponseEntity<ResultResponseDto> radioToss(@RequestBody RadioCreateRequestDto radioCreateRequestDto){
         HttpStatus status = HttpStatus.OK;
-        String message = "success";
+        String message = messageSuccess;
         try {
             radioService.tossRadio(radioCreateRequestDto);
         } catch (NullPointerException e) {

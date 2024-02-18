@@ -6,7 +6,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
