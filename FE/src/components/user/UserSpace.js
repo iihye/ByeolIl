@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei";
-import * as THREE from "three";
-import axios from "axios";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import {
     atom,
     useRecoilState,
@@ -26,6 +24,8 @@ import { constellationCheck } from "util";
 import { PiShootingStarFill } from "react-icons/pi";
 import { FaRadio } from "react-icons/fa6";
 import swal from "sweetalert";
+import * as THREE from "three";
+import axios from "axios";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
 const starRange = [];
@@ -78,6 +78,8 @@ const isAddedStar = new Map();
 function Line(props) {
     const starLineOpacity = useRecoilValue(starLineOpacityState);
 
+    const lineRef = useRef();
+
     const groupNum = props.groupNum;
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
@@ -86,8 +88,15 @@ function Line(props) {
             <line geometry={lineGeometry}>
                 <lineBasicMaterial
                     attach="material"
-                    transparent={props.lineColor}
-                    opacity={starLineOpacity === groupNum ? 0.05 : 0.01}
+                    ref={lineRef}
+                    transparent={true}
+                    opacity={
+                        !props.lineColor
+                            ? 1
+                            : starLineOpacity === groupNum
+                            ? 0.05
+                            : 0.01
+                    }
                     color={0xced6ff}
                 />
             </line>
