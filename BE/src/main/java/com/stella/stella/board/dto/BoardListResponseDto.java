@@ -27,16 +27,18 @@ public class BoardListResponseDto {
     private int boardHeart;
     private List<String> Hash;
 
-    public static List<BoardListResponseDto> wrap(Long memberIndex, List<Board> list) {
+    public static List<BoardListResponseDto> wrap(List<Board> list) {
         List<BoardListResponseDto> dtoList = new ArrayList<>();
+        String timeFormat = "yy.MM.dd HH:mm";
+        String dateFormat = "yy.MM.dd";
         for (Board b : list) {
             dtoList.add(BoardListResponseDto.builder()
                     .boardIndex(b.getBoardIndex())
                     .memberIndex(b.getMember().getMemberIndex())
                     .memberNickname(b.getMember().getMemberNickname())
-                    .boardRegTime(b.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
-                    .boardUpdateDate(b.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
-                    .boardInputDate(b.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                    .boardRegTime(b.getBoardRegtime().format(DateTimeFormatter.ofPattern(timeFormat)))
+                    .boardUpdateDate(b.getBoardUpdateDate().format(DateTimeFormatter.ofPattern(timeFormat)))
+                    .boardInputDate(b.getBoardInputDate().format(DateTimeFormatter.ofPattern(dateFormat)))
                     .boardContent(b.getBoardContent())
                     .boardLocation(b.getBoardLocation())
                     .boardAccess(b.getBoardAccess())
@@ -48,14 +50,16 @@ public class BoardListResponseDto {
 
     public static List<BoardListResponseDto> getSearchList(List<Board> list) {
         List<BoardListResponseDto> dtoList = new ArrayList<>();
+        String timeFormat = "yy.MM.dd HH:mm";
+        String dateFormat = "yy.MM.dd";
         for (Board b : list) {
             dtoList.add(BoardListResponseDto.builder()
                     .boardIndex(b.getBoardIndex())
                     .memberIndex(b.getMember().getMemberIndex())
                     .memberNickname(b.getMember().getMemberNickname())
-                    .boardRegTime(b.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
-                    .boardUpdateDate(b.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
-                    .boardInputDate(b.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                    .boardRegTime(b.getBoardRegtime().format(DateTimeFormatter.ofPattern(timeFormat)))
+                    .boardUpdateDate(b.getBoardUpdateDate().format(DateTimeFormatter.ofPattern(timeFormat)))
+                    .boardInputDate(b.getBoardInputDate().format(DateTimeFormatter.ofPattern(dateFormat)))
                     .boardContent(b.getBoardContent())
                     .boardLocation(b.getBoardLocation())
                     .boardAccess(b.getBoardAccess())

@@ -97,7 +97,7 @@ public class MemberService {
     }
 
     public String getKakaoAccessToken(String code, String url) {
-        String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
+        String requestURL = "https://kauth.kakao.com/oauth/token";
         RestTemplate restTemplate = new RestTemplate();
 
         // Set Header
@@ -111,13 +111,12 @@ public class MemberService {
         params.add("client_id", kakaoRestAPIKey);
 
         params.add("redirect_uri", redirectUrl+url);
-//        params.add("redirect_uri", "http://localhost:3000" + url);
         params.add("code", code);
 
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         //
-        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(REQUEST_URL, request, String.class);
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(requestURL, request, String.class);
 
         JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
 
@@ -125,7 +124,7 @@ public class MemberService {
     }
 
     public String getGoogleAccessToken(String code, String url) {
-        String REQUEST_URL = "https://oauth2.googleapis.com/token";
+        String requestURL = "https://oauth2.googleapis.com/token";
         RestTemplate restTemplate = new RestTemplate();
 
         // Set Header
@@ -145,7 +144,7 @@ public class MemberService {
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         //
-        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(REQUEST_URL, request, String.class);
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(requestURL, request, String.class);
 
         JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
 
@@ -153,7 +152,7 @@ public class MemberService {
     }
 
     public String getNaverAccessToken(String code, String url) {
-        String REQUEST_URL = "https://nid.naver.com/oauth2.0/token";
+        String requestURL = "https://nid.naver.com/oauth2.0/token";
         RestTemplate restTemplate = new RestTemplate();
 
         // Set Header
@@ -172,7 +171,7 @@ public class MemberService {
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(REQUEST_URL, request, String.class);
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(requestURL, request, String.class);
 
         JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
 
@@ -180,7 +179,7 @@ public class MemberService {
     }
 
     public HashMap<String, Object> getKakaoMemberInfo(String kakaoAcessToken) {
-        String KAKAO_USERINFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
+        String kakaoUserinfoRequestURL = "https://kapi.kakao.com/v2/user/me";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -193,7 +192,7 @@ public class MemberService {
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(KAKAO_USERINFO_REQUEST_URL, request, String.class);
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(kakaoUserinfoRequestURL, request, String.class);
 
         JSONObject jsonObject = new JSONObject(stringResponseEntity.getBody());
 
@@ -216,7 +215,7 @@ public class MemberService {
     }
 
     public HashMap<String, Object> getGoogleMemberInfo(String googleAccessToken) {
-        String GOOGLE_USERINFO_REQUEST_URL = "https://www.googleapis.com/oauth2/v1/userinfo";
+        String googleUserinfoRequestURL = "https://www.googleapis.com/oauth2/v1/userinfo";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -229,7 +228,7 @@ public class MemberService {
         HttpEntity request = new HttpEntity(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                GOOGLE_USERINFO_REQUEST_URL,
+                googleUserinfoRequestURL,
                 HttpMethod.GET,
                 request,
                 String.class
@@ -246,7 +245,7 @@ public class MemberService {
     }
 
     public HashMap<String, Object> getNaverMemberInfo(String naverAccessToken) {
-        String NAVER_USERINFO_REQUEST_URL = "https://openapi.naver.com/v1/nid/me";
+        String naverUserinfoURL = "https://openapi.naver.com/v1/nid/me";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -259,7 +258,7 @@ public class MemberService {
         HttpEntity request = new HttpEntity(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                NAVER_USERINFO_REQUEST_URL,
+                naverUserinfoURL,
                 HttpMethod.GET,
                 request,
                 String.class

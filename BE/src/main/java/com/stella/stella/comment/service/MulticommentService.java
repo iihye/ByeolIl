@@ -40,7 +40,7 @@ public class MulticommentService {
 
         multicommentRepository.save(multiComment);
 
-        if(comment.getBoard().getMember().getMemberId() != member.getMemberId()){
+        if(!comment.getMember().getMemberId().equals(member.getMemberId())){
             Alarm alarm = Alarm.builder()
                     .toMember(comment.getBoard().getMember())
                     .fromMember(member)

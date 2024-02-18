@@ -1,7 +1,6 @@
 package com.stella.stella.board.repository;
 
 import com.stella.stella.board.entity.Heart;
-import com.stella.stella.board.entity.Media;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,19 +10,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HeartRepository extends JpaRepository<Heart, Long> {
-    int countByBoardBoardIndex(Long BoardIndex);
+    int countByBoardBoardIndex(Long boardIndex);
 
-    List<Heart> findAllByMemberMemberIndex(Long MemberIndex);
+    List<Heart> findAllByMemberMemberIndex(Long memberIndex);
 
-    void deleteByBoardBoardIndexAndMemberMemberIndex(Long BoardIndex, Long MemberIndex);
+    void deleteByBoardBoardIndexAndMemberMemberIndex(Long boardIndex, Long memberIndex);
 
-    Optional<Heart> findByBoardBoardIndexAndMemberMemberIndex(Long BoardIndex, Long MemberIndex);
+    Optional<Heart> findByBoardBoardIndexAndMemberMemberIndex(Long boardIndex, Long memberIndex);
 
-    int countByBoardBoardIndexAndMemberMemberIndex(Long BoardIndex, Long MemberIndex);
+    int countByBoardBoardIndexAndMemberMemberIndex(Long boardIndex, Long memberIndex);
 
     @Modifying
     @Query(value = "select h from Heart h where h.board.boardIndex = :BoardIndex")
-    Iterable<Heart> findByBoardBoardIndexList(@Param("BoardIndex")Long BoardIndex);
+    Iterable<Heart> findByBoardBoardIndexList(@Param("BoardIndex")Long boardIndex);
 
     @Modifying
     @Query(value = "delete from Heart h where h in :hearts")
