@@ -6,7 +6,7 @@ const treeSize = 1 << (treeHeight + 1);
 let tree = Array(treeSize).fill(0);
 
 function treeReset() {
-    tree = Array(treeSize).fill(0);
+    tree.fill(0);
 }
 
 function update(node, start, end, index, value) {

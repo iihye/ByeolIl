@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei";
-import * as THREE from "three";
-import axios from "axios";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import {
     atom,
     useRecoilState,
@@ -26,6 +24,8 @@ import { constellationCheck } from "util";
 import { PiShootingStarFill } from "react-icons/pi";
 import { FaRadio } from "react-icons/fa6";
 import swal from "sweetalert";
+import * as THREE from "three";
+import axios from "axios";
 
 // 해당 별자리 내 첫 번째 별 번호, 마지막 별 번호
 const starRange = [];
@@ -68,16 +68,6 @@ const starLineOpacityState = atom({
     default: -1,
 });
 
-const followState = atom({
-    key: "followState",
-    default: null,
-});
-
-const renewLineState = atom({
-    key: "renewLine",
-    default: false,
-});
-
 ///////////////////////////////// ↑ atoms
 
 const starArr = Array(MAX_SATR_CNT).fill(null);
@@ -87,9 +77,10 @@ const isAddedStar = new Map();
 
 function Line(props) {
     const starLineOpacity = useRecoilValue(starLineOpacityState);
-    const stars = useRecoilValue(starsState);
-    const groupNum = props.groupNum;
 
+    const lineRef = useRef();
+
+    const groupNum = props.groupNum;
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
     return (
@@ -97,8 +88,15 @@ function Line(props) {
             <line geometry={lineGeometry}>
                 <lineBasicMaterial
                     attach="material"
-                    transparent={props.lineColor}
-                    opacity={starLineOpacity === groupNum ? 0.05 : 0.01}
+                    ref={lineRef}
+                    transparent={true}
+                    opacity={
+                        !props.lineColor
+                            ? 1
+                            : starLineOpacity === groupNum
+                            ? 0.05
+                            : 0.01
+                    }
                     color={0xced6ff}
                 />
             </line>
@@ -151,14 +149,14 @@ function Space(props) {
 }
 
 function Star(props) {
-    const params = useParams();
-    const mesh = useRef(null);
-
     const stars = useRecoilValue(starsState);
-
     const isFollower = useRecoilValue(isFollowerState);
     const setIsStarDetailOpen = useSetRecoilState(isStarDetailOpenState);
     const setIsStarRegistOpen = useSetRecoilState(isStarRegistOpenState);
+
+    const params = useParams();
+
+    const mesh = useRef(null);
 
     const writerIndex = Number(params["user_id"]);
     const loginUserIndex = Number(
@@ -259,11 +257,11 @@ function StarSurround(props) {
 
 function GroupStar(props) {
     const stars = useRecoilValue(starsState);
-
     const setStarLineOpacityState = useSetRecoilState(starLineOpacityState);
     const setIsConstellationOpen = useSetRecoilState(
         isConstellationInfoOpenState
     );
+
     const [lineColor, setLineColor] = useState(true);
     const [renewConstellation, setRenewConstellation] = useState(false);
 
@@ -344,17 +342,17 @@ function GroupStar(props) {
 }
 
 function SceneStars() {
-    const curPage = useRecoilValue(curPageState);
     const [stars, setStars] = useRecoilState(starsState);
+    const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
+    const curPage = useRecoilValue(curPageState);
+    const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
     const setFollower = useSetRecoilState(followerState);
     const setIsGuideCommentOpen = useSetRecoilState(isGuideCommentOpenState);
-    const isDeleteAlertOpen = useRecoilValue(isDeleteAlertOpenState);
 
     const params = useParams();
     const writerIndex = Number(params.user_id);
     const loginUserId = Number(sessionStorage.getItem("memberIndex"));
     const loginUserNickname = sessionStorage.getItem("nickname");
-    const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -480,8 +478,10 @@ function SceneEnvironment() {
 
 function FollowArea() {
     const params = useParams();
-    const userId = Number(params.user_id);
+
     const location = useLocation();
+
+    const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
 
     const [loginToken, setLoginToken] = useState(
         sessionStorage.getItem("token")
@@ -490,7 +490,8 @@ function FollowArea() {
         Number(sessionStorage.getItem("memberIndex"))
     );
     const [userName, setUserName] = useState("");
-    const [isFollower, setIsFollower] = useRecoilState(isFollowerState);
+
+    const userId = Number(params.user_id);
 
     const handleFollow = (isFollower) => {
         const relationData = {
@@ -582,26 +583,27 @@ function FollowArea() {
     );
 }
 
-// export function GuideComment() {
-//     const resetIsGuideCommentOpen = useResetRecoilState(
-//         isGuideCommentOpenState
-//     );
+export function GuideComment() {
+    const resetIsGuideCommentOpen = useResetRecoilState(
+        isGuideCommentOpenState
+    );
 
-//     useEffect(() => {
-//         function guideClose() {
-//             resetIsGuideCommentOpen();
-//         }
+    useEffect(() => {
+        function guideClose() {
+            resetIsGuideCommentOpen();
+        }
 
-//         setTimeout(guideClose, 4000);
-//     }, []);
-//     return (
-//         <div className="guide-comment-container relative w-full h-full">
-//             <div className="guide-comment absolute top-0 left-0 right-0 bottom-0 p-2 bg-alert-bg">
-//                 <div>희미한 별을 눌러 일기를 작성해보아요!</div>
-//             </div>
-//         </div>
-//     );
-// }
+        setTimeout(guideClose, 4000);
+    }, []);
+
+    return (
+        <div className="guide-comment-container  font-['Star'] absolute bottom-32 justify-center w-full flex ">
+            <div className="guide-comment p-2 text-white-sub text-4xl animate-fade-in animate-fade-out">
+                <div>희미한 별을 눌러 일기를 작성하고 별자리를 이어보아요!</div>
+            </div>
+        </div>
+    );
+}
 
 function UserSpace() {
     return (
@@ -626,7 +628,7 @@ function UserSpace() {
                         dampingFactor={0.15}
                         target={[0, 0, 0]}
                         rotateSpeed={-0.15}
-                        enableZoom={true}
+                        enableZoom={false}
                     />
                     <PerspectiveCamera
                         makeDefault

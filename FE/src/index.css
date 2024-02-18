@@ -133,18 +133,18 @@
 }
 
 @font-face {
-    font-family: 'Star';
-    src: url('./fonts/Star.ttf');
+    font-family: "Star";
+    src: url("./fonts/Star.ttf");
 }
 @font-face {
-    font-family: 'Pre-Bold';
-    src: url('./fonts/Pretendard-SemiBold.woff');
+    font-family: "Pre-Bold";
+    src: url("./fonts/Pretendard-SemiBold.woff");
 }
 @font-face {
-    font-family: 'Pre-Thin';
-    src: url('./fonts/Pretendard-Thin.woff');
+    font-family: "Pre-Thin";
+    src: url("./fonts/Pretendard-Thin.woff");
 }
 @font-face {
-    font-family: 'Pre-Light';
-    src: url('./fonts/Pretendard-Light.woff');
+    font-family: "Pre-Light";
+    src: url("./fonts/Pretendard-Light.woff");
 }
