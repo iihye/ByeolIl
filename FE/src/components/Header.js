@@ -22,7 +22,7 @@ function Header() {
             {token ? (
                 <>
                     <nav className="sideContainer flex justify-end">
-                        <div className="m-2 mr-1">
+                        <div className="m-2 mr-1 hover:cursor-pointer">
                             <FaRegBell
                                 className="Sidebar-Alarm "
                                 size="28"
