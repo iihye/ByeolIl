@@ -170,6 +170,18 @@ function Star(props) {
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
 
+    let regDate = curStarState
+        ? curStarState.boardRegTime.split(" ")[0].split(".")
+        : null;
+
+    if (regDate) {
+        regDate[0] = "20" + regDate[0];
+        regDate = new Date(regDate.join("-"));
+    }
+
+    const today = new Date();
+    const dayDiff = regDate ? (today - regDate) / 1000 / 60 / 60 / 24 : 0;
+
     const colorCheck = curStarState
         ? (isFollower && curStarState.boardAccess === "PARTOPEN") ||
           curStarState.boardAccess === "OPEN" ||
@@ -220,7 +232,9 @@ function Star(props) {
                 <sphereGeometry args={props.size} />
                 <meshPhongMaterial
                     color={curStarState ? colors[colorCheck] : "grey"}
-                    opacity={curStarState ? 1 : 0.4}
+                    opacity={
+                        curStarState ? Math.max(1 - dayDiff / 360, 0.5) : 0.4
+                    }
                     transparent={true}
                 />
             </mesh>
@@ -545,7 +559,7 @@ function FollowArea() {
             {userName ? (
                 <div className="absolute bottom-4 left-4 flex justify-center items-center text-white">
                     <PiShootingStarFill className="mr-1" />
-                    <div className="space-name font-['Pre-Bold'] text-2xl mr-2 ">
+                    <div className="space-name font-['Pre-Bold'] text-2xl mr-2">
                         {userName} 우주
                     </div>
                     <div>
