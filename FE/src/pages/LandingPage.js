@@ -12,8 +12,8 @@ import {
     isTagSearchOpenState,
 } from 'components/atom';
 import { Button } from '@/components/ui/button';
-import styled, { keyframes } from "styled-components";
-
+import ScrollAnimationContainer from "./ScrollAnimationContainer";
+import { Container } from "./styled";
 
 export default function LandingPage() {
     const resetIsChangeInfoOpen = useResetRecoilState(isChangeInfoOpenState);
@@ -100,33 +100,19 @@ export default function LandingPage() {
                 </div>
             </div>
             </Container>
-            <Container className={`{isInViewport ? "frame-in" : ""} bg-indigo-950`} ref={ref}>
-                <h1 className="text-white text-6xl text-center font-['Star'] py-4">안녕하세요</h1>
-            </Container>
+            <ScrollAnimationContainer>
+                <h1 className=" text-6xl text-center font-['Star'] py-4">나만의 3D 우주에서 별 일기 쓰기.</h1>
+            </ScrollAnimationContainer>
+            <ScrollAnimationContainer>
+                <h1 className=" text-6xl text-center font-['Star'] py-4">학교종이 쌩쌩쌩</h1>
+            </ScrollAnimationContainer>
+            <ScrollAnimationContainer>
+                <h1 className=" text-6xl text-center font-['Star'] py-4">선생님이 워리를 </h1>
+            </ScrollAnimationContainer>
+            <ScrollAnimationContainer>
+                <h1 className=" text-6xl text-center font-['Star'] py-4">waiting 하신다.</h1>
+            </ScrollAnimationContainer>
+
             </>
     );
 }
-
-const frameInAnimation = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-
-  100%{
-    opacity: 1;
-    transform: translateX(0%);
-  }
-`;
-
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-  &.frame-in {
-    animation: ${frameInAnimation} 2s forwards;
-  }
-`;
