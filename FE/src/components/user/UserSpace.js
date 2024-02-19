@@ -252,6 +252,7 @@ function StarSurround(props) {
 
     return (
         <mesh
+            renderOrder={1}
             position={props.position}
             onClick={(e) => {
                 props.handleClick(e, props.location);
@@ -638,7 +639,7 @@ function UserSpace() {
                         dampingFactor={0.15}
                         target={[0, 0, 0]}
                         rotateSpeed={-0.15}
-                        enableZoom={false}
+                        enableZoom={true}
                         minPolarAngle={(1.9 / 4) * Math.PI}
                     />
                     <PerspectiveCamera
