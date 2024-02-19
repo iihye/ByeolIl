@@ -128,10 +128,14 @@ function StarRegist(props) {
         const hashContent = [];
         hashtagSet.forEach((it) => hashContent.push(it));
 
+        let contents = contentRef.current.value;
+        contents = contents.replaceAll("\n", "<br>");
+
         if (type === "regist") {
             const data = {
                 memberIndex: writerIndex,
-                boardContent: contentRef.current.value,
+                // boardContent: contentRef.current.value.replace("\r\n", "<br>"),
+                boardContent: contents,
                 boardInputDate: dateRef.current.innerText,
                 mediaContent: [],
                 boardLocation: curPage * MAX_STAR_CNT + location,
@@ -199,7 +203,7 @@ function StarRegist(props) {
                 boardIndex: boardIndex,
                 memberIndex: writerIndex,
                 boardInputDate: dateRef.current.innerText,
-                boardContent: contentRef.current.value,
+                boardContent: contents,
                 boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
                 // boardHash: preBoard.boardHash.concat([...hashContent]),

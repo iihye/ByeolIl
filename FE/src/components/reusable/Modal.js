@@ -280,7 +280,11 @@ function StarContent(props) {
                 <div className="">
                     <ScrollArea className="star-content-content relative w-96 border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
                         {/* 게시글 내용 */}
-                        {data ? data.boardContent : "로딩중"}
+                        {data
+                            ? data.boardContent
+                                  .split("<br>")
+                                  .map((it, index) => <p>{it}</p>)
+                            : "로딩중"}
                     </ScrollArea>
                 </div>
 

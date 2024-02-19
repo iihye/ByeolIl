@@ -285,7 +285,7 @@ export default function Sidebar() {
     return (
         <div className="Sidebar m-2">
             <TfiMenu
-                className="Sidebar-Menu"
+                className="Sidebar-Menu hover:cursor-pointer"
                 onClick={() =>
                     viewSideBar ? setViewSideBar(false) : setViewSideBar(true)
                 }
