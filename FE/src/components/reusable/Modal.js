@@ -784,32 +784,21 @@ function RadioContent() {
                                 </div>
 
                                 <div className="Radio-Content border border-white-sub p-2 h-44 mb-4">
-                                    {rdata.boardContent}
+                                    {rdata.boardContent
+                                        .split("<br>")
+                                        .map((it, index) => (
+                                            <p>{it}</p>
+                                        ))}
                                 </div>
 
-                                {/* <button
-                                    onClick={() => {
-                                        setIsReportAlertOpen(true);
-                                    }}
-                                >
-                                    신고
-                                </button> */}
-                                {/* <button
-                                    onClick={() => {
-                                        navigate(-1);
-                                    }}
-                                >
-                                    닫기
-                                </button> */}
-
                                 <div className="Radio-Player w-full mb-4">
-                                    {audioSrc && (
-                                        <audio
-                                            className="w-full"
-                                            src={audioSrc}
-                                            controls
-                                        />
-                                    )}
+                                    {/* {audioSrc && ( */}
+                                    <audio
+                                        className="w-full"
+                                        src={audioSrc}
+                                        controls
+                                    />
+                                    {/* )} */}
                                 </div>
                                 <div>
                                     <button
