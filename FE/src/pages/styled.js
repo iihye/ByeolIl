@@ -5,10 +5,6 @@ const frameInAnimation = keyframes`
     opacity: 0;
     transform: translateY(50%);
   }
-  50% {
-    opacity: 0.5;
-    transform: translateY(25%);
-  }
 
   100%{ 
     opacity: 1;
@@ -24,7 +20,7 @@ export const Container = styled.div`
   align-items: center;
   width: 100%;
   height: 100vh;
-  
+
   &.frame-in {
     animation: ${frameInAnimation} 2s forwards;
 `;
