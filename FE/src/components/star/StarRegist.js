@@ -331,24 +331,22 @@ const ContentArea = forwardRef((props, ref) => {
     }, []);
 
     return (
-        <>
-            <div className="relative bg-alert-bg rounded-lg w-full h-44 border text-white-sub">
-                <textarea
-                    className="w-full h-36 bg-transparent resize-none p-2 border-transparent outline-none"
-                    style={{ outlineColor: "transparent" }}
-                    ref={ref}
-                    placeholder="일기 내용을 입력해주세요."
-                    onChange={() => {
-                        setContentLength(ref.current.value.length);
-                    }}
-                    maxLength={200}
-                />
+        <div className="relative bg-alert-bg rounded-lg w-full h-44 border text-white-sub">
+            <textarea
+                className="w-full h-36 bg-transparent resize-none p-2 border-transparent outline-none"
+                style={{ outlineColor: "transparent" }}
+                ref={ref}
+                placeholder="일기 내용을 입력해주세요."
+                onChange={() => {
+                    setContentLength(ref.current.value.length);
+                }}
+                maxLength={200}
+            />
 
-                <div className="absolute text-white-sub bottom-1 right-2">
-                    {contentLength} / 200자
-                </div>
+            <div className="absolute text-white-sub bottom-1 right-2">
+                {contentLength} / 200자
             </div>
-        </>
+        </div>
     );
 });
 
