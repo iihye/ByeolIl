@@ -611,9 +611,11 @@ function RadioContent() {
     const fetchDataWav = async () => {
         if (!rdata) return; // rdata가 null일 때는 메소드를 종료
 
+        const textData = rdata.boardContent.replaceAll("<br>", " ");
+
         await axios
             .get(
-                `${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`,
+                `${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${textData}`,
                 {
                     responseType: "blob",
                 }
