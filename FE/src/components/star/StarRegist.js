@@ -128,10 +128,13 @@ function StarRegist(props) {
         const hashContent = [];
         hashtagSet.forEach((it) => hashContent.push(it));
 
+        let contents = contentRef.current.value;
+        contents = contents.replaceAll("\n", "<br>");
+
         if (type === "regist") {
             const data = {
                 memberIndex: writerIndex,
-                boardContent: contentRef.current.value,
+                boardContent: contents,
                 boardInputDate: dateRef.current.innerText,
                 mediaContent: [],
                 boardLocation: curPage * MAX_STAR_CNT + location,
@@ -199,11 +202,10 @@ function StarRegist(props) {
                 boardIndex: boardIndex,
                 memberIndex: writerIndex,
                 boardInputDate: dateRef.current.innerText,
-                boardContent: contentRef.current.value,
+                boardContent: contents,
                 boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
-                // boardHash: preBoard.boardHash.concat([...hashContent]),
-                boardHash: preBoard.hashContent.concat([...hashContent]),
+                boardHash: hashContent,
             };
 
             // Object to Blob
@@ -329,24 +331,22 @@ const ContentArea = forwardRef((props, ref) => {
     }, []);
 
     return (
-        <>
-            <div className="relative bg-alert-bg rounded-lg w-full h-44 border text-white-sub">
-                <textarea
-                    className="w-full h-36 bg-transparent resize-none p-2 border-transparent outline-none"
-                    style={{ outlineColor: "transparent" }}
-                    ref={ref}
-                    placeholder="일기 내용을 입력해주세요."
-                    onChange={() => {
-                        setContentLength(ref.current.value.length);
-                    }}
-                    maxLength={200}
-                />
+        <div className="relative bg-alert-bg rounded-lg w-full h-44 border text-white-sub">
+            <textarea
+                className="w-full h-36 bg-transparent resize-none p-2 border-transparent outline-none"
+                style={{ outlineColor: "transparent" }}
+                ref={ref}
+                placeholder="일기 내용을 입력해주세요."
+                onChange={() => {
+                    setContentLength(ref.current.value.length);
+                }}
+                maxLength={200}
+            />
 
-                <div className="absolute text-white-sub bottom-1 right-2">
-                    {contentLength} / 200자
-                </div>
+            <div className="absolute text-white-sub bottom-1 right-2">
+                {contentLength} / 200자
             </div>
-        </>
+        </div>
     );
 });
 
@@ -712,11 +712,11 @@ function ImagePreviewArea(props) {
                             ))}
                         </div>
                         <FaChevronLeft
-                            className="absolute left-0 h-full w-8 mx-2 text-black-sub hover:text-black"
+                            className="absolute left-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
                             onClick={handleLeft}
                         />
                         <FaChevronRight
-                            className="absolute right-0 h-full w-8 mx-2 text-black-sub hover:text-black"
+                            className="absolute right-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
                             onClick={handleRight}
                         />
                     </div>
@@ -808,6 +808,9 @@ const HashtagArea = (props) => {
     useEffect(() => {
         if (props.preBoard) {
             setHashtagList(props.preBoard.hashContent);
+            props.preBoard.hashContent.forEach((it) => {
+                props.hashtagSet.add(it);
+            });
         }
     }, []);
 

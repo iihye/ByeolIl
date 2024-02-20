@@ -34,7 +34,7 @@ export default function LandingPage() {
     const ref = useRef(null);
 
     useEffect(() => {
-        if (location.pathname.split('/').length > 2) setIsOpen(true);
+        if (location.pathname.split("/").length > 2) setIsOpen(true);
         else setIsOpen(false);
     }, [location]);
 

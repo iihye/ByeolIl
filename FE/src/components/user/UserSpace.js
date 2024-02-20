@@ -70,8 +70,6 @@ const starLineOpacityState = atom({
 
 ///////////////////////////////// ↑ atoms
 
-const starArr = Array(MAX_SATR_CNT).fill(null);
-
 // isAddedStar : starLocation : starInfo
 const isAddedStar = new Map();
 
@@ -84,23 +82,21 @@ function Line(props) {
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(props.points);
 
     return (
-        <>
-            <line geometry={lineGeometry}>
-                <lineBasicMaterial
-                    attach="material"
-                    ref={lineRef}
-                    transparent={true}
-                    opacity={
-                        !props.lineColor
-                            ? 1
-                            : starLineOpacity === groupNum
-                            ? 0.05
-                            : 0.01
-                    }
-                    color={0xced6ff}
-                />
-            </line>
-        </>
+        <line geometry={lineGeometry}>
+            <lineBasicMaterial
+                attach="material"
+                ref={lineRef}
+                transparent={true}
+                opacity={
+                    !props.lineColor
+                        ? 1
+                        : starLineOpacity === groupNum
+                        ? 0.05
+                        : 0.01
+                }
+                color={0xced6ff}
+            />
+        </line>
     );
 }
 
@@ -172,6 +168,18 @@ function Star(props) {
     // curStarState: 해당 별 객체 정보를 모두 담고 있다.
     const [curStarState, setCurStarState] = useState(null);
 
+    let regDate = curStarState
+        ? curStarState.boardRegTime.split(" ")[0].split(".")
+        : null;
+
+    if (regDate) {
+        regDate[0] = "20" + regDate[0];
+        regDate = new Date(regDate.join("-"));
+    }
+
+    const today = new Date();
+    const dayDiff = regDate ? (today - regDate) / 1000 / 60 / 60 / 24 : 0;
+
     const colorCheck = curStarState
         ? (isFollower && curStarState.boardAccess === "PARTOPEN") ||
           curStarState.boardAccess === "OPEN" ||
@@ -182,9 +190,9 @@ function Star(props) {
         setCurStarState(isAddedStar.get(props.location));
 
         if (isAddedStar.get(props.location)) {
-            starArr[props.location] = isAddedStar.get(props.location);
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 1);
         } else {
-            starArr[props.location] = null;
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 0);
         }
     }, [stars]);
 
@@ -222,7 +230,9 @@ function Star(props) {
                 <sphereGeometry args={props.size} />
                 <meshPhongMaterial
                     color={curStarState ? colors[colorCheck] : "grey"}
-                    opacity={curStarState ? 1 : 0.4}
+                    opacity={
+                        curStarState ? Math.max(1 - dayDiff / 360, 0.5) : 0.4
+                    }
                     transparent={true}
                 />
             </mesh>
@@ -250,7 +260,11 @@ function StarSurround(props) {
             onPointerLeave={() => setOpacity(0)}
         >
             <sphereGeometry args={[0.7, 48, 48]} />
-            <meshStandardMaterial transparent={true} opacity={opacity} />
+            <meshStandardMaterial
+                transparent={true}
+                opacity={opacity}
+                depthTest={false}
+            />
         </mesh>
     );
 }
@@ -280,10 +294,15 @@ function GroupStar(props) {
 
     // 작성한 별 목록 변경 시 별자리 체크
     useEffect(() => {
-        const check2 = starArr.slice(startStarNum, lastStarNum + 1);
-        const check3 = check2.every((it) => it !== null);
+        const check = constellationCheck.query(
+            1,
+            0,
+            MAX_SATR_CNT,
+            startStarNum,
+            lastStarNum
+        );
 
-        if (check3) {
+        if (check === lastStarNum - startStarNum + 1) {
             setLineColor(false);
         } else {
             setLineColor(true);
@@ -306,38 +325,36 @@ function GroupStar(props) {
     }
 
     return (
-        <>
-            <group
-                ref={group}
-                onPointerEnter={handlePointerEnter}
-                onPointerLeave={handlePointerLeave}
-            >
-                {props.position.map((val, index) => (
-                    <Star
+        <group
+            ref={group}
+            onPointerEnter={handlePointerEnter}
+            onPointerLeave={handlePointerLeave}
+        >
+            {props.position.map((val, index) => (
+                <Star
+                    key={index}
+                    size={[0.17, 32, 32]}
+                    positions={position}
+                    position={val.slice(1, 4)}
+                    location={val[0]}
+                    renewConstellation={renewConstellation}
+                    setRenewConstellation={setRenewConstellation}
+                    startStarNum={startStarNum}
+                    lastStarNum={lastStarNum}
+                />
+            ))}
+            {linePosition[groupNum].map((it, index) => {
+                const pos = it.map((it) => new THREE.Vector3(...it));
+                return (
+                    <Line
                         key={index}
-                        size={[0.17, 32, 32]}
-                        positions={position}
-                        position={val.slice(1, 4)}
-                        location={val[0]}
-                        renewConstellation={renewConstellation}
-                        setRenewConstellation={setRenewConstellation}
-                        startStarNum={startStarNum}
-                        lastStarNum={lastStarNum}
+                        points={pos}
+                        groupNum={groupNum}
+                        lineColor={lineColor}
                     />
-                ))}
-                {linePosition[groupNum].map((it, index) => {
-                    const pos = it.map((it) => new THREE.Vector3(...it));
-                    return (
-                        <Line
-                            key={index}
-                            points={pos}
-                            groupNum={groupNum}
-                            lineColor={lineColor}
-                        />
-                    );
-                })}
-            </group>
-        </>
+                );
+            })}
+        </group>
     );
 }
 
@@ -383,14 +400,6 @@ function SceneStars() {
                                 star.boardLocation % MAX_SATR_CNT,
                                 star
                             );
-                        });
-
-                        starArr.forEach((it, index) => {
-                            if (isAddedStar.get(index)) {
-                                starArr[index] = it;
-                            } else {
-                                starArr[index] = null;
-                            }
                         });
 
                         setStars([...response.data]);
@@ -549,7 +558,7 @@ function FollowArea() {
             {userName ? (
                 <div className="absolute bottom-4 left-4 flex justify-center items-center text-white">
                     <PiShootingStarFill className="mr-1" />
-                    <div className="space-name font-['Pre-Bold'] text-2xl mr-2 ">
+                    <div className="space-name font-['Pre-Bold'] text-2xl mr-2">
                         {userName} 우주
                     </div>
                     <div>
@@ -628,7 +637,8 @@ function UserSpace() {
                         dampingFactor={0.15}
                         target={[0, 0, 0]}
                         rotateSpeed={-0.15}
-                        enableZoom={false}
+                        enableZoom={true}
+                        minPolarAngle={(1.9 / 4) * Math.PI}
                     />
                     <PerspectiveCamera
                         makeDefault

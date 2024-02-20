@@ -280,7 +280,11 @@ function StarContent(props) {
                 <div className="">
                     <ScrollArea className="star-content-content relative w-96 border border-white-sub rounded-lg text-white-sub p-2 h-44 bg-alert-bg">
                         {/* 게시글 내용 */}
-                        {data ? data.boardContent : "로딩중"}
+                        {data
+                            ? data.boardContent
+                                  .split("<br>")
+                                  .map((it, index) => <p>{it}</p>)
+                            : "로딩중"}
                     </ScrollArea>
                 </div>
 
@@ -499,11 +503,11 @@ function MediaArea(props) {
                         })}
                 </div>
                 <FaChevronLeft
-                    className="absolute left-0 h-full w-8 mx-2 text-black-sub hover:text-black"
+                    className="absolute left-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
                     onClick={handleLeft}
                 />
                 <FaChevronRight
-                    className="absolute right-0 h-full w-8 mx-2 text-black-sub hover:text-black"
+                    className="absolute right-0 h-20 w-8 mx-2 text-black-sub hover:text-black"
                     onClick={handleRight}
                 />
             </div>
@@ -607,9 +611,11 @@ function RadioContent() {
     const fetchDataWav = async () => {
         if (!rdata) return; // rdata가 null일 때는 메소드를 종료
 
+        const textData = rdata.boardContent.replaceAll("<br>", " ");
+
         await axios
             .get(
-                `${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${rdata.boardContent}`,
+                `${process.env.REACT_APP_TTS_URL}/api/infer-glowtts?text=${textData}`,
                 {
                     responseType: "blob",
                 }
@@ -780,32 +786,21 @@ function RadioContent() {
                                 </div>
 
                                 <div className="Radio-Content border border-white-sub p-2 h-44 mb-4">
-                                    {rdata.boardContent}
+                                    {rdata.boardContent
+                                        .split("<br>")
+                                        .map((it, index) => (
+                                            <p>{it}</p>
+                                        ))}
                                 </div>
 
-                                {/* <button
-                                    onClick={() => {
-                                        setIsReportAlertOpen(true);
-                                    }}
-                                >
-                                    신고
-                                </button> */}
-                                {/* <button
-                                    onClick={() => {
-                                        navigate(-1);
-                                    }}
-                                >
-                                    닫기
-                                </button> */}
-
                                 <div className="Radio-Player w-full mb-4">
-                                    {audioSrc && (
-                                        <audio
-                                            className="w-full"
-                                            src={audioSrc}
-                                            controls
-                                        />
-                                    )}
+                                    {/* {audioSrc && ( */}
+                                    <audio
+                                        className="w-full"
+                                        src={audioSrc}
+                                        controls
+                                    />
+                                    {/* )} */}
                                 </div>
                                 <div>
                                     <button
