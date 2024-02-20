@@ -1,4 +1,7 @@
 import video from '../video/background3.mp4';
+import create from "../img/create.gif"
+import hover from "../img/hover.gif"
+import move from "../img/move.gif"
 import { useEffect, useState, useRef } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useResetRecoilState } from 'recoil';
@@ -70,7 +73,7 @@ export default function LandingPage() {
         };
       }, []);
       
-    return (<>
+    return (<div className="bg-slate-900 text-white">
         <Container>
             <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden">
                 <div>
@@ -104,15 +107,18 @@ export default function LandingPage() {
                 <h1 className=" text-6xl text-center font-['Star'] py-4">나만의 3D 우주에서 별 일기 쓰기.</h1>
             </ScrollAnimationContainer>
             <ScrollAnimationContainer>
-                <h1 className=" text-6xl text-center font-['Star'] py-4">학교종이 쌩쌩쌩</h1>
+                <h1 className=" text-6xl text-center font-['Star'] py-4">마우스로 내 우주를 드래그 해보아요.</h1>
+                <img className="w-3/5" src={move} />
             </ScrollAnimationContainer>
             <ScrollAnimationContainer>
-                <h1 className=" text-6xl text-center font-['Star'] py-4">선생님이 워리를 </h1>
+                <h1 className=" text-6xl text-center font-['Star'] py-4">마우스를 별위에 올리면 어떤 별자리인지 알려줘요.</h1>
+                <img className="w-3/5" src={hover} />
             </ScrollAnimationContainer>
             <ScrollAnimationContainer>
-                <h1 className=" text-6xl text-center font-['Star'] py-4">waiting 하신다.</h1>
+                <h1 className=" text-6xl text-center font-['Star'] py-4">별자리의 모든 별을 채워서 별자리를 완성해보아요.</h1>
+                <img className="w-3/5" src={create} />
             </ScrollAnimationContainer>
 
-            </>
+            </div>
     );
 }

@@ -20,12 +20,8 @@ export const Container = styled.div`
   align-items: center;
   width: 100%;
   height: 100vh;
-  background: black;
-
-  div {
-      &.frame-in {
-        animation: ${frameInAnimation} 2s forwards;
-      }
+  h1 {
+  &.frame-in {
+    animation: ${frameInAnimation} 2s forwards;
   }
-
 `;
