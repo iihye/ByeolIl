@@ -2,6 +2,7 @@ import video from '../video/background3.mp4';
 import create from "../img/create.gif"
 import hover from "../img/hover.gif"
 import move from "../img/move.gif"
+import scrollDown from "../img/scrollDownImg.png"
 import { useEffect, useState, useRef } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useResetRecoilState } from 'recoil';
@@ -16,7 +17,7 @@ import {
 } from 'components/atom';
 import { Button } from '@/components/ui/button';
 import ScrollAnimationContainer from "./ScrollAnimationContainer";
-import { Container } from "./styled";
+import { Container, DownArrow } from "./styled";
 
 export default function LandingPage() {
     const resetIsChangeInfoOpen = useResetRecoilState(isChangeInfoOpenState);
@@ -100,6 +101,9 @@ export default function LandingPage() {
                         </div>
                     )}
                     <Outlet />
+                    <div className='fixed bottom-0 m-2.5 ml-[60px]'>
+                        <DownArrow src={scrollDown} />
+                    </div>
                 </div>
             </div>
             </Container>
