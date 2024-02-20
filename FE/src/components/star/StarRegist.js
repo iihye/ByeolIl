@@ -205,8 +205,7 @@ function StarRegist(props) {
                 boardContent: contents,
                 boardMedia: [...preBoard.boardMedia],
                 boardAccess: accessRange,
-                // boardHash: preBoard.boardHash.concat([...hashContent]),
-                boardHash: preBoard.hashContent.concat([...hashContent]),
+                boardHash: hashContent,
             };
 
             // Object to Blob
@@ -811,6 +810,9 @@ const HashtagArea = (props) => {
     useEffect(() => {
         if (props.preBoard) {
             setHashtagList(props.preBoard.hashContent);
+            props.preBoard.hashContent.forEach((it) => {
+                props.hashtagSet.add(it);
+            });
         }
     }, []);
 
