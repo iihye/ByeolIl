@@ -70,8 +70,6 @@ const starLineOpacityState = atom({
 
 ///////////////////////////////// ↑ atoms
 
-const starArr = Array(MAX_SATR_CNT).fill(null);
-
 // isAddedStar : starLocation : starInfo
 const isAddedStar = new Map();
 
@@ -192,9 +190,9 @@ function Star(props) {
         setCurStarState(isAddedStar.get(props.location));
 
         if (isAddedStar.get(props.location)) {
-            starArr[props.location] = isAddedStar.get(props.location);
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 1);
         } else {
-            starArr[props.location] = null;
+            constellationCheck.update(1, 0, MAX_SATR_CNT, props.location, 0);
         }
     }, [stars]);
 
@@ -296,10 +294,15 @@ function GroupStar(props) {
 
     // 작성한 별 목록 변경 시 별자리 체크
     useEffect(() => {
-        const check2 = starArr.slice(startStarNum, lastStarNum + 1);
-        const check3 = check2.every((it) => it !== null);
+        const check = constellationCheck.query(
+            1,
+            0,
+            MAX_SATR_CNT,
+            startStarNum,
+            lastStarNum
+        );
 
-        if (check3) {
+        if (check === lastStarNum - startStarNum + 1) {
             setLineColor(false);
         } else {
             setLineColor(true);
@@ -307,9 +310,9 @@ function GroupStar(props) {
     }, [stars]);
 
     // 하늘 회전
-    // useFrame((state, delta) => {
-    //     group.current.rotation.y += delta / 250;
-    // });
+    useFrame((state, delta) => {
+        group.current.rotation.y += delta / 250;
+    });
 
     function handlePointerEnter() {
         setStarLineOpacityState(groupNum);
@@ -397,14 +400,6 @@ function SceneStars() {
                                 star.boardLocation % MAX_SATR_CNT,
                                 star
                             );
-                        });
-
-                        starArr.forEach((it, index) => {
-                            if (isAddedStar.get(index)) {
-                                starArr[index] = it;
-                            } else {
-                                starArr[index] = null;
-                            }
                         });
 
                         setStars([...response.data]);
