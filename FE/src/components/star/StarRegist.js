@@ -134,7 +134,6 @@ function StarRegist(props) {
         if (type === "regist") {
             const data = {
                 memberIndex: writerIndex,
-                // boardContent: contentRef.current.value.replace("\r\n", "<br>"),
                 boardContent: contents,
                 boardInputDate: dateRef.current.innerText,
                 mediaContent: [],

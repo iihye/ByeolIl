@@ -252,7 +252,6 @@ function StarSurround(props) {
 
     return (
         <mesh
-            renderOrder={1}
             position={props.position}
             onClick={(e) => {
                 props.handleClick(e, props.location);
@@ -263,7 +262,11 @@ function StarSurround(props) {
             onPointerLeave={() => setOpacity(0)}
         >
             <sphereGeometry args={[0.7, 48, 48]} />
-            <meshStandardMaterial transparent={true} opacity={opacity} />
+            <meshStandardMaterial
+                transparent={true}
+                opacity={opacity}
+                depthTest={false}
+            />
         </mesh>
     );
 }
@@ -304,9 +307,9 @@ function GroupStar(props) {
     }, [stars]);
 
     // 하늘 회전
-    useFrame((state, delta) => {
-        group.current.rotation.y += delta / 250;
-    });
+    // useFrame((state, delta) => {
+    //     group.current.rotation.y += delta / 250;
+    // });
 
     function handlePointerEnter() {
         setStarLineOpacityState(groupNum);
