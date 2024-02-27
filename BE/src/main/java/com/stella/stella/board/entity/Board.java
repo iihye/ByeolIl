@@ -126,4 +126,6 @@ public class Board {
                 .board(this)
         .build();
     }
+
+    public void setBoardLike(Long boardLike) { this.boardLike = boardLike; }
 }
