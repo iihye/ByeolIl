@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HeartRepository extends JpaRepository<Heart, Long> {
-    int countByBoardBoardIndex(Long BoardIndex);
+    Long countByBoardBoardIndex(Long BoardIndex);
 
     List<Heart> findAllByMemberMemberIndex(Long MemberIndex);
 

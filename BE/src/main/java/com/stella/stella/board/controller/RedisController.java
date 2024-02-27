@@ -1,30 +1,42 @@
 package com.stella.stella.board.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpStatus;
+import com.stella.stella.board.dto.HeartRequestDto;
+import com.stella.stella.board.service.HeartService;
+import com.stella.stella.common.dto.BasicResponseDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/redis")
+@RequiredArgsConstructor
 public class RedisController {
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private final HeartService heartService;
 
-    @PostMapping("/test")
-    public ResponseEntity<?> addRedisKey(){
-        ValueOperations<String, String> vop = redisTemplate.opsForValue();
-        vop.set("yellow", "banana");
-        vop.set("red", "apple");
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @GetMapping("/heart/mysql")
+    public void heartUpdate(){
+        heartService.transferRedisToMySQL();
     }
 
-    @GetMapping("/{key}")
-    public ResponseEntity<?> getRedisKey(@PathVariable String key){
-        ValueOperations<String, String> vop = redisTemplate.opsForValue();
-        String value = vop.get(key);
-        return new ResponseEntity<>(value, HttpStatus.OK);
+    @GetMapping("/heart/redis")
+    public void heartUpdateMySQLToRedis() {
+        heartService.transferMySQLToRedis();
     }
+
+//    @PostMapping("/test")
+//    public ResponseEntity<?> addRedisKey(){
+//        ValueOperations<String, String> vop = redisTemplate.opsForValue();
+//        vop.set("yellow", "banana");
+//        vop.set("red", "apple");
+//        return new ResponseEntity<>(HttpStatus.CREATED);
+//    }
+//
+//    @GetMapping("/{key}")
+//    public ResponseEntity<?> getRedisKey(@PathVariable String key){
+//        ValueOperations<String, String> vop = redisTemplate.opsForValue();
+//        String value = vop.get(key);
+//        return new ResponseEntity<>(value, HttpStatus.OK);
+//    }
 }

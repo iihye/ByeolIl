@@ -61,7 +61,6 @@ public class Board {
     private BoardDeleteYN boardDeleteYN;
 
     @Column(name = "board_like")
-    @ColumnDefault("0")
     private Long boardLike;
 
     @ManyToOne(optional = false)
@@ -127,5 +126,7 @@ public class Board {
         .build();
     }
 
-    public void setBoardLike(Long boardLike) { this.boardLike = boardLike; }
+    public void setBoardLike(Long boardLike) {
+        this.boardLike = boardLike;
+    }
 }

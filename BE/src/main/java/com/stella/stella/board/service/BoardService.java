@@ -149,6 +149,11 @@ public class BoardService {
                 .map(Hash::getHashContent)
                 .toList();
 
+        // Find a key in Redis
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        String key = "board:" + board.getBoardIndex().toString();
+        String value = values.get(key);
+
         BoardStarResponseDto dto = BoardStarResponseDto.builder()
                 .boardRegtime(board.getBoardRegtime().format(DateTimeFormatter.ofPattern(timeFormat)))
                 .boardUpdateDate(board.getBoardUpdateDate().format(DateTimeFormatter.ofPattern(timeFormat)))
@@ -157,7 +162,8 @@ public class BoardService {
                 .boardMedia(mediaLocations)
                 .alreadyHeartedTF(alreadyHeartedTF)
                 .boardAccess(board.getBoardAccess())
-                .boardLike(heartRepository.countByBoardBoardIndex(boardIndex))
+                .boardLike(Integer.parseInt(value))
+//                .boardLike(heartRepository.countByBoardBoardIndex(boardIndex))
                 .hashContent(hashContent).build();
 
         return dto;

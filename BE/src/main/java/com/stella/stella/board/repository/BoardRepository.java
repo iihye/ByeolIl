@@ -30,4 +30,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByMemberMemberIndex(Long MemberIndex);
     @Query(value = "select b from Board b where b.member.memberIndex = :memberIndex and b.boardDeleteYN =:boardDeleteYN")
     List<Board> findAllByMemberIndexForDelete(@Param("memberIndex")Long memberIndex, @Param("boardDeleteYN") BoardDeleteYN boardDeleteYN);
+
+    @Query("select b from Board b where b.boardDeleteYN =:boardDeleteYN")
+    List<Board> findAllByBoardDeleteYN(BoardDeleteYN boardDeleteYN);
+
 }

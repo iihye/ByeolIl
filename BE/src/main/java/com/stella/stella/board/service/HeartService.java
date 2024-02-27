@@ -14,15 +14,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class HeartService {
 
-   private final BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final HeartRepository heartRepository;
     private final RedisTemplate redisTemplate;
@@ -74,4 +78,46 @@ public class HeartService {
         values.set(key, String.valueOf(Integer.parseInt(value) - 1));
 
     }
+
+    // Redis -> Mysql로 하트 정보 보내기
+    // 시간 : 매일 자정
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *")
+    public void transferRedisToMySQL() {
+        Set<String> keySet = redisTemplate.keys("board:" + "*");
+        if (keySet != null && !keySet.isEmpty()) {
+            List<String> values = redisTemplate.opsForValue().multiGet(keySet);
+
+            for (int i = 0; i < keySet.size(); i++) {
+                String key = keySet.toArray(new String[0])[i].substring(6);
+                String value = values.get(i);
+
+                Board board = boardRepository.findById(Long.parseLong(key))
+                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.BOARDID_INVALID));
+
+                // update board_like in MySQL
+                board.setBoardLike(Long.parseLong(value));
+//                System.out.println("key: " + key + ", value: " + value);
+            }
+        } else {
+            log.info("저장된 key 값이 없어 업데이트 할 수 없습니다");
+        }
+
+    }
+
+    // Mysql -> Redis로 하트 정보 보내기
+    // 시간 : redis가 켜질 때
+    @Transactional
+    public void transferMySQLToRedis() {
+        List<Board> boardList = boardRepository.findAllByBoardDeleteYN(BoardDeleteYN.N);
+        for (Board board : boardList){
+            ValueOperations<String, String> values = redisTemplate.opsForValue();
+            String key = "board:" + board.getBoardIndex().toString();
+            Long heartCount = heartRepository.countByBoardBoardIndex(board.getBoardIndex());
+            values.set(key, heartCount.toString());
+
+            System.out.println("key: " + key + ", value: " + heartCount.toString());
+        }
+    }
+
 }
