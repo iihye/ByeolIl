@@ -50,6 +50,7 @@ public class SecurityConfig {
 //                				.requestMatchers("/member/test").hasAnyRole("USER","ADMIN")
 								.requestMatchers("/api/media/**").permitAll()
 								.requestMatchers("/api/opinion/**").permitAll()
+								.requestMatchers("/redis/**").permitAll()
 								.anyRequest().authenticated()
 
 				)

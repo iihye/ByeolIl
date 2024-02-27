@@ -60,6 +60,10 @@ public class Board {
     @ColumnDefault("'N'")
     private BoardDeleteYN boardDeleteYN;
 
+    @Column(name = "board_like")
+    @ColumnDefault("0")
+    private Long boardLike;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_index", referencedColumnName = "member_index")
     private Member member;
