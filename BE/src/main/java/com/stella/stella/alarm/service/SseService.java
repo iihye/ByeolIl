@@ -17,15 +17,13 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SseService {
     private final EmitterRepository emitterRepository;
-
-    private final Long DEFAULT_TIMEOUT = 60L * 1000;
-    private final String ALARM_NAME = "alarm";
+    private final String alarmName = "alarm";
 
     // 알림 SSE
     public void send(final long alarmId, final Long memberIndex, final String msg) {
         emitterRepository.get(memberIndex).ifPresentOrElse(sseEmitter -> {
             try {
-                sseEmitter.send(SseEmitter.event().id(createAlarmId(memberIndex, alarmId)).name(ALARM_NAME).data(msg));
+                sseEmitter.send(SseEmitter.event().id(createAlarmId(memberIndex, alarmId)).name(alarmName).data(msg));
             } catch (IOException e) {
                 emitterRepository.delete(memberIndex);
                 throw new CustomException(CustomExceptionStatus.INTERNAL_ERROR);
@@ -34,7 +32,8 @@ public class SseService {
     }
 
     public SseEmitter connectAlarm(Long memberIndex) {
-        SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
+        Long defaultTimeout = 60L * 1000;
+        SseEmitter sseEmitter = new SseEmitter(defaultTimeout);
         emitterRepository.save(memberIndex, sseEmitter);
 
         // 종료 되었을 때 처리
@@ -48,7 +47,7 @@ public class SseService {
         });
 
         try {
-            sseEmitter.send(SseEmitter.event().id(createAlarmId(memberIndex, null)).name(ALARM_NAME).data("connect completed!!"));
+            sseEmitter.send(SseEmitter.event().id(createAlarmId(memberIndex, null)).name(alarmName).data("connect completed!!"));
         } catch (IOException e) {
             throw new CustomException(CustomExceptionStatus.CONNECT_ERROR);
         }

@@ -55,7 +55,7 @@ public class RadioService {
         //게시글이 삭제되었는지 여부 확인
         if(board.getMember().getMemberIndex()==dto.getMemberIndex()) {
             //라디오를 보내려는 사람이 게시글의 작성자인지 확인한 후
-            saveRadio(board,dto);
+            this.saveRadio(board,dto);
         }else{
             throw new CustomException(CustomExceptionStatus.MEMBERID_INVALID);
         }
@@ -84,7 +84,7 @@ public class RadioService {
         if(board.getBoardDeleteYN()== BoardDeleteYN.Y){
             throw new CustomException(CustomExceptionStatus.BOARD_DELETED);
         }
-        saveRadio(board,dto);
+        this.saveRadio(board,dto);
     }
     @Transactional//초 분 시 일 월 요일 ( 0-7 이런 식으로 범위 설정, 7,16 이런 식으로 설정도 가능)
     @Scheduled(cron = "0 0 0 * * *")//매일 정각
@@ -96,7 +96,7 @@ public class RadioService {
             LocalDateTime st = LocalDateTime.now();
             LocalDateTime ed = LocalDateTime.now();
             switch (radioStatus){
-                case OLD
+                case OLD:
                     st= st.minusMonths(3);
                     ed= ed.minusMonths(6);
                     break;

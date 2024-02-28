@@ -1,7 +1,6 @@
 package com.stella.stella.member.dto;
 
 import com.stella.stella.member.entity.MemberAlarmStatus;
-import com.stella.stella.member.entity.MemberDeleteYN;
 import com.stella.stella.member.entity.MemberRadioStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +15,9 @@ import java.time.LocalDate;
 @Builder
 public class MemberUpdateRequestDto {
     private long memberIndex;
-    private String memberNickname, memberEmail, memberPass;
+    private String memberNickname;
+    private String memberEmail;
+    private String memberPass;
     private MemberAlarmStatus memberAlarmStatus;
     private MemberRadioStatus memberRadioStatus;
     private LocalDate memberBirth, memberDeleteDate;

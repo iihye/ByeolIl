@@ -14,9 +14,6 @@ import com.stella.stella.member.repository.MemberRepository;
 import com.stella.stella.radio.repository.RadioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +36,8 @@ public class BoardService {
     private final HashRepository hashRepository;
     private final RadioRepository radioRepository;
     private final S3Service s3Service;
+    private final String timeFormat = "yy.MM.dd HH:mm";
+    private final String dateFormat = "yy.MM.dd";
 
     @Transactional
     public void addBoard(BoardCreateRequestDto dto, MultipartFile[] files) throws IOException {
@@ -105,9 +104,9 @@ public class BoardService {
                 .toList();
 
         BoardStarResponseDto dto = BoardStarResponseDto.builder()
-                .boardRegtime(board.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
-                .boardUpdateDate(board.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
-                .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                .boardRegtime(board.getBoardRegtime().format(DateTimeFormatter.ofPattern(timeFormat)))
+                .boardUpdateDate(board.getBoardUpdateDate().format(DateTimeFormatter.ofPattern(timeFormat)))
+                .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern(dateFormat)))
                 .boardContent(board.getBoardContent())
                 .boardMedia(mediaLocations)
                 .alreadyHeartedTF(alreadyHeartedTF)
@@ -136,9 +135,9 @@ public class BoardService {
                 .toList();
 
         BoardStarResponseDto dto = BoardStarResponseDto.builder()
-                .boardRegtime(board.getBoardRegtime().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
-                .boardUpdateDate(board.getBoardUpdateDate().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")))
-                .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                .boardRegtime(board.getBoardRegtime().format(DateTimeFormatter.ofPattern(timeFormat)))
+                .boardUpdateDate(board.getBoardUpdateDate().format(DateTimeFormatter.ofPattern(timeFormat)))
+                .boardInputDate(board.getBoardInputDate().format(DateTimeFormatter.ofPattern(dateFormat)))
                 .boardContent(board.getBoardContent())
                 .boardMedia(mediaLocations)
                 .alreadyHeartedTF(alreadyHeartedTF)
@@ -255,7 +254,7 @@ public class BoardService {
 
         List<Board> boards = boardRepository.findByBoardforPage(memberIndex, BoardDeleteYN.N,locLow,locHigh );
 
-        return BoardListResponseDto.wrap(memberIndex,boards);
+        return BoardListResponseDto.wrap(boards);
 
     }
 
@@ -263,24 +262,24 @@ public class BoardService {
     public List<BoardListResponseDto> findBoardListToList(Long memberIndex) {
         List<Board> boards = boardRepository.findByMemberMemberIndexAndBoardDeleteYN(memberIndex, BoardDeleteYN.N);
 
-        return BoardListResponseDto.wrap(memberIndex, boards);
+        return BoardListResponseDto.wrap(boards);
 
     }
 
     @Transactional(readOnly = true)
     public List<BoardListResponseDto> findHeartedBoardList(Long memberIndex) {
-        List<Heart> Hearts = heartRepository.findAllByMemberMemberIndex(memberIndex);
+        List<Heart> hearts = heartRepository.findAllByMemberMemberIndex(memberIndex);
 
-        if (Hearts.isEmpty()) throw new CustomException(CustomExceptionStatus.NO_HEART_CONTENT);
+        if (hearts.isEmpty()) throw new CustomException(CustomExceptionStatus.NO_HEART_CONTENT);
 
         List<Long> boardIndexList = new ArrayList<>();
 
-        for (Heart H : Hearts) {
-            boardIndexList.add(H.getBoard().getBoardIndex());
+        for (Heart h : hearts) {
+            boardIndexList.add(h.getBoard().getBoardIndex());
         }
         List<Board> boards = boardRepository.findByBoardIndexInAndBoardDeleteYN(boardIndexList, BoardDeleteYN.N);
 
-        return BoardListResponseDto.wrap(memberIndex, boards);
+        return BoardListResponseDto.wrap(boards);
 
     }
 
