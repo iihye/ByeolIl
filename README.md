@@ -1,70 +1,89 @@
-# 📖별일 - 평범했던 나의 하루에 찾아온 별일
+# 📖별일 - 나만의 3D 우주에서 별 일기 쓰기
 ![상단메인](./asset/상단메인.gif)
 
 ### 🕰️ 개발 기간
-
-**24.01.03일 - 24.02.17일 (7주)**
+**2024.01.03 - 24.02.16 (7주)**
 <br>
 <br>
 
-### ⭐️ 팀원 소개
-
-|이혜진|이효재|전성수|김동학|조은영|조한빈|
-|:---:|:---:|:---:|:---:|:---:|:---:|
-|<img src="./asset/profile1.png" width="200px" />|<img src="./asset/profile2.png" width="200px" />|<img src="./asset/profile3.jpg" width="200px" />|<img src="./asset/profile4.jpg" width="200px" />|<img src="./asset/profile5.jpg" width="200px" />|<img src="./asset/profile6.png" width="200px" />|
-
+### 🏆 성과
+**삼성 청년 소프트웨어 아카데미(SSAFY) 공통 프로젝트 우수상 수상**
+<br>
 <br>
 
-## 📌캠페인 개요
-우리는 남기고 싶은 기억과 감정을 일기에 담습니다.<br><br>
-대부분의 일기는 그렇게 기록되고 그렇게 기억에서 사라집니다.<br><br>
-이런 일기를 특별한 계기나 우연으로 읽게 된다면 굉장히 반가운 일입니다.<br><br>
-어린 시절 썼던 일기를 우연히 읽어본 경험처럼 말이에요.<br><br>
-**별일은 이런 특별한 사건을 주기적으로 만들어주는 일기장입니다.<br><br>**
+## 🌟 서비스 소개
+기록은 순간을 오랫동안 기억할 수 있게 해줍니다.<br>
+여러분은 기억에 남는 일기가 있으신가요?<br>
+<br>
+저희는 “기억”에 초점을 맞추어,<br>
+일기를 작성한 때의 분위기를 “기억”하고,<br>
+내가 작성하고 잊고 있던 일기가 있다면 다시 “기억”하는 것에서 시작했습니다.<br>
+<br>
+**별일에서 별 일기를 작성하고, 잊고 있던 일기를 TTS로 들어보세요!**<br>
+<br>
 <br>
 
+## 💡 주요 기능
+### 3D 우주 배경에 그려지는 별 일기
+- 우주의 회색 별을 클릭하여 별 일기를 작성할 수 있어요.
+- 날짜, 내용와 해시태그, 사진(최대 5장), 영상(최대 1개)을 추가로 넣을 수 있어요.
+- 전체 공개, 팔로워 공개, 비공개로 공개 범위를 설정할 수 있어요.
+- 다른 사람 읽을 수 있는 일기는 좋아요, 댓글, 답댓글, 신고 기능을 사용할 수 있어요.
+- 별 일기가 모여 하나의 별자리를 완성할 수 있어요.
+<br>
 
-## 🎯주요 기능
+### 랜덤 주기로 나에게 돌아오는 별 일기
+- 환경설정에서 라디오 수신 범위 설정을 통해 별 일기 범위를 설정할 수 있어요.
+    - 최근에 가까울수록 3개월 이후의 일기 중에 랜덤으로 선택해드려요.
+    - 과거에 가까울수록 2년 까지의 일기 중에 랜덤으로 선택해드려요.
+- 매일 하나의 일기가 선택되어 라디오로 보내드려요,
+<br>
 
-**1.Three.js를 이용한 3차원 페이지에 구현된 별에 작성하는 일기.**
+### 익명으로 들려주는 별 일기
+- 나의 별 일기를 라디오로 송신하여 다른 사람과 공유할 수 있어요.
+- 라디오를 통해 익명으로 별 일기를 수신하고 TTS로 들을 수 있어요.
+- 수신한 별 일기를 랜덤으로 다른 사람에게 전달할 수 있어요.
+<br>
 
-**2.사용자가 설정한 주기에 따라 과거에 썼던 일기 리마인드 기능.**
+### 별 일기 목록 / 다른 사람의 우주 이동
+- 나의 별 목록, 좋아요 한 별 목록을 리스트 형태로 보여주고 검색할 수 있어요.
+- 전체 공개 별 일기를 대상으로 해시태그를 검색할 수 있어요.
+- 다른 사람의 우주를 검색하고 해당 우주로 이동할 수 있어요.
+- 다른 사람의 우주를 팔로우 할 수 있어요.
+- 댓글, 답댓글, 팔로우 알림을 받을 수 있어요.
+<br>
+<br>
 
-**3.랜덤 사용자에게 보내는 TTS 일기**
-
-
-
-### ⚙개발환경
-
-![개발환경](./asset/version.png)
-
-
-
-## 🏢Service Architecture
-
+## 🎯 서비스 아키텍쳐
 ![Architecture](./asset/architecture.png)
+<br>
+<br>
 
-
-   
-## ⌨️Stacks⌨️
-[![Git][Git.com]][Git-url]
-
+## 🛠 주요 기술 스택
 [![amazonec2][amazonec2.com]][amazonec2-url]
-[![NGINX][NGINX.com]][NGINX-url]
-[![Docker][Docker.com]][Docker-url]
 [![jenkins][jenkins.com]][jenkins-url]
-[![sonarqube][sonarqube.com]][sonarqube-url]
+[![Docker][Docker.com]][Docker-url]
+[![NGINX][NGINX.com]][NGINX-url]
 
-[![React][React.com]][React-url]
 [![Java][Java.com]][Java-url]
 [![SpringBoot][SpringBoot.com]][SpringBoot-url]
 [![flask][flask.com]][flask-url]
 
+[![React][React.com]][React-url]
+[![HTML][HTML.com]][HTML-url]
+[![CSS][CSS.com]][CSS-url]
+[![JavaScript][JavaScript.com]][JavaScript-url]
+
 [![Mysql][Mysql.com]][Mysql-url]
 [![amazons3][amazons3.com]][amazons3-url]
 
-
-
+[![Git][Git.com]][Git-url]
+[![Sonarqube][sonarqube.com]][sonarqube-url]
+[![Jira][Jira.com]][Jira-url]
+[![Gerrit][Gerrit.com]][Gerrit-url]
+[![MatterMost][MatterMost.com]][MatterMost-url]
+[![Notion][Notion.com]][Notion-url]
+[![Figma][Figma.com]][Figma-url]
 
 [React.com]: https://img.shields.io/badge/react-0099FF?style=for-the-badge&logo=react&logoColor=white
 [React-url]: https://ko.legacy.reactjs.org/
@@ -90,7 +109,26 @@
 [amazonec2-url]:https://aws.amazon.com/ko/pm/ec2/
 [amazons3.com]: https://img.shields.io/badge/amazons3-569A31?style=for-the-badge&logo=amazons3&logoColor=white
 [amazons3-url]:https://aws.amazon.com/ko/pm/serv-s3/
-
+[Tailwind.com]: https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=Tailwind&logoColor=white
+[Tailwind-url]: https://www.tailwind.com/
+[HTML.com]: https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=HTML&logoColor=white
+[HTML-url]: https://html.com/
+[CSS.com]: https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=CSS&logoColor=white
+[CSS-url]: https://html.com/
+[JavaScript.com]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white
+[JavaScript-url]: https://www.javascript.com/
+[Jira.com]: https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira&logoColor=white
+[Jira-url]: https://www.atlassian.com/software/jira
+[Gerrit.com]: https://img.shields.io/badge/Gerrit-EEEEEE?style=for-the-badge&logo=Gerrit&logoColor=white
+[Gerrit-url]: https://www.gerritcodereview.com/
+[MatterMost.com]: https://img.shields.io/badge/MatterMost-0058CC?style=for-the-badge&logo=MatterMost&logoColor=white
+[MatterMost-url]: https://www.mattermost.com/
+[Notion.com]: https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white
+[Notion-url]: https://www.notion.com/
+[Figma.com]: https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white
+[Figma-url]: https://www.figma.com/
+<br>
+<br>
 
 ## 📌서비스 화면
 
@@ -111,4 +149,13 @@
 ![radio1](./asset/05_1_radio.gif)
 ![radio2](./asset/05_2_radio.png)
 
+
+<br>
+
+## ⭐️ 팀원 소개
+
+|이혜진|이효재|전성수|김동학|조은영|조한빈|
+|---|---|---|---|---|---|
+|[Infra] CI/CD <br>[BE] 알림, 팔로우 <br>[FE]CSS|[BE] 로그인, 보안<br>[BE] TTS<br>[UCC] 영상 편집|[BE] 별 API<br>[UCC] 시나리오 기획|[FE] 소셜 로그인<br>[FE] 라디오|[FE] 검색 디바운싱<br>[FE] 렌더링 최적화|[FE] 3D 우주 구현<br>[UCC] 영상 출연|
+|<img src="./asset/profile1.png" width="200px" />|<img src="./asset/profile2.png" width="200px" />|<img src="./asset/profile3.jpg" width="200px" />|<img src="./asset/profile4.jpg" width="200px" />|<img src="./asset/profile5.jpg" width="200px" />|<img src="./asset/profile6.png" width="200px" />|
 
