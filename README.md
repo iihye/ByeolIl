@@ -33,13 +33,6 @@
 **3.랜덤 사용자에게 보내는 TTS 일기**
 
 
-## 🛒Usage
-
-````
-git clone https://lab.ssafy.com/s10-webmobile2-sub2/S10P12B209.git
-
-````
-
 
 ### ⚙개발환경
 
